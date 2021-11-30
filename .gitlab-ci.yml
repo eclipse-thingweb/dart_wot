@@ -14,6 +14,8 @@ before_script:
   - export PATH="$PATH":"~/.pub-cache/bin"
   - pub get --no-precompile
   - pub global activate junitreport
+  - pub global activate junitreport
+  - pub global activate -sgit https://github.com/Workiva/lsif_indexer
 
 style_check:
   stage: test
@@ -45,3 +47,12 @@ code_quality:
     reports:
       codequality:
         - quality.json
+
+code_navigation:
+  stage: test
+  allow_failure: true
+  script:
+    - pub global run lsif_indexer -o dump.lsif
+  artifacts:
+    reports:
+      lsif: dump.lsif
