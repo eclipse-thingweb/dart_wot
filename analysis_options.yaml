@@ -53,6 +53,27 @@ linter:
   - type_annotate_public_apis
   - avoid_types_on_closure_parameters
   - avoid_positional_boolean_parameters
+  - avoid_dynamic_calls
+  - avoid_returning_null_for_future
+  - avoid_slow_async_io
+  - cancel_subscriptions
+  - close_sinks
+  - always_declare_return_types
+  - avoid_void_async
+  - cascade_invocations
+  - eol_at_end_of_file
+  - flutter_style_todos
+  - leading_newlines_in_multiline_strings
+  - only_throw_errors
+  - prefer_final_locals
+  - prefer_final_parameters
+  - prefer_null_aware_method_calls
+  - unawaited_futures
+  - unnecessary_null_aware_assignments
+  - use_if_null_to_convert_nulls_to_bools
+  - use_is_even_rather_than_modulo
+  - depend_on_referenced_packages
+
 
 dart_code_metrics:
   anti-patterns:
