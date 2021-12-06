@@ -40,6 +40,19 @@ linter:
   - package_api_docs
   - public_member_api_docs
   - comment_references
+  - prefer_interpolation_to_compose_strings
+  - unnecesary_lambdas
+  - lines_longer_than_80_chars
+  - avoid_catches_without_on_clauses  # no pokémon exception handling (at least only catch Exception)
+  - avoid_catching_errors
+  - use_to_and_as_if_applicable  # this rule may cause false positives, if so, just disable it
+  - prefer_mixin
+  - use_setters_to_change_properties
+  - avoid_setters_without_getters  # use a method instead
+  - avoid_returning_this  # use cascades instead
+  - type_annotate_public_apis
+  - avoid_types_on_closure_parameters
+  - avoid_positional_boolean_parameters
 
 dart_code_metrics:
   anti-patterns:
