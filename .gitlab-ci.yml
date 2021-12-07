@@ -1,5 +1,5 @@
-# https://hub.docker.com/r/google/dart
-image: google/dart:latest
+# https://hub.docker.com/_/dart
+image: dart:latest
 
 variables:
   PUB_VARS: "--platform vm --timeout 30s --concurrency=6 --test-randomize-ordering-seed=random --reporter=json"
