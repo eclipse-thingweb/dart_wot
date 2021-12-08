@@ -34,7 +34,6 @@ analyzer:
     type_annotate_public_apis: warning
     always_declare_return_types: warning
     avoid_void_async: warning
-    flutter_style_todos: warning
     only_throw_errors: warning
     prefer_final_locals: warning
     prefer_null_aware_method_calls: warning
