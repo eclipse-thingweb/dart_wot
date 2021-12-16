@@ -1,6 +1,93 @@
+// Copyright 2021 The NAMIB Project Developers
+//
+// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
+// option. This file may not be copied, modified, or distributed
+// except according to those terms.
+//
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
+import 'dart:io';
+
 import 'package:dart_wot/dart_wot.dart';
 
-void main() {
-  final awesome = Awesome();
-  print('awesome: ${awesome.isAwesome}');
+final thingDescriptionJson = '''
+{
+  "@context": ["http://www.w3.org/ns/td", {"@language": "de"}],
+  "title": "Test Thing",
+  "base": "coap://coap.me",
+  "securityDefinitions": {
+    "nosec_sc": {
+      "scheme": "nosec",
+      "descriptions": {
+        "de": "Keine Sicherheit",
+        "en": "No Security"
+      }
+    }
+  },
+  "properties": {
+    "status": {
+      "forms": [
+        {
+          "href": "/.well-known/core"
+        }
+      ]
+    },
+    "differentStatus": {
+      "forms": [
+        {
+          "href": "coap://coap.me",
+          "cov:methodName": "PUT"
+        }
+      ]
+    }
+  },
+  "actions": {
+    "toggle": {
+      "forms": [
+        {
+          "href": "coap://coap.me"
+        }
+      ]
+    }
+  },
+  "events": {
+    "overheating": {
+      "forms": [
+        {
+          "href": "coap://coap.me"
+        }
+      ]
+    }
+  }
+}
+''';
+
+Future<void> main() async {
+  // TODO(JKRhb): Add a proper example
+  final coapConfig = CoapConfig(blocksize: 64);
+  final CoapClientFactory coapClientFactory = CoapClientFactory(coapConfig);
+  final servient = Servient()..addClientFactory(coapClientFactory);
+  final wot = await servient.start();
+
+  final thingDescription = ThingDescription(thingDescriptionJson);
+  final consumedThing = await wot.consume(thingDescription);
+  final status = await consumedThing.readProperty("status", null);
+  final value1 = await status.value();
+  print(value1);
+  await consumedThing.invokeAction("toggle", null, null);
+  final status2 = await consumedThing.readProperty("status", null);
+  final value2 = await status2.value();
+  print(value2);
+
+  final fetchedThingDescription =
+      await fetchThingDescription("coap://coap.me", servient, null);
+  print(fetchedThingDescription);
+
+  print("done!");
+
+  // FIXME: For some reason the main function does not terminate without
+  //        an exit call
+  exit(0);
 }
