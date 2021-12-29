@@ -6,6 +6,6 @@
 
 <!-- Insert a description here -->
 
-/label ~"type::misc"
+/label ~"type::misc" ~"group:hotels"
 
 <!-- TODO: Is this structure okay? -->

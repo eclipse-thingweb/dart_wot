@@ -14,4 +14,4 @@
 
 <!-- Add links to other issues/MRs here -->
 
-/label ~"type::feature"
+/label ~"type::feature" ~"group:hotels"

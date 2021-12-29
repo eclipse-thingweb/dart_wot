@@ -10,4 +10,4 @@
 
 <!-- Add links to other issues/MRs here -->
 
-/label ~"type::discussion"
+/label ~"type::discussion" ~"group:hotels"
