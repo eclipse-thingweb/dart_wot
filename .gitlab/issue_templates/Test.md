@@ -10,4 +10,4 @@
 
 <!-- Add links to other issues/MRs here -->
 
-/label ~"type::test"
+/label ~"type::test" ~"group:hotels"

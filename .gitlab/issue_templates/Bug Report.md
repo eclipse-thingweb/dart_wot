@@ -27,4 +27,4 @@ it's very hard to read otherwise. -->
 
 <!-- Add links to other issues/MRs here -->
 
-/label ~"type::bug"
+/label ~"type::bug" ~"group:hotels"

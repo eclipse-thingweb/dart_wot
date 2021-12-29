@@ -6,6 +6,4 @@
 
 <!-- Insert a description here -->
 
-/label ~"type::misc"
-
-<!-- TODO: Is this structure okay? -->
+/label ~"type::misc" ~"group:hotels"
