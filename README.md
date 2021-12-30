@@ -41,6 +41,12 @@ Licensed under either of
   ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
 at your option.
 
+## Note on Third-Party Code
+
+This software includes material copied from
+Eclipse Thingweb node-wot (https://github.com/eclipse/thingweb.node-wot).
+Copyright (c) 2018 Contributors to the Eclipse Foundation
+
 ## Contribution
 
 Unless you explicitly state otherwise, any contribution intentionally submitted
