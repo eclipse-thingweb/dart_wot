@@ -1,4 +1,4 @@
-# dart_wot: A W3C Web of Things implementation written in Dart
+# dart_wot
 
 dart_wot is an implementation of the
 Web of Things [Scripting API](https://w3c.github.io/wot-scripting-api/) modelled
