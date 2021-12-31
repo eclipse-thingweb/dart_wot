@@ -22,8 +22,7 @@ analyzer:
     missing_required_param: warning
     missing_return: warning
     package_api_docs: warning
-    #TODO: Change to warning
-    public_member_api_docs: info
+    public_member_api_docs: warning
     prefer_interpolation_to_compose_strings: warning
     unnecessary_lambdas: warning
     avoid_catches_without_on_clauses: warning

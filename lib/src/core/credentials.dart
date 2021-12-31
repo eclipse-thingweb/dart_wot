@@ -8,17 +8,6 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-/// A W3C Web of Things implementation written in Dart.
-library dart_wot;
-
-/// Protocol Bindings
-export 'binding_coap.dart';
-
-/// Core implementation providing WoT servient.
-export 'core.dart';
-
-/// Thing Description and Thing Model Definitions
-export 'definitions.dart';
-
-/// Provides a WoT Scripting API implementation
-export 'scripting_api.dart';
+/// Class used for defining credentials for Thing Interactions.
+// TODO(JKRhb): Add implementation.
+class Credentials {}

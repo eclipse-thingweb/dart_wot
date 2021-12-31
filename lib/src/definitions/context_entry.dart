@@ -8,17 +8,15 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-/// A W3C Web of Things implementation written in Dart.
-library dart_wot;
+/// Class holding a [value] and an optional [key] for representing different
+/// types of `@context` entries.
+class ContextEntry {
+  /// The [value] of this [ContextEntry].
+  String value;
 
-/// Protocol Bindings
-export 'binding_coap.dart';
+  /// The [key] of this [ContextEntry]. Might be `null`.
+  String? key;
 
-/// Core implementation providing WoT servient.
-export 'core.dart';
-
-/// Thing Description and Thing Model Definitions
-export 'definitions.dart';
-
-/// Provides a WoT Scripting API implementation
-export 'scripting_api.dart';
+  /// Creates a new [ContextEntry].
+  ContextEntry(this.value, this.key);
+}

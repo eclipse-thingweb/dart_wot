@@ -8,17 +8,14 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-/// A W3C Web of Things implementation written in Dart.
-library dart_wot;
+/// Allows for configuring the behavior of CoAP clients and servers.
+class CoapConfig {
+  /// The port number used by a client or server. Defaults to 5683.
+  int port;
 
-/// Protocol Bindings
-export 'binding_coap.dart';
+  /// The preferred block size for blockwise transfer.
+  int? blocksize;
 
-/// Core implementation providing WoT servient.
-export 'core.dart';
-
-/// Thing Description and Thing Model Definitions
-export 'definitions.dart';
-
-/// Provides a WoT Scripting API implementation
-export 'scripting_api.dart';
+  /// Creates a new [CoapConfig] object.
+  CoapConfig({this.port = 5683, this.blocksize});
+}
