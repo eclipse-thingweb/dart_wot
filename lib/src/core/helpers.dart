@@ -41,9 +41,7 @@ Future<ThingDescription> fetchThingDescription(
   final content = await client.readResource(fetchForm);
   await client.stop();
 
-  final contentSerdes = ContentSerdes();
-
-  final value = await contentSerdes.contentToValue(content, null);
+  final value = await servient.contentSerdes.contentToValue(content, null);
   if (value is Map<String, dynamic>) {
     return ThingDescription.fromJson(value);
   }

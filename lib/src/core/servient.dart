@@ -12,6 +12,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../definitions.dart';
 import '../definitions/interaction_affordances/interaction_affordance.dart';
+import 'content_serdes.dart';
 import 'credentials.dart';
 import 'exposed_thing.dart';
 import 'protocol_interfaces/protocol_client.dart';
@@ -25,6 +26,16 @@ class Servient {
   final Map<String, ProtocolClientFactory> _clientFactories = {};
   final Map<String, ExposedThing> _things = {};
   final Map<String, Credentials> _credentialsStore = {};
+
+  /// The [ContentSerdes] object that is used for serializing/deserializing.
+  final ContentSerdes contentSerdes;
+
+  /// Creates a new [Servient].
+  ///
+  /// A custom [contentSerdes] can be passed that supports other media types
+  /// than the default ones.
+  Servient([ContentSerdes? contentSerdes])
+      : contentSerdes = contentSerdes ?? ContentSerdes();
 
   /// Starts this [Servient] and returns a [WoT] runtime object.
   ///

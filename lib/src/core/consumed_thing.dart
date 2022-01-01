@@ -15,7 +15,6 @@ import '../definitions/form.dart';
 import '../definitions/interaction_affordances/interaction_affordance.dart';
 import '../definitions/security_scheme.dart';
 import '../definitions/thing_description.dart';
-import 'content_serdes.dart';
 import 'interaction_output.dart';
 import 'operation_type.dart';
 import 'protocol_interfaces/protocol_client.dart';
@@ -41,9 +40,6 @@ class UnexpectedReponseException implements Exception {
 
 /// Implementation of the [scripting_api.ConsumedThing] interface.
 class ConsumedThing implements scripting_api.ConsumedThing {
-  /// The [ContentSerdes] object that is used for serializing/deserializing.
-  final ContentSerdes contentSerdes;
-
   /// The [Servient] corresponding with this [ConsumedThing].
   final Servient servient;
 
@@ -57,10 +53,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   final Map<String, SecurityScheme> _securityDefinitions = {};
 
   /// Constructor
-  ConsumedThing(this.servient, this.thingDescription,
-      [ContentSerdes? contentSerdes])
-      : title = thingDescription.title,
-        contentSerdes = contentSerdes ?? ContentSerdes() {
+  ConsumedThing(this.servient, this.thingDescription)
+      : title = thingDescription.title {
     _augmentInteractionAffordanceForms();
   }
 
@@ -124,7 +118,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final client = clientAndForm.client;
 
     final content = await client.readResource(form);
-    return InteractionOutput(content, contentSerdes, form, property);
+    return InteractionOutput(content, servient.contentSerdes, form, property);
   }
 
   @override
@@ -143,8 +137,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     final form = clientAndForm.form; // TODO(JKRhb): Handle URI variables
     final client = clientAndForm.client;
-    final content = contentSerdes.valueToContent(
-        interactionInput, property, form.contentType);
+    final content = servient.contentSerdes
+        .valueToContent(interactionInput, property, form.contentType);
     await client.writeResource(form, content);
   }
 
@@ -163,8 +157,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     final form = clientAndForm.form; // TODO(JKRhb): Handle URI variables
     final client = clientAndForm.client;
-    final input = contentSerdes.valueToContent(
-        interactionInput, action.input, form.contentType);
+    final input = servient.contentSerdes
+        .valueToContent(interactionInput, action.input, form.contentType);
 
     final content = await client.invokeResource(form, input);
 
@@ -175,7 +169,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       }
     }
 
-    return InteractionOutput(content, contentSerdes, form, action.output);
+    return InteractionOutput(
+        content, servient.contentSerdes, form, action.output);
   }
 
   void _ensureClientSecurity(ProtocolClient client, Form form) {
