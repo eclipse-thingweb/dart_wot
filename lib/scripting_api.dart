@@ -8,9 +8,11 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-/// WoT Scripting API Definitions
+/// Defines interfaces that follow the
+/// [WoT Scripting API Specification][spec link].
 ///
-///
+/// [spec link]: https://www.w3.org/TR/wot-scripting-api/
+
 export 'src/scripting_api/consumed_thing.dart';
 export 'src/scripting_api/discovery/discovery_method.dart';
 export 'src/scripting_api/discovery/thing_discovery.dart';

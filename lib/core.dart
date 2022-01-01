@@ -8,6 +8,10 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
+/// Core implementation providing Scripting API implementations, interfaces
+/// for protocol bindings, and the `Servient` class which provides the WoT
+/// runtime used for consuming, exposing, and discovering Things.
+
 export 'src/core/codecs/content_codec.dart';
 export 'src/core/content_serdes.dart';
 export 'src/core/helpers.dart';

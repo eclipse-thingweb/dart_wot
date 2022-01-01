@@ -8,5 +8,10 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
+/// Provides Thing Description and Thing Model Definitions that follow the
+/// [WoT Thing Description Specification][spec link].
+///
+/// [spec link]: https://www.w3.org/TR/wot-thing-description11/
+
 export 'src/definitions/thing_description.dart';
 export 'src/definitions/thing_model.dart';

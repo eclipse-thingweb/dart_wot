@@ -8,6 +8,11 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
+/// Protocol binding for the Constrained Application Protocol (CoAP). Follows
+/// the [WoT Binding Templates Specification][spec link] for CoAP.
+///
+/// [spec link]: https://www.w3.org/TR/wot-binding-templates/
+
 export 'src/binding_coap/coap_client.dart';
 export 'src/binding_coap/coap_client_factory.dart';
 export 'src/binding_coap/coap_config.dart';
