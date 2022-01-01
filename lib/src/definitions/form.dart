@@ -106,10 +106,6 @@ class Form {
   }
 
   dynamic _getJsonValue(Map<String, dynamic> formJson, String key) {
-    if (formJson is! Map<String, dynamic>) {
-      throw ArgumentError("Expected a Map<String, dynamic> as form, got "
-          "${formJson.runtimeType} instead.");
-    }
     _parsedJsonFields.add(key);
     return formJson[key];
   }
