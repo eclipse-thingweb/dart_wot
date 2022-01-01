@@ -14,7 +14,6 @@ import 'dart:io';
 import 'package:coap/coap.dart';
 import 'package:coap/config/coap_config_default.dart';
 
-import '../../core.dart';
 import '../core/content.dart';
 import '../core/credentials.dart';
 import '../core/operation_type.dart';
