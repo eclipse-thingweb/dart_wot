@@ -10,7 +10,6 @@
 
 import '../definitions/form.dart';
 import '../definitions/thing_description.dart';
-import '../scripting_api/interaction_options.dart';
 import 'content_serdes.dart';
 import 'servient.dart';
 
