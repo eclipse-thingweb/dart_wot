@@ -82,7 +82,7 @@ Future<void> main() async {
   print(value2);
 
   final fetchedThingDescription =
-      await fetchThingDescription("coap://coap.me", servient, null);
+      await fetchThingDescription("coap://coap.me", servient);
   print(fetchedThingDescription);
 
   print("done!");

@@ -30,7 +30,7 @@ class ThingDescriptionFetchException implements Exception {
 
 /// Fetches a Thing Description from a given [uri].
 Future<ThingDescription> fetchThingDescription(
-    String uri, Servient servient, InteractionOptions? options) async {
+    String uri, Servient servient) async {
   final parsedUri = Uri.parse(uri);
   final client = servient.clientFor(parsedUri.scheme);
   final fetchForm = Form(uri, "application/td+json");
