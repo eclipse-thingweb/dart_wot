@@ -28,7 +28,11 @@ class ThingDescriptionFetchException implements Exception {
       : message = "Fetching Thing Description from $uri failed.";
 }
 
-/// Fetches a Thing Description from a given [uri].
+/// Fetches a Thing Description from a given [uri] using a [servient].
+///
+/// The [servient] needs to support the given [uri] scheme, otherwise a
+/// [StateError] is thrown. If the fetched value is not parsable, a
+/// [ThingDescriptionFetchException] is thrown.
 Future<ThingDescription> fetchThingDescription(
     String uri, Servient servient) async {
   final parsedUri = Uri.parse(uri);
