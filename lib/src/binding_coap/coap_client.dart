@@ -81,8 +81,7 @@ class _WoTCoapRequest {
   /// [CoapRequestMethod.get] or [CoapRequestMethod.post]).
   final CoapRequestMethod _requestMethod;
 
-  /// An (optional) custom [CoapConfig] passed in by the user when creating
-  /// the [Servient].
+  /// An (optional) custom [CoapConfig] which overrides the default values.
   final CoapConfig? _coapConfig;
 
   /// This [defaultCoapConfig] is used if parameters should not be set in a
