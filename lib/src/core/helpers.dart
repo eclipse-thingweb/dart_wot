@@ -8,8 +8,9 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-import '../../definitions.dart';
-import '../../scripting_api.dart';
+import '../definitions/form.dart';
+import '../definitions/thing_description.dart';
+import '../scripting_api/interaction_options.dart';
 import 'content_serdes.dart';
 import 'servient.dart';
 

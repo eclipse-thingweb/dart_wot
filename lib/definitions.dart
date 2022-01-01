@@ -8,6 +8,5 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-export 'src/definitions/form.dart';
 export 'src/definitions/thing_description.dart';
 export 'src/definitions/thing_model.dart';
