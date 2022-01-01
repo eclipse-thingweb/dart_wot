@@ -1,4 +1,6 @@
 [![Build](https://github.com/namib-project/dart_wot/actions/workflows/ci.yml/badge.svg)](https://github.com/namib-project/dart_wot/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/namib-project/dart_wot/branch/main/graph/badge.svg?token=76OBNOVL60)](https://codecov.io/gh/namib-project/dart_wot)
+
 # dart_wot
 
 dart_wot is an implementation of the
