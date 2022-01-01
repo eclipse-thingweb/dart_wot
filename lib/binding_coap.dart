@@ -13,7 +13,6 @@
 ///
 /// [spec link]: https://www.w3.org/TR/wot-binding-templates/
 
-export 'src/binding_coap/coap_client.dart';
 export 'src/binding_coap/coap_client_factory.dart';
 export 'src/binding_coap/coap_config.dart';
 export 'src/binding_coap/coap_server.dart';
