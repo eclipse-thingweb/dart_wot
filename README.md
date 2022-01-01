@@ -1,3 +1,4 @@
+[![Build](https://github.com/namib-project/dart_wot/actions/workflows/ci.yml/badge.svg)](https://github.com/namib-project/dart_wot/actions/workflows/ci.yml)
 # dart_wot
 
 dart_wot is an implementation of the
