@@ -1,6 +1,4 @@
-This software is distributed under the terms of both the MIT license and the
-Apache License (Version 2.0).
-
+dart_wot
 
 MIT license
 
@@ -30,6 +28,8 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
+--------------------------------------------------------------------------------
+dart_wot
 
 Apache 2 license
 
@@ -236,8 +236,9 @@ Apache 2 license
    limitations under the License.
 
 --------------------------------------------------------------------------------
+node-wot
 
-This software includes material copied from
+dart_wot includes material copied from
 Eclipse Thingweb node-wot (https://github.com/eclipse/thingweb.node-wot).
 Copyright (c) 2018 Contributors to the Eclipse Foundation
 
