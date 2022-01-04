@@ -1,3 +1,13 @@
+## 0.3.0
+
+- chore(binding_coap): remove unneeded import
+- fix(helpers): remove unneeded fetch parameter
+- docs(helpers): better document fetch function
+- refactor(helpers): remove unused import
+- refactor(binding-coap): do not export client
+- refactor(core): move ContentSerdes to Servient
+- chore: fix format of LICENSE file
+
 ## 0.2.0
 
 - docs: use a shorter README title
