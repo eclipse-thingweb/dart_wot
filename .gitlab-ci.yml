@@ -36,7 +36,7 @@ test:
     - pub run test $PUB_VARS --coverage=./coverage > report.jsonl
     - pub global run junitreport:tojunit --input report.jsonl --output report.xml
     - pub global run coverage:format_coverage --packages=.packages --report-on=lib --lcov -o ./coverage/lcov.info -i ./coverage
-    - python3 lcov_cobertura.py ./coverage/test/* -o ./coverage.xml
+    - python3 lcov_cobertura.py ./coverage/lcov.info -o ./coverage.xml
     - genhtml coverage/lcov.info
   coverage: '/lines\.*: \d+\.\d+\%/'
   artifacts:
