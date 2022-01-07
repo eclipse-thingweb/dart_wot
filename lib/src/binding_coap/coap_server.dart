@@ -18,6 +18,7 @@ class CoapServer extends ProtocolServer {
   @override
   final int port;
 
+  /// Preferred payload size by the server when using block-wise transfer.
   final int? preferredBlockSize;
 
   /// Creates a new [CoapServer] which can be configured using a [CoapConfig].
