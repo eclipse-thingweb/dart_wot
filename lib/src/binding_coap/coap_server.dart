@@ -18,8 +18,13 @@ class CoapServer extends ProtocolServer {
   @override
   final int port;
 
+  /// Preferred payload size by the server when using block-wise transfer.
+  final int? preferredBlockSize;
+
   /// Creates a new [CoapServer] which can be configured using a [CoapConfig].
-  CoapServer([CoapConfig? coapConfig]) : port = coapConfig?.port ?? 5683;
+  CoapServer([CoapConfig? coapConfig])
+      : port = coapConfig?.port ?? 5683,
+        preferredBlockSize = coapConfig?.blocksize;
 
   @override
   Future<void> expose(ExposedThing thing) {
