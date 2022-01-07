@@ -107,10 +107,18 @@ void main() {
       expect(customServer.preferredBlockSize, 64);
     });
 
-    test("ClientFactory tests", () {
+    test("ClientFactory tests", () async {
       final defaultCientFactory = CoapClientFactory(null);
 
       expect(defaultCientFactory.coapConfig, null);
+      expect(defaultCientFactory.init(), true);
+      expect(defaultCientFactory.destroy(), true);
+
+      final coapClient = defaultCientFactory.createClient();
+
+      expect(coapClient.setSecurity([], Credentials()), true);
+      await coapClient.start();
+      await coapClient.stop();
 
       final customCientFactory =
           CoapClientFactory(CoapConfig(port: 9001, blocksize: 64));
