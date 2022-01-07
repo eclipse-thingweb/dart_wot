@@ -17,7 +17,7 @@ before_script:
   - pub global activate coverage
   - pub global activate -sgit https://github.com/Workiva/lsif_indexer
   - apt -qq update
-  - apt -qq install -y python3 python3-distutils # unfortunately necessary to convert lcov reports to cobertura
+  - apt -qq install -y lcov python3 python3-distutils # unfortunately necessary to convert lcov reports to cobertura
   - curl -o lcov_cobertura.py https://raw.githubusercontent.com/eriwen/lcov-to-cobertura-xml/master/lcov_cobertura/lcov_cobertura.py
 
 style_check:
@@ -36,7 +36,9 @@ test:
     - pub run test $PUB_VARS --coverage=./coverage > report.jsonl
     - pub global run junitreport:tojunit --input report.jsonl --output report.xml
     - pub global run coverage:format_coverage --packages=.packages --report-on=lib --lcov -o ./coverage/lcov.info -i ./coverage
-    - python3 lcov_cobertura.py ./coverage/test/* -o ./coverage.xml
+    - python3 lcov_cobertura.py ./coverage/lcov.info -o ./coverage.xml
+    - genhtml coverage/lcov.info
+  coverage: '/lines\.*: \d+\.\d+\%/'
   artifacts:
     when: always
     reports:
