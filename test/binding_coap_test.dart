@@ -28,5 +28,11 @@ void main() {
       expect(customServer.port, 9001);
       expect(customServer.preferredBlockSize, 64);
     });
+
+    test("ClientFactory tests", () {
+      final defaultCientFactory = CoapClientFactory(null);
+
+      expect(defaultCientFactory.coapConfig, null);
+    });
   });
 }
