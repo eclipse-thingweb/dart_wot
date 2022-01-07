@@ -13,10 +13,10 @@ import 'coap_config.dart';
 class CoapServer extends ProtocolServer {
   // TODO(JKRhb): Consider other protocol schemes.
   @override
-  String scheme = "coap";
+  final String scheme = "coap";
 
   @override
-  int port;
+  final int port;
 
   /// Creates a new [CoapServer] which can be configured using a [CoapConfig].
   CoapServer([CoapConfig? coapConfig]) : port = coapConfig?.port ?? 5683;
