@@ -40,27 +40,28 @@ void main() {
     });
 
     test("ClientFactory tests", () async {
-      final defaultCientFactory = CoapClientFactory(null);
+      final defaultClientFactory = CoapClientFactory(null);
 
-      expect(defaultCientFactory.coapConfig, null);
-      expect(defaultCientFactory.init(), true);
+      expect(defaultClientFactory.coapConfig, null);
+      expect(defaultClientFactory.init(), true);
 
-      final coapClient = defaultCientFactory.createClient();
+      final coapClient = defaultClientFactory.createClient();
 
       expect(coapClient.setSecurity([], Credentials()), true);
       await coapClient.start();
+
       await coapClient.stop();
 
-      expect(defaultCientFactory.destroy(), true);
+      expect(defaultClientFactory.destroy(), true);
 
-      final customCientFactory =
+      final customClientFactory =
           CoapClientFactory(CoapConfig(port: 9001, blocksize: 64));
 
-      expect(customCientFactory.coapConfig?.port, 9001);
-      expect(customCientFactory.coapConfig?.blocksize, 64);
+      expect(customClientFactory.coapConfig?.port, 9001);
+      expect(customClientFactory.coapConfig?.blocksize, 64);
 
-      expect(customCientFactory.init(), true);
-      expect(customCientFactory.destroy(), true);
+      expect(customClientFactory.init(), true);
+      expect(customClientFactory.destroy(), true);
     });
   });
 }
