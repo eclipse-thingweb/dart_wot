@@ -9,79 +9,11 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 import 'package:dart_wot/dart_wot.dart';
+import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
+import 'binding_coap_test.mocks.dart';
 
-class MockedExposedThing implements ExposedThing {
-  @override
-  Future<void> destroy() {
-    // TODO(JKRhb): implement destroy
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> emitEvent(String name, InteractionInput? data) {
-    // TODO(JKRhb): implement emitEvent
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> emitPropertyChange(String name) {
-    // TODO(JKRhb): implement emitPropertyChange
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> expose() {
-    // TODO(JKRhb): implement expose
-    throw UnimplementedError();
-  }
-
-  @override
-  void setActionHandler(String name, ActionHandler handler) {
-    // TODO(JKRhb): implement setActionHandler
-  }
-
-  @override
-  void setEventHandler(String name, EventListenerHandler handler) {
-    // TODO(JKRhb): implement setEventHandler
-  }
-
-  @override
-  void setEventSubscribeHandler(String name, EventSubscriptionHandler handler) {
-    // TODO(JKRhb): implement setEventSubscribeHandler
-  }
-
-  @override
-  void setEventUnsubscribeHandler(
-      String name, EventSubscriptionHandler handler) {
-    // TODO(JKRhb): implement setEventUnsubscribeHandler
-  }
-
-  @override
-  void setPropertyObserveHandler(String name, PropertyReadHandler handler) {
-    // TODO(JKRhb): implement setPropertyObserveHandler
-  }
-
-  @override
-  void setPropertyReadHandler(String name, PropertyReadHandler handler) {
-    // TODO(JKRhb): implement setPropertyReadHandler
-  }
-
-  @override
-  void setPropertyUnobserveHandler(String name, PropertyReadHandler handler) {
-    // TODO(JKRhb): implement setPropertyUnobserveHandler
-  }
-
-  @override
-  void setPropertyWriteHandler(String name, PropertyWriteHandler handler) {
-    // TODO(JKRhb): implement setPropertyWriteHandler
-  }
-
-  @override
-  // TODO(JKRhb): implement thingDescription
-  ThingDescription get thingDescription => throw UnimplementedError();
-}
-
+@GenerateMocks([ExposedThing])
 void main() {
   group('CoAP Binding Tests', () {
     setUp(() {
@@ -98,7 +30,7 @@ void main() {
           throwsA(TypeMatcher<UnimplementedError>()));
       expect(() async => await defaultServer.stop(),
           throwsA(TypeMatcher<UnimplementedError>()));
-      expect(() async => await defaultServer.expose(MockedExposedThing()),
+      expect(() async => await defaultServer.expose(MockExposedThing()),
           throwsA(TypeMatcher<UnimplementedError>()));
 
       final customServer = CoapServer(CoapConfig(port: 9001, blocksize: 64));
