@@ -18,10 +18,15 @@ void main() {
     });
 
     test("Server tests", () {
-      final server = CoapServer(null);
+      final defaultServer = CoapServer(null);
 
-      expect(server.port, 5683);
-      expect(server.scheme, "coap");
+      expect(defaultServer.port, 5683);
+      expect(defaultServer.scheme, "coap");
+
+      final customServer = CoapServer(CoapConfig(port: 9001, blocksize: 64));
+
+      expect(customServer.port, 9001);
+      expect(customServer.preferredBlockSize, 64);
     });
   });
 }
