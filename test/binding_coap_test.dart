@@ -112,7 +112,6 @@ void main() {
 
       expect(defaultCientFactory.coapConfig, null);
       expect(defaultCientFactory.init(), true);
-      expect(defaultCientFactory.destroy(), true);
 
       final coapClient = defaultCientFactory.createClient();
 
@@ -120,11 +119,16 @@ void main() {
       await coapClient.start();
       await coapClient.stop();
 
+      expect(defaultCientFactory.destroy(), true);
+
       final customCientFactory =
           CoapClientFactory(CoapConfig(port: 9001, blocksize: 64));
 
       expect(customCientFactory.coapConfig?.port, 9001);
       expect(customCientFactory.coapConfig?.blocksize, 64);
+
+      expect(customCientFactory.init(), true);
+      expect(customCientFactory.destroy(), true);
     });
   });
 }
