@@ -23,6 +23,11 @@ void main() {
       expect(defaultServer.port, 5683);
       expect(defaultServer.scheme, "coap");
 
+      expect(() async => await defaultServer.start({}),
+          throwsA(TypeMatcher<UnimplementedError>()));
+      expect(() async => await defaultServer.stop(),
+          throwsA(TypeMatcher<UnimplementedError>()));
+
       final customServer = CoapServer(CoapConfig(port: 9001, blocksize: 64));
 
       expect(customServer.port, 9001);
