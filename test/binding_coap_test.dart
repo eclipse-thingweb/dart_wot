@@ -33,6 +33,12 @@ void main() {
       final defaultCientFactory = CoapClientFactory(null);
 
       expect(defaultCientFactory.coapConfig, null);
+
+      final customCientFactory =
+          CoapClientFactory(CoapConfig(port: 9001, blocksize: 64));
+
+      expect(customCientFactory.coapConfig?.port, 9001);
+      expect(customCientFactory.coapConfig?.blocksize, 64);
     });
   });
 }
