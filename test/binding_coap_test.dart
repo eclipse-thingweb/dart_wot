@@ -38,5 +38,29 @@ void main() {
       expect(customServer.port, 9001);
       expect(customServer.preferredBlockSize, 64);
     });
+
+    test("ClientFactory tests", () async {
+      final defaultClientFactory = CoapClientFactory(null);
+
+      expect(defaultClientFactory.coapConfig, null);
+      expect(defaultClientFactory.init(), true);
+
+      final coapClient = defaultClientFactory.createClient();
+
+      await coapClient.start();
+
+      await coapClient.stop();
+
+      expect(defaultClientFactory.destroy(), true);
+
+      final customClientFactory =
+          CoapClientFactory(CoapConfig(port: 9001, blocksize: 64));
+
+      expect(customClientFactory.coapConfig?.port, 9001);
+      expect(customClientFactory.coapConfig?.blocksize, 64);
+
+      expect(customClientFactory.init(), true);
+      expect(customClientFactory.destroy(), true);
+    });
   });
 }
