@@ -23,7 +23,7 @@ class CoapServer extends ProtocolServer {
   int port;
 
   /// Creates a new [CoapServer] which can be configured using a [CoapConfig].
-  CoapServer(CoapConfig? coapConfig) : port = coapConfig?.port ?? 5683;
+  CoapServer([CoapConfig? coapConfig]) : port = coapConfig?.port ?? 5683;
 
   @override
   Future<void> expose(ExposedThing thing) {

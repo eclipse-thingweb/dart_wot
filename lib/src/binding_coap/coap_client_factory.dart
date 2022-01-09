@@ -23,7 +23,7 @@ class CoapClientFactory extends ProtocolClientFactory {
   final CoapConfig? coapConfig;
 
   /// Creates a new [CoapClientFactory] based on an optional [CoapConfig].
-  CoapClientFactory(this.coapConfig);
+  CoapClientFactory([this.coapConfig]);
 
   @override
   bool destroy() {

@@ -201,7 +201,7 @@ class CoapClient extends ProtocolClient {
   final CoapConfig? _coapConfig;
 
   /// Creates a new [CoapClient] based on an optional [CoapConfig].
-  CoapClient(this._coapConfig);
+  CoapClient([this._coapConfig]);
 
   _CoapRequest _createRequest(Form form, OperationType operationType) {
     final requestMethod = _getRequestMethod(form, operationType);
