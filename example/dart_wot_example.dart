@@ -11,6 +11,8 @@
 import 'dart:io';
 
 import 'package:dart_wot/dart_wot.dart';
+import 'package:dart_wot/src/binding_http/http_client_factory.dart';
+import 'package:dart_wot/src/binding_http/https_client_factory.dart';
 
 final thingDescriptionJson = '''
 {
@@ -68,7 +70,10 @@ Future<void> main() async {
   // TODO(JKRhb): Add a proper example
   final coapConfig = CoapConfig(blocksize: 64);
   final CoapClientFactory coapClientFactory = CoapClientFactory(coapConfig);
-  final servient = Servient()..addClientFactory(coapClientFactory);
+  final HttpsClientFactory httpsClientFactory = HttpsClientFactory();
+  final servient = Servient()
+    ..addClientFactory(coapClientFactory)
+    ..addClientFactory(httpsClientFactory);
   final wot = await servient.start();
 
   final thingDescription = ThingDescription(thingDescriptionJson);
@@ -81,9 +86,10 @@ Future<void> main() async {
   final value2 = await status2.value();
   print(value2);
 
-  final fetchedThingDescription =
-      await fetchThingDescription("coap://coap.me", servient);
-  print(fetchedThingDescription);
+  final fetchedThingDescription = await fetchThingDescription(
+      "https://raw.githubusercontent.com/w3c/wot-testing/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs/Oracle/oracle-Festo_Shared.td.jsonld",
+      servient);
+  print(fetchedThingDescription.title);
 
   print("done!");
 

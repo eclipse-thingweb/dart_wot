@@ -227,7 +227,6 @@ class CoapClient extends ProtocolClient {
     final request = _createRequest(form, OperationType.writeproperty);
     final input = await _getInputFromContent(content);
     await request.resolveInteraction(input);
-    return;
   }
 
   @override
