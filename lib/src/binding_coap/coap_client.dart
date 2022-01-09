@@ -218,15 +218,13 @@ class CoapClient extends ProtocolClient {
 
   @override
   Future<Content> readResource(Form form) async {
-    final request =
-        _createRequest(form, OperationType.readproperty, _coapConfig);
+    final request = _createRequest(form, OperationType.readproperty);
     return await request.resolveInteraction(null);
   }
 
   @override
   Future<void> writeResource(Form form, Content content) async {
-    final request =
-        _createRequest(form, OperationType.writeproperty, _coapConfig);
+    final request = _createRequest(form, OperationType.writeproperty);
     final input = await _getInputFromContent(content);
     await request.resolveInteraction(input);
     return;
@@ -234,8 +232,7 @@ class CoapClient extends ProtocolClient {
 
   @override
   Future<Content> invokeResource(Form form, Content content) async {
-    final request =
-        _createRequest(form, OperationType.invokeaction, _coapConfig);
+    final request = _createRequest(form, OperationType.invokeaction);
     final input = await _getInputFromContent(content);
     return await request.resolveInteraction(input);
   }
