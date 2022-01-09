@@ -8,10 +8,9 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-import 'package:dart_wot/src/core/content.dart';
-import 'package:dart_wot/src/definitions/form.dart';
-import 'package:dart_wot/src/definitions/security_scheme.dart';
-
+import '../../definitions/form.dart';
+import '../../definitions/security_scheme.dart';
+import '../content.dart';
 import '../credentials.dart';
 import '../subscription.dart';
 

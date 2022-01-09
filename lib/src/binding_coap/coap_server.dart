@@ -8,10 +8,10 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-import 'package:dart_wot/binding_coap.dart';
-import 'package:dart_wot/src/core/credentials.dart';
-import 'package:dart_wot/src/core/protocol_interfaces/protocol_server.dart';
-import 'package:dart_wot/src/scripting_api/exposed_thing.dart';
+import '../core/credentials.dart';
+import '../core/protocol_interfaces/protocol_server.dart';
+import '../scripting_api/exposed_thing.dart';
+import 'coap_config.dart';
 
 /// A [ProtocolServer] for the Constrained Application Protocol (CoAP).
 class CoapServer extends ProtocolServer {

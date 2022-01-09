@@ -8,10 +8,9 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-import 'package:dart_wot/dart_wot.dart';
-
 import '../definitions/form.dart';
 import '../definitions/interaction_affordances/interaction_affordance.dart';
+import 'consumed_thing.dart';
 
 /// Indicates the type of the subscription.
 enum SubscriptionType {
