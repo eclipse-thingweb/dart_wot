@@ -11,7 +11,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:coap/coap.dart';
+import 'package:coap/coap.dart' as coap;
 import 'package:coap/config/coap_config_default.dart';
 
 import '../core/content.dart';
@@ -48,31 +48,31 @@ enum CoapRequestMethod {
 }
 
 extension _CoapRequestMethodExtension on CoapRequestMethod {
-  CoapRequest generateRequest() {
+  coap.CoapRequest generateRequest() {
     switch (this) {
       case CoapRequestMethod.get:
-        return CoapRequest.newGet();
+        return coap.CoapRequest.newGet();
       case CoapRequestMethod.post:
-        return CoapRequest.newPost();
+        return coap.CoapRequest.newPost();
       case CoapRequestMethod.put:
-        return CoapRequest.newPut();
+        return coap.CoapRequest.newPut();
       case CoapRequestMethod.delete:
-        return CoapRequest.newDelete();
+        return coap.CoapRequest.newDelete();
       default:
         throw UnimplementedError();
     }
   }
 }
 
-class _WoTCoapRequest {
+class _CoapRequest {
   /// The [CoapClient] which sends out request messages.
-  late final CoapClient _coapClient = _getCoapClient(_requestUri);
+  late final coap.CoapClient _coapClient = _getCoapClient(_requestUri);
 
   /// The [Uri] describing the endpoint for the request.
   final Uri _requestUri;
 
-  /// The actual [CoapRequest] object.
-  final CoapRequest _coapRequest;
+  /// The actual [coap.CoapRequest] object.
+  final coap.CoapRequest _coapRequest;
 
   /// A reference to the [Form] that is the basis for this request.
   final Form _form;
@@ -85,11 +85,11 @@ class _WoTCoapRequest {
   final CoapConfig? _coapConfig;
 
   /// This [defaultCoapConfig] is used if parameters should not be set in a
-  ///  [Form] or [CoapConfig] passed to the [_WoTCoapRequest].
+  ///  [Form] or [CoapConfig] passed to the [_CoapRequest].
   static final defaultCoapConfig = CoapConfigDefault();
 
-  /// Creates a new [_WoTCoapRequest]
-  _WoTCoapRequest(this._form, this._requestMethod, [this._coapConfig])
+  /// Creates a new [_CoapRequest]
+  _CoapRequest(this._form, this._requestMethod, [this._coapConfig])
       : _requestUri =
             _createRequestUri(_form.href, _coapConfig, defaultCoapConfig),
         _coapRequest = _requestMethod.generateRequest() {
@@ -109,13 +109,13 @@ class _WoTCoapRequest {
     }
   }
 
-  static CoapClient _getCoapClient(Uri uri) {
-    return CoapClient(uri, defaultCoapConfig)
+  static coap.CoapClient _getCoapClient(Uri uri) {
+    return coap.CoapClient(uri, defaultCoapConfig)
       ..addressType = _determineAddressType(uri);
   }
 
-  Future<CoapResponse> _makeRequest(String? payload,
-      [int format = CoapMediaType.textPlain]) async {
+  Future<coap.CoapResponse> _makeRequest(String? payload,
+      [int format = coap.CoapMediaType.textPlain]) async {
     switch (_requestMethod) {
       case CoapRequestMethod.get:
         return await _coapClient.get();
@@ -137,11 +137,11 @@ class _WoTCoapRequest {
   Future<Content> resolveInteraction(String? payload) async {
     // TODO(JKRhb): Submit PR to change return type of parse to int instead of
     //              int?
-    final requestContentType = CoapMediaType.parse(_form.contentType);
+    final requestContentType = coap.CoapMediaType.parse(_form.contentType);
     final response = await _makeRequest(payload, requestContentType!);
     final responseContentType =
-        response.contentFormat ?? CoapMediaType.undefined;
-    final type = CoapMediaType.name(responseContentType);
+        response.contentFormat ?? coap.CoapMediaType.undefined;
+    final type = coap.CoapMediaType.name(responseContentType);
     final body = _getPayloadFromResponse(response);
     return Content(type, body);
   }
@@ -179,15 +179,15 @@ class _WoTCoapRequest {
 
   void _applyFormInformation() {
     if (_form.contentType != null) {
-      _coapRequest.accept = CoapMediaType.parse(_form.contentType);
+      _coapRequest.accept = coap.CoapMediaType.parse(_form.contentType);
     } else {
       // TODO(JKRhb): Should a default accept option be set?
-      _coapRequest.accept = CoapMediaType.applicationJson;
+      _coapRequest.accept = coap.CoapMediaType.applicationJson;
     }
   }
 }
 
-Stream<List<int>> _getPayloadFromResponse(CoapResponse response) {
+Stream<List<int>> _getPayloadFromResponse(coap.CoapResponse response) {
   if (response.payload != null) {
     return Stream.value(response.payload!);
   } else {
@@ -196,17 +196,16 @@ Stream<List<int>> _getPayloadFromResponse(CoapResponse response) {
 }
 
 /// A [ProtocolClient] for the Constrained Application Protocol (CoAP).
-class WoTCoapClient extends ProtocolClient {
-  final List<_WoTCoapRequest> _pendingRequests = [];
+class CoapClient extends ProtocolClient {
+  final List<_CoapRequest> _pendingRequests = [];
   final CoapConfig? _coapConfig;
 
-  /// Creates a new [WoTCoapClient] based on an optional [CoapConfig].
-  WoTCoapClient(this._coapConfig);
+  /// Creates a new [CoapClient] based on an optional [CoapConfig].
+  CoapClient(this._coapConfig);
 
-  _WoTCoapRequest _createRequest(
-      Form form, OperationType operationType, CoapConfig? coapConfig) {
+  _CoapRequest _createRequest(Form form, OperationType operationType) {
     final requestMethod = _getRequestMethod(form, operationType);
-    final request = _WoTCoapRequest(form, requestMethod, coapConfig);
+    final request = _CoapRequest(form, requestMethod, _coapConfig);
     _pendingRequests.add(request);
     return request;
   }

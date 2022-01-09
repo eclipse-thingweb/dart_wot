@@ -32,7 +32,7 @@ class CoapClientFactory extends ProtocolClientFactory {
   }
 
   @override
-  ProtocolClient createClient() => WoTCoapClient(coapConfig);
+  ProtocolClient createClient() => CoapClient(coapConfig);
 
   @override
   bool init() {
