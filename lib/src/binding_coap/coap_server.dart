@@ -8,10 +8,10 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-import 'package:dart_wot/binding_coap.dart';
-import 'package:dart_wot/src/core/credentials.dart';
-import 'package:dart_wot/src/core/protocol_interfaces/protocol_server.dart';
-import 'package:dart_wot/src/scripting_api/exposed_thing.dart';
+import '../core/credentials.dart';
+import '../core/protocol_interfaces/protocol_server.dart';
+import '../scripting_api/exposed_thing.dart';
+import 'coap_config.dart';
 
 /// A [ProtocolServer] for the Constrained Application Protocol (CoAP).
 class CoapServer extends ProtocolServer {
@@ -23,7 +23,7 @@ class CoapServer extends ProtocolServer {
   int port;
 
   /// Creates a new [CoapServer] which can be configured using a [CoapConfig].
-  CoapServer(CoapConfig? coapConfig) : port = coapConfig?.port ?? 5683;
+  CoapServer([CoapConfig? coapConfig]) : port = coapConfig?.port ?? 5683;
 
   @override
   Future<void> expose(ExposedThing thing) {
