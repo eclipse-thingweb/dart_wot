@@ -1,3 +1,8 @@
+## 0.4.0
+
+- Refactored and cleaned up CoAP package
+- Added first version of a basic HTTP binding (only client support yet)
+
 ## 0.3.0
 
 - chore(binding_coap): remove unneeded import
