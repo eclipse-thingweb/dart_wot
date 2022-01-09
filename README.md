@@ -8,14 +8,13 @@ Web of Things [Scripting API](https://w3c.github.io/wot-scripting-api/) modelled
 after the  WoT reference implementation
 [node-wot](https://github.com/eclipse/thingweb.node-wot).
 At the moment, it supports interacting with Things using the Constrained Application
-Protocol (CoAP).
+Protocol (CoAP) and the Hypertext Transfer Protocol (HTTP).
 
 ## Features
 
 You can fetch and consume Thing Descriptions, and read and write properties as well as
 invoking actions offered by a Thing.
-Other protocols (such as HTTP(S)) as well as exposing, and discovering Things are not
-yet supported but will be added in future versions.
+Both exposing and discovering Things is not yet supported but will be added in future versions.
 
 ## Getting started
 
