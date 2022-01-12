@@ -11,8 +11,6 @@
 import 'dart:io';
 
 import 'package:dart_wot/dart_wot.dart';
-import 'package:dart_wot/src/binding_http/http_client_factory.dart';
-import 'package:dart_wot/src/binding_http/https_client_factory.dart';
 
 final thingDescriptionJson = '''
 {
@@ -70,10 +68,10 @@ Future<void> main() async {
   // TODO(JKRhb): Add a proper example
   final coapConfig = CoapConfig(blocksize: 64);
   final CoapClientFactory coapClientFactory = CoapClientFactory(coapConfig);
-  final HttpsClientFactory httpsClientFactory = HttpsClientFactory();
+  final HttpClientFactory httpClientFactory = HttpClientFactory();
   final servient = Servient()
     ..addClientFactory(coapClientFactory)
-    ..addClientFactory(httpsClientFactory);
+    ..addClientFactory(httpClientFactory);
   final wot = await servient.start();
 
   final thingDescription = ThingDescription(thingDescriptionJson);

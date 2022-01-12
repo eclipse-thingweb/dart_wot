@@ -12,8 +12,8 @@ import 'protocol_client.dart';
 
 /// Base class for a factory that produces [ProtocolClient]s.
 abstract class ProtocolClientFactory {
-  /// The protocol [scheme] of the clients this factory produces.
-  String get scheme;
+  /// The protocol [schemes] support of the clients this factory produces.
+  Set<String> get schemes;
 
   /// Initalizes this [ProtocolClientFactory].
   ///
