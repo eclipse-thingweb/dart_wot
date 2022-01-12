@@ -24,12 +24,6 @@ class Property extends InteractionAffordance implements DataSchema {
   Object? defaultValue;
 
   @override
-  String? description;
-
-  @override
-  Map<String, String>? descriptions;
-
-  @override
   List<Object>? enumeration;
 
   @override
@@ -40,12 +34,6 @@ class Property extends InteractionAffordance implements DataSchema {
 
   @override
   bool? readOnly;
-
-  @override
-  String? title;
-
-  @override
-  Map<String, String>? titles;
 
   @override
   String? type;
@@ -61,7 +49,7 @@ class Property extends InteractionAffordance implements DataSchema {
 
   /// Creates a new [Property] from a [json] object.
   Property.fromJson(Map<String, dynamic> json) : super([]) {
-    parseForms(json);
+    parseAffordanceFields(json);
     parseDataSchemaJson(this, json);
   }
 }
