@@ -10,9 +10,9 @@
 
 import '../../definitions/form.dart';
 import '../../definitions/security_scheme.dart';
+import '../../scripting_api/subscription.dart';
 import '../content.dart';
 import '../credentials.dart';
-import '../subscription.dart';
 
 /// Base class for a Protocol Client.
 abstract class ProtocolClient {
@@ -37,6 +37,7 @@ abstract class ProtocolClient {
   /// [form].
   Future<Subscription> subscribeResource(
       Form form,
+      void Function() deregisterObservation,
       void Function(Content content) next,
       void Function(Exception error)? error,
       void Function()? complete);
