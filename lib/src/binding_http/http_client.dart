@@ -16,9 +16,9 @@ import '../core/content.dart';
 import '../core/credentials.dart';
 import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
-import '../core/subscription.dart';
 import '../definitions/form.dart';
 import '../definitions/security_scheme.dart';
+import '../scripting_api/subscription.dart';
 import 'http_config.dart';
 
 /// Defines the available HTTP request methods.
@@ -148,12 +148,6 @@ class HttpClient extends ProtocolClient {
   }
 
   @override
-  Future<Content> unsubscribeResource(Form form) {
-    // TODO: implement unsubscribeResource
-    throw UnimplementedError();
-  }
-
-  @override
   Future<void> writeResource(Form form, Content content) async {
     final input = await _getInputFromContent(content);
     await _createRequest(form, OperationType.writeproperty, input);
@@ -162,11 +156,12 @@ class HttpClient extends ProtocolClient {
   @override
   Future<Subscription> subscribeResource(
       Form form,
+      void Function() deregisterObservation,
       void Function(Content content) next,
       void Function(Exception error)? error,
       void Function()? complete) async {
     // TODO: implement subscribeResource
-    return Subscription();
+    throw UnimplementedError();
   }
 }
 
@@ -179,6 +174,8 @@ HttpRequestMethod _requestMethodFromOperationType(OperationType operationType) {
       return HttpRequestMethod.put;
     case OperationType.invokeaction:
       return HttpRequestMethod.post;
+    default:
+      throw UnimplementedError();
   }
 }
 
