@@ -341,8 +341,11 @@ CoapRequestMethod _requestMethodFromOperationType(OperationType operationType) {
   // TODO(JKRhb): Handle observe/subscribe case
   switch (operationType) {
     case OperationType.readproperty:
+    case OperationType.readmultipleproperties:
+    case OperationType.readallproperties:
       return CoapRequestMethod.get;
     case OperationType.writeproperty:
+    case OperationType.writemultipleproperties:
       return CoapRequestMethod.put;
     case OperationType.invokeaction:
       return CoapRequestMethod.post;

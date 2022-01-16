@@ -309,15 +309,15 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
   @override
   Future<PropertyReadMap> readAllProperties([InteractionOptions? options]) {
-    // TODO(JKRhb): implement readAllProperties
-    throw UnimplementedError();
+    final propertyNames = thingDescription.properties.keys.toList();
+
+    return _readProperties(propertyNames, options);
   }
 
   @override
   Future<PropertyReadMap> readMultipleProperties(List<String> propertyNames,
       [InteractionOptions? options]) {
-    // TODO(JKRhb): implement readMultipleProperties
-    throw UnimplementedError();
+    return _readProperties(propertyNames, options);
   }
 
   @override

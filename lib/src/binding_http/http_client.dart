@@ -169,8 +169,11 @@ HttpRequestMethod _requestMethodFromOperationType(OperationType operationType) {
   // TODO(JKRhb): Handle observe/subscribe case
   switch (operationType) {
     case OperationType.readproperty:
+    case OperationType.readmultipleproperties:
+    case OperationType.readallproperties:
       return HttpRequestMethod.get;
     case OperationType.writeproperty:
+    case OperationType.writemultipleproperties:
       return HttpRequestMethod.put;
     case OperationType.invokeaction:
       return HttpRequestMethod.post;

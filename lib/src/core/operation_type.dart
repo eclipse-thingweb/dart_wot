@@ -27,6 +27,15 @@ enum OperationType {
   /// Corresponds with the `unobserveproperty` operation type.
   unobserveproperty,
 
+  /// Corresponds with the `readmultipleproperties` operation type.
+  readmultipleproperties,
+
+  /// Corresponds with the `readallproperties` operation type.
+  readallproperties,
+
+  /// Corresponds with the `writemultipleproperties` operation type.
+  writemultipleproperties,
+
   /// Corresponds with the `invokeaction` operation type.
   invokeaction,
 
