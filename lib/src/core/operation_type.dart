@@ -36,3 +36,11 @@ enum OperationType {
   /// Corresponds with the `unsubscribeevent` operation type.
   unsubscribeevent,
 }
+
+/// Adds a [toShortString] function to the [OperationType] enum.
+extension ParseToString on OperationType {
+  /// Creates a String representation with the leading "OperationType".
+  String toShortString() {
+    return toString().split('.').last;
+  }
+}
