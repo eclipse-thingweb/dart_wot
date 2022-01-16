@@ -41,11 +41,6 @@ abstract class ProtocolClient {
       void Function(Exception error)? error,
       void Function()? complete);
 
-  /// Requests the client to perform a `unsubscribeproperty` operation on a
-  /// [form].
-  // TODO(JKRhb): Unclear if this should rather be an unlinkResource method.
-  Future<Content> unsubscribeResource(Form form);
-
   /// Defines the security definitions used by the client.
   // TODO(falko17): Document return parameter
   bool setSecurity(List<SecurityScheme> metaData, Credentials? credentials);
