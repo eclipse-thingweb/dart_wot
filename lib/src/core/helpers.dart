@@ -10,7 +10,6 @@
 
 import '../definitions/form.dart';
 import '../definitions/thing_description.dart';
-import 'content_serdes.dart';
 import 'servient.dart';
 
 /// Custom [Exception] that is thrown when the fetching of a [ThingDescription]
