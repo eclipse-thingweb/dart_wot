@@ -120,8 +120,14 @@ class Form {
 
   /// Creates a deep copy of this [Form].
   Form copy() {
-    // TODO(JKRhb): Copy the other fields as well
-    final copiedForm = Form(href)..contentType = contentType;
+    // TODO(JKRhb): Make deep copies of security, scopes, and response.
+    final copiedForm = Form(href)
+      ..contentType = contentType
+      ..op = op
+      ..subprotocol = subprotocol
+      ..security = security
+      ..scopes = scopes
+      ..response = response;
     return copiedForm;
   }
 
