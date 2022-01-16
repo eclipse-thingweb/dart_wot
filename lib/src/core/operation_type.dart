@@ -21,6 +21,18 @@ enum OperationType {
   /// Corresponds with the `writeproperty` operation type.
   writeproperty,
 
+  /// Corresponds with the `observeproperty` operation type.
+  observeproperty,
+
+  /// Corresponds with the `unobserveproperty` operation type.
+  unobserveproperty,
+
   /// Corresponds with the `invokeaction` operation type.
   invokeaction,
+
+  /// Corresponds with the `subscribeevent` operation type.
+  subscribeevent,
+
+  /// Corresponds with the `unsubscribeevent` operation type.
+  unsubscribeevent,
 }
