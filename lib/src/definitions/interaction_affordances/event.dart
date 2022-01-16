@@ -13,17 +13,11 @@ import 'interaction_affordance.dart';
 
 /// Class representing an [Event] Affordance in a Thing Description.
 class Event extends InteractionAffordance {
-  /// The default title of this [Event].
-  String? title;
-
-  /// The default description of this [Event].
-  String? description;
-
   /// Creates a new [Event] from a [List] of [forms].
   Event(List<Form> forms) : super(forms);
 
   /// Creates a new [Event] from a [json] object.
   Event.fromJson(Map<String, dynamic> json) : super([]) {
-    parseForms(json);
+    parseAffordanceFields(json);
   }
 }

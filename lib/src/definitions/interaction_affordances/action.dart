@@ -14,12 +14,6 @@ import 'interaction_affordance.dart';
 
 /// Class representing an [Action] Affordance in a Thing Description.
 class Action extends InteractionAffordance {
-  /// The default title of this [Action].
-  String? title;
-
-  /// The default description of this [Action].
-  String? description;
-
   /// The schema of the [input] data this [Action] accepts.
   DataSchema? input;
 
@@ -31,6 +25,6 @@ class Action extends InteractionAffordance {
 
   /// Creates a new [Action] from a [json] object.
   Action.fromJson(Map<String, dynamic> json) : super([]) {
-    parseForms(json);
+    parseAffordanceFields(json);
   }
 }
