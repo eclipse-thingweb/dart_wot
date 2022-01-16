@@ -65,8 +65,8 @@ class Form {
       final dynamic jsonOp = _getJsonValue(json, "op");
       if (jsonOp is String) {
         op = [jsonOp];
-      } else if (jsonOp is List<String>) {
-        op = jsonOp;
+      } else if (jsonOp is List<dynamic>) {
+        op = jsonOp.whereType<String>().toList();
       }
     }
 
