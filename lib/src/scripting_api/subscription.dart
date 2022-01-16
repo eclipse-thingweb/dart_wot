@@ -89,12 +89,15 @@ Form? _findFormByScoring(
       score++;
     }
 
-  /// The Thing Description fragment that describes the WoT [interaction].
-  InteractionAffordance? interaction;
+    if (form.contentType == currentForm.contentType) {
+      score++;
+    }
 
-  /// The [Form] associated with this [Subscription].
-  Form? form;
+    if (score > maxScore) {
+      maxScore = score;
+      foundForm = currentForm;
+    }
+  }
 
-  /// The [ConsumedThing] associated with this [Subscription].
-  ConsumedThing? thing;
+  return foundForm;
 }
