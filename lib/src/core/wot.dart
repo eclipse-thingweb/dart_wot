@@ -38,8 +38,7 @@ class WoT implements scripting_api.WoT {
     if (_servient.addThing(newThing)) {
       return newThing;
     } else {
-      // TODO(falko17): We should probably use a custom exception type here.
-      throw Exception('Thing already exists: ${newThing.title}');
+      throw StateError('Thing already exists: ${newThing.title}');
     }
   }
 

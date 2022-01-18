@@ -18,9 +18,10 @@ import '../core/content.dart';
 import '../core/credentials.dart';
 import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
-import '../core/subscription.dart';
 import '../definitions/form.dart';
 import '../definitions/security_scheme.dart';
+import '../scripting_api/interaction_options.dart';
+import '../scripting_api/subscription.dart';
 import 'coap_config.dart';
 
 /// Defines the available CoAP request methods.
@@ -45,6 +46,12 @@ enum CoapRequestMethod {
 
   /// Corresponds with the iPATCH request method.
   ipatch,
+}
+
+/// Enumeration of available CoAP subprotocols.
+enum _Subprotocol {
+  /// Subprotocol for observing CoAP resources.
+  observe,
 }
 
 extension _CoapRequestMethodExtension on CoapRequestMethod {
@@ -84,13 +91,20 @@ class _CoapRequest {
   /// An (optional) custom [CoapConfig] which overrides the default values.
   final CoapConfig? _coapConfig;
 
+  /// The subprotocol that should be used for requests.
+  final _Subprotocol? _subprotocol;
+
   /// This [defaultCoapConfig] is used if parameters should not be set in a
   ///  [Form] or [CoapConfig] passed to the [_CoapRequest].
   static final defaultCoapConfig = CoapConfigDefault();
 
   /// Creates a new [_CoapRequest]
-  _CoapRequest(this._form, this._requestMethod, [this._coapConfig])
-      : _requestUri =
+  _CoapRequest(
+    this._form,
+    this._requestMethod, [
+    this._coapConfig,
+    this._subprotocol,
+  ])  : _requestUri =
             _createRequestUri(_form.href, _coapConfig, defaultCoapConfig),
         _coapRequest = _requestMethod.generateRequest() {
     _coapRequest.addUriPath(_requestUri.path);
@@ -144,6 +158,32 @@ class _CoapRequest {
     final type = coap.CoapMediaType.name(responseContentType);
     final body = _getPayloadFromResponse(response);
     return Content(type, body);
+  }
+
+  Future<_CoapSubscription> startObservation(
+      void Function(Content content) next,
+      void Function() deregisterObservation) async {
+    void handleResponse(coap.CoapResponse? response) {
+      if (response == null) {
+        return;
+      }
+
+      final responseContentType =
+          response.contentFormat ?? coap.CoapMediaType.undefined;
+      final type = coap.CoapMediaType.name(responseContentType);
+      final body = _getPayloadFromResponse(response);
+      final content = Content(type, body);
+      next(content);
+    }
+
+    if (_subprotocol == _Subprotocol.observe) {
+      _coapRequest.markObserve();
+      _coapRequest.responses.listen(handleResponse);
+    }
+
+    final requestContentType = coap.CoapMediaType.parse(_form.contentType);
+    await _makeRequest(null, requestContentType!);
+    return _CoapSubscription(_coapClient, deregisterObservation);
   }
 
   /// Aborts the request and closes the client.
@@ -205,7 +245,9 @@ class CoapClient extends ProtocolClient {
 
   _CoapRequest _createRequest(Form form, OperationType operationType) {
     final requestMethod = _getRequestMethod(form, operationType);
-    final request = _CoapRequest(form, requestMethod, _coapConfig);
+    final _Subprotocol? subprotocol =
+        _determineSubprotocol(form, operationType);
+    final request = _CoapRequest(form, requestMethod, _coapConfig, subprotocol);
     _pendingRequests.add(request);
     return request;
   }
@@ -245,17 +287,22 @@ class CoapClient extends ProtocolClient {
   @override
   Future<Subscription> subscribeResource(
       Form form,
+      void Function() deregisterObservation,
       void Function(Content content) next,
       void Function(Exception error)? error,
-      void Function()? complete) {
-    // TODO(JKRhb): implement subscribeResource
-    throw UnimplementedError();
-  }
+      void Function()? complete) async {
+    OperationType operationType;
+    final op = form.op ?? ["observeproperty"];
+    // TODO(JKRhb): Create separate function for this.
+    if (op.contains("subscribeevent")) {
+      operationType = OperationType.subscribeevent;
+    } else {
+      operationType = OperationType.observeproperty;
+    }
 
-  @override
-  Future<Content> unsubscribeResource(Form form) {
-    // TODO(JKRhb): implement unsubscribeResource
-    throw UnimplementedError();
+    final request = _createRequest(form, operationType);
+
+    return await request.startObservation(next, deregisterObservation);
   }
 
   @override
@@ -273,15 +320,43 @@ class CoapClient extends ProtocolClient {
   }
 }
 
+_Subprotocol? _determineSubprotocol(Form form, OperationType operationType) {
+  if ([
+    OperationType.subscribeevent,
+    OperationType.unsubscribeevent,
+    OperationType.observeproperty,
+    OperationType.unobserveproperty
+  ].contains(operationType)) {
+    return _Subprotocol.observe;
+  }
+
+  if (form.additionalFields["subprotocol"] == "cov:observe") {
+    return _Subprotocol.observe;
+  }
+
+  return null;
+}
+
 CoapRequestMethod _requestMethodFromOperationType(OperationType operationType) {
   // TODO(JKRhb): Handle observe/subscribe case
   switch (operationType) {
     case OperationType.readproperty:
+    case OperationType.readmultipleproperties:
+    case OperationType.readallproperties:
       return CoapRequestMethod.get;
     case OperationType.writeproperty:
+    case OperationType.writemultipleproperties:
       return CoapRequestMethod.put;
     case OperationType.invokeaction:
       return CoapRequestMethod.post;
+    case OperationType.observeproperty:
+      return CoapRequestMethod.get;
+    case OperationType.unobserveproperty:
+      return CoapRequestMethod.get;
+    case OperationType.subscribeevent:
+      return CoapRequestMethod.get;
+    case OperationType.unsubscribeevent:
+      return CoapRequestMethod.get;
   }
 }
 
@@ -311,4 +386,33 @@ CoapRequestMethod _getRequestMethod(Form form, OperationType operationType) {
   }
 
   return _requestMethodFromOperationType(operationType);
+}
+
+class _CoapSubscription implements Subscription {
+  final coap.CoapClient coapClient;
+
+  bool _active;
+
+  @override
+  bool get active => _active;
+
+  /// Callback used to pass by the servient that is used to signal it that an
+  /// observation has been cancelled.
+  final void Function() _deregisterObservation;
+
+  _CoapSubscription(this.coapClient, this._deregisterObservation)
+      : _active = true;
+
+  @override
+  Future<void> stop([InteractionOptions? options]) async {
+    // TODO(JKRhb): According to RFC 7641, observations can be cancelled by
+    //              simply ignoring all following messages. We should evaluate
+    //              whether it makes sense to explicitly cancel them instead.
+    //              For now, this seems to be difficult to realize in the CoAP
+    //              library implementation which is why I decided to use this
+    //              approach instead for the time being.
+    coapClient.close();
+    _active = false;
+    _deregisterObservation();
+  }
 }
