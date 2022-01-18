@@ -25,6 +25,7 @@ abstract class ProtocolClientFactory {
   /// Returns `true` on success.
   bool destroy();
 
-  /// Creates a new [ProtocolClient] with the given [scheme].
+  /// Creates a new [ProtocolClient] with that supports one or more of the given
+  /// [schemes].
   ProtocolClient createClient();
 }
