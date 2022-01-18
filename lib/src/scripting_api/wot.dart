@@ -34,10 +34,25 @@ abstract class WoT {
   /// based on the underlying impementation.
   Future<ExposedThing> produce(ExposedThingInit exposedThingInit);
 
-  /// Discovers Thing Descriptions and filters them based on an option
-  /// [thingFilter].
+  /// Discovers [ThingDescription]s, which are passed to a [callback] function
+  /// upon retrieval.
+  /// As this part of the Scripting API specification is still in development,
+  /// this method's implementation is in an experimental state and does not
+  /// conform to the specification's latest version.
   ///
-  /// Returns a [ThingDiscovery] object which can be iterated for obtaining the
-  /// Thing Descriptions that have been discovered.
-  ThingDiscovery discover([ThingFilter? thingFilter]);
+  /// An optional [thingFilter] can be passed for filtering out TDs before they
+  /// are processed. The [thingFilter] also contains relevant information for
+  /// controlling the Discovery process, e. g. a URL, the discovery method
+  /// (`direct` or `directory`), and a "fragement" [Map] for filtering out
+  /// properties of a [ThingDescription].
+  ///
+  /// So far, however, only `direct` discovery is supported. Therefore, despite
+  /// its method signature, a compatible [ThingFilter] with a defined URL is
+  /// required. Otherwise, an [ArgumentError] will be thrown.
+  ///
+  /// The [ThingDiscovery] object that is returned by this function can be used
+  /// for stopping the Discovery process and retrieving information about its
+  /// current state (i. e. whether it is still `active` or already `done`).
+  ThingDiscovery discover(DiscoveryListener callback,
+      [ThingFilter? thingFilter]);
 }

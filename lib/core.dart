@@ -14,7 +14,6 @@
 
 export 'src/core/codecs/content_codec.dart';
 export 'src/core/content_serdes.dart';
-export 'src/core/helpers.dart';
 export 'src/core/protocol_interfaces/protocol_client.dart';
 export 'src/core/protocol_interfaces/protocol_client_factory.dart';
 export 'src/core/protocol_interfaces/protocol_server.dart';

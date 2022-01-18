@@ -98,14 +98,19 @@ Future<void> main() async {
     await subscription?.stop();
   });
 
-  final fetchedThingDescription = await fetchThingDescription(
-      "https://raw.githubusercontent.com/w3c/wot-testing/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs/Oracle/oracle-Festo_Shared.td.jsonld",
-      servient);
-  print(fetchedThingDescription.title);
+  Future<void> handleThingInteraction(ThingDescription thingDescription) async {
+    final consumedThing = await wot.consume(thingDescription);
+    print("The title of the fetched TD is ${consumedThing.title}.");
+    print("Done!");
 
-  print("done!");
+    exit(0);
+  }
 
-  // FIXME: For some reason the main function does not terminate without
-  //        an exit call
-  exit(0);
+  wot.discover(
+      handleThingInteraction,
+      ThingFilter(
+          "https://raw.githubusercontent.com/w3c/wot-testing"
+          "/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs"
+          "/Oracle/oracle-Festo_Shared.td.jsonld",
+          DiscoveryMethod.direct));
 }

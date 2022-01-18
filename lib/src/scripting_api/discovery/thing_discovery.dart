@@ -8,7 +8,6 @@
 //
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-import '../../definitions/thing_description.dart';
 import 'thing_filter.dart';
 
 /// Interface
@@ -30,7 +29,4 @@ abstract class ThingDiscovery {
 
   /// Stops the discovery process.
   void stop();
-
-  /// Returns the next discovered [ThingDescription].
-  Future<ThingDescription> next();
 }

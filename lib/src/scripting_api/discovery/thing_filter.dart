@@ -16,9 +16,9 @@ import 'discovery_method.dart';
 ///
 /// [spec link]: https://w3c.github.io/wot-scripting-api/#the-thingfilter-dictionary
 // TODO(JKRhb): This part of the specification has to be improved IMHO.
-abstract class ThingFilter {
+class ThingFilter {
   /// Represents the discovery type that should be used in the discovery process
-  DiscoveryMethod method = DiscoveryMethod.directory;
+  DiscoveryMethod method;
 
   /// Represents the URL of the target entity serving the discovery request.
   ///
@@ -30,4 +30,8 @@ abstract class ThingFilter {
   /// Represents a template object used for matching property by property
   /// against discovered Things.
   Map<String, dynamic>? fragment;
+
+  /// Constructor.
+  ThingFilter(
+      [this.url, this.method = DiscoveryMethod.directory, this.fragment]);
 }
