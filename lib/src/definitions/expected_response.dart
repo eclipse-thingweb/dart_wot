@@ -22,8 +22,7 @@ class ExpectedResponse {
 
   static String _parseContentType(dynamic contentType) {
     if (contentType is! String) {
-      // TODO(JKRhb): Define custom exceptions
-      throw Exception("contentType of response map is not a String!");
+      throw ArgumentError("contentType of response map is not a String!");
     }
     return contentType;
   }

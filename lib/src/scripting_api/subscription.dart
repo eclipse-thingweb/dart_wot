@@ -54,8 +54,7 @@ Form findUnsubscribeForm(InteractionAffordance interaction,
   final unsubscribeForm = _findFormByScoring(interaction, form, operationType);
 
   if (unsubscribeForm == null) {
-    // TODO(JKRhb): Add appropriate Exception type.
-    throw Exception("Could not find matching form for unsubscribe");
+    throw StateError("Could not find matching form for unsubscribe");
   }
 
   return unsubscribeForm;
@@ -68,7 +67,7 @@ String _determineOpType(SubscriptionType? subscriptionType) {
     case SubscriptionType.property:
       return "unobserveproperty";
     default:
-      throw Exception();
+      throw ArgumentError();
   }
 }
 
