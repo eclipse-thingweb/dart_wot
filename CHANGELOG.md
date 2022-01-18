@@ -1,3 +1,24 @@
+## 0.5.0
+
+- feat: parse affordance title(s) and description(s) of interaction affordances
+- feat!: let Client Factories support multiple schemes
+- fix: properly parse `op` field in Forms, improve Form augmentation
+- feat(protocol_client)!: remove unneeded unsubscribeResource method
+- feat(core)!: add subscription op types
+- feat(core): implement subscription interfaces
+- feat(scripting_api)!: clean up Subscription interface
+- feat(scripting_api): add findUnsubscribeForm helper
+- feat(definitions): add DataSchema fields to Event class
+- feat(binding_coap): implement subscription API
+- feat(binding_http): adjust according to subscription API
+- feat: implement readmultipleproperties, readallproperties, and writemultipleproperties operations
+- fix: replace generic with concrete Exceptions
+- feat: add property observation to example file
+- docs(core): fix doc comment of client factory
+- feat(scripting_api): turn ThingFilter into concrete class
+- feat!: implement basic Discovery API version
+- feat: update example with Discovery features
+
 ## 0.4.0
 
 - Refactored and cleaned up CoAP package
