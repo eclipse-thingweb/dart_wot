@@ -28,9 +28,14 @@ final thingDescriptionJson = '''
   },
   "properties": {
     "status": {
+      "observable": true,
       "forms": [
         {
           "href": "/.well-known/core"
+        },
+        {
+          "href": "/hello",
+          "op": ["observeproperty", "unobserveproperty"]
         }
       ]
     },
@@ -83,6 +88,15 @@ Future<void> main() async {
   final status2 = await consumedThing.readProperty("status", null);
   final value2 = await status2.value();
   print(value2);
+
+  Subscription? subscription;
+
+  // TODO(JKRhb): Turn into a "real" observation example.
+  subscription = await consumedThing.observeProperty("status", (data) async {
+    final value = await data.value();
+    print(value);
+    await subscription?.stop();
+  });
 
   final fetchedThingDescription = await fetchThingDescription(
       "https://raw.githubusercontent.com/w3c/wot-testing/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs/Oracle/oracle-Festo_Shared.td.jsonld",
