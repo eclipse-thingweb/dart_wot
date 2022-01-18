@@ -134,7 +134,9 @@ class Servient {
 
   /// Adds a new [clientFactory] to this [Servient.]
   void addClientFactory(ProtocolClientFactory clientFactory) {
-    _clientFactories[clientFactory.scheme] = clientFactory;
+    for (final scheme in clientFactory.schemes) {
+      _clientFactories[scheme] = clientFactory;
+    }
   }
 
   /// Checks whether a [ProtocolClient] is avaiable for a given [scheme].

@@ -13,10 +13,10 @@ import '../core/protocol_interfaces/protocol_client_factory.dart';
 import 'http_client.dart';
 import 'http_config.dart';
 
-/// A [ProtocolClientFactory] that produces HTTP clients.
+/// A [ProtocolClientFactory] that produces HTTP and HTTPS clients.
 class HttpClientFactory extends ProtocolClientFactory {
   @override
-  String get scheme => "http";
+  Set<String> get schemes => {"http", "https"};
 
   /// The [HttpConfig] used to configure new clients.
   final HttpConfig? httpConfig;

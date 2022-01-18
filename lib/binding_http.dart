@@ -16,4 +16,3 @@
 export 'src/binding_http/http_client_factory.dart';
 export 'src/binding_http/http_config.dart';
 export 'src/binding_http/http_server.dart';
-export 'src/binding_http/https_client_factory.dart';
