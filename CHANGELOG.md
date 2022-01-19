@@ -1,3 +1,7 @@
+## 0.6.0
+
+- Package republished under 3-Clause BSD license
+
 ## 0.5.0
 
 - feat: parse affordance title(s) and description(s) of interaction affordances
