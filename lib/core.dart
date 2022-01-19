@@ -1,12 +1,8 @@
-// Copyright 2021 The NAMIB Project Developers
+// Copyright 2021 The NAMIB Project Developers. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 //
-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
-// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
-// option. This file may not be copied, modified, or distributed
-// except according to those terms.
-//
-// SPDX-License-Identifier: MIT OR Apache-2.0
+// SPDX-License-Identifier: BSD-3-Clause
 
 /// Core implementation providing Scripting API implementations, interfaces
 /// for protocol bindings, and the `Servient` class which provides the WoT
