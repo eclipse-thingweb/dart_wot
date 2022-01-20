@@ -1,3 +1,7 @@
+## 0.6.1
+
+- feat: parse titles and descriptions at Thing level
+
 ## 0.6.0
 
 - Package republished under 3-Clause BSD license
