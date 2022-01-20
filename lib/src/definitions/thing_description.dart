@@ -26,6 +26,15 @@ class ThingDescription {
   /// The [title] of this [ThingDescription].
   late String title;
 
+  /// The [description] of this [ThingDescription].
+  String? description;
+
+  /// A [Map] of multi-language [titles].
+  final Map<String, String> titles = {};
+
+  /// A [Map] of multi-language [descriptions].
+  final Map<String, String> descriptions = {};
+
   /// The JSON-LD `@context`, represented by a  [List] of [ContextEntry]s.
   List<ContextEntry> context = [];
 
@@ -81,6 +90,12 @@ class ThingDescription {
     if (base is String) {
       this.base = base;
     }
+    final dynamic description = json["description"];
+    if (description is String) {
+      this.description = description;
+    }
+    _parseMultilangString(titles, json, "titles");
+    _parseMultilangString(descriptions, json, "descriptions");
     final dynamic properties = json["properties"];
     if (properties is Map<String, dynamic>) {
       _parseProperties(properties);
@@ -100,6 +115,20 @@ class ThingDescription {
     final dynamic securityDefinitions = json["securityDefinitions"];
     if (securityDefinitions is Map<String, dynamic>) {
       _parseSecurityDefinitions(securityDefinitions);
+    }
+  }
+
+  // TODO(JKRhb): Refactor
+  void _parseMultilangString(
+      Map<String, String> field, Map<String, dynamic> json, String jsonKey) {
+    final dynamic jsonEntries = json[jsonKey];
+    if (jsonEntries is Map<String, dynamic>) {
+      for (final entry in jsonEntries.entries) {
+        final dynamic value = entry.value;
+        if (value is String) {
+          field[entry.key] = value;
+        }
+      }
     }
   }
 

@@ -18,6 +18,13 @@ void main() {
       {
         "@context": ["http://www.w3.org/ns/td"],
         "title": "Test Thing",
+        "titles": {
+          "en": "Test Thing"
+        },
+        "description": "A Test Thing used for Testing.",
+        "descriptions": {
+          "en": "A Test Thing used for Testing."
+        },
         "securityDefinitions": {
           "nosec_sc": {
             "scheme": "nosec"
@@ -81,6 +88,9 @@ void main() {
       final parsedTd = ThingDescription(thingDescriptionJson);
 
       expect(parsedTd.title, "Test Thing");
+      expect(parsedTd.titles, {"en": "Test Thing"});
+      expect(parsedTd.description, "A Test Thing used for Testing.");
+      expect(parsedTd.descriptions, {"en": "A Test Thing used for Testing."});
 
       final statusProperty = parsedTd.properties["status"];
       expect(statusProperty!.title, "Status");
