@@ -76,7 +76,7 @@ class ThingDiscovery implements scripting_api.ThingDiscovery {
     }
     final parsedUri = Uri.parse(uri);
     final client = _servient.clientFor(parsedUri.scheme);
-    final fetchForm = Form(uri, "application/td+json");
+    final fetchForm = Form(uri, contentType: "application/td+json");
 
     final content = await client.readResource(fetchForm);
     await client.stop();

@@ -39,7 +39,17 @@ class Form {
   /// Creates a new [Form] object.
   ///
   /// An [href] has to be provided. A [contentType] is optional.
-  Form(this.href, [this.contentType]);
+  Form(this.href,
+      {this.contentType,
+      this.subprotocol,
+      this.security,
+      this.scopes,
+      this.response,
+      Map<String, dynamic>? additionalFields}) {
+    if (additionalFields != null) {
+      this.additionalFields.addAll(additionalFields);
+    }
+  }
 
   /// Creates a new [Form] from a [json] object.
   Form.fromJson(Map<String, dynamic> json) {
