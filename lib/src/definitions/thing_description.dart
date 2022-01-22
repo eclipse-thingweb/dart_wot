@@ -10,6 +10,7 @@ import 'context_entry.dart';
 import 'interaction_affordances/action.dart';
 import 'interaction_affordances/event.dart';
 import 'interaction_affordances/property.dart';
+import 'link.dart';
 import 'security_scheme.dart';
 import 'thing_model.dart';
 
@@ -46,6 +47,9 @@ class ThingDescription {
 
   /// A [Map] of [Event] Affordances.
   Map<String, Event> events = {};
+
+  /// A [List] of [Link]s.
+  final List<Link> links = [];
 
   /// The [base] address of this [ThingDescription]. Might be `null`.
   String? base;
@@ -116,6 +120,10 @@ class ThingDescription {
     if (securityDefinitions is Map<String, dynamic>) {
       _parseSecurityDefinitions(securityDefinitions);
     }
+    final dynamic links = json["links"];
+    if (links is List<dynamic>) {
+      _parseLinks(links);
+    }
   }
 
   // TODO(JKRhb): Refactor
@@ -166,6 +174,14 @@ class ThingDescription {
   /// Creates a [ThingDescription] from a [ThingModel].
   ThingDescription.fromThingModel(ThingModel thingModel)
       : rawThingModel = thingModel;
+
+  void _parseLinks(List<dynamic> json) {
+    for (final link in json) {
+      if (link is Map<String, dynamic>) {
+        links.add(Link.fromJson(link));
+      }
+    }
+  }
 
   void _parseProperties(Map<String, dynamic> json) {
     for (final property in json.entries) {
