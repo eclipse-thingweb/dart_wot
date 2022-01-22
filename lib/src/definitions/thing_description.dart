@@ -113,8 +113,10 @@ class ThingDescription {
       _parseEvents(events);
     }
     final dynamic security = json["security"];
-    if (security is List<String>) {
-      this.security.addAll(security);
+    if (security is List<dynamic>) {
+      this.security.addAll(security.whereType<String>());
+    } else if (security is String) {
+      this.security.add(security);
     }
     final dynamic securityDefinitions = json["securityDefinitions"];
     if (securityDefinitions is Map<String, dynamic>) {
