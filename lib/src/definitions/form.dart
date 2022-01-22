@@ -11,7 +11,7 @@ class Form {
   /// The [href] pointing to the resource.
   ///
   /// Can be a relative or absolute URI.
-  late String href;
+  late final String href;
 
   /// The subprotocol that is used with this [Form].
   String? subprotocol;

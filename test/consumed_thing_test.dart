@@ -87,6 +87,9 @@ void main() {
 
       final parsedTd = ThingDescription(thingDescriptionJson);
 
+      final security = parsedTd.security;
+      expect(security, ["nosec_sc"]);
+
       expect(parsedTd.title, "Test Thing");
       expect(parsedTd.titles, {"en": "Test Thing"});
       expect(parsedTd.description, "A Test Thing used for Testing.");

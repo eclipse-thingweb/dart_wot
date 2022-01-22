@@ -37,16 +37,16 @@ class ThingDescription {
   final Map<String, String> descriptions = {};
 
   /// The JSON-LD `@context`, represented by a  [List] of [ContextEntry]s.
-  List<ContextEntry> context = [];
+  final List<ContextEntry> context = [];
 
   /// A [Map] of [Property] Affordances.
-  Map<String, Property> properties = {};
+  final Map<String, Property> properties = {};
 
   /// A [Map] of [Action] Affordances.
-  Map<String, Action> actions = {};
+  final Map<String, Action> actions = {};
 
   /// A [Map] of [Event] Affordances.
-  Map<String, Event> events = {};
+  final Map<String, Event> events = {};
 
   /// A [List] of [Link]s.
   final List<Link> links = [];
@@ -60,7 +60,7 @@ class ThingDescription {
   /// A [List] of the [securityDefinitions] that are used as the default.
   ///
   /// Each entry has to be a key of the [securityDefinitions] Map.
-  List<String> security = [];
+  final List<String> security = [];
 
   /// A map of [SecurityScheme]s that can be used for secure communication.
   final Map<String, SecurityScheme> securityDefinitions = {};
@@ -113,8 +113,10 @@ class ThingDescription {
       _parseEvents(events);
     }
     final dynamic security = json["security"];
-    if (security is List<String>) {
-      this.security = security;
+    if (security is List<dynamic>) {
+      this.security.addAll(security.whereType<String>());
+    } else if (security is String) {
+      this.security.add(security);
     }
     final dynamic securityDefinitions = json["securityDefinitions"];
     if (securityDefinitions is Map<String, dynamic>) {

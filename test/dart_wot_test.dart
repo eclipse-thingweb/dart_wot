@@ -49,7 +49,13 @@ void main() {
             "sizes": "42",
             "test": "test"
           }
-        ]
+        ],
+        "securityDefinitions": {
+          "nosec_sc": {
+            "scheme": "nosec"
+          }
+        },
+        "security": ["nosec_sc"]
       }
       ''';
       final parsedTd = ThingDescription(thingDescriptionJson);
@@ -63,6 +69,10 @@ void main() {
       expect(firstContextEntry.value, "http://www.w3.org/ns/td");
       expect(secondContextEntry.key, "@language");
       expect(secondContextEntry.value, "de");
+
+      expect(parsedTd.security, ["nosec_sc"]);
+      final securityDefinition = parsedTd.securityDefinitions["nosec_sc"]!;
+      expect(securityDefinition.scheme, "nosec");
 
       final parsedLink = parsedTd.links[0];
       expect(parsedLink.href, Uri.parse("https://example.org"));
