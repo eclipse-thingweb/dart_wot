@@ -87,8 +87,8 @@ class Form {
       final dynamic jsonSecurity = _getJsonValue(json, "security");
       if (jsonSecurity is String) {
         security = [jsonSecurity];
-      } else if (jsonSecurity is List<String>) {
-        security = jsonSecurity;
+      } else if (jsonSecurity is List<dynamic>) {
+        security = jsonSecurity.whereType<String>().toList();
       }
     }
 
