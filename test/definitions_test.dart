@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'dart:convert';
+
 import 'package:dart_wot/src/definitions/expected_response.dart';
 import 'package:dart_wot/src/definitions/form.dart';
 import 'package:test/test.dart';
@@ -34,6 +36,52 @@ void main() {
       expect(form2.scopes, ["test"]);
       expect(form2.response!.contentType, "application/json");
       expect(form2.additionalFields, {"test": "test"});
+
+      final dynamic form3Json = jsonDecode("""
+      {
+        "href": "https://example.org",
+        "contentType": "application/json",
+        "subprotocol": "test",
+        "scopes": ["test1", "test2"],
+        "response": {
+          "contentType": "application/json"
+        },
+        "security": ["test1", "test2"],
+        "op": ["writeproperty", "readproperty"],
+        "test": "test"
+      }""");
+
+      final form3 = Form.fromJson(form3Json as Map<String, dynamic>);
+
+      expect(form3.href, "https://example.org");
+      expect(form3.contentType, "application/json");
+      expect(form3.subprotocol, "test");
+      expect(form3.security, ["test1", "test2"]);
+      expect(form3.op, ["writeproperty", "readproperty"]);
+      expect(form3.scopes, ["test1", "test2"]);
+      expect(form3.response?.contentType, "application/json");
+      expect(form3.additionalFields, {"test": "test"});
+
+      final dynamic form4Json = jsonDecode("""
+      {
+        "href": "https://example.org",
+        "security": "test",
+        "op": "writeproperty",
+        "scopes": "test"
+      }""");
+
+      final form4 = Form.fromJson(form4Json as Map<String, dynamic>);
+
+      expect(form4.security, ["test"]);
+      expect(form4.op, ["writeproperty"]);
+      expect(form4.scopes, ["test"]);
+
+      final dynamic form5Json = jsonDecode("""
+      {
+      }""");
+
+      expect(() => Form.fromJson(form5Json as Map<String, dynamic>),
+          throwsArgumentError);
     });
   });
 }
