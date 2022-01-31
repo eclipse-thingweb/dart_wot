@@ -11,7 +11,7 @@ class Form {
   /// The [href] pointing to the resource.
   ///
   /// Can be a relative or absolute URI.
-  late final String href;
+  late String href;
 
   /// The subprotocol that is used with this [Form].
   String? subprotocol;
@@ -87,8 +87,8 @@ class Form {
       final dynamic jsonSecurity = _getJsonValue(json, "security");
       if (jsonSecurity is String) {
         security = [jsonSecurity];
-      } else if (jsonSecurity is List<String>) {
-        security = jsonSecurity;
+      } else if (jsonSecurity is List<dynamic>) {
+        security = jsonSecurity.whereType<String>().toList();
       }
     }
 
@@ -96,8 +96,8 @@ class Form {
       final dynamic jsonScopes = _getJsonValue(json, "scopes");
       if (jsonScopes is String) {
         scopes = [jsonScopes];
-      } else if (jsonScopes is List<String>) {
-        scopes = jsonScopes;
+      } else if (jsonScopes is List<dynamic>) {
+        scopes = jsonScopes.whereType<String>().toList();
       }
     }
 
