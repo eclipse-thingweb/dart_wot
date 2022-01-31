@@ -96,8 +96,8 @@ class Form {
       final dynamic jsonScopes = _getJsonValue(json, "scopes");
       if (jsonScopes is String) {
         scopes = [jsonScopes];
-      } else if (jsonScopes is List<String>) {
-        scopes = jsonScopes;
+      } else if (jsonScopes is List<dynamic>) {
+        scopes = jsonScopes.whereType<String>().toList();
       }
     }
 
