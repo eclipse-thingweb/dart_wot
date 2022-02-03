@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../credentials/credentials.dart';
+import '../credentials/oauth2_credentials.dart';
 import 'helper_functions.dart';
 import 'security_scheme.dart';
 
@@ -41,10 +41,7 @@ class OAuth2SecurityScheme extends SecurityScheme {
   final List<String> _parsedJsonFields = [];
 
   @override
-  final Credentials? credentials = null;
-
-  // TODO(JKRhb): Check whether credentials should be used with this
-  //              Security Scheme.
+  OAuth2Credentials? credentials;
 
   /// Constructor.
   OAuth2SecurityScheme(this.flow,
