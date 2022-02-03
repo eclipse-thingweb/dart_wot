@@ -48,27 +48,24 @@ class HttpClient extends ProtocolClient {
     final requestMethod = _getRequestMethod(form, operationType);
 
     final Future<http.Response> response;
+    final Uri uri = Uri.parse(form.href);
     final headers = _getHeadersFromForm(form);
     _applySecurityToHeader(form, headers);
     switch (requestMethod) {
       case HttpRequestMethod.get:
-        response = http.get(Uri.parse(form.href), headers: headers);
+        response = http.get(uri, headers: headers);
         break;
       case HttpRequestMethod.post:
-        response =
-            http.post(Uri.parse(form.href), headers: headers, body: payload);
+        response = http.post(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.delete:
-        response =
-            http.delete(Uri.parse(form.href), headers: headers, body: payload);
+        response = http.delete(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.put:
-        response =
-            http.put(Uri.parse(form.href), headers: headers, body: payload);
+        response = http.put(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.patch:
-        response =
-            http.patch(Uri.parse(form.href), headers: headers, body: payload);
+        response = http.patch(uri, headers: headers, body: payload);
         break;
     }
     return response;
