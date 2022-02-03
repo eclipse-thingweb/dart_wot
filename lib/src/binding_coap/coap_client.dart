@@ -11,11 +11,9 @@ import 'package:coap/coap.dart' as coap;
 import 'package:coap/config/coap_config_default.dart';
 
 import '../core/content.dart';
-import '../core/credentials.dart';
 import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../definitions/form.dart';
-import '../definitions/security_scheme.dart';
 import '../scripting_api/interaction_options.dart';
 import '../scripting_api/subscription.dart';
 import 'coap_config.dart';
@@ -272,12 +270,6 @@ class CoapClient extends ProtocolClient {
     final request = _createRequest(form, OperationType.invokeaction);
     final input = await _getInputFromContent(content);
     return await request.resolveInteraction(input);
-  }
-
-  @override
-  bool setSecurity(List<SecurityScheme> metaData, Credentials? credentials) {
-    // TODO(JKRhb): Add implementation for CoAPS
-    return true;
   }
 
   @override

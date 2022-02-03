@@ -5,6 +5,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import 'expected_response.dart';
+import 'security/security_scheme.dart';
+import 'thing_description.dart';
 
 /// Contains the information needed for performing interactions with a Thing.
 class Form {
@@ -33,6 +35,11 @@ class Form {
 
   /// Additional fields collected during the parsing of a JSON object.
   final Map<String, dynamic> additionalFields = <String, dynamic>{};
+
+  /// The [securityDefinitions] associated with this [Form].
+  ///
+  /// Used by augmented [Form]s.
+  Map<String, SecurityScheme> securityDefinitions = {};
 
   final List<String> _parsedJsonFields = [];
 
@@ -137,26 +144,38 @@ class Form {
     return copiedForm;
   }
 
+  static String _augmentHref(Uri href, ThingDescription thingDescription) {
+    final base = thingDescription.base;
+    if (base == null) {
+      throw ArgumentError(
+          "Relative URI given for affordance form but no base provided!");
+    }
+    final parsedBaseUri = Uri.parse(base);
+    return href
+        .replace(
+          scheme: parsedBaseUri.scheme,
+          host: parsedBaseUri.host,
+          port: parsedBaseUri.port,
+        )
+        .toString();
+  }
+
   /// Copies and augments this [Form] with additional information.
   ///
-  /// At the moment, only the [base] of a Thing Description is used for turning
-  /// relative [Form] URLs into absolute ones.
-  Form augment(final String? base) {
+  /// Converts relative [Form] URLs into absolute ones using the `base` field of
+  /// a [ThingDescription] and links concrete [SecurityScheme]s to it.
+  Form augment(ThingDescription thingDescription) {
     final Form augmentedForm = copy();
-    var parsedHref = Uri.parse(href);
+    final parsedHref = Uri.parse(href);
     if (!parsedHref.isAbsolute) {
-      if (base == null) {
-        throw ArgumentError(
-            "Relative URI given for affordance form but no base provided!");
-      }
-      final parsedBaseUri = Uri.parse(base);
-      parsedHref = parsedHref.replace(
-        scheme: parsedBaseUri.scheme,
-        host: parsedBaseUri.host,
-        port: parsedBaseUri.port,
-      );
-      augmentedForm.href = parsedHref.toString();
+      augmentedForm.href = _augmentHref(parsedHref, thingDescription);
     }
+    final security = augmentedForm.security ?? thingDescription.security;
+    thingDescription.securityDefinitions.entries
+        .where((element) => security.contains(element.key))
+        .forEach((element) {
+      augmentedForm.securityDefinitions[element.key] = element.value;
+    });
     return augmentedForm;
   }
 }

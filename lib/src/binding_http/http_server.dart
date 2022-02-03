@@ -6,8 +6,8 @@
 
 import 'package:dart_wot/src/binding_http/http_config.dart';
 
-import '../core/credentials.dart';
 import '../core/protocol_interfaces/protocol_server.dart';
+import '../definitions/credentials/credentials.dart';
 import '../scripting_api/exposed_thing.dart';
 
 /// A [ProtocolServer] for the Hypertext Transfer Protocol (HTTP).
@@ -18,7 +18,7 @@ class HttpServer extends ProtocolServer {
 
   final HttpConfig? _httpConfig;
 
-  Map<String, Credentials> _credentials = {};
+  Map<String, Map<String, Credentials>> _credentials = {};
 
   /// Create a new [HttpServer] from an optional [HttpConfig].
   HttpServer(this._httpConfig)
@@ -45,9 +45,8 @@ class HttpServer extends ProtocolServer {
   String get scheme => _scheme;
 
   @override
-  Future<void> start(Map<String, Credentials> credentials) async {
+  Future<void> start(Map<String, Map<String, Credentials>> credentials) async {
     _credentials = credentials;
-    // TODO(JKRhb): implement start
   }
 
   @override

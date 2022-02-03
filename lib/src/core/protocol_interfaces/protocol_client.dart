@@ -5,10 +5,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import '../../definitions/form.dart';
-import '../../definitions/security_scheme.dart';
 import '../../scripting_api/subscription.dart';
 import '../content.dart';
-import '../credentials.dart';
 
 /// Base class for a Protocol Client.
 abstract class ProtocolClient {
@@ -37,8 +35,4 @@ abstract class ProtocolClient {
       void Function(Content content) next,
       void Function(Exception error)? error,
       void Function()? complete);
-
-  /// Defines the security definitions used by the client.
-  // TODO(falko17): Document return parameter
-  bool setSecurity(List<SecurityScheme> metaData, Credentials? credentials);
 }

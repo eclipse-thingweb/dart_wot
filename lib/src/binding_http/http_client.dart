@@ -9,11 +9,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../core/content.dart';
-import '../core/credentials.dart';
 import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
+import '../definitions/credentials/basic_credentials.dart';
 import '../definitions/form.dart';
-import '../definitions/security_scheme.dart';
+import '../definitions/security/basic_security_scheme.dart';
 import '../scripting_api/subscription.dart';
 import 'http_config.dart';
 
@@ -48,26 +48,24 @@ class HttpClient extends ProtocolClient {
     final requestMethod = _getRequestMethod(form, operationType);
 
     final Future<http.Response> response;
+    final Uri uri = Uri.parse(form.href);
     final headers = _getHeadersFromForm(form);
+    _applySecurityToHeader(form, headers);
     switch (requestMethod) {
       case HttpRequestMethod.get:
-        response = http.get(Uri.parse(form.href), headers: headers);
+        response = http.get(uri, headers: headers);
         break;
       case HttpRequestMethod.post:
-        response =
-            http.post(Uri.parse(form.href), headers: headers, body: payload);
+        response = http.post(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.delete:
-        response =
-            http.delete(Uri.parse(form.href), headers: headers, body: payload);
+        response = http.delete(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.put:
-        response =
-            http.put(Uri.parse(form.href), headers: headers, body: payload);
+        response = http.put(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.patch:
-        response =
-            http.patch(Uri.parse(form.href), headers: headers, body: payload);
+        response = http.patch(uri, headers: headers, body: payload);
         break;
     }
     return response;
@@ -126,12 +124,6 @@ class HttpClient extends ProtocolClient {
   }
 
   @override
-  bool setSecurity(List<SecurityScheme> metaData, Credentials? credentials) {
-    // TODO: implement setSecurity
-    throw UnimplementedError();
-  }
-
-  @override
   Future<void> start() async {
     // Do nothing
     // TODO(JKRhb): Check if this enough.
@@ -158,6 +150,30 @@ class HttpClient extends ProtocolClient {
       void Function()? complete) async {
     // TODO: implement subscribeResource
     throw UnimplementedError();
+  }
+
+  void _applySecurityToHeader(Form form, Map<String, String> headers) {
+    final securityDefinitions = form.securityDefinitions.values.toList();
+    for (final securityDefinition in securityDefinitions) {
+      if (securityDefinition is BasicSecurityScheme) {
+        if (securityDefinition.in_ != "header") {
+          continue;
+        }
+        final credentials = securityDefinition.credentials;
+        if (credentials is BasicCredentials) {
+          _applyBasicSecurityToHeader(headers, credentials);
+        }
+      }
+    }
+  }
+
+  static void _applyBasicSecurityToHeader(
+      Map<String, String> headers, BasicCredentials credentials) {
+    final username = credentials.username;
+    final password = credentials.password;
+    final basicAuth =
+        'Basic ${base64Encode(utf8.encode('$username:$password'))}';
+    headers["authorization"] = basicAuth;
   }
 }
 

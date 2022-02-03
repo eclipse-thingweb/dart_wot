@@ -5,6 +5,13 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import 'package:dart_wot/dart_wot.dart';
+import 'package:dart_wot/src/definitions/security/apikey_security_scheme.dart';
+import 'package:dart_wot/src/definitions/security/basic_security_scheme.dart';
+import 'package:dart_wot/src/definitions/security/bearer_security_scheme.dart';
+import 'package:dart_wot/src/definitions/security/digest_security_scheme.dart';
+import 'package:dart_wot/src/definitions/security/no_security_scheme.dart';
+import 'package:dart_wot/src/definitions/security/oauth2_security_scheme.dart';
+import 'package:dart_wot/src/definitions/security/psk_security_scheme.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -27,7 +34,45 @@ void main() {
         },
         "securityDefinitions": {
           "nosec_sc": {
-            "scheme": "nosec"
+            "scheme": "nosec",
+            "proxy": "http://example.org",
+            "@type": "Test"
+          },
+          "basic_sc": {
+            "scheme": "basic",
+            "in": "query",
+            "description": "Test"
+          },
+          "psk_sc": {
+            "scheme": "psk",
+            "identity": "Test"
+          },
+          "apikey_sc": {
+            "scheme": "apikey",
+            "name": "Test",
+            "in": "body"
+          },
+          "digest_sc": {
+            "scheme": "digest",
+            "name": "Test",
+            "in": "cookie",
+            "qop": "auth-int"
+          },
+          "bearer_sc": {
+            "scheme": "bearer",
+            "authorization": "http://example.org",
+            "name": "Test",
+            "alg": "ES256",
+            "format": "jws",
+            "in": "uri"
+          },
+          "oauth2_sc": {
+            "scheme": "oauth2",
+            "authorization": "http://example.org",
+            "token": "http://example.org",
+            "refresh": "http://example.org",
+            "scopes": "test",
+            "flow": "client"
           }
         },
         "security": "nosec_sc",
@@ -112,6 +157,49 @@ void main() {
       expect(eventAction.titles!["en"], "Overheating");
       expect(eventAction.description, "Overheating of this Lamp");
       expect(eventAction.descriptions!["en"], "Overheating of this Lamp");
+
+      final nosecSc = parsedTd.securityDefinitions["nosec_sc"];
+      expect(nosecSc is NoSecurityScheme, true);
+      expect(nosecSc?.proxy, "http://example.org");
+      expect(nosecSc?.jsonLdType, ["Test"]);
+
+      final basicSc = parsedTd.securityDefinitions["basic_sc"];
+      expect(basicSc is BasicSecurityScheme, true);
+      expect(basicSc?.description, "Test");
+      expect((basicSc as BasicSecurityScheme).in_, "query");
+
+      final pskSc = parsedTd.securityDefinitions["psk_sc"];
+      expect(pskSc is PskSecurityScheme, true);
+      expect((pskSc as PskSecurityScheme).identity, "Test");
+
+      final apikeySc = parsedTd.securityDefinitions["apikey_sc"];
+      expect(apikeySc is ApiKeySecurityScheme, true);
+      expect((apikeySc as ApiKeySecurityScheme).name, "Test");
+      expect((apikeySc).in_, "body");
+
+      final digestSc = parsedTd.securityDefinitions["digest_sc"];
+      expect(digestSc is DigestSecurityScheme, true);
+      expect((digestSc as DigestSecurityScheme).name, "Test");
+      expect((digestSc).in_, "cookie");
+      expect((digestSc).qop, "auth-int");
+
+      final bearerSc = parsedTd.securityDefinitions["bearer_sc"];
+      expect(bearerSc is BearerSecurityScheme, true);
+      expect((bearerSc as BearerSecurityScheme).authorization,
+          "http://example.org");
+      expect((bearerSc).name, "Test");
+      expect((bearerSc).alg, "ES256");
+      expect((bearerSc).format, "jws");
+      expect((bearerSc).in_, "uri");
+
+      final oauth2Sc = parsedTd.securityDefinitions["oauth2_sc"];
+      expect(oauth2Sc is OAuth2SecurityScheme, true);
+      expect((oauth2Sc as OAuth2SecurityScheme).authorization,
+          "http://example.org");
+      expect((oauth2Sc).refresh, "http://example.org");
+      expect((oauth2Sc).token, "http://example.org");
+      expect((oauth2Sc).scopes, ["test"]);
+      expect((oauth2Sc).flow, "client");
     });
   });
 }

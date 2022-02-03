@@ -6,10 +6,21 @@
 
 import '../../scripting_api.dart' as scripting_api;
 import '../../scripting_api.dart' hide ConsumedThing, InteractionOutput;
+import '../definitions/credentials/apikey_credentials.dart';
+import '../definitions/credentials/basic_credentials.dart';
+import '../definitions/credentials/bearer_credentials.dart';
+import '../definitions/credentials/credentials.dart';
+import '../definitions/credentials/digest_credentials.dart';
+import '../definitions/credentials/psk_credentials.dart';
 import '../definitions/data_schema.dart';
 import '../definitions/form.dart';
 import '../definitions/interaction_affordances/interaction_affordance.dart';
-import '../definitions/security_scheme.dart';
+import '../definitions/security/apikey_security_scheme.dart';
+import '../definitions/security/basic_security_scheme.dart';
+import '../definitions/security/bearer_security_scheme.dart';
+import '../definitions/security/digest_security_scheme.dart';
+import '../definitions/security/psk_security_scheme.dart';
+import '../definitions/security/security_scheme.dart';
 import '../definitions/thing_description.dart';
 import 'interaction_output.dart';
 import 'operation_type.dart';
@@ -44,9 +55,6 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   /// The [title] of the Thing.
   final String title;
 
-  final List<String> _security = [];
-  final Map<String, SecurityScheme> _securityDefinitions = {};
-
   final Map<String, scripting_api.Subscription> _subscribedEvents = {};
 
   final Map<String, scripting_api.Subscription> _observedProperties = {};
@@ -60,6 +68,31 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   /// Checks if the [Servient] of this [ConsumedThing] supports a protocol
   /// [scheme].
   bool hasClientFor(String scheme) => servient.hasClientFor(scheme);
+
+  static void _applyCredentials(Map<String, Credentials>? credentialStore,
+      Map<String, SecurityScheme> securityDefinitions) {
+    for (final entry in securityDefinitions.entries) {
+      final credentials = credentialStore?[entry.key];
+      final securityDefinition = entry.value;
+      // TODO(JKRhb): Maybe this matching can be done more elegantly.
+      if (securityDefinition is BasicSecurityScheme &&
+          credentials is BasicCredentials) {
+        securityDefinition.credentials = credentials;
+      } else if (securityDefinition is PskSecurityScheme &&
+          credentials is PskCredentials) {
+        securityDefinition.credentials = credentials;
+      } else if (securityDefinition is DigestSecurityScheme &&
+          credentials is DigestCredentials) {
+        securityDefinition.credentials = credentials;
+      } else if (securityDefinition is ApiKeySecurityScheme &&
+          credentials is ApiKeyCredentials) {
+        securityDefinition.credentials = credentials;
+      } else if (securityDefinition is BearerSecurityScheme &&
+          credentials is BearerCredentials) {
+        securityDefinition.credentials = credentials;
+      }
+    }
+  }
 
   _ClientAndForm _getClientFor(List<Form> forms, OperationType operationType,
       _AffordanceType affordanceType, InteractionOptions? options) {
@@ -76,6 +109,14 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     final int? formIndex = options?.formIndex;
 
+    // TODO(JKRhb): Revisit ID determination
+    final id =
+        thingDescription.id ?? thingDescription.base ?? thingDescription.title;
+
+    final credentials = servient.credentials(id);
+
+    _applyCredentials(credentials, thingDescription.securityDefinitions);
+
     if (formIndex != null) {
       if (formIndex >= 0 && formIndex < forms.length) {
         foundForm = forms[formIndex];
@@ -86,17 +127,12 @@ class ConsumedThing implements scripting_api.ConsumedThing {
             '$formIndex"');
       }
     } else {
-      // ignore: unused_local_variable
-      final schemes = forms.map((form) => Uri.parse(form.href).scheme);
-
       foundForm = forms.firstWhere((form) =>
           hasClientFor(Uri.parse(form.href).scheme) &&
           _supportsOperationType(form, affordanceType, operationType));
       final scheme = Uri.parse(foundForm.href).scheme;
       client = servient.clientFor(scheme);
     }
-
-    _ensureClientSecurity(client, foundForm);
 
     return _ClientAndForm(client, foundForm);
   }
@@ -173,22 +209,6 @@ class ConsumedThing implements scripting_api.ConsumedThing {
         content, servient.contentSerdes, form, action.output);
   }
 
-  void _ensureClientSecurity(ProtocolClient client, Form form) {
-    if (_securityDefinitions.isNotEmpty) {
-      // TODO(JKRhb): This method is still a bit weird
-      // FIXME: ID has to be properly determined
-      final id = thingDescription.id ?? thingDescription.title;
-
-      if (form.security != null) {
-        client.setSecurity(
-            _getSecuritySchemes(form.security), servient.credentials(id));
-      } else if (_security.isNotEmpty) {
-        client.setSecurity(
-            _getSecuritySchemes(_security), servient.credentials(id));
-      }
-    }
-  }
-
   void _augmentInteractionAffordanceForms() {
     final interactionAffordanceList = [
       thingDescription.properties,
@@ -201,18 +221,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
   void _augmentForms(InteractionAffordance interactionAffordance) {
     interactionAffordance.augmentedForms = interactionAffordance.forms
-        .map((form) => form.augment(thingDescription.base))
-        .toList();
-  }
-
-  List<SecurityScheme> _getSecuritySchemes(List<String>? security) {
-    if (security == null) {
-      return List.empty();
-    }
-
-    return _securityDefinitions.entries
-        .where((definition) => security.contains(definition.key))
-        .map((definition) => definition.value)
+        .map((form) => form.augment(thingDescription))
         .toList();
   }
 

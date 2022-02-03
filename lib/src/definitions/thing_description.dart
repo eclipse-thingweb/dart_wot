@@ -11,7 +11,14 @@ import 'interaction_affordances/action.dart';
 import 'interaction_affordances/event.dart';
 import 'interaction_affordances/property.dart';
 import 'link.dart';
-import 'security_scheme.dart';
+import 'security/apikey_security_scheme.dart';
+import 'security/basic_security_scheme.dart';
+import 'security/bearer_security_scheme.dart';
+import 'security/digest_security_scheme.dart';
+import 'security/no_security_scheme.dart';
+import 'security/oauth2_security_scheme.dart';
+import 'security/psk_security_scheme.dart';
+import 'security/security_scheme.dart';
 import 'thing_model.dart';
 
 /// Represents a WoT Thing Description
@@ -213,10 +220,48 @@ class ThingDescription {
 
   void _parseSecurityDefinitions(Map<String, dynamic> json) {
     for (final securityDefinition in json.entries) {
-      if (securityDefinition.value is Map<String, dynamic>) {
-        // TODO(JKRhb): Add subclasses for security schemes
-        final securityScheme = SecurityScheme.fromJson(
-            securityDefinition.value as Map<String, dynamic>);
+      final dynamic value = securityDefinition.value;
+      if (value is Map<String, dynamic>) {
+        SecurityScheme securityScheme;
+        switch (value["scheme"]) {
+          case "basic":
+            {
+              securityScheme = BasicSecurityScheme.fromJson(value);
+              break;
+            }
+          case "bearer":
+            {
+              securityScheme = BearerSecurityScheme.fromJson(value);
+              break;
+            }
+          case "nosec":
+            {
+              securityScheme = NoSecurityScheme.fromJson(value);
+              break;
+            }
+          case "psk":
+            {
+              securityScheme = PskSecurityScheme.fromJson(value);
+              break;
+            }
+          case "digest":
+            {
+              securityScheme = DigestSecurityScheme.fromJson(value);
+              break;
+            }
+          case "apikey":
+            {
+              securityScheme = ApiKeySecurityScheme.fromJson(value);
+              break;
+            }
+          case "oauth2":
+            {
+              securityScheme = OAuth2SecurityScheme.fromJson(value);
+              break;
+            }
+          default:
+            continue;
+        }
         securityDefinitions[securityDefinition.key] = securityScheme;
       }
     }

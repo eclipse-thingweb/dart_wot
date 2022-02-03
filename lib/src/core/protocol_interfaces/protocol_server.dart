@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import '../../../scripting_api.dart';
-import '../credentials.dart';
+import '../../definitions/credentials/credentials.dart';
 
 /// Base class for a Protocol Server.
 abstract class ProtocolServer {
@@ -17,7 +17,7 @@ abstract class ProtocolServer {
 
   // TODO(JKRhb): Check if a Servient should be passed as a parameter instead
   /// Starts the server. Accepts a [Map] of [credentials].
-  Future<void> start(Map<String, Credentials> credentials);
+  Future<void> start(Map<String, Map<String, Credentials>> credentials);
 
   /// Stops the server.
   Future<void> stop();
