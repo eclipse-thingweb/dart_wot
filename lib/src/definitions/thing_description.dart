@@ -16,6 +16,7 @@ import 'security/basic_security_scheme.dart';
 import 'security/bearer_security_scheme.dart';
 import 'security/digest_security_scheme.dart';
 import 'security/no_security_scheme.dart';
+import 'security/oauth2_security_scheme.dart';
 import 'security/psk_security_scheme.dart';
 import 'security/security_scheme.dart';
 import 'thing_model.dart';
@@ -251,6 +252,11 @@ class ThingDescription {
           case "apikey":
             {
               securityScheme = ApiKeySecurityScheme.fromJson(value);
+              break;
+            }
+          case "oauth2":
+            {
+              securityScheme = OAuth2SecurityScheme.fromJson(value);
               break;
             }
           default:
