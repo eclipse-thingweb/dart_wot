@@ -13,6 +13,7 @@ import 'interaction_affordances/property.dart';
 import 'link.dart';
 import 'security/apikey_security_scheme.dart';
 import 'security/basic_security_scheme.dart';
+import 'security/bearer_security_scheme.dart';
 import 'security/digest_security_scheme.dart';
 import 'security/no_security_scheme.dart';
 import 'security/psk_security_scheme.dart';
@@ -225,6 +226,11 @@ class ThingDescription {
           case "basic":
             {
               securityScheme = BasicSecurityScheme.fromJson(value);
+              break;
+            }
+          case "bearer":
+            {
+              securityScheme = BearerSecurityScheme.fromJson(value);
               break;
             }
           case "nosec":
