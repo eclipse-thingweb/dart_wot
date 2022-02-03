@@ -9,6 +9,7 @@
 ///
 /// [spec link]: https://www.w3.org/TR/wot-thing-description11/
 
+export 'src/definitions/credentials/apikey_credentials.dart';
 export 'src/definitions/credentials/basic_credentials.dart';
 export 'src/definitions/credentials/credentials.dart';
 export 'src/definitions/credentials/digest_credentials.dart';

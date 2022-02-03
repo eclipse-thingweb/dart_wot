@@ -11,6 +11,7 @@ import 'interaction_affordances/action.dart';
 import 'interaction_affordances/event.dart';
 import 'interaction_affordances/property.dart';
 import 'link.dart';
+import 'security/apikey_security_scheme.dart';
 import 'security/basic_security_scheme.dart';
 import 'security/digest_security_scheme.dart';
 import 'security/no_security_scheme.dart';
@@ -239,6 +240,11 @@ class ThingDescription {
           case "digest":
             {
               securityScheme = DigestSecurityScheme.fromJson(value);
+              break;
+            }
+          case "apikey":
+            {
+              securityScheme = ApiKeySecurityScheme.fromJson(value);
               break;
             }
           default:

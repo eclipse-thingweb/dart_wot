@@ -6,6 +6,7 @@
 
 import '../../scripting_api.dart' as scripting_api;
 import '../../scripting_api.dart' hide ConsumedThing, InteractionOutput;
+import '../definitions/credentials/apikey_credentials.dart';
 import '../definitions/credentials/basic_credentials.dart';
 import '../definitions/credentials/credentials.dart';
 import '../definitions/credentials/digest_credentials.dart';
@@ -13,6 +14,7 @@ import '../definitions/credentials/psk_credentials.dart';
 import '../definitions/data_schema.dart';
 import '../definitions/form.dart';
 import '../definitions/interaction_affordances/interaction_affordance.dart';
+import '../definitions/security/apikey_security_scheme.dart';
 import '../definitions/security/basic_security_scheme.dart';
 import '../definitions/security/digest_security_scheme.dart';
 import '../definitions/security/psk_security_scheme.dart';
@@ -79,6 +81,9 @@ class ConsumedThing implements scripting_api.ConsumedThing {
         securityDefinition.credentials = credentials;
       } else if (securityDefinition is DigestSecurityScheme &&
           credentials is DigestCredentials) {
+        securityDefinition.credentials = credentials;
+      } else if (securityDefinition is ApiKeySecurityScheme &&
+          credentials is ApiKeyCredentials) {
         securityDefinition.credentials = credentials;
       }
     }
