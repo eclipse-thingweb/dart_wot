@@ -1,3 +1,10 @@
+## 0.7.0
+
+- feat: let TD parse links field
+- docs: improve documentation
+- feat!: rework API for Credentials, parse all SecuritySchemes
+- feat: add support for basic Credentials to HTTP Client
+
 ## 0.6.1
 
 - feat: parse titles and descriptions at Thing level
