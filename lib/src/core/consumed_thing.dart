@@ -104,8 +104,9 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     final int? formIndex = options?.formIndex;
 
-    // FIXME: ID has to be properly determined
-    final id = thingDescription.id ?? thingDescription.title;
+    // TODO(JKRhb): Revisit ID determination
+    final id =
+        thingDescription.id ?? thingDescription.base ?? thingDescription.title;
 
     final credentials = servient.credentials(id);
 
