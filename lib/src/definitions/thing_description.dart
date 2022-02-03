@@ -13,6 +13,7 @@ import 'interaction_affordances/property.dart';
 import 'link.dart';
 import 'security/basic_security_scheme.dart';
 import 'security/no_security_scheme.dart';
+import 'security/psk_security_scheme.dart';
 import 'security/security_scheme.dart';
 import 'thing_model.dart';
 
@@ -227,6 +228,11 @@ class ThingDescription {
           case "nosec":
             {
               securityScheme = NoSecurityScheme.fromJson(value);
+              break;
+            }
+          case "psk":
+            {
+              securityScheme = PskSecurityScheme.fromJson(value);
               break;
             }
           default:

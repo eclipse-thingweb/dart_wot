@@ -11,5 +11,6 @@
 
 export 'src/definitions/credentials/basic_credentials.dart';
 export 'src/definitions/credentials/credentials.dart';
+export 'src/definitions/credentials/psk_credentials.dart';
 export 'src/definitions/thing_description.dart';
 export 'src/definitions/thing_model.dart';

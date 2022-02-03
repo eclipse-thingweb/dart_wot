@@ -6,6 +6,7 @@
 
 import 'package:dart_wot/dart_wot.dart';
 import 'package:dart_wot/src/definitions/security/basic_security_scheme.dart';
+import 'package:dart_wot/src/definitions/security/psk_security_scheme.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -33,6 +34,10 @@ void main() {
           "basic_sc": {
             "scheme": "basic",
             "description": "Test"
+          },
+          "psk_sc": {
+            "scheme": "psk",
+            "identity": "Test"
           }
         },
         "security": "nosec_sc",
@@ -121,6 +126,12 @@ void main() {
       expect(parsedTd.securityDefinitions["basic_sc"] is BasicSecurityScheme,
           true);
       expect(parsedTd.securityDefinitions["basic_sc"]?.description, "Test");
+
+      expect(parsedTd.securityDefinitions["psk_sc"] is PskSecurityScheme, true);
+      expect(
+          (parsedTd.securityDefinitions["psk_sc"] as PskSecurityScheme)
+              .identity,
+          "Test");
     });
   });
 }
