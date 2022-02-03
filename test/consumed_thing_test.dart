@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import 'package:dart_wot/dart_wot.dart';
+import 'package:dart_wot/src/definitions/security/basic_security_scheme.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -28,6 +29,10 @@ void main() {
         "securityDefinitions": {
           "nosec_sc": {
             "scheme": "nosec"
+          },
+          "basic_sc": {
+            "scheme": "basic",
+            "description": "Test"
           }
         },
         "security": "nosec_sc",
@@ -112,6 +117,10 @@ void main() {
       expect(eventAction.titles!["en"], "Overheating");
       expect(eventAction.description, "Overheating of this Lamp");
       expect(eventAction.descriptions!["en"], "Overheating of this Lamp");
+
+      expect(parsedTd.securityDefinitions["basic_sc"] is BasicSecurityScheme,
+          true);
+      expect(parsedTd.securityDefinitions["basic_sc"]?.description, "Test");
     });
   });
 }
