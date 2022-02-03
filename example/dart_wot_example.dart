@@ -12,6 +12,7 @@ final thingDescriptionJson = '''
 {
   "@context": ["http://www.w3.org/ns/td", {"@language": "de"}],
   "title": "Test Thing",
+  "id": "urn:test",
   "base": "coap://coap.me",
   "securityDefinitions": {
     "nosec_sc": {
@@ -20,8 +21,13 @@ final thingDescriptionJson = '''
         "de": "Keine Sicherheit",
         "en": "No Security"
       }
+    },
+    "basic_sc": {
+      "scheme": "basic",
+      "description": "Test"
     }
   },
+  "security": "nosec_sc",
   "properties": {
     "status": {
       "observable": true,
@@ -40,6 +46,14 @@ final thingDescriptionJson = '''
         {
           "href": "coap://coap.me",
           "cov:methodName": "PUT"
+        }
+      ]
+    },
+    "test": {
+      "forms": [
+        {
+          "href": "http://example.org",
+          "security": ["basic_sc"]
         }
       ]
     }
@@ -72,7 +86,9 @@ Future<void> main() async {
   final HttpClientFactory httpClientFactory = HttpClientFactory();
   final servient = Servient()
     ..addClientFactory(coapClientFactory)
-    ..addClientFactory(httpClientFactory);
+    ..addClientFactory(httpClientFactory)
+    ..addCredentials(
+        "urn:test", "basic_sc", BasicCredentials("username", "password"));
   final wot = await servient.start();
 
   final thingDescription = ThingDescription(thingDescriptionJson);
@@ -93,6 +109,8 @@ Future<void> main() async {
     print(value);
     await subscription?.stop();
   });
+
+  await consumedThing.readProperty("test");
 
   Future<void> handleThingInteraction(ThingDescription thingDescription) async {
     final consumedThing = await wot.consume(thingDescription);
