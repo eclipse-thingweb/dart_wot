@@ -83,7 +83,7 @@ A more complex example can be found in the `example` directory.
 
 The package will be extended gradually over the upcoming months.
 Support for exposing and discovering Things will be added as well as
-more protocols (especially HTTP and HTTPS, but also CoAPS).
+more protocols (especially `coaps://`) and security schemes.
 
 Contributions are very welcome.
 You will soon be able to find guidelines for contributing to the package
