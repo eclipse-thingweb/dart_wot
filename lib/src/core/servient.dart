@@ -6,10 +6,10 @@
 
 import 'package:uuid/uuid.dart';
 
-import '../../definitions.dart';
+import '../definitions/credentials/credentials.dart';
 import '../definitions/interaction_affordances/interaction_affordance.dart';
+import '../definitions/thing_description.dart';
 import 'content_serdes.dart';
-import 'credentials.dart';
 import 'exposed_thing.dart';
 import 'protocol_interfaces/protocol_client.dart';
 import 'protocol_interfaces/protocol_client_factory.dart';
@@ -26,7 +26,7 @@ class Servient {
   final List<ProtocolServer> _servers = [];
   final Map<String, ProtocolClientFactory> _clientFactories = {};
   final Map<String, ExposedThing> _things = {};
-  final Map<String, Credentials> _credentialsStore = {};
+  final Map<String, Map<String, Credentials>> _credentialsStore = {};
 
   /// The [ContentSerdes] object that is used for serializing/deserializing.
   final ContentSerdes contentSerdes;
@@ -140,6 +140,24 @@ class Servient {
     }
   }
 
+  /// Adds new [credentials] to this [Servient].
+  void addCredentials(
+      String id, String definitionKey, Credentials credentials) {
+    final currentCredentials = _credentialsStore[id];
+    if (currentCredentials == null) {
+      _credentialsStore[id] = {definitionKey: credentials};
+    } else {
+      currentCredentials[definitionKey] = credentials;
+    }
+  }
+
+  /// Removes [Credentials] from this [Servient].
+  ///
+  /// Returns the [Credentials] if the removal was successful, otherwise `null`.
+  Credentials? removeCredentials(String id, String definitionKey) {
+    return _credentialsStore[id]?.remove(definitionKey);
+  }
+
   /// Checks whether a [ProtocolClient] is avaiable for a given [scheme].
   bool hasClientFor(String scheme) => _clientFactories.containsKey(scheme);
 
@@ -155,5 +173,6 @@ class Servient {
   /// Returns the [Credentials] for a given [identifier].
   ///
   /// Returns null if the [identifier] is unknown.
-  Credentials? credentials(String identifier) => _credentialsStore[identifier];
+  Map<String, Credentials>? credentials(String identifier) =>
+      _credentialsStore[identifier];
 }

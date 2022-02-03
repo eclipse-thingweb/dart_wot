@@ -9,5 +9,6 @@
 ///
 /// [spec link]: https://www.w3.org/TR/wot-thing-description11/
 
+export 'src/definitions/credentials/credentials.dart';
 export 'src/definitions/thing_description.dart';
 export 'src/definitions/thing_model.dart';

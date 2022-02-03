@@ -9,11 +9,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../core/content.dart';
-import '../core/credentials.dart';
 import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../definitions/form.dart';
-import '../definitions/security_scheme.dart';
 import '../scripting_api/subscription.dart';
 import 'http_config.dart';
 
@@ -123,12 +121,6 @@ class HttpClient extends ProtocolClient {
     final response =
         await _createRequest(form, OperationType.readproperty, null);
     return _contentFromResponse(form, response);
-  }
-
-  @override
-  bool setSecurity(List<SecurityScheme> metaData, Credentials? credentials) {
-    // TODO: implement setSecurity
-    throw UnimplementedError();
   }
 
   @override
