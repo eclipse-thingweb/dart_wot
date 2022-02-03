@@ -12,6 +12,7 @@ import 'interaction_affordances/event.dart';
 import 'interaction_affordances/property.dart';
 import 'link.dart';
 import 'security/basic_security_scheme.dart';
+import 'security/digest_security_scheme.dart';
 import 'security/no_security_scheme.dart';
 import 'security/psk_security_scheme.dart';
 import 'security/security_scheme.dart';
@@ -233,6 +234,11 @@ class ThingDescription {
           case "psk":
             {
               securityScheme = PskSecurityScheme.fromJson(value);
+              break;
+            }
+          case "digest":
+            {
+              securityScheme = DigestSecurityScheme.fromJson(value);
               break;
             }
           default:
