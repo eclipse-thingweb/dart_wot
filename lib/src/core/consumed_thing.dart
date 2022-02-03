@@ -30,7 +30,6 @@ import 'servient.dart';
 enum _AffordanceType {
   action,
   property,
-  // ignore: unused_field
   event,
 }
 
