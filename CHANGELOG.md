@@ -1,3 +1,7 @@
+## 0.7.1
+
+- feat: add missing OAuth2Credentials class
+
 ## 0.7.0
 
 - feat: let TD parse links field
