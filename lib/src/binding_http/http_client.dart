@@ -11,7 +11,9 @@ import 'package:http/http.dart' as http;
 import '../core/content.dart';
 import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
+import '../definitions/credentials/basic_credentials.dart';
 import '../definitions/form.dart';
+import '../definitions/security/basic_security_scheme.dart';
 import '../scripting_api/subscription.dart';
 import 'http_config.dart';
 
@@ -47,6 +49,7 @@ class HttpClient extends ProtocolClient {
 
     final Future<http.Response> response;
     final headers = _getHeadersFromForm(form);
+    _applySecurityToHeader(form, headers);
     switch (requestMethod) {
       case HttpRequestMethod.get:
         response = http.get(Uri.parse(form.href), headers: headers);
@@ -150,6 +153,30 @@ class HttpClient extends ProtocolClient {
       void Function()? complete) async {
     // TODO: implement subscribeResource
     throw UnimplementedError();
+  }
+
+  void _applySecurityToHeader(Form form, Map<String, String> headers) {
+    final securityDefinitions = form.securityDefinitions.values.toList();
+    for (final securityDefinition in securityDefinitions) {
+      if (securityDefinition is BasicSecurityScheme) {
+        if (securityDefinition.in_ != "header") {
+          continue;
+        }
+        final credentials = securityDefinition.credentials;
+        if (credentials is BasicCredentials) {
+          _applyBasicSecurityToHeader(headers, credentials);
+        }
+      }
+    }
+  }
+
+  static void _applyBasicSecurityToHeader(
+      Map<String, String> headers, BasicCredentials credentials) {
+    final username = credentials.username;
+    final password = credentials.password;
+    final basicAuth =
+        'Basic ${base64Encode(utf8.encode('$username:$password'))}';
+    headers["authorization"] = basicAuth;
   }
 }
 
