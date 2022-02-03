@@ -16,7 +16,12 @@ import 'protocol_interfaces/protocol_client_factory.dart';
 import 'protocol_interfaces/protocol_server.dart';
 import 'wot.dart';
 
+// TODO(JKRhb): Documentation should be improved.
+/// A software stack that implements the WoT building blocks.
 ///
+/// A [Servient] can host and expose Things and/or host Consumers that consume
+/// Things. Servients can support multiple Protocol Bindings to enable
+/// interaction with different IoT platforms.
 class Servient {
   final List<ProtocolServer> _servers = [];
   final Map<String, ProtocolClientFactory> _clientFactories = {};
