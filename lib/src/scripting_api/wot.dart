@@ -30,8 +30,9 @@ abstract class WoT {
   /// based on the underlying impementation.
   Future<ExposedThing> produce(ExposedThingInit exposedThingInit);
 
-  /// Discovers [ThingDescription]s, which are passed to a [callback] function
-  /// upon retrieval.
+  /// Discovers [ThingDescription]s which can be obtained by calling `next()`
+  /// on the returned [ThingDiscovery] object.
+  ///
   /// As this part of the Scripting API specification is still in development,
   /// this method's implementation is in an experimental state and does not
   /// conform to the specification's latest version.
@@ -49,6 +50,5 @@ abstract class WoT {
   /// The [ThingDiscovery] object that is returned by this function can be used
   /// for stopping the Discovery process and retrieving information about its
   /// current state (i. e. whether it is still `active` or already `done`).
-  ThingDiscovery discover(DiscoveryListener callback,
-      [ThingFilter? thingFilter]);
+  ThingDiscovery discover([ThingFilter? thingFilter]);
 }

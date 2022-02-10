@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'dart:async';
+
 import '../../scripting_api.dart' as scripting_api;
 import '../definitions/form.dart';
 import '../definitions/thing_description.dart';
@@ -40,17 +42,25 @@ class ThingDiscovery implements scripting_api.ThingDiscovery {
 
   final Servient _servient;
 
-  final scripting_api.DiscoveryListener _callback;
+  // This linting issue should be a false positive.
+  // ignore: close_sinks
+  StreamController<ThingDescription>? _controller;
+
+  StreamIterator<ThingDescription>? _streamIterator;
 
   /// Creates a new [ThingDiscovery] object with a given [thingFilter].
-  ThingDiscovery(this._callback, this.thingFilter, this._servient);
+  ThingDiscovery(this.thingFilter, this._servient);
 
   @override
   Future<void> start() async {
     final thingFilter = this.thingFilter;
+    _controller = StreamController();
+    _streamIterator = StreamIterator(_controller!.stream);
 
     if (thingFilter == null) {
-      throw ArgumentError();
+      // TODO(JKRhb): This has to be revisited once the specification has been
+      //              updated and the thingFilter can actually be unset.
+      throw ArgumentError("thingFilter can't be null!");
     }
     _active = true;
 
@@ -67,10 +77,15 @@ class ThingDiscovery implements scripting_api.ThingDiscovery {
 
   @override
   void stop() {
+    _controller?.sink.close();
     _active = false;
   }
 
   Future<void> _discoverDirectly(String? uri) async {
+    final controller = _controller;
+    if (controller == null) {
+      throw StateError("ThingDiscovery is not active!");
+    }
     if (uri == null) {
       throw ArgumentError();
     }
@@ -84,9 +99,11 @@ class ThingDiscovery implements scripting_api.ThingDiscovery {
     final value = await _servient.contentSerdes.contentToValue(content, null);
 
     if (value is Map<String, dynamic>) {
-      _callback(ThingDescription.fromJson(value));
+      final thingDescription = ThingDescription.fromJson(value);
+      _done = true; // TODO(JKRhb): Check if done should be set here
       _active = false;
-      _done = true;
+      controller.sink.add(thingDescription);
+      await controller.sink.close();
       return;
     }
 
@@ -97,5 +114,21 @@ class ThingDiscovery implements scripting_api.ThingDiscovery {
     if (error is Exception) {
       throw error;
     }
+  }
+
+  @override
+  Future<ThingDescription> next() async {
+    final streamIterator = _streamIterator;
+    if (streamIterator == null) {
+      throw StateError("ThingDiscovery has not been started yet!");
+    }
+    final hasNext = await streamIterator.moveNext();
+    if (!active && !hasNext) {
+      _done = true;
+    } else if (hasNext) {
+      return streamIterator.current;
+    }
+    // TODO(JKRhb): Revisit error message
+    throw StateError("ThingDiscovery has already been stopped!");
   }
 }

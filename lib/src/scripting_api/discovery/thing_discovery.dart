@@ -4,9 +4,10 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import '../../definitions/thing_description.dart';
 import 'thing_filter.dart';
 
-/// Interface
+/// Provides the properties and methods controlling the discovery process.
 abstract class ThingDiscovery {
   /// The [thingFilter] that is applied during the discovery process.
   ThingFilter? get thingFilter;
@@ -25,4 +26,7 @@ abstract class ThingDiscovery {
 
   /// Stops the discovery process.
   void stop();
+
+  /// Provides the next discovered [ThingDescription] object.
+  Future<ThingDescription> next();
 }
