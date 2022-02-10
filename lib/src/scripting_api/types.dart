@@ -30,7 +30,3 @@ typedef PropertyWriteMap = Map<String, InteractionInput>;
 /// Represents a Partial TD as described in the
 /// [WoT Architecture](https://w3c.github.io/wot-architecture/#dfn-partial-td).
 typedef ExposedThingInit = Map<String, dynamic>;
-
-/// User provided callback that is given an argument of type [ThingDescription]
-/// and is used for handling discovered Thing Descriptions.
-typedef DiscoveryListener = void Function(ThingDescription thingDescription);

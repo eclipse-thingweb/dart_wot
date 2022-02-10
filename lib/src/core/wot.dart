@@ -40,8 +40,8 @@ class WoT implements scripting_api.WoT {
 
   /// Discovers [ThingDescription]s matching a given [filter].
   @override
-  ThingDiscovery discover(scripting_api.DiscoveryListener callback,
-      [scripting_api.ThingFilter? filter]) {
-    return ThingDiscovery(callback, filter, _servient)..start();
+  ThingDiscovery discover([scripting_api.ThingFilter? filter]) {
+    // TODO(JKRhb): Decide if the user should call the start method.
+    return ThingDiscovery(filter, _servient)..start();
   }
 }
