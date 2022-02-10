@@ -47,7 +47,6 @@ void main() {
 
       final coapClient = defaultClientFactory.createClient();
 
-      expect(coapClient.setSecurity([], Credentials()), true);
       await coapClient.start();
 
       await coapClient.stop();
