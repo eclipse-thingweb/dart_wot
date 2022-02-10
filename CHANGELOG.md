@@ -1,3 +1,7 @@
+## 0.8.0
+
+- feat(discovery)!: re-align discovery API with current Scripting API specification
+
 ## 0.7.1
 
 - feat: add missing OAuth2Credentials class
