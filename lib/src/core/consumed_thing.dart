@@ -76,6 +76,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       final credentials = credentialStore?[entry.key];
       final securityDefinition = entry.value;
       // TODO(JKRhb): Maybe this matching can be done more elegantly.
+      // TODO(JKRhb): Check whether the SecurityScheme should be referenced by
+      //              the credentials instead.
       if (securityDefinition is BasicSecurityScheme &&
           credentials is BasicCredentials) {
         securityDefinition.credentials = credentials;
