@@ -35,7 +35,7 @@ class OAuth2SecurityScheme extends SecurityScheme {
   /// those defined in an [OAuth2SecurityScheme] active on that form.
   List<String>? scopes;
 
-  /// Name for query, header, cookie, or uri parameters.
+  /// Authorization flow.
   late String flow;
 
   final List<String> _parsedJsonFields = [];
