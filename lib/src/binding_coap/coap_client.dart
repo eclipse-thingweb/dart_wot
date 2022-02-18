@@ -274,11 +274,11 @@ class CoapClient extends ProtocolClient {
 
   @override
   Future<Subscription> subscribeResource(
-      Form form,
-      void Function() deregisterObservation,
-      void Function(Content content) next,
-      void Function(Exception error)? error,
-      void Function()? complete) async {
+    Form form, {
+    required void Function(Content content) next,
+    void Function(Exception error)? error,
+    required void Function() complete,
+  }) async {
     OperationType operationType;
     final op = form.op ?? ["observeproperty"];
     // TODO(JKRhb): Create separate function for this.
@@ -290,7 +290,7 @@ class CoapClient extends ProtocolClient {
 
     final request = _createRequest(form, operationType);
 
-    return await request.startObservation(next, deregisterObservation);
+    return await request.startObservation(next, complete);
   }
 
   @override

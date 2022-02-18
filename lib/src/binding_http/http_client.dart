@@ -142,12 +142,10 @@ class HttpClient extends ProtocolClient {
   }
 
   @override
-  Future<Subscription> subscribeResource(
-      Form form,
-      void Function() deregisterObservation,
-      void Function(Content content) next,
+  Future<Subscription> subscribeResource(Form form,
+      {required void Function(Content content) next,
       void Function(Exception error)? error,
-      void Function()? complete) async {
+      required void Function() complete}) async {
     // TODO: implement subscribeResource
     throw UnimplementedError();
   }

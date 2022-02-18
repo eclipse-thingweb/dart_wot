@@ -277,25 +277,23 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final form = clientAndForm.form; // TODO(JKRhb): Handle URI variables
     final client = clientAndForm.client;
 
-    final subscription = await client.subscribeResource(
-        form, () => removeSubscription(affordanceName, subscriptionType),
-        (content) {
-      try {
-        listener(InteractionOutput(
-            content, servient.contentSerdes, form, dataSchema));
-      } on Exception {
-        // Exception is handled by onError function. Not sure if this is the
-        // best design, though.
-        // TODO(JKRhb): Check if this try-catch-block can be removed.
-      }
-    }, (error) {
-      if (onError != null) {
-        onError(error);
-      }
-    }, () {
-      // TODO(JKRhb): current scripting api cannot handle this (apparently)
-    });
-
+    final subscription = await client.subscribeResource(form,
+        next: (content) {
+          try {
+            listener(InteractionOutput(
+                content, servient.contentSerdes, form, dataSchema));
+          } on Exception {
+            // Exception is handled by onError function. Not sure if this is the
+            // best design, though.
+            // TODO(JKRhb): Check if this try-catch-block can be removed.
+          }
+        },
+        error: (error) {
+          if (onError != null) {
+            onError(error);
+          }
+        },
+        complete: () => removeSubscription(affordanceName, subscriptionType));
     if (subscriptionType == SubscriptionType.property) {
       _observedProperties[affordanceName] = subscription;
     } else {
