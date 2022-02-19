@@ -261,14 +261,18 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     DataSchema? dataSchema,
     SubscriptionType subscriptionType,
   ) async {
-    OperationType operationType;
-    _AffordanceType affordanceType;
+    final OperationType operationType;
+    final _AffordanceType affordanceType;
+    final Map<String, Subscription> subscriptions;
+
     if (subscriptionType == SubscriptionType.property) {
       operationType = OperationType.observeproperty;
       affordanceType = _AffordanceType.property;
+      subscriptions = _observedProperties;
     } else {
       operationType = OperationType.subscribeevent;
       affordanceType = _AffordanceType.event;
+      subscriptions = _subscribedEvents;
     }
 
     final clientAndForm = _getClientFor(
@@ -293,6 +297,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     } else {
       _subscribedEvents[affordanceName] = subscription;
     }
+
+    subscriptions[affordanceName] = subscription;
 
     return subscription;
   }
