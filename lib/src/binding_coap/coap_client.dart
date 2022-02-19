@@ -155,8 +155,7 @@ class _CoapRequest {
   }
 
   Future<_CoapSubscription> startObservation(
-      void Function(Content content) next,
-      void Function() deregisterObservation) async {
+      void Function(Content content) next, void Function() complete) async {
     void handleResponse(coap.CoapResponse? response) {
       if (response == null) {
         return;
@@ -177,7 +176,7 @@ class _CoapRequest {
 
     final requestContentType = coap.CoapMediaType.parse(_form.contentType);
     await _makeRequest(null, requestContentType!);
-    return _CoapSubscription(_coapClient, deregisterObservation);
+    return _CoapSubscription(_coapClient, complete);
   }
 
   /// Aborts the request and closes the client.
@@ -387,10 +386,9 @@ class _CoapSubscription implements Subscription {
 
   /// Callback used to pass by the servient that is used to signal it that an
   /// observation has been cancelled.
-  final void Function() _deregisterObservation;
+  final void Function() _complete;
 
-  _CoapSubscription(this.coapClient, this._deregisterObservation)
-      : _active = true;
+  _CoapSubscription(this.coapClient, this._complete) : _active = true;
 
   @override
   Future<void> stop([InteractionOptions? options]) async {
@@ -402,6 +400,6 @@ class _CoapSubscription implements Subscription {
     //              approach instead for the time being.
     coapClient.close();
     _active = false;
-    _deregisterObservation();
+    _complete();
   }
 }
