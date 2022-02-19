@@ -101,9 +101,7 @@ class HttpClient extends ProtocolClient {
   }
 
   static Content _contentFromResponse(Form form, http.Response response) {
-    final type = response.headers["Content-Type"] ??
-        form.contentType ??
-        "application/octet-stream";
+    final type = response.headers["Content-Type"] ?? form.contentType;
     final body = Stream.value(response.bodyBytes);
     return Content(type, body);
   }

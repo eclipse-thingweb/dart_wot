@@ -211,12 +211,8 @@ class _CoapRequest {
   }
 
   void _applyFormInformation() {
-    if (_form.contentType != null) {
-      _coapRequest.accept = coap.CoapMediaType.parse(_form.contentType);
-    } else {
-      // TODO(JKRhb): Should a default accept option be set?
-      _coapRequest.accept = coap.CoapMediaType.applicationJson;
-    }
+    // TODO(JKRhb): Should the accept option be the form's contentType?
+    _coapRequest.accept = coap.CoapMediaType.parse(_form.contentType);
   }
 }
 
