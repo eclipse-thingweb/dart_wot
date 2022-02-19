@@ -279,18 +279,23 @@ class CoapClient extends ProtocolClient {
     void Function(Exception error)? error,
     required void Function() complete,
   }) async {
-    OperationType operationType;
-    final op = form.op ?? ["observeproperty"];
-    // TODO(JKRhb): Create separate function for this.
-    if (op.contains("subscribeevent")) {
-      operationType = OperationType.subscribeevent;
-    } else {
-      operationType = OperationType.observeproperty;
-    }
+    final OperationType operationType = _determineSubscribeOperationType(form);
 
     final request = _createRequest(form, operationType);
 
     return await request.startObservation(next, complete);
+  }
+
+  static OperationType _determineSubscribeOperationType(Form form) {
+    final op = form.op ?? [];
+    if (op.contains("subscribeevent")) {
+      return OperationType.subscribeevent;
+    } else if (op.contains("observeproperty")) {
+      return OperationType.observeproperty;
+    }
+
+    throw ArgumentError("Subscription form contained neither 'subscribeevent'"
+        "nor 'observeproperty' operation type.");
   }
 
   @override
@@ -326,7 +331,6 @@ _Subprotocol? _determineSubprotocol(Form form, OperationType operationType) {
 }
 
 CoapRequestMethod _requestMethodFromOperationType(OperationType operationType) {
-  // TODO(JKRhb): Handle observe/subscribe case
   switch (operationType) {
     case OperationType.readproperty:
     case OperationType.readmultipleproperties:
@@ -338,11 +342,9 @@ CoapRequestMethod _requestMethodFromOperationType(OperationType operationType) {
     case OperationType.invokeaction:
       return CoapRequestMethod.post;
     case OperationType.observeproperty:
-      return CoapRequestMethod.get;
     case OperationType.unobserveproperty:
       return CoapRequestMethod.get;
     case OperationType.subscribeevent:
-      return CoapRequestMethod.get;
     case OperationType.unsubscribeevent:
       return CoapRequestMethod.get;
   }
