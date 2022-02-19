@@ -301,7 +301,6 @@ class CoapClient extends ProtocolClient {
   @override
   Future<void> start() async {
     // Do nothing
-    // TODO(JKRhb): Check if this enough.
   }
 
   @override

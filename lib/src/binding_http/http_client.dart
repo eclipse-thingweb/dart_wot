@@ -126,13 +126,11 @@ class HttpClient extends ProtocolClient {
   @override
   Future<void> start() async {
     // Do nothing
-    // TODO(JKRhb): Check if this enough.
   }
 
   @override
   Future<void> stop() async {
     // Do nothing
-    // TODO(JKRhb): Check if this enough.
   }
 
   @override
