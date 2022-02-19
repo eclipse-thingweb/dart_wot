@@ -4,7 +4,6 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../definitions/thing_description.dart';
 import 'interaction_output.dart';
 
 /// The (optional) input for an interaction.
