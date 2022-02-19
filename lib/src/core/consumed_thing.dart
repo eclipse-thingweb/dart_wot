@@ -110,8 +110,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
           'ConsumedThing "$title" has no links for this interaction');
     }
 
-    ProtocolClient client;
-    Form foundForm;
+    final ProtocolClient client;
+    final Form foundForm;
 
     final int? formIndex = options?.formIndex;
 
