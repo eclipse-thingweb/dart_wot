@@ -137,7 +137,8 @@ class _CoapRequest {
       case CoapRequestMethod.delete:
         return await _coapClient.delete();
       default:
-        throw UnimplementedError();
+        throw UnimplementedError(
+            "CoAP request method $_requestMethod is not supported yet.");
     }
   }
 
