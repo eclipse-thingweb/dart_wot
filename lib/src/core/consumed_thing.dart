@@ -102,16 +102,13 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
   _ClientAndForm _getClientFor(List<Form> forms, OperationType operationType,
       _AffordanceType affordanceType, InteractionOptions? options) {
-    // TODO(JKRhb): This method is mostly taken from node-wot and has to be
-    //              reworked.
-
     if (forms.isEmpty) {
       throw ArgumentError(
           'ConsumedThing "$title" has no links for this interaction');
     }
 
-    ProtocolClient client;
-    Form foundForm;
+    final ProtocolClient client;
+    final Form foundForm;
 
     final int? formIndex = options?.formIndex;
 
@@ -261,14 +258,18 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     DataSchema? dataSchema,
     SubscriptionType subscriptionType,
   ) async {
-    OperationType operationType;
-    _AffordanceType affordanceType;
+    final OperationType operationType;
+    final _AffordanceType affordanceType;
+    final Map<String, Subscription> subscriptions;
+
     if (subscriptionType == SubscriptionType.property) {
       operationType = OperationType.observeproperty;
       affordanceType = _AffordanceType.property;
+      subscriptions = _observedProperties;
     } else {
       operationType = OperationType.subscribeevent;
       affordanceType = _AffordanceType.event;
+      subscriptions = _subscribedEvents;
     }
 
     final clientAndForm = _getClientFor(
@@ -278,29 +279,23 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final client = clientAndForm.client;
 
     final subscription = await client.subscribeResource(
-        form, () => removeSubscription(affordanceName, subscriptionType),
-        (content) {
-      try {
-        listener(InteractionOutput(
-            content, servient.contentSerdes, form, dataSchema));
-      } on Exception {
-        // Exception is handled by onError function. Not sure if this is the
-        // best design, though.
-        // TODO(JKRhb): Check if this try-catch-block can be removed.
-      }
-    }, (error) {
-      if (onError != null) {
-        onError(error);
-      }
-    }, () {
-      // TODO(JKRhb): current scripting api cannot handle this (apparently)
-    });
-
+      form,
+      next: (content) => listener(
+          InteractionOutput(content, servient.contentSerdes, form, dataSchema)),
+      error: (error) {
+        if (onError != null) {
+          onError(error);
+        }
+      },
+      complete: () => removeSubscription(affordanceName, subscriptionType),
+    );
     if (subscriptionType == SubscriptionType.property) {
       _observedProperties[affordanceName] = subscription;
     } else {
       _subscribedEvents[affordanceName] = subscription;
     }
+
+    subscriptions[affordanceName] = subscription;
 
     return subscription;
   }
@@ -374,17 +369,21 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       Form form, _AffordanceType affordanceType, OperationType operationType) {
     List<String>? operationTypes = form.op;
 
-    // TODO(JKRhb): Replace with constants or stringified OperationType enum
-    //              values.
     switch (affordanceType) {
       case _AffordanceType.property:
-        operationTypes ??= ["readproperty", "writeproperty"];
+        operationTypes ??= [
+          OperationType.readproperty.toShortString(),
+          OperationType.writeproperty.toShortString()
+        ];
         break;
       case _AffordanceType.action:
-        operationTypes ??= ["invokeaction"];
+        operationTypes ??= [OperationType.invokeaction.toShortString()];
         break;
       case _AffordanceType.event:
-        operationTypes ??= ["subscribeevent", "unsubscribeevent"];
+        operationTypes ??= [
+          OperationType.subscribeevent.toShortString(),
+          OperationType.unsubscribeevent.toShortString()
+        ];
         break;
     }
 

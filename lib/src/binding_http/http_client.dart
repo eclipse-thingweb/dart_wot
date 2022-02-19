@@ -101,9 +101,7 @@ class HttpClient extends ProtocolClient {
   }
 
   static Content _contentFromResponse(Form form, http.Response response) {
-    final type = response.headers["Content-Type"] ??
-        form.contentType ??
-        "application/octet-stream";
+    final type = response.headers["Content-Type"] ?? form.contentType;
     final body = Stream.value(response.bodyBytes);
     return Content(type, body);
   }
@@ -126,13 +124,11 @@ class HttpClient extends ProtocolClient {
   @override
   Future<void> start() async {
     // Do nothing
-    // TODO(JKRhb): Check if this enough.
   }
 
   @override
   Future<void> stop() async {
     // Do nothing
-    // TODO(JKRhb): Check if this enough.
   }
 
   @override
@@ -142,13 +138,11 @@ class HttpClient extends ProtocolClient {
   }
 
   @override
-  Future<Subscription> subscribeResource(
-      Form form,
-      void Function() deregisterObservation,
-      void Function(Content content) next,
+  Future<Subscription> subscribeResource(Form form,
+      {required void Function(Content content) next,
       void Function(Exception error)? error,
-      void Function()? complete) async {
-    // TODO: implement subscribeResource
+      required void Function() complete}) async {
+    // TODO(JKRhb): implement subscribeResource
     throw UnimplementedError();
   }
 

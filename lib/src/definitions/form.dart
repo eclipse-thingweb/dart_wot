@@ -22,7 +22,7 @@ class Form {
   List<String>? op;
 
   /// The [contentType] supported by this [Form].
-  String? contentType;
+  String contentType = "application/json";
 
   /// The list of [security] definitions applied to this [Form].
   List<String>? security;
@@ -47,7 +47,7 @@ class Form {
   ///
   /// An [href] has to be provided. A [contentType] is optional.
   Form(this.href,
-      {this.contentType,
+      {this.contentType = "application/json",
       this.subprotocol,
       this.security,
       this.scopes,

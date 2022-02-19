@@ -29,10 +29,8 @@ abstract class ProtocolClient {
 
   /// Requests the client to perform a `subscribeproperty` operation on a
   /// [form].
-  Future<Subscription> subscribeResource(
-      Form form,
-      void Function() deregisterObservation,
-      void Function(Content content) next,
+  Future<Subscription> subscribeResource(Form form,
+      {required void Function(Content content) next,
       void Function(Exception error)? error,
-      void Function()? complete);
+      required void Function() complete});
 }

@@ -128,7 +128,6 @@ class _CoapRequest {
       case CoapRequestMethod.get:
         return await _coapClient.get();
       case CoapRequestMethod.post:
-        // TODO(JKRhb): Decide how payloads should be handled
         payload ??= "";
         return await _coapClient.post(payload, format);
       case CoapRequestMethod.put:
@@ -137,7 +136,8 @@ class _CoapRequest {
       case CoapRequestMethod.delete:
         return await _coapClient.delete();
       default:
-        throw UnimplementedError();
+        throw UnimplementedError(
+            "CoAP request method $_requestMethod is not supported yet.");
     }
   }
 
@@ -155,8 +155,7 @@ class _CoapRequest {
   }
 
   Future<_CoapSubscription> startObservation(
-      void Function(Content content) next,
-      void Function() deregisterObservation) async {
+      void Function(Content content) next, void Function() complete) async {
     void handleResponse(coap.CoapResponse? response) {
       if (response == null) {
         return;
@@ -177,7 +176,7 @@ class _CoapRequest {
 
     final requestContentType = coap.CoapMediaType.parse(_form.contentType);
     await _makeRequest(null, requestContentType!);
-    return _CoapSubscription(_coapClient, deregisterObservation);
+    return _CoapSubscription(_coapClient, complete);
   }
 
   /// Aborts the request and closes the client.
@@ -212,12 +211,8 @@ class _CoapRequest {
   }
 
   void _applyFormInformation() {
-    if (_form.contentType != null) {
-      _coapRequest.accept = coap.CoapMediaType.parse(_form.contentType);
-    } else {
-      // TODO(JKRhb): Should a default accept option be set?
-      _coapRequest.accept = coap.CoapMediaType.applicationJson;
-    }
+    // TODO(JKRhb): Should the accept option be the form's contentType?
+    _coapRequest.accept = coap.CoapMediaType.parse(_form.contentType);
   }
 }
 
@@ -274,29 +269,33 @@ class CoapClient extends ProtocolClient {
 
   @override
   Future<Subscription> subscribeResource(
-      Form form,
-      void Function() deregisterObservation,
-      void Function(Content content) next,
-      void Function(Exception error)? error,
-      void Function()? complete) async {
-    OperationType operationType;
-    final op = form.op ?? ["observeproperty"];
-    // TODO(JKRhb): Create separate function for this.
-    if (op.contains("subscribeevent")) {
-      operationType = OperationType.subscribeevent;
-    } else {
-      operationType = OperationType.observeproperty;
-    }
+    Form form, {
+    required void Function(Content content) next,
+    void Function(Exception error)? error,
+    required void Function() complete,
+  }) async {
+    final OperationType operationType = _determineSubscribeOperationType(form);
 
     final request = _createRequest(form, operationType);
 
-    return await request.startObservation(next, deregisterObservation);
+    return await request.startObservation(next, complete);
+  }
+
+  static OperationType _determineSubscribeOperationType(Form form) {
+    final op = form.op ?? [];
+    if (op.contains("subscribeevent")) {
+      return OperationType.subscribeevent;
+    } else if (op.contains("observeproperty")) {
+      return OperationType.observeproperty;
+    }
+
+    throw ArgumentError("Subscription form contained neither 'subscribeevent'"
+        "nor 'observeproperty' operation type.");
   }
 
   @override
   Future<void> start() async {
     // Do nothing
-    // TODO(JKRhb): Check if this enough.
   }
 
   @override
@@ -326,7 +325,6 @@ _Subprotocol? _determineSubprotocol(Form form, OperationType operationType) {
 }
 
 CoapRequestMethod _requestMethodFromOperationType(OperationType operationType) {
-  // TODO(JKRhb): Handle observe/subscribe case
   switch (operationType) {
     case OperationType.readproperty:
     case OperationType.readmultipleproperties:
@@ -338,11 +336,9 @@ CoapRequestMethod _requestMethodFromOperationType(OperationType operationType) {
     case OperationType.invokeaction:
       return CoapRequestMethod.post;
     case OperationType.observeproperty:
-      return CoapRequestMethod.get;
     case OperationType.unobserveproperty:
       return CoapRequestMethod.get;
     case OperationType.subscribeevent:
-      return CoapRequestMethod.get;
     case OperationType.unsubscribeevent:
       return CoapRequestMethod.get;
   }
@@ -386,10 +382,9 @@ class _CoapSubscription implements Subscription {
 
   /// Callback used to pass by the servient that is used to signal it that an
   /// observation has been cancelled.
-  final void Function() _deregisterObservation;
+  final void Function() _complete;
 
-  _CoapSubscription(this.coapClient, this._deregisterObservation)
-      : _active = true;
+  _CoapSubscription(this.coapClient, this._complete) : _active = true;
 
   @override
   Future<void> stop([InteractionOptions? options]) async {
@@ -401,6 +396,6 @@ class _CoapSubscription implements Subscription {
     //              approach instead for the time being.
     coapClient.close();
     _active = false;
-    _deregisterObservation();
+    _complete();
   }
 }
