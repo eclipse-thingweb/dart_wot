@@ -372,17 +372,21 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       Form form, _AffordanceType affordanceType, OperationType operationType) {
     List<String>? operationTypes = form.op;
 
-    // TODO(JKRhb): Replace with constants or stringified OperationType enum
-    //              values.
     switch (affordanceType) {
       case _AffordanceType.property:
-        operationTypes ??= ["readproperty", "writeproperty"];
+        operationTypes ??= [
+          OperationType.readproperty.toShortString(),
+          OperationType.writeproperty.toShortString()
+        ];
         break;
       case _AffordanceType.action:
-        operationTypes ??= ["invokeaction"];
+        operationTypes ??= [OperationType.invokeaction.toShortString()];
         break;
       case _AffordanceType.event:
-        operationTypes ??= ["subscribeevent", "unsubscribeevent"];
+        operationTypes ??= [
+          OperationType.subscribeevent.toShortString(),
+          OperationType.unsubscribeevent.toShortString()
+        ];
         break;
     }
 
