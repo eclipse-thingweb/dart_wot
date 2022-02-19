@@ -142,7 +142,7 @@ class HttpClient extends ProtocolClient {
       {required void Function(Content content) next,
       void Function(Exception error)? error,
       required void Function() complete}) async {
-    // TODO: implement subscribeResource
+    // TODO(JKRhb): implement subscribeResource
     throw UnimplementedError();
   }
 

@@ -102,9 +102,6 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
   _ClientAndForm _getClientFor(List<Form> forms, OperationType operationType,
       _AffordanceType affordanceType, InteractionOptions? options) {
-    // TODO(JKRhb): This method is mostly taken from node-wot and has to be
-    //              reworked.
-
     if (forms.isEmpty) {
       throw ArgumentError(
           'ConsumedThing "$title" has no links for this interaction');

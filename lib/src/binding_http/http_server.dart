@@ -34,7 +34,7 @@ class HttpServer extends ProtocolServer {
 
   @override
   Future<void> expose(ExposedThing thing) {
-    // TODO: implement expose
+    // TODO(JKRhb): implement expose
     throw UnimplementedError();
   }
 

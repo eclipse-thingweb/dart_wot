@@ -128,7 +128,6 @@ class _CoapRequest {
       case CoapRequestMethod.get:
         return await _coapClient.get();
       case CoapRequestMethod.post:
-        // TODO(JKRhb): Decide how payloads should be handled
         payload ??= "";
         return await _coapClient.post(payload, format);
       case CoapRequestMethod.put:
