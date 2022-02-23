@@ -1,3 +1,10 @@
+## 0.9.0
+
+- Fixed OAuth2 SecurityScheme and its documentation
+- Refactored ConsumedThing class
+- Reworked subscribeResource API
+- Set default contentType of Forms to application/json
+
 ## 0.8.0
 
 - feat(discovery)!: re-align discovery API with current Scripting API specification
