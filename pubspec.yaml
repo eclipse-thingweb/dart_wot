@@ -14,7 +14,7 @@ dev_dependencies:
 
 dependencies:
   cbor: ^4.1.0
-  coap: ^3.3.0
+  coap: ^3.4.0
   http: ^0.13.4
   http_parser: ^4.0.0
   typed_data: ^1.3.0
