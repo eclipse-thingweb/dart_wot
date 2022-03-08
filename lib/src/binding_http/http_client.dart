@@ -57,6 +57,24 @@ typedef _OtherHttpMethod = Future<Response> Function(Uri uri,
     {Map<String, String>? headers, Object? body, Encoding? encoding});
 
 /// A [ProtocolClient] for the Hypertext Transfer Protocol (HTTP).
+///
+/// Supports both HTTP and HTTPS as well as the Basic ([RFC 7617]),
+/// Digest ([RFC 7616]), and Bearer Token ([RFC 6750]) Security Schemes.
+///
+/// At most one of the aforementioned Security Schemes should be defined for
+/// any [Form] (as there is only one possible value for the `Authorization`
+/// header that is used for these Security Schemes).  If multiple Schemes are
+/// defined in a [Form], then Bearer > Digest > Basic is followed as an order of
+/// priority. The definition of multiple Security Schemes will be reworked in
+/// the feature using the newly introduced [`ComboSecurityScheme`], which is
+/// currently still at risk.
+///
+/// The use of Proxies is not supported yet.
+///
+/// [RFC 7617]: https://datatracker.ietf.org/doc/html/rfc7617
+/// [RFC 7616]: https://datatracker.ietf.org/doc/html/rfc7616
+/// [RFC 6750]: https://datatracker.ietf.org/doc/html/rfc6750
+/// [`ComboSecurityScheme`]: https://w3c.github.io/wot-thing-description/#combosecurityscheme
 class HttpClient extends ProtocolClient {
   /// An (optional) custom [HttpConfig] which overrides the default values.
   final HttpConfig? _httpConfig;
