@@ -141,6 +141,11 @@ class Servient {
   }
 
   /// Adds new [credentials] to this [Servient].
+  ///
+  /// The [definitionKey] must refer to an entry of the `securityDefinitions`
+  /// map of a TD, while the [credentials] have to match the type of the
+  /// Security Scheme they are being assigned to. Otherwise they will be
+  /// ignored.
   void addCredentials(
       String id, String definitionKey, Credentials credentials) {
     final currentCredentials = _credentialsStore[id];
