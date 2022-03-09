@@ -5,12 +5,13 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import '../credentials/bearer_credentials.dart';
+import 'credentials_scheme.dart';
 import 'helper_functions.dart';
 import 'security_scheme.dart';
 
 /// Bearer Token security configuration identified by the Vocabulary Term
 /// `bearer`.
-class BearerSecurityScheme extends SecurityScheme {
+class BearerSecurityScheme extends SecurityScheme implements CredentialsScheme {
   @override
   String get scheme => "bearer";
 

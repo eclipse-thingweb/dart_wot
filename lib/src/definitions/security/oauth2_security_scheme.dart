@@ -5,13 +5,14 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import '../credentials/oauth2_credentials.dart';
+import 'credentials_scheme.dart';
 import 'helper_functions.dart';
 import 'security_scheme.dart';
 
 /// OAuth 2.0 authentication security configuration for systems conformant with
 /// RFC 6749, RFC 8252 and (for the device flow) RFC 8628, identified by the
 /// Vocabulary Term `oauth2`.
-class OAuth2SecurityScheme extends SecurityScheme {
+class OAuth2SecurityScheme extends SecurityScheme implements CredentialsScheme {
   @override
   String get scheme => "oauth2";
 
