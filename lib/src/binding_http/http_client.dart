@@ -6,7 +6,7 @@
 
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 import '../core/content.dart';
 import '../core/operation_type.dart';
@@ -43,29 +43,29 @@ class HttpClient extends ProtocolClient {
   /// Creates a new [HttpClient] based on an optional [HttpConfig].
   HttpClient([this._httpConfig]);
 
-  Future<http.Response> _createRequest(
+  Future<Response> _createRequest(
       Form form, OperationType operationType, Object? payload) async {
     final requestMethod = _getRequestMethod(form, operationType);
 
-    final Future<http.Response> response;
+    final Future<Response> response;
     final Uri uri = Uri.parse(form.href);
     final headers = _getHeadersFromForm(form);
     _applySecurityToHeader(form, headers);
     switch (requestMethod) {
       case HttpRequestMethod.get:
-        response = http.get(uri, headers: headers);
+        response = get(uri, headers: headers);
         break;
       case HttpRequestMethod.post:
-        response = http.post(uri, headers: headers, body: payload);
+        response = post(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.delete:
-        response = http.delete(uri, headers: headers, body: payload);
+        response = delete(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.put:
-        response = http.put(uri, headers: headers, body: payload);
+        response = put(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.patch:
-        response = http.patch(uri, headers: headers, body: payload);
+        response = patch(uri, headers: headers, body: payload);
         break;
     }
     return response;
@@ -100,7 +100,7 @@ class HttpClient extends ProtocolClient {
         .convert(inputBuffer.asUint8List().toList(growable: false));
   }
 
-  static Content _contentFromResponse(Form form, http.Response response) {
+  static Content _contentFromResponse(Form form, Response response) {
     final type = response.headers["Content-Type"] ?? form.contentType;
     final body = Stream.value(response.bodyBytes);
     return Content(type, body);
