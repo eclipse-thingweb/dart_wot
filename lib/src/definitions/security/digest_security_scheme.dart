@@ -5,12 +5,13 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import '../credentials/digest_credentials.dart';
+import 'credentials_scheme.dart';
 import 'helper_functions.dart';
 import 'security_scheme.dart';
 
 /// Digest Access Authentication security configuration identified by the
 /// Vocabulary Term `digest`.
-class DigestSecurityScheme extends SecurityScheme {
+class DigestSecurityScheme extends SecurityScheme implements CredentialsScheme {
   @override
   String get scheme => "digest";
 

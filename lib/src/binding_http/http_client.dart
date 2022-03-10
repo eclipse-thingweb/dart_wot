@@ -6,16 +6,25 @@
 
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
+import 'package:http_auth/http_auth.dart';
 
 import '../core/content.dart';
 import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../definitions/credentials/basic_credentials.dart';
+import '../definitions/credentials/bearer_credentials.dart';
+import '../definitions/credentials/credentials.dart';
+import '../definitions/credentials/digest_credentials.dart';
 import '../definitions/form.dart';
 import '../definitions/security/basic_security_scheme.dart';
+import '../definitions/security/bearer_security_scheme.dart';
+import '../definitions/security/credentials_scheme.dart';
+import '../definitions/security/digest_security_scheme.dart';
 import '../scripting_api/subscription.dart';
 import 'http_config.dart';
+
+const _authorizationHeader = "Authorization";
 
 /// Defines the available HTTP request methods.
 enum HttpRequestMethod {
@@ -35,7 +44,37 @@ enum HttpRequestMethod {
   patch,
 }
 
+/// Signature of Dart's method used for HTTP GET requests.
+///
+/// Does not have a `body` or `encoding` parameter, in contrast to
+/// [_OtherHttpMethod].
+typedef _GetMethod = Future<Response> Function(Uri uri,
+    {Map<String, String> headers});
+
+/// Signature of Dart's methods used for HTTP POST, DELETE, PATCH, or PUT
+/// requests.
+typedef _OtherHttpMethod = Future<Response> Function(Uri uri,
+    {Map<String, String>? headers, Object? body, Encoding? encoding});
+
 /// A [ProtocolClient] for the Hypertext Transfer Protocol (HTTP).
+///
+/// Supports both HTTP and HTTPS as well as the Basic ([RFC 7617]),
+/// Digest ([RFC 7616]), and Bearer Token ([RFC 6750]) Security Schemes.
+///
+/// At most one of the aforementioned Security Schemes should be defined for
+/// any [Form] (as there is only one possible value for the `Authorization`
+/// header that is used for these Security Schemes).  If multiple Schemes are
+/// defined in a [Form], then Bearer > Digest > Basic is followed as an order of
+/// priority. The definition of multiple Security Schemes will be reworked in
+/// the feature using the newly introduced [`ComboSecurityScheme`], which is
+/// currently still at risk.
+///
+/// The use of Proxies is not supported yet.
+///
+/// [RFC 7617]: https://datatracker.ietf.org/doc/html/rfc7617
+/// [RFC 7616]: https://datatracker.ietf.org/doc/html/rfc7616
+/// [RFC 6750]: https://datatracker.ietf.org/doc/html/rfc6750
+/// [`ComboSecurityScheme`]: https://w3c.github.io/wot-thing-description/#combosecurityscheme
 class HttpClient extends ProtocolClient {
   /// An (optional) custom [HttpConfig] which overrides the default values.
   final HttpConfig? _httpConfig;
@@ -43,32 +82,59 @@ class HttpClient extends ProtocolClient {
   /// Creates a new [HttpClient] based on an optional [HttpConfig].
   HttpClient([this._httpConfig]);
 
-  Future<http.Response> _createRequest(
+  Future<Response> _createRequest(
       Form form, OperationType operationType, Object? payload) async {
     final requestMethod = _getRequestMethod(form, operationType);
 
-    final Future<http.Response> response;
+    final Future<Response> response;
     final Uri uri = Uri.parse(form.href);
     final headers = _getHeadersFromForm(form);
     _applySecurityToHeader(form, headers);
+    final BasicCredentials? basicCredentials =
+        _credentialsFromForm<BasicSecurityScheme>(form) as BasicCredentials?;
+    final DigestCredentials? digestCredentials =
+        _credentialsFromForm<DigestSecurityScheme>(form) as DigestCredentials?;
     switch (requestMethod) {
       case HttpRequestMethod.get:
-        response = http.get(uri, headers: headers);
+        final getMethod =
+            _determineGetMethod(headers, digestCredentials, basicCredentials);
+        response = getMethod(uri, headers: headers);
         break;
       case HttpRequestMethod.post:
-        response = http.post(uri, headers: headers, body: payload);
+        final postMethod = _determineHttpMethod(
+            headers, requestMethod, digestCredentials, basicCredentials);
+        response = postMethod(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.delete:
-        response = http.delete(uri, headers: headers, body: payload);
+        final deleteMethod = _determineHttpMethod(
+            headers, requestMethod, digestCredentials, basicCredentials);
+        response = deleteMethod(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.put:
-        response = http.put(uri, headers: headers, body: payload);
+        final putMethod = _determineHttpMethod(
+            headers, requestMethod, digestCredentials, basicCredentials);
+        response = putMethod(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.patch:
-        response = http.patch(uri, headers: headers, body: payload);
+        final patchMethod = _determineHttpMethod(
+            headers, requestMethod, digestCredentials, basicCredentials);
+        response = patchMethod(uri, headers: headers, body: payload);
         break;
     }
     return response;
+  }
+
+  /// Selects the first instance of defined [Credentials] from a [form].
+  static Credentials? _credentialsFromForm<T extends CredentialsScheme>(
+      Form form) {
+    final securityScheme = form.securityDefinitions.values
+        .whereType<T>()
+        .where((element) => element.credentials != null);
+    if (securityScheme.isNotEmpty) {
+      return securityScheme.first.credentials;
+    }
+
+    return null;
   }
 
   static Map<String, String> _getHeadersFromForm(Form form) {
@@ -100,7 +166,7 @@ class HttpClient extends ProtocolClient {
         .convert(inputBuffer.asUint8List().toList(growable: false));
   }
 
-  static Content _contentFromResponse(Form form, http.Response response) {
+  static Content _contentFromResponse(Form form, Response response) {
     final type = response.headers["Content-Type"] ?? form.contentType;
     final body = Stream.value(response.bodyBytes);
     return Content(type, body);
@@ -147,27 +213,69 @@ class HttpClient extends ProtocolClient {
   }
 
   void _applySecurityToHeader(Form form, Map<String, String> headers) {
-    final securityDefinitions = form.securityDefinitions.values.toList();
-    for (final securityDefinition in securityDefinitions) {
-      if (securityDefinition is BasicSecurityScheme) {
-        if (securityDefinition.in_ != "header") {
-          continue;
-        }
-        final credentials = securityDefinition.credentials;
-        if (credentials is BasicCredentials) {
-          _applyBasicSecurityToHeader(headers, credentials);
-        }
-      }
+    final BearerCredentials? bearerCredentials =
+        _credentialsFromForm<BearerSecurityScheme>(form) as BearerCredentials?;
+
+    if (bearerCredentials != null) {
+      headers[_authorizationHeader] = "Bearer ${bearerCredentials.token}";
     }
   }
 
-  static void _applyBasicSecurityToHeader(
-      Map<String, String> headers, BasicCredentials credentials) {
-    final username = credentials.username;
-    final password = credentials.password;
-    final basicAuth =
-        'Basic ${base64Encode(utf8.encode('$username:$password'))}';
-    headers["authorization"] = basicAuth;
+  static _GetMethod _determineGetMethod(
+      Map<String, String> headers,
+      DigestCredentials? digestCredentials,
+      BasicCredentials? basicCredentials) {
+    if (headers.containsKey(_authorizationHeader)) {
+      // Bearer Security has already been defined. Therefore, we use the get
+      // method of a "regular"  HTTP client.
+      return get;
+    }
+
+    if (digestCredentials != null) {
+      return DigestAuthClient(
+              digestCredentials.username, digestCredentials.password)
+          .get;
+    } else if (basicCredentials != null) {
+      return BasicAuthClient(
+              basicCredentials.username, basicCredentials.password)
+          .get;
+    } else {
+      return get;
+    }
+  }
+
+  static _OtherHttpMethod _determineHttpMethod(
+      Map<String, String> headers,
+      HttpRequestMethod requestMethod,
+      DigestCredentials? digestCredentials,
+      BasicCredentials? basicCredentials) {
+    DigestAuthClient? digestClient;
+    BasicAuthClient? basicClient;
+
+    if (!headers.containsKey(_authorizationHeader)) {
+      // Bearer Security has not been defined, yet. Therefore, we determine if
+      // we should use an HTTP client for Digest or Basic Authentication.
+      if (digestCredentials != null) {
+        digestClient = DigestAuthClient(
+            digestCredentials.username, digestCredentials.password);
+      } else if (basicCredentials != null) {
+        basicClient = BasicAuthClient(
+            basicCredentials.username, basicCredentials.password);
+      }
+    }
+
+    switch (requestMethod) {
+      case HttpRequestMethod.post:
+        return digestClient?.post ?? basicClient?.post ?? post;
+      case HttpRequestMethod.delete:
+        return digestClient?.delete ?? basicClient?.delete ?? delete;
+      case HttpRequestMethod.patch:
+        return digestClient?.patch ?? basicClient?.patch ?? patch;
+      case HttpRequestMethod.put:
+        return digestClient?.put ?? basicClient?.put ?? put;
+      default:
+        throw ArgumentError("Invalid HTTP method specified.");
+    }
   }
 }
 
