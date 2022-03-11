@@ -100,8 +100,12 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     }
   }
 
-  _ClientAndForm _getClientFor(List<Form> forms, OperationType operationType,
-      _AffordanceType affordanceType, InteractionOptions? options) {
+  _ClientAndForm _getClientFor(
+      List<Form> forms,
+      OperationType operationType,
+      _AffordanceType affordanceType,
+      InteractionOptions? options,
+      InteractionAffordance interactionAffordance) {
     if (forms.isEmpty) {
       throw ArgumentError(
           'ConsumedThing "$title" has no links for this interaction');
@@ -150,8 +154,12 @@ class ConsumedThing implements scripting_api.ConsumedThing {
           'ConsumedThing $title does not have property $propertyName');
     }
 
-    final clientAndForm = _getClientFor(property.augmentedForms,
-        OperationType.readproperty, _AffordanceType.property, options);
+    final clientAndForm = _getClientFor(
+        property.augmentedForms,
+        OperationType.readproperty,
+        _AffordanceType.property,
+        options,
+        property);
 
     final form = clientAndForm.form;
     final client = clientAndForm.client;
@@ -171,8 +179,12 @@ class ConsumedThing implements scripting_api.ConsumedThing {
           'ConsumedThing $title does not have property $propertyName');
     }
 
-    final clientAndForm = _getClientFor(property.augmentedForms,
-        OperationType.writeproperty, _AffordanceType.property, options);
+    final clientAndForm = _getClientFor(
+        property.augmentedForms,
+        OperationType.writeproperty,
+        _AffordanceType.property,
+        options,
+        property);
 
     final form = clientAndForm.form; // TODO(JKRhb): Handle URI variables
     final client = clientAndForm.client;
@@ -192,7 +204,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     }
 
     final clientAndForm = _getClientFor(action.augmentedForms,
-        OperationType.invokeaction, _AffordanceType.action, options);
+        OperationType.invokeaction, _AffordanceType.action, options, action);
 
     final form = clientAndForm.form; // TODO(JKRhb): Handle URI variables
     final client = clientAndForm.client;
@@ -272,8 +284,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       subscriptions = _subscribedEvents;
     }
 
-    final clientAndForm = _getClientFor(
-        affordance.augmentedForms, operationType, affordanceType, options);
+    final clientAndForm = _getClientFor(affordance.augmentedForms,
+        operationType, affordanceType, options, affordance);
 
     final form = clientAndForm.form; // TODO(JKRhb): Handle URI variables
     final client = clientAndForm.client;
