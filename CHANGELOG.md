@@ -1,3 +1,8 @@
+## 0.10.0
+
+- HTTP-Binding: Added support for Digest and Bearer Security
+- Improved Documentation
+
 ## 0.9.0
 
 - Fixed OAuth2 SecurityScheme and its documentation
