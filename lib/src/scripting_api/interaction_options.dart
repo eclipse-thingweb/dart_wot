@@ -16,9 +16,12 @@ class InteractionOptions {
   int? formIndex;
 
   /// Represents the URI template variables to be used with the interaction.
-  Object? uriVariables;
+  Map<String, Object>? uriVariables;
 
   /// Represents additional opaque data that needs to be passed to the
   /// interaction.
   Object? data;
+
+  /// Constructor
+  InteractionOptions({this.formIndex, this.uriVariables, this.data});
 }
