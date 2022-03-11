@@ -23,6 +23,11 @@ abstract class InteractionAffordance {
   /// The basic [forms] which can be used for interacting with this resource.
   List<Form> forms;
 
+  /// URI template variables as defined in [RFC 6570].
+  ///
+  /// [RFC 6570]: http://tools.ietf.org/html/rfc6570
+  Map<String, Object?>? uriVariables;
+
   /// A list of [forms] augmented with additional information.
   ///
   /// This information includes base addresses and security definitions.
@@ -70,6 +75,13 @@ abstract class InteractionAffordance {
     }
 
     descriptions = _parseMultilangString(json, "descriptions");
+
+    if (json["uriVariables"] != null) {
+      final dynamic jsonUriVariables = json["uriVariables"];
+      if (jsonUriVariables is Map<String, dynamic>) {
+        uriVariables = jsonUriVariables;
+      }
+    }
   }
 
   /// Creates a new [InteractionAffordance]. Accepts a [List] of [forms].
