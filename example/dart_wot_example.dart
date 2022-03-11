@@ -109,7 +109,7 @@ Future<void> main() async {
   final value1 = await status.value();
   print(value1);
   await consumedThing.invokeAction("toggle", null, null);
-  final status2 = await consumedThing.readProperty("status", null);
+  final status2 = await consumedThing.readProperty("differentStatus", null);
   final value2 = await status2.value();
   print(value2);
 
