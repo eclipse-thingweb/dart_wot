@@ -202,4 +202,66 @@ void main() {
       expect((oauth2Sc).flow, "client");
     });
   });
+
+  test('Use of URI Template Variables', () async {
+    final thingDescriptionJson = '''
+      {
+        "@context": ["http://www.w3.org/ns/td"],
+        "title": "Test Thing",
+        "base": "https://httpbin.org",
+        "securityDefinitions": {
+          "nosec_sc": {
+            "scheme": "nosec"
+          }
+        },
+        "security": "nosec_sc",
+        "properties": {
+          "status": {
+            "uriVariables": {
+              "value": {
+                "type": "string"
+              }
+            },
+            "forms": [
+              {
+                "href": "/base64/{value}",
+                "contentType": "text/html"
+              }
+            ]
+          },
+          "status2": {
+            "uriVariables": {
+              "value": {
+                "type": "integer"
+              }
+            },
+            "forms": [
+              {
+                "href": "/base64/{value}"
+              }
+            ]
+          }
+        }
+      }
+      ''';
+
+    final parsedTd = ThingDescription(thingDescriptionJson);
+
+    final servient = Servient()..addClientFactory(HttpClientFactory());
+    final wot = await servient.start();
+
+    final uriVariables = {"value": "SFRUUEJJTiBpcyBhd2Vzb21l"};
+    final interactionOptions = InteractionOptions(uriVariables: uriVariables);
+
+    final consumedThing = await wot.consume(parsedTd);
+    final result =
+        await consumedThing.readProperty("status", interactionOptions);
+    final value = await result.value();
+    expect(value, "HTTPBIN is awesome");
+
+    // status2 expects an integer instead of a String and throws an error if the
+    // same value is provided as an input
+    expect(consumedThing.readProperty("status2", interactionOptions),
+        throwsA(TypeMatcher<ArgumentError>()));
+  });
 }
