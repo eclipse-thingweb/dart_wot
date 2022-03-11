@@ -4,6 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:json_schema2/json_schema2.dart';
+import 'package:uri/uri.dart';
+
 import '../../scripting_api.dart' as scripting_api;
 import '../../scripting_api.dart' hide ConsumedThing, InteractionOutput;
 import '../definitions/credentials/apikey_credentials.dart';
@@ -28,6 +31,18 @@ import 'interaction_output.dart';
 import 'operation_type.dart';
 import 'protocol_interfaces/protocol_client.dart';
 import 'servient.dart';
+
+/// This [Exception] is thrown when [URI variables] are being used in the [Form]
+/// of a TD but no (valid) values were provided.
+///
+/// [URI variables]: https://www.w3.org/TR/wot-thing-description11/#form-uriVariables
+class UriVariableException implements Exception {
+  /// The error [message].
+  final String message;
+
+  /// Constructor.
+  UriVariableException(this.message);
+}
 
 enum _AffordanceType {
   action,
@@ -141,7 +156,10 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       client = servient.clientFor(scheme);
     }
 
-    return _ClientAndForm(client, foundForm);
+    final form = foundForm.copy()
+      ..href = _resolveUriVariables(interactionAffordance, foundForm, options);
+
+    return _ClientAndForm(client, form);
   }
 
   @override
@@ -186,11 +204,97 @@ class ConsumedThing implements scripting_api.ConsumedThing {
         options,
         property);
 
-    final form = clientAndForm.form; // TODO(JKRhb): Handle URI variables
+    final form = clientAndForm.form;
     final client = clientAndForm.client;
     final content = servient.contentSerdes
         .valueToContent(interactionInput, property, form.contentType);
     await client.writeResource(form, content);
+  }
+
+  void _validateUriVariables(
+      List<String> hrefUriVariables,
+      Map<String, Object?> affordanceUriVariables,
+      Map<String, Object?> uriVariables) {
+    // TODO(JKRhb): Handle global uriVariables
+
+    final missingTdDefinitions =
+        hrefUriVariables.where((element) => !uriVariables.containsKey(element));
+
+    if (missingTdDefinitions.isNotEmpty) {
+      throw UriVariableException("$missingTdDefinitions do not have defined "
+          "uriVariables in the TD");
+    }
+
+    final missingUserInput = hrefUriVariables
+        .where((element) => !affordanceUriVariables.containsKey(element));
+
+    if (missingUserInput.isNotEmpty) {
+      throw UriVariableException("$missingUserInput did not have defined "
+          "Values in the provided InteractionOptions.");
+    }
+
+    // We now assert that all user provided values comply to the Schema
+    // definition in the TD.
+    for (final affordanceUriVariable in affordanceUriVariables.entries) {
+      final key = affordanceUriVariable.key;
+      final value = affordanceUriVariable.value;
+
+      // TODO(JKRhb): Replace with a Draft 7 validator once it is available
+      //              (the original json_schema library which supports Draft 7
+      //              does not support sound null safety, yet, and can therefore
+      //              not be used. json_schema2, on the other hand, only
+      //              supports Draft 6.)
+      final schema = JsonSchema.createSchema(value);
+      final valid = schema.validate(uriVariables[key]);
+
+      if (!valid) {
+        throw ArgumentError("Invalid type for URI variable $key");
+      }
+    }
+  }
+
+  List<String> _filterUriVariables(String href) {
+    final regex = RegExp(r"{[?+#./;&]?([^}]*)}");
+    return regex
+        .allMatches(Uri.decodeFull(href))
+        .map((e) => e.group(1))
+        .whereType<String>()
+        .toList();
+  }
+
+  String _resolveUriVariables(InteractionAffordance interactionAffordance,
+      Form form, InteractionOptions? options) {
+    final hrefUriVariables = _filterUriVariables(form.href);
+    final optionUriVariables = options?.uriVariables;
+    final affordanceUriVariables = interactionAffordance.uriVariables;
+
+    if (hrefUriVariables.isEmpty) {
+      // The href uses no uriVariables, therefore we can abort all further
+      // checks.
+      return form.href;
+    }
+
+    if (affordanceUriVariables == null) {
+      throw UriVariableException("The Form href ${form.href} contains URI "
+          "variables but the TD does not provide a uriVariables definition.");
+    }
+
+    if (optionUriVariables == null) {
+      throw ArgumentError("The Form href ${form.href} contains URI variables "
+          "but no values were provided as InteractionOptions.");
+    }
+
+    // Perform additional validation
+    _validateUriVariables(
+        hrefUriVariables, affordanceUriVariables, optionUriVariables);
+
+    // As "{" and "}" are "percent encoded" due to Uri.parse(), we need to
+    // revert the encoding first before we can insert the values.
+    final decodedHref = Uri.decodeFull(form.href);
+
+    // Everything should be okay at this point, we can simply insert the values
+    // and return the result.
+    return UriTemplate(decodedHref).expand(optionUriVariables);
   }
 
   @override
@@ -206,7 +310,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final clientAndForm = _getClientFor(action.augmentedForms,
         OperationType.invokeaction, _AffordanceType.action, options, action);
 
-    final form = clientAndForm.form; // TODO(JKRhb): Handle URI variables
+    final form = clientAndForm.form;
     final client = clientAndForm.client;
     final input = servient.contentSerdes
         .valueToContent(interactionInput, action.input, form.contentType);
@@ -287,7 +391,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final clientAndForm = _getClientFor(affordance.augmentedForms,
         operationType, affordanceType, options, affordance);
 
-    final form = clientAndForm.form; // TODO(JKRhb): Handle URI variables
+    final form = clientAndForm.form;
     final client = clientAndForm.client;
 
     final subscription = await client.subscribeResource(
