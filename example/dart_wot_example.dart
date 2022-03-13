@@ -49,6 +49,18 @@ final thingDescriptionJson = '''
         }
       ]
     },
+    "anotherStatus": {
+            "uriVariables": {
+              "test": {
+                "type": "string"
+              }
+            },
+      "forms": [
+        {
+          "href": "coap://coap.me/query{?test}"
+        }
+      ]
+    },
     "test": {
       "forms": [
         {
@@ -97,9 +109,14 @@ Future<void> main() async {
   final value1 = await status.value();
   print(value1);
   await consumedThing.invokeAction("toggle", null, null);
-  final status2 = await consumedThing.readProperty("status", null);
+  final status2 = await consumedThing.readProperty("differentStatus", null);
   final value2 = await status2.value();
   print(value2);
+
+  final status3 = await consumedThing.readProperty(
+      "anotherStatus", InteractionOptions(uriVariables: {"test": "hi"}));
+  final value3 = await status3.value();
+  print(value3);
 
   Subscription? subscription;
 

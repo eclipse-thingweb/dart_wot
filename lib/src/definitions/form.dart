@@ -138,6 +138,7 @@ class Form {
       ..contentType = contentType
       ..op = op
       ..subprotocol = subprotocol
+      ..securityDefinitions = securityDefinitions
       ..security = security
       ..scopes = scopes
       ..response = response;
