@@ -1,3 +1,9 @@
+## 0.11.0
+
+- Added support for URI template variables
+- Updated dependencies (`cbor` and `coap`)
+- Addressed linting issues
+
 ## 0.10.0
 
 - HTTP-Binding: Added support for Digest and Bearer Security
