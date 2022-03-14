@@ -26,7 +26,7 @@ class HttpClientFactory extends ProtocolClientFactory {
   }
 
   @override
-  ProtocolClient createClient() => HttpClient(httpConfig);
+  ProtocolClient createClient() => HttpClient();
 
   @override
   bool init() {

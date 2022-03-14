@@ -4,8 +4,6 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:io';
-
 import 'package:dart_wot/dart_wot.dart';
 
 final thingDescriptionJson = '''

@@ -16,12 +16,8 @@ class HttpServer extends ProtocolServer {
 
   final int _port;
 
-  final HttpConfig? _httpConfig;
-
-  Map<String, Map<String, Credentials>> _credentials = {};
-
   /// Create a new [HttpServer] from an optional [HttpConfig].
-  HttpServer(this._httpConfig)
+  HttpServer(HttpConfig? _httpConfig)
       // TODO(JKRhb): Check if the scheme should be determined differently.
       : _scheme = _httpConfig?.secure ?? false ? "https" : "http",
         _port = _portFromConfig(_httpConfig);
@@ -45,9 +41,7 @@ class HttpServer extends ProtocolServer {
   String get scheme => _scheme;
 
   @override
-  Future<void> start(Map<String, Map<String, Credentials>> credentials) async {
-    _credentials = credentials;
-  }
+  Future<void> start(Map<String, Map<String, Credentials>> credentials) async {}
 
   @override
   Future<void> stop() async {
