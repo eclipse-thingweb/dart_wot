@@ -36,7 +36,6 @@ To do so, a Thing Description JSON string is first parsed and turned into a
 
 ```dart
 import 'dart:async';
-import 'dart:io';
 
 import 'package:dart_wot/dart_wot.dart';
 
@@ -60,7 +59,7 @@ FutureOr<void> main(List<String> args) async {
       "status": {
         "forms": [
           {
-            "href": "/.well-known/core"
+            "href": "/hello"
           }
         ]
       }
@@ -73,7 +72,6 @@ FutureOr<void> main(List<String> args) async {
   final status = await consumedThing.readProperty("status", null);
   final value = await status.value();
   print(value);
-  exit(0);
 }
 ```
 
