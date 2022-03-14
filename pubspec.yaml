@@ -13,7 +13,7 @@ dev_dependencies:
   dart_code_metrics: ^4.7.0
 
 dependencies:
-  coap: ^3.4.0
+  coap: ^3.5.0
   cbor: ^5.0.0
   http: ^0.13.4
   http_auth: ^1.0.1
