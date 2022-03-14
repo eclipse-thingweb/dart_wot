@@ -22,7 +22,6 @@ import '../definitions/security/bearer_security_scheme.dart';
 import '../definitions/security/credentials_scheme.dart';
 import '../definitions/security/digest_security_scheme.dart';
 import '../scripting_api/subscription.dart';
-import 'http_config.dart';
 
 const _authorizationHeader = "Authorization";
 
@@ -76,11 +75,8 @@ typedef _OtherHttpMethod = Future<Response> Function(Uri uri,
 /// [RFC 6750]: https://datatracker.ietf.org/doc/html/rfc6750
 /// [`ComboSecurityScheme`]: https://w3c.github.io/wot-thing-description/#combosecurityscheme
 class HttpClient extends ProtocolClient {
-  /// An (optional) custom [HttpConfig] which overrides the default values.
-  final HttpConfig? _httpConfig;
-
-  /// Creates a new [HttpClient] based on an optional [HttpConfig].
-  HttpClient([this._httpConfig]);
+  /// Creates a new [HttpClient].
+  HttpClient();
 
   Future<Response> _createRequest(
       Form form, OperationType operationType, Object? payload) async {
@@ -138,7 +134,7 @@ class HttpClient extends ProtocolClient {
   }
 
   static Map<String, String> _getHeadersFromForm(Form form) {
-    final Map<String, String> headers = {};
+    final Map<String, String> headers = {"Content-Type": form.contentType};
 
     final dynamic formHeaders = form.additionalFields["htv:headers"];
     if (formHeaders is List<Map<String, String>>) {
@@ -150,11 +146,6 @@ class HttpClient extends ProtocolClient {
           headers[key] = value;
         }
       }
-    }
-
-    final contentType = form.contentType;
-    if (contentType != null) {
-      headers["Content-Type"] = contentType;
     }
 
     return headers;
