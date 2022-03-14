@@ -1,3 +1,7 @@
+## 0.11.1
+
+- Updated example in README.md
+
 ## 0.11.0
 
 - Added support for URI template variables
