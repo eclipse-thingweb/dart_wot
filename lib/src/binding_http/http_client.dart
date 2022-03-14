@@ -138,6 +138,7 @@ class HttpClient extends ProtocolClient {
   }
 
   static Map<String, String> _getHeadersFromForm(Form form) {
+    final Map<String, String> headers = {"Content-Type": form.contentType};
 
     final dynamic formHeaders = form.additionalFields["htv:headers"];
     if (formHeaders is List<Map<String, String>>) {
