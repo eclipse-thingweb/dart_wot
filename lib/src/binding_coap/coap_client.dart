@@ -124,21 +124,28 @@ class _CoapRequest {
 
   Future<coap.CoapResponse> _makeRequest(String? payload,
       [int format = coap.CoapMediaType.textPlain]) async {
+    final coap.CoapResponse response;
     switch (_requestMethod) {
       case CoapRequestMethod.get:
-        return await _coapClient.get();
+        response = await _coapClient.get();
+        break;
       case CoapRequestMethod.post:
         payload ??= "";
-        return await _coapClient.post(payload, format);
+        response = await _coapClient.post(payload, format);
+        break;
       case CoapRequestMethod.put:
         payload ??= "";
-        return await _coapClient.put(payload, format);
+        response = await _coapClient.put(payload, format);
+        break;
       case CoapRequestMethod.delete:
-        return await _coapClient.delete();
+        response = await _coapClient.delete();
+        break;
       default:
         throw UnimplementedError(
             "CoAP request method $_requestMethod is not supported yet.");
     }
+    _coapClient.close();
+    return response;
   }
 
   // TODO(JKRhb): Revisit name of this method
