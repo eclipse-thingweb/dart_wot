@@ -141,6 +141,4 @@ Future<void> main() async {
 
   print("The title of the fetched TD is ${consumedDiscoveredThing.title}.");
   print("Done!");
-
-  exit(0);
 }
