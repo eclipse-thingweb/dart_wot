@@ -215,13 +215,13 @@ void main() {
           }
         },
         "security": "nosec_sc",
+        "uriVariables": {
+          "value": {
+            "type": "string"
+          }
+        },
         "properties": {
           "status": {
-            "uriVariables": {
-              "value": {
-                "type": "string"
-              }
-            },
             "forms": [
               {
                 "href": "/base64/{value}",
