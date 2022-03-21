@@ -1,3 +1,8 @@
+## 0.12.0
+
+- Added support for global URI Template variables
+- Added JSON Schema validation to the Content Serializer/Deserializer
+
 ## 0.11.1
 
 - Updated example in README.md
