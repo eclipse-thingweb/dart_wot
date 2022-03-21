@@ -1,3 +1,7 @@
+## 0.12.1
+
+- Updated examples
+
 ## 0.12.0
 
 - Added support for global URI Template variables
