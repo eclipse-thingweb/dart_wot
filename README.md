@@ -12,9 +12,15 @@ Protocol (CoAP) and the Hypertext Transfer Protocol (HTTP).
 
 ## Features
 
-You can fetch and consume Thing Descriptions, and read and write properties as well as
-invoking actions offered by a Thing.
-Both exposing and discovering Things is not yet supported but will be added in future versions.
+You can consume Thing Descriptions and interact with a Thing based on its
+exposed Properties, Actions, and Events.
+Discovery support is currently limited to the "direct" method (i. e. fecthing a
+TD using a single URL).
+Exposing Things is not yet supported but will be added in future versions.
+
+Using the Protocol Interfaces in the `core` package, you can add support for
+additional protocols in your own application or library. The main requirement
+for this to work is the existence of a URI scheme for the given protocol.
 
 ## Getting started
 
@@ -80,7 +86,7 @@ A more complex example can be found in the `example` directory.
 ## Additional information
 
 The package will be extended gradually over the upcoming months.
-Support for exposing and discovering Things will be added as well as
+Support for exposing Things will be added as well as
 more protocols (especially `coaps://`) and security schemes.
 
 Contributions are very welcome.
