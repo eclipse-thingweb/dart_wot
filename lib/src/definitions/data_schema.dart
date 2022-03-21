@@ -70,8 +70,12 @@ class DataSchema {
   /// or null.
   String? type;
 
+  /// The original JSON object that was parsed when creating this [DataSchema].
+  Map<String, dynamic>? rawJson;
+
   /// Creates a new [DataSchema] from a [json] object.
   DataSchema.fromJson(Map<String, dynamic> json) {
     parseDataSchemaJson(this, json);
+    rawJson = json;
   }
 }

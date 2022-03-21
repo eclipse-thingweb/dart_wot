@@ -40,6 +40,9 @@ class Property extends InteractionAffordance implements DataSchema {
   @override
   bool? writeOnly;
 
+  @override
+  Map<String, dynamic>? rawJson;
+
   /// Default constructor that creates a [Property] from a [List] of [forms].
   Property(List<Form> forms) : super(forms);
 
@@ -47,5 +50,6 @@ class Property extends InteractionAffordance implements DataSchema {
   Property.fromJson(Map<String, dynamic> json) : super([]) {
     parseAffordanceFields(json);
     parseDataSchemaJson(this, json);
+    rawJson = json;
   }
 }
