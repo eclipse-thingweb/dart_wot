@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:http_parser/http_parser.dart';
+import 'package:json_schema2/json_schema2.dart';
 
 import '../definitions/data_schema.dart';
 import 'codecs/cbor_codec.dart';
@@ -27,6 +28,16 @@ const jsonLdContentType = 'application/ld+json';
 
 /// Defines `application/json` as the default content type.
 const defaultContentType = jsonContentType;
+
+/// Custom [Exception] that is thrown when Serialization or Deserialization
+/// fails.
+class ContentSerdesException implements Exception {
+  /// The error message of this [ContentSerdesException].
+  String? message;
+
+  /// Constructor.
+  ContentSerdesException(this.message);
+}
 
 /// Class providing serializing and deserializing capabilities.
 ///
@@ -151,12 +162,25 @@ class ContentSerdes {
     return _supportedCodecs[codecName];
   }
 
+  void _validateValue(Object? value, DataSchema? dataSchema) {
+    final dataSchemaJson = dataSchema?.rawJson;
+    if (dataSchemaJson == null) {
+      return;
+    }
+    final schema = JsonSchema.createSchema(dataSchemaJson);
+    if (!schema.validate(value)) {
+      throw ContentSerdesException("JSON Schema validation failed.");
+    }
+  }
+
   /// Converts an [Object] to a byte representation based on its [contentType].
   ///
   /// A [dataSchema] can be passed for validating the input [value] before the
   /// conversion.
   Content valueToContent(
       Object? value, DataSchema? dataSchema, String? contentType) {
+    _validateValue(value, dataSchema);
+
     contentType ??= defaultContentType;
 
     final parsedMediaType = MediaType.parse(contentType);
@@ -194,7 +218,9 @@ class ContentSerdes {
 
     final codec = _getCodecFromMediaType(mimeType);
     if (codec != null) {
-      return codec.bytesToValue(bytes, dataSchema, parameters);
+      final value = codec.bytesToValue(bytes, dataSchema, parameters);
+      _validateValue(value, dataSchema);
+      return value;
     } else {
       // TODO(JKRhb): Should unsupported data be returned as a String?
       return utf8.decode(bytes.asUint8List());
