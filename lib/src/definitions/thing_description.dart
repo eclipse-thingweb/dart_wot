@@ -72,6 +72,11 @@ class ThingDescription {
   /// A map of [SecurityScheme]s that can be used for secure communication.
   final Map<String, SecurityScheme> securityDefinitions = {};
 
+  /// URI template variables as defined in [RFC 6570].
+  ///
+  /// [RFC 6570]: http://tools.ietf.org/html/rfc6570
+  Map<String, Object?>? uriVariables;
+
   /// Creates a [ThingDescription] from a [rawThingDescription] JSON [String].
   ThingDescription(this.rawThingDescription) {
     parseThingDescription(rawThingDescription!);
@@ -132,6 +137,10 @@ class ThingDescription {
     final dynamic links = json["links"];
     if (links is List<dynamic>) {
       _parseLinks(links);
+    }
+    final dynamic jsonUriVariables = json["uriVariables"];
+    if (jsonUriVariables is Map<String, dynamic>) {
+      uriVariables = jsonUriVariables;
     }
   }
 

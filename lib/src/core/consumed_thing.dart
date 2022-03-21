@@ -266,7 +266,12 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       Form form, InteractionOptions? options) {
     final hrefUriVariables = _filterUriVariables(form.href);
     final optionUriVariables = options?.uriVariables;
-    final affordanceUriVariables = interactionAffordance.uriVariables;
+
+    // Use global URI variables by default and override them with
+    // affordance-level variables, if any
+    final Map<String, Object?> affordanceUriVariables = {}
+      ..addAll(thingDescription.uriVariables ?? {})
+      ..addAll(interactionAffordance.uriVariables ?? {});
 
     if (hrefUriVariables.isEmpty) {
       // The href uses no uriVariables, therefore we can abort all further
@@ -274,7 +279,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       return form.href;
     }
 
-    if (affordanceUriVariables == null) {
+    if (affordanceUriVariables.isEmpty) {
       throw UriVariableException("The Form href ${form.href} contains URI "
           "variables but the TD does not provide a uriVariables definition.");
     }
