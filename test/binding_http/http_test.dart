@@ -5,12 +5,39 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import 'package:dart_wot/dart_wot.dart';
+import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
+import 'http_test.mocks.dart';
 
+@GenerateMocks([ExposedThing])
 void main() {
   group('HTTP tests', () {
     setUp(() {
       // Additional setup goes here.
+    });
+
+    test("Server tests", () {
+      final defaultServer = HttpServer(null);
+
+      expect(defaultServer.port, 80);
+      expect(defaultServer.scheme, "http");
+
+      expect(() async => await defaultServer.start({}),
+          throwsA(TypeMatcher<UnimplementedError>()));
+      expect(() async => await defaultServer.stop(),
+          throwsA(TypeMatcher<UnimplementedError>()));
+      expect(() async => await defaultServer.expose(MockExposedThing()),
+          throwsA(TypeMatcher<UnimplementedError>()));
+
+      final customServer1 = HttpServer(HttpConfig(secure: true));
+
+      expect(customServer1.port, 443);
+      expect(customServer1.scheme, "https");
+
+      final customServer2 = HttpServer(HttpConfig(port: 9001, secure: true));
+
+      expect(customServer2.port, 9001);
+      expect(customServer2.scheme, "https");
     });
 
     test('HTTP Security Schemes', () async {
