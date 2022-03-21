@@ -12,15 +12,17 @@ import '../scripting_api/exposed_thing.dart';
 
 /// A [ProtocolServer] for the Hypertext Transfer Protocol (HTTP).
 class HttpServer extends ProtocolServer {
-  final String _scheme;
+  @override
+  final String scheme;
 
-  final int _port;
+  @override
+  final int port;
 
   /// Create a new [HttpServer] from an optional [HttpConfig].
   HttpServer(HttpConfig? _httpConfig)
       // TODO(JKRhb): Check if the scheme should be determined differently.
-      : _scheme = _httpConfig?.secure ?? false ? "https" : "http",
-        _port = _portFromConfig(_httpConfig);
+      : scheme = _httpConfig?.secure ?? false ? "https" : "http",
+        port = _portFromConfig(_httpConfig);
 
   static int _portFromConfig(HttpConfig? httpConfig) {
     final secure = httpConfig?.secure ?? false;
@@ -33,12 +35,6 @@ class HttpServer extends ProtocolServer {
     // TODO(JKRhb): implement expose
     throw UnimplementedError();
   }
-
-  @override
-  int get port => _port;
-
-  @override
-  String get scheme => _scheme;
 
   @override
   Future<void> start(Map<String, Map<String, Credentials>> credentials) async {}
