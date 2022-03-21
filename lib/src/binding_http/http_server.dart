@@ -37,10 +37,14 @@ class HttpServer extends ProtocolServer {
   }
 
   @override
-  Future<void> start(Map<String, Map<String, Credentials>> credentials) async {}
+  Future<void> start(Map<String, Map<String, Credentials>> credentials) async {
+    // TODO(JKRhb): implement start
+    throw UnimplementedError();
+  }
 
   @override
   Future<void> stop() async {
     // TODO(JKRhb): implement stop
+    throw UnimplementedError();
   }
 }
