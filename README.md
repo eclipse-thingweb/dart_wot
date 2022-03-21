@@ -41,11 +41,9 @@ To do so, a Thing Description JSON string is first parsed and turned into a
 `Servient` with CoAP support.
 
 ```dart
-import 'dart:async';
-
 import 'package:dart_wot/dart_wot.dart';
 
-FutureOr<void> main(List<String> args) async {
+Future<void> main(List<String> args) async {
   final CoapClientFactory coapClientFactory = CoapClientFactory(null);
   final servient = Servient()..addClientFactory(coapClientFactory);
   final wot = await servient.start();
