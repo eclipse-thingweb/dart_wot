@@ -13,13 +13,18 @@ import 'coap_config.dart';
 class CoapServer extends ProtocolServer {
   // TODO(JKRhb): Consider other protocol schemes.
   @override
-  String scheme = "coap";
+  final String scheme = "coap";
 
   @override
-  int port;
+  final int port;
+
+  /// Preferred payload size by the server when using block-wise transfer.
+  final int? preferredBlockSize;
 
   /// Creates a new [CoapServer] which can be configured using a [CoapConfig].
-  CoapServer([CoapConfig? coapConfig]) : port = coapConfig?.port ?? 5683;
+  CoapServer([CoapConfig? coapConfig])
+      : port = coapConfig?.port ?? 5683,
+        preferredBlockSize = coapConfig?.blocksize;
 
   @override
   Future<void> expose(ExposedThing thing) {
