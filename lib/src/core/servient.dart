@@ -9,12 +9,23 @@ import 'package:uuid/uuid.dart';
 import '../definitions/credentials/credentials.dart';
 import '../definitions/interaction_affordances/interaction_affordance.dart';
 import '../definitions/thing_description.dart';
+import 'consumed_thing.dart';
 import 'content_serdes.dart';
 import 'exposed_thing.dart';
 import 'protocol_interfaces/protocol_client.dart';
 import 'protocol_interfaces/protocol_client_factory.dart';
 import 'protocol_interfaces/protocol_server.dart';
 import 'wot.dart';
+
+/// This [Exception] is thrown when the addition or application of [Credentials]
+/// fails.
+class CredentialsException implements Exception {
+  /// The error message of this [CredentialsException].
+  String message;
+
+  /// Constructor.
+  CredentialsException(this.message);
+}
 
 // TODO(JKRhb): Documentation should be improved.
 /// A software stack that implements the WoT building blocks.
@@ -26,6 +37,7 @@ class Servient {
   final List<ProtocolServer> _servers = [];
   final Map<String, ProtocolClientFactory> _clientFactories = {};
   final Map<String, ExposedThing> _things = {};
+  final Map<String, ConsumedThing> _consumedThings = {};
   final Map<String, Map<String, Credentials>> _credentialsStore = {};
 
   /// The [ContentSerdes] object that is used for serializing/deserializing.
@@ -108,6 +120,22 @@ class Servient {
     return true;
   }
 
+  /// Adds a [ConsumedThing] to the servient if it hasn't been registered
+  /// before.
+  ///
+  /// Returns `false` if the [thing] has already been registered, otherwise
+  /// `true`.
+  bool addConsumedThing(ConsumedThing thing) {
+    final id = thing.identifier;
+    if (_things.containsKey(id)) {
+      return false;
+    }
+
+    _consumedThings[id] = thing;
+    _applyCredentials(id);
+    return true;
+  }
+
   /// Returns an [ExposedThing] with the given [id] if it has been registered.
   ExposedThing? thing(String id) => _things[id];
 
@@ -154,6 +182,7 @@ class Servient {
     } else {
       currentCredentials[definitionKey] = credentials;
     }
+    _applyCredentials(id);
   }
 
   /// Removes [Credentials] from this [Servient].
@@ -180,4 +209,36 @@ class Servient {
   /// Returns null if the [identifier] is unknown.
   Map<String, Credentials>? credentials(String identifier) =>
       _credentialsStore[identifier];
+
+  /// Links the [Credentials] stored in this [Servient] to the `SecuritySchemes`
+  /// of a [ConsumedThing].
+  ///
+  /// Throws a [CredentialsException] if a type mismatch between [Credentials]
+  /// and a `SecurityScheme` should be detected.
+  void _applyCredentials(String id) {
+    final consumedThing = _consumedThings[id];
+
+    if (consumedThing == null) {
+      return;
+    }
+
+    final securityDefinitions =
+        consumedThing.thingDescription.securityDefinitions;
+
+    for (final entry in securityDefinitions.entries) {
+      final credentials = _credentialsStore[id]?[entry.key];
+      final securityDefinition = entry.value;
+
+      final securitySchemeType = securityDefinition.scheme;
+      final credentialsType = credentials?.securitySchemeType;
+
+      if (securitySchemeType == credentialsType) {
+        credentials?.securityScheme = securityDefinition;
+      } else if (credentials != null) {
+        throw CredentialsException("Type mismatch of credentials for"
+            " thing with id $id! Credentials type was $credentialsType,"
+            " SecurityScheme type was $securitySchemeType");
+      }
+    }
+  }
 }

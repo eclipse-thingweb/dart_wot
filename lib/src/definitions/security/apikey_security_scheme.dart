@@ -4,14 +4,12 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../credentials/apikey_credentials.dart';
-import 'credentials_scheme.dart';
 import 'helper_functions.dart';
 import 'security_scheme.dart';
 
 /// API key authentication security configuration identified by the Vocabulary
 /// Term `apikey`.
-class ApiKeySecurityScheme extends SecurityScheme implements CredentialsScheme {
+class ApiKeySecurityScheme extends SecurityScheme {
   @override
   String get scheme => "apikey";
 
@@ -22,9 +20,6 @@ class ApiKeySecurityScheme extends SecurityScheme implements CredentialsScheme {
   late String in_ = "query";
 
   final List<String> _parsedJsonFields = [];
-
-  @override
-  ApiKeyCredentials? credentials;
 
   /// Constructor.
   ApiKeySecurityScheme(

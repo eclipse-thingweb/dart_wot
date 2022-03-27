@@ -4,6 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'credentials/credentials.dart';
 import 'expected_response.dart';
 import 'security/security_scheme.dart';
 import 'thing_description.dart';
@@ -40,6 +41,12 @@ class Form {
   ///
   /// Used by augmented [Form]s.
   Map<String, SecurityScheme> securityDefinitions = {};
+
+  /// The credentials associated with this [Form].
+  ///
+  /// Used by augmented [Form]s.
+  // TODO(JKRhb): Move to an agumented Form class.
+  List<Credentials> credentials = [];
 
   final List<String> _parsedJsonFields = [];
 
@@ -178,5 +185,16 @@ class Form {
       augmentedForm.securityDefinitions[element.key] = element.value;
     });
     return augmentedForm;
+  }
+
+  /// Associates [credentials] with [securityDefinitions] used by this [Form].
+  void updateCredentials(
+      Map<String, Credentials<SecurityScheme>>? credentials) {
+    final definitionKeys = securityDefinitions.keys;
+    this.credentials = credentials?.entries
+            .where((element) => definitionKeys.contains(element.key))
+            .map((element) => element.value)
+            .toList(growable: false) ??
+        List.empty();
   }
 }

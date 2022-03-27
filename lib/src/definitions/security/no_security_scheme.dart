@@ -4,8 +4,6 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../credentials/credentials.dart';
-
 import 'helper_functions.dart';
 import 'security_scheme.dart';
 
@@ -22,7 +20,4 @@ class NoSecurityScheme extends SecurityScheme {
     _parsedJsonFields.addAll(parseSecurityJson(this, json));
     parseAdditionalFields(additionalFields, json, _parsedJsonFields);
   }
-
-  @override
-  Credentials? get credentials => null;
 }

@@ -4,10 +4,12 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import '../security/bearer_security_scheme.dart';
+
 import 'credentials.dart';
 
 /// [Credentials] used for the `BearerSecurityScheme`.
-class BearerCredentials extends Credentials {
+class BearerCredentials extends Credentials<BearerSecurityScheme> {
   /// The [token] associated with these [BearerCredentials].
   String token;
 

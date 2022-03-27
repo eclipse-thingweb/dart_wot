@@ -4,14 +4,12 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../credentials/basic_credentials.dart';
-import 'credentials_scheme.dart';
 import 'helper_functions.dart';
 import 'security_scheme.dart';
 
 /// Basic Authentication security configuration identified by the Vocabulary
 /// Term `basic`.
-class BasicSecurityScheme extends SecurityScheme implements CredentialsScheme {
+class BasicSecurityScheme extends SecurityScheme {
   @override
   String get scheme => "basic";
 
@@ -22,9 +20,6 @@ class BasicSecurityScheme extends SecurityScheme implements CredentialsScheme {
   late String in_ = "header";
 
   final List<String> _parsedJsonFields = [];
-
-  @override
-  BasicCredentials? credentials;
 
   /// Constructor.
   BasicSecurityScheme(
