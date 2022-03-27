@@ -11,16 +11,15 @@ import 'discovery_method.dart';
 /// See [WoT Scripting API Specification, Section 10.3][spec link].
 ///
 /// [spec link]: https://w3c.github.io/wot-scripting-api/#the-thingfilter-dictionary
-// TODO(JKRhb): This part of the specification has to be improved IMHO.
 class ThingFilter {
   /// Represents the discovery type that should be used in the discovery process
   DiscoveryMethod method;
 
   /// Represents the URL of the target entity serving the discovery request.
   ///
-  /// This is, for instance the URL of a Thing Directory (if method is
-  /// "directory"), or the URL of a directly targeted Thing (if method is
-  /// "direct").
+  /// This is, for instance the URL of a Thing Directory (if [method] is
+  /// [DiscoveryMethod.directory]), or the URL of a directly targeted Thing (if
+  /// [method] is [DiscoveryMethod.direct]).
   String? url;
 
   /// Represents a template object used for matching property by property
@@ -29,5 +28,5 @@ class ThingFilter {
 
   /// Constructor.
   ThingFilter(
-      [this.url, this.method = DiscoveryMethod.directory, this.fragment]);
+      {this.url, this.method = DiscoveryMethod.directory, this.fragment});
 }
