@@ -1,3 +1,11 @@
+## 0.13.0
+
+- Refactored internal use of credentials
+- Various smaller refactorings
+- Added internal clean up methods
+- Fixed exposed ConsumedThing interface
+- Improved test framework
+
 ## 0.12.1
 
 - Updated examples
