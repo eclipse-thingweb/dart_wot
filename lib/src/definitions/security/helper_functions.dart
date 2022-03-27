@@ -35,7 +35,8 @@ List<String> parseSecurityJson(
   if (jsonLdType is String) {
     securityScheme.jsonLdType = [jsonLdType];
   } else if (jsonLdType is List<dynamic>) {
-    securityScheme.jsonLdType = jsonLdType.whereType<String>().toList();
+    securityScheme.jsonLdType =
+        jsonLdType.whereType<String>().toList(growable: false);
   }
 
   return parsedJsonFields;

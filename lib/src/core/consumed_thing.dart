@@ -213,7 +213,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
         .allMatches(Uri.decodeFull(href))
         .map((e) => e.group(1))
         .whereType<String>()
-        .toList();
+        .toList(growable: false);
   }
 
   String _resolveUriVariables(InteractionAffordance interactionAffordance,
@@ -300,7 +300,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   void _augmentForms(InteractionAffordance interactionAffordance) {
     interactionAffordance.augmentedForms = interactionAffordance.forms
         .map((form) => form.augment(thingDescription))
-        .toList();
+        .toList(growable: false);
   }
 
   @override
@@ -390,7 +390,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
   @override
   Future<PropertyReadMap> readAllProperties([InteractionOptions? options]) {
-    final propertyNames = thingDescription.properties.keys.toList();
+    final propertyNames =
+        thingDescription.properties.keys.toList(growable: false);
 
     return _readProperties(propertyNames, options);
   }

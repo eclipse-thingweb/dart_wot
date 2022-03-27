@@ -86,7 +86,7 @@ class Form {
       if (jsonOp is String) {
         op = [jsonOp];
       } else if (jsonOp is List<dynamic>) {
-        op = jsonOp.whereType<String>().toList();
+        op = jsonOp.whereType<String>().toList(growable: false);
       }
     }
 
@@ -102,7 +102,7 @@ class Form {
       if (jsonSecurity is String) {
         security = [jsonSecurity];
       } else if (jsonSecurity is List<dynamic>) {
-        security = jsonSecurity.whereType<String>().toList();
+        security = jsonSecurity.whereType<String>().toList(growable: false);
       }
     }
 
@@ -111,7 +111,7 @@ class Form {
       if (jsonScopes is String) {
         scopes = [jsonScopes];
       } else if (jsonScopes is List<dynamic>) {
-        scopes = jsonScopes.whereType<String>().toList();
+        scopes = jsonScopes.whereType<String>().toList(growable: false);
       }
     }
 
