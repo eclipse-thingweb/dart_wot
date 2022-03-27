@@ -83,7 +83,7 @@ class OAuth2SecurityScheme extends SecurityScheme {
       scopes = [jsonScopes];
       _parsedJsonFields.add("scopes");
     } else if (jsonScopes is List<dynamic>) {
-      scopes = jsonScopes.whereType<String>().toList();
+      scopes = jsonScopes.whereType<String>().toList(growable: false);
       _parsedJsonFields.add("scopes");
     }
 
