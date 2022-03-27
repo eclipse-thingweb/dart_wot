@@ -72,10 +72,16 @@ class Servient {
     for (final clientFactory in _clientFactories.values) {
       clientFactory.destroy();
     }
+    _clientFactories.clear();
+    for (final consumedThing in _consumedThings.values) {
+      consumedThing.destroy();
+    }
+    _consumedThings.clear();
 
     final serverStatuses =
         _servers.map((server) => server.stop()).toList(growable: false);
     await Future.wait(serverStatuses);
+    serverStatuses.clear();
   }
 
   void _cleanUpForms(Iterable<InteractionAffordance>? interactionAffordances) {
@@ -118,6 +124,22 @@ class Servient {
 
     _things[thing.id!] = thing;
     return true;
+  }
+
+  /// Removes and cleans up the resources of the [ConsumedThing] with the given
+  /// [id].
+  ///
+  /// If the [ConsumedThing] has not been registered before, `false` is
+  /// returned, otherwise `true`.
+  bool destroyConsumedThing(String id) {
+    final existingThing = _consumedThings.remove(id);
+
+    if (existingThing != null) {
+      existingThing.destroy();
+      return true;
+    }
+
+    return false;
   }
 
   /// Adds a [ConsumedThing] to the servient if it hasn't been registered

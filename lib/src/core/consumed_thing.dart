@@ -465,6 +465,18 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     return operationTypes.contains(operationType.toShortString());
   }
+
+  /// Cleans up the resources used by this [ConsumedThing].
+  void destroy() {
+    for (final observedProperty in _observedProperties.values) {
+      observedProperty.stop();
+    }
+    _observedProperties.clear();
+    for (final subscribedEvent in _subscribedEvents.values) {
+      subscribedEvent.stop();
+    }
+    _subscribedEvents.clear();
+  }
 }
 
 /// Private class providing a tuple of a [ProtocolClient] and a [Form].
