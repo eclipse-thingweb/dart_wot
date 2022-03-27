@@ -1,3 +1,7 @@
+## 0.14.0
+
+- Fixed constructor of `ThingFilter` class and aligned it with Scripting API
+
 ## 0.13.0
 
 - Refactored internal use of credentials
