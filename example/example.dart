@@ -7,7 +7,7 @@
 import 'package:dart_wot/dart_wot.dart';
 
 Future<void> main(List<String> args) async {
-  final CoapClientFactory coapClientFactory = CoapClientFactory(null);
+  final CoapClientFactory coapClientFactory = CoapClientFactory();
   final servient = Servient()..addClientFactory(coapClientFactory);
   final wot = await servient.start();
 
@@ -36,7 +36,7 @@ Future<void> main(List<String> args) async {
 
   final thingDescription = ThingDescription(thingDescriptionJson);
   final consumedThing = await wot.consume(thingDescription);
-  final status = await consumedThing.readProperty("status", null);
+  final status = await consumedThing.readProperty("status");
   final value = await status.value();
   print(value);
 }

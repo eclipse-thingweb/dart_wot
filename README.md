@@ -74,7 +74,7 @@ Future<void> main(List<String> args) async {
 
   final thingDescription = ThingDescription(thingDescriptionJson);
   final consumedThing = await wot.consume(thingDescription);
-  final status = await consumedThing.readProperty("status", null);
+  final status = await consumedThing.readProperty("status");
   final value = await status.value();
   print(value);
 }

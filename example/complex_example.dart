@@ -90,7 +90,6 @@ final thingDescriptionJson = '''
 ''';
 
 Future<void> main() async {
-  // TODO(JKRhb): Add a proper example
   final coapConfig = CoapConfig(blocksize: 64);
   final CoapClientFactory coapClientFactory = CoapClientFactory(coapConfig);
   final HttpClientFactory httpClientFactory = HttpClientFactory();
@@ -103,11 +102,11 @@ Future<void> main() async {
 
   final thingDescription = ThingDescription(thingDescriptionJson);
   final consumedThing = await wot.consume(thingDescription);
-  final status = await consumedThing.readProperty("status", null);
+  final status = await consumedThing.readProperty("status");
   final value1 = await status.value();
   print(value1);
-  await consumedThing.invokeAction("toggle", null, null);
-  final status2 = await consumedThing.readProperty("differentStatus", null);
+  await consumedThing.invokeAction("toggle");
+  final status2 = await consumedThing.readProperty("differentStatus");
   final value2 = await status2.value();
   print(value2);
 
