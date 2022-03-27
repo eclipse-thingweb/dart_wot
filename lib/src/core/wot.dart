@@ -31,14 +31,15 @@ class WoT implements scripting_api.WoT {
   /// Creates a new [WoT] runtime based on a [Servient].
   WoT(this._servient);
 
-  /// Consumes a [ThingDescription] and returns a [ConsumedThing].
+  /// Consumes a [ThingDescription] and returns a [scripting_api.ConsumedThing].
   ///
   /// The returned [ConsumedThing] can then be used to trigger
   /// interaction affordances exposed by the Thing.
   ///
   /// If a [ThingDescription] with the same identifier has already been
   @override
-  Future<ConsumedThing> consume(ThingDescription thingDescription) async {
+  Future<scripting_api.ConsumedThing> consume(
+      ThingDescription thingDescription) async {
     final newThing = ConsumedThing(_servient, thingDescription);
     if (_servient.addConsumedThing(newThing)) {
       return newThing;
@@ -51,7 +52,7 @@ class WoT implements scripting_api.WoT {
 
   /// Exposes a Thing based on a (partial) TD.
   @override
-  Future<ExposedThing> produce(Map<String, dynamic> init) async {
+  Future<scripting_api.ExposedThing> produce(Map<String, dynamic> init) async {
     final newThing = ExposedThing(_servient, init);
     if (_servient.addThing(newThing)) {
       return newThing;

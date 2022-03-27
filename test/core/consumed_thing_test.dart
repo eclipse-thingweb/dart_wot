@@ -263,5 +263,8 @@ void main() {
     // same value is provided as an input
     expect(consumedThing.readProperty("status2", interactionOptions),
         throwsA(TypeMatcher<ArgumentError>()));
+
+    await servient.shutdown();
+    expect(servient.destroyConsumedThing(parsedTd.identifier), false);
   });
 }

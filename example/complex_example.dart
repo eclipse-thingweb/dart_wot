@@ -137,6 +137,7 @@ Future<void> main() async {
   thingDiscovery.stop();
   final consumedDiscoveredThing = await wot.consume(discoveredThingDescription);
 
-  print("The title of the fetched TD is ${consumedDiscoveredThing.title}.");
+  print("The title of the fetched TD is "
+      "${consumedDiscoveredThing.thingDescription.title}.");
   print("Done!");
 }
