@@ -11,7 +11,6 @@ import 'discovery_method.dart';
 /// See [WoT Scripting API Specification, Section 10.3][spec link].
 ///
 /// [spec link]: https://w3c.github.io/wot-scripting-api/#the-thingfilter-dictionary
-// TODO(JKRhb): This part of the specification has to be improved IMHO.
 class ThingFilter {
   /// Represents the discovery type that should be used in the discovery process
   DiscoveryMethod method;
