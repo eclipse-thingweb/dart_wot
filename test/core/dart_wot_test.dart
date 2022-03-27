@@ -22,8 +22,9 @@ void main() {
       final Map<String, dynamic> exposedThingInit = <String, dynamic>{
         "title": "Test Thing"
       };
-      final exposedThing = await wot.produce(exposedThingInit);
-      expect(exposedThing.id!.startsWith("urn:uuid:"), true);
+      final dynamic exposedThing = await wot.produce(exposedThingInit);
+      // ignore: avoid_dynamic_calls
+      expect(exposedThing.id.startsWith("urn:uuid:"), true);
     });
 
     test('Parse Thing Description', () {
