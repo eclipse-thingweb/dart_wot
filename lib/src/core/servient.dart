@@ -78,8 +78,7 @@ class Servient {
     }
     _consumedThings.clear();
 
-    final serverStatuses =
-        _servers.map((server) => server.stop()).toList(growable: false);
+    final serverStatuses = _servers.map((server) => server.stop()).toList();
     await Future.wait(serverStatuses);
     serverStatuses.clear();
   }
