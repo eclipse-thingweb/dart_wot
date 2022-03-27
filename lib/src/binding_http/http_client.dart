@@ -17,10 +17,6 @@ import '../definitions/credentials/bearer_credentials.dart';
 import '../definitions/credentials/credentials.dart';
 import '../definitions/credentials/digest_credentials.dart';
 import '../definitions/form.dart';
-import '../definitions/security/basic_security_scheme.dart';
-import '../definitions/security/bearer_security_scheme.dart';
-import '../definitions/security/credentials_scheme.dart';
-import '../definitions/security/digest_security_scheme.dart';
 import '../scripting_api/subscription.dart';
 
 const _authorizationHeader = "Authorization";
@@ -87,9 +83,9 @@ class HttpClient extends ProtocolClient {
     final headers = _getHeadersFromForm(form);
     _applySecurityToHeader(form, headers);
     final BasicCredentials? basicCredentials =
-        _credentialsFromForm<BasicSecurityScheme>(form) as BasicCredentials?;
+        _credentialsFromForm<BasicCredentials>(form);
     final DigestCredentials? digestCredentials =
-        _credentialsFromForm<DigestSecurityScheme>(form) as DigestCredentials?;
+        _credentialsFromForm<DigestCredentials>(form);
     switch (requestMethod) {
       case HttpRequestMethod.get:
         final getMethod =
@@ -121,13 +117,10 @@ class HttpClient extends ProtocolClient {
   }
 
   /// Selects the first instance of defined [Credentials] from a [form].
-  static Credentials? _credentialsFromForm<T extends CredentialsScheme>(
-      Form form) {
-    final securityScheme = form.securityDefinitions.values
-        .whereType<T>()
-        .where((element) => element.credentials != null);
-    if (securityScheme.isNotEmpty) {
-      return securityScheme.first.credentials;
+  static T? _credentialsFromForm<T extends Credentials>(Form form) {
+    final credentials = form.credentials.whereType<T>();
+    if (credentials.isNotEmpty) {
+      return credentials.first;
     }
 
     return null;
@@ -205,7 +198,7 @@ class HttpClient extends ProtocolClient {
 
   void _applySecurityToHeader(Form form, Map<String, String> headers) {
     final BearerCredentials? bearerCredentials =
-        _credentialsFromForm<BearerSecurityScheme>(form) as BearerCredentials?;
+        _credentialsFromForm<BearerCredentials>(form);
 
     if (bearerCredentials != null) {
       headers[_authorizationHeader] = "Bearer ${bearerCredentials.token}";

@@ -4,14 +4,12 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../credentials/psk_credentials.dart';
-import 'credentials_scheme.dart';
 import 'helper_functions.dart';
 import 'security_scheme.dart';
 
 /// Pre-shared key authentication security configuration identified by the
 /// Vocabulary Term `psk`.
-class PskSecurityScheme extends SecurityScheme implements CredentialsScheme {
+class PskSecurityScheme extends SecurityScheme {
   @override
   String get scheme => "psk";
 
@@ -19,9 +17,6 @@ class PskSecurityScheme extends SecurityScheme implements CredentialsScheme {
   String? identity;
 
   final List<String> _parsedJsonFields = [];
-
-  @override
-  PskCredentials? credentials;
 
   /// Constructor.
   PskSecurityScheme(

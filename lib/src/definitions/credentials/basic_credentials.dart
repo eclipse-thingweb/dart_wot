@@ -4,12 +4,14 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import '../security/basic_security_scheme.dart';
+
 import 'credentials.dart';
 
 /// [Credentials] used for the `BasicSecurityScheme`.
 ///
 /// Provides an unencrypted [username] and [password] combination.
-class BasicCredentials extends Credentials {
+class BasicCredentials extends Credentials<BasicSecurityScheme> {
   /// The [username] associated with these [BasicCredentials].
   String username;
 

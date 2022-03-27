@@ -4,8 +4,6 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../credentials/credentials.dart';
-
 /// Class that contains metadata describing the configuration of a security
 /// mechanism.
 abstract class SecurityScheme {
@@ -23,9 +21,6 @@ abstract class SecurityScheme {
 
   ///
   String? proxy;
-
-  /// The [credentials] associated with this [SecurityScheme].
-  Credentials? get credentials;
 
   /// A [List] of JSON-LD `@type` annotations.
   List<String>? jsonLdType = [];

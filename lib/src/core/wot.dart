@@ -11,6 +11,19 @@ import 'exposed_thing.dart';
 import 'servient.dart';
 import 'thing_discovery.dart' show ThingDiscovery;
 
+/// This [Exception] is thrown if an error during the consumption of a
+/// [ThingDescription] occurs.
+class ThingConsumptionException implements Exception {
+  /// The actual error message.
+  String message;
+
+  /// The identifier of the [ThingDescription] that triggered this [Exception].
+  String identifier;
+
+  /// Constructor
+  ThingConsumptionException(this.message, this.identifier);
+}
+
 /// Implementation of the [scripting_api.WoT] runtime interface.
 class WoT implements scripting_api.WoT {
   final Servient _servient;
@@ -22,9 +35,18 @@ class WoT implements scripting_api.WoT {
   ///
   /// The returned [ConsumedThing] can then be used to trigger
   /// interaction affordances exposed by the Thing.
+  ///
+  /// If a [ThingDescription] with the same identifier has already been
   @override
   Future<ConsumedThing> consume(ThingDescription thingDescription) async {
-    return ConsumedThing(_servient, thingDescription);
+    final newThing = ConsumedThing(_servient, thingDescription);
+    if (_servient.addConsumedThing(newThing)) {
+      return newThing;
+    } else {
+      final id = thingDescription.identifier;
+      throw ThingConsumptionException(
+          "A ConsumedThing with identifier $id already exists", id);
+    }
   }
 
   /// Exposes a Thing based on a (partial) TD.

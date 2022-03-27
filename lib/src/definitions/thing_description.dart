@@ -77,6 +77,19 @@ class ThingDescription {
   /// [RFC 6570]: http://tools.ietf.org/html/rfc6570
   Map<String, Object?>? uriVariables;
 
+  /// Determines the id of this [ThingDescription].
+  ///
+  /// As the [id] field of a [ThingDescription] is not mandatory, the [base] and
+  /// the [title] are used as fallbacks.
+  ///
+  /// This can lead to unintended behavior if two Things should use the same
+  /// [title] or if two [ThingDescription]s are using the same `base` address.
+  /// However, there seems to be no better solution at the moment.
+  // TODO(JKRhb): Revisit ID determination
+  String get identifier {
+    return id ?? base ?? title;
+  }
+
   /// Creates a [ThingDescription] from a [rawThingDescription] JSON [String].
   ThingDescription(this.rawThingDescription) {
     parseThingDescription(rawThingDescription!);

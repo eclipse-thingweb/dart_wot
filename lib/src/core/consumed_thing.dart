@@ -9,23 +9,9 @@ import 'package:uri/uri.dart';
 
 import '../../scripting_api.dart' as scripting_api;
 import '../../scripting_api.dart' hide ConsumedThing, InteractionOutput;
-import '../definitions/credentials/apikey_credentials.dart';
-import '../definitions/credentials/basic_credentials.dart';
-import '../definitions/credentials/bearer_credentials.dart';
-import '../definitions/credentials/credentials.dart';
-import '../definitions/credentials/digest_credentials.dart';
-import '../definitions/credentials/oauth2_credentials.dart';
-import '../definitions/credentials/psk_credentials.dart';
 import '../definitions/data_schema.dart';
 import '../definitions/form.dart';
 import '../definitions/interaction_affordances/interaction_affordance.dart';
-import '../definitions/security/apikey_security_scheme.dart';
-import '../definitions/security/basic_security_scheme.dart';
-import '../definitions/security/bearer_security_scheme.dart';
-import '../definitions/security/digest_security_scheme.dart';
-import '../definitions/security/oauth2_security_scheme.dart';
-import '../definitions/security/psk_security_scheme.dart';
-import '../definitions/security/security_scheme.dart';
 import '../definitions/thing_description.dart';
 import 'interaction_output.dart';
 import 'operation_type.dart';
@@ -75,6 +61,9 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
   final Map<String, scripting_api.Subscription> _observedProperties = {};
 
+  /// Determines the id of this [ConsumedThing].
+  String get identifier => thingDescription.identifier;
+
   /// Constructor
   ConsumedThing(this.servient, this.thingDescription)
       : title = thingDescription.title {
@@ -84,36 +73,6 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   /// Checks if the [Servient] of this [ConsumedThing] supports a protocol
   /// [scheme].
   bool hasClientFor(String scheme) => servient.hasClientFor(scheme);
-
-  static void _applyCredentials(Map<String, Credentials>? credentialStore,
-      Map<String, SecurityScheme> securityDefinitions) {
-    for (final entry in securityDefinitions.entries) {
-      final credentials = credentialStore?[entry.key];
-      final securityDefinition = entry.value;
-      // TODO(JKRhb): Maybe this matching can be done more elegantly.
-      // TODO(JKRhb): Check whether the SecurityScheme should be referenced by
-      //              the credentials instead.
-      if (securityDefinition is BasicSecurityScheme &&
-          credentials is BasicCredentials) {
-        securityDefinition.credentials = credentials;
-      } else if (securityDefinition is PskSecurityScheme &&
-          credentials is PskCredentials) {
-        securityDefinition.credentials = credentials;
-      } else if (securityDefinition is DigestSecurityScheme &&
-          credentials is DigestCredentials) {
-        securityDefinition.credentials = credentials;
-      } else if (securityDefinition is ApiKeySecurityScheme &&
-          credentials is ApiKeyCredentials) {
-        securityDefinition.credentials = credentials;
-      } else if (securityDefinition is BearerSecurityScheme &&
-          credentials is BearerCredentials) {
-        securityDefinition.credentials = credentials;
-      } else if (securityDefinition is OAuth2SecurityScheme &&
-          credentials is OAuth2Credentials) {
-        securityDefinition.credentials = credentials;
-      }
-    }
-  }
 
   _ClientAndForm _getClientFor(
       List<Form> forms,
@@ -130,14 +89,6 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final Form foundForm;
 
     final int? formIndex = options?.formIndex;
-
-    // TODO(JKRhb): Revisit ID determination
-    final id =
-        thingDescription.id ?? thingDescription.base ?? thingDescription.title;
-
-    final credentials = servient.credentials(id);
-
-    _applyCredentials(credentials, thingDescription.securityDefinitions);
 
     if (formIndex != null) {
       if (formIndex >= 0 && formIndex < forms.length) {
@@ -156,8 +107,11 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       client = servient.clientFor(scheme);
     }
 
+    final credentials = servient.credentials(identifier);
+
     final form = foundForm.copy()
-      ..href = _resolveUriVariables(interactionAffordance, foundForm, options);
+      ..href = _resolveUriVariables(interactionAffordance, foundForm, options)
+      ..updateCredentials(credentials);
 
     return _ClientAndForm(client, form);
   }
