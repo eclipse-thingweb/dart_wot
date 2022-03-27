@@ -127,10 +127,10 @@ Future<void> main() async {
   await consumedThing.readProperty("test");
 
   final thingDiscovery = wot.discover(ThingFilter(
-      "https://raw.githubusercontent.com/w3c/wot-testing"
-      "/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs"
-      "/Oracle/oracle-Festo_Shared.td.jsonld",
-      DiscoveryMethod.direct));
+      url: "https://raw.githubusercontent.com/w3c/wot-testing"
+          "/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs"
+          "/Oracle/oracle-Festo_Shared.td.jsonld",
+      method: DiscoveryMethod.direct));
 
   final discoveredThingDescription = await thingDiscovery.next();
   thingDiscovery.stop();

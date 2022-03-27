@@ -29,5 +29,5 @@ class ThingFilter {
 
   /// Constructor.
   ThingFilter(
-      [this.url, this.method = DiscoveryMethod.directory, this.fragment]);
+      {this.url, this.method = DiscoveryMethod.directory, this.fragment});
 }
