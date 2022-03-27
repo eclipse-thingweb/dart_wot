@@ -18,9 +18,9 @@ class ThingFilter {
 
   /// Represents the URL of the target entity serving the discovery request.
   ///
-  /// This is, for instance the URL of a Thing Directory (if method is
-  /// "directory"), or the URL of a directly targeted Thing (if method is
-  /// "direct").
+  /// This is, for instance the URL of a Thing Directory (if [method] is
+  /// [DiscoveryMethod.directory]), or the URL of a directly targeted Thing (if
+  /// [method] is [DiscoveryMethod.direct]).
   String? url;
 
   /// Represents a template object used for matching property by property
