@@ -13,7 +13,7 @@ import 'coap_config.dart';
 /// A [ProtocolClientFactory] that produces CoAP clients.
 class CoapClientFactory extends ProtocolClientFactory {
   @override
-  Set<String> get schemes => {"coap"};
+  Set<String> get schemes => {"coap", "coaps"};
 
   /// The [CoapConfig] used to configure new clients.
   final CoapConfig? coapConfig;

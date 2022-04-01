@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'package:coap/coap.dart' as coap;
 import 'package:coap/config/coap_config_default.dart';
 import 'package:curie/curie.dart';
+import 'package:dart_wot/src/definitions/credentials/psk_credentials.dart';
 
 import '../core/content.dart';
 import '../core/operation_type.dart';
@@ -113,7 +114,30 @@ class _InternalCoapConfig extends CoapConfigDefault {
   @override
   int preferredBlockSize;
 
-  _InternalCoapConfig(this.preferredBlockSize);
+  @override
+  coap.DtlsBackend? dtlsBackend;
+
+  final Form _form;
+
+  _InternalCoapConfig(CoapConfig coapConfig, this._form)
+      : preferredBlockSize =
+            coapConfig.blocksize ?? coap.CoapConstants.preferredBlockSize {
+    if (!_dtlsNeeded) {
+      return;
+    }
+
+    if (_hasPskCredentials(_form) && coapConfig.useTinyDtls) {
+      dtlsBackend = coap.DtlsBackend.TinyDtls;
+    } else if (coapConfig.useOpenSsl) {
+      dtlsBackend = coap.DtlsBackend.OpenSsl;
+    }
+  }
+
+  bool get _dtlsNeeded => _form.href.startsWith("coaps");
+}
+
+bool _hasPskCredentials(Form form) {
+  return form.credentials.whereType<PskCredentials>().isNotEmpty;
 }
 
 class _CoapRequest {
@@ -137,9 +161,11 @@ class _CoapRequest {
   _CoapRequest(
     this._form,
     this._requestMethod,
-    _InternalCoapConfig _coapConfig, [
+    CoapConfig _coapConfig, [
     this._subprotocol,
-  ])  : _coapClient = coap.CoapClient(Uri.parse(_form.href), _coapConfig),
+  ])  : _coapClient = coap.CoapClient(
+            Uri.parse(_form.href), _InternalCoapConfig(_coapConfig, _form),
+            pskCredentialsCallback: _createPskCallback(_form)),
         _requestUri = Uri.parse(_form.href);
 
   // TODO(JKRhb): blockwise parameters cannot be handled at the moment due to
@@ -179,6 +205,41 @@ class _CoapRequest {
       throw CoapBindingException("Sending CoAP request to $_requestUri failed");
     }
     return response;
+  }
+
+  static coap.PskCredentials? _retrievePskCredentials(Form form) {
+    final pskCredentialsList = form.credentials.whereType<PskCredentials>();
+
+    for (final pskCredentials in pskCredentialsList) {
+      final identity =
+          pskCredentials.identity ?? pskCredentials.securityScheme?.identity;
+
+      if (identity == null) {
+        continue;
+      }
+
+      final preSharedKey = pskCredentials.preSharedKey;
+
+      return coap.PskCredentials(
+          identity: identity, preSharedKey: preSharedKey);
+    }
+
+    return null;
+  }
+
+  static coap.PskCredentialsCallback? _createPskCallback(Form form) {
+    if (!_hasPskCredentials(form)) {
+      return null;
+    }
+
+    final pskCredentials = _retrievePskCredentials(form);
+
+    if (pskCredentials == null) {
+      throw CoapBindingException("No client Identity found for CoAPS request!");
+    }
+
+    // TODO(JKRhb): Should the identityHint be handled?
+    return (identityHint) => pskCredentials;
   }
 
   int _determineContentFormat(_ContentFormatType _contentFormatType) {
@@ -291,10 +352,8 @@ class CoapClient extends ProtocolClient {
     final requestMethod = _getRequestMethod(form, operationType);
     final _Subprotocol? subprotocol =
         _determineSubprotocol(form, operationType);
-    final internalCoapConfig = _InternalCoapConfig(
-        _coapConfig?.blocksize ?? coap.CoapConstants.preferredBlockSize);
-    final request =
-        _CoapRequest(form, requestMethod, internalCoapConfig, subprotocol);
+    final coapConfig = _coapConfig ?? CoapConfig();
+    final request = _CoapRequest(form, requestMethod, coapConfig, subprotocol);
     _pendingRequests.add(request);
     return request;
   }

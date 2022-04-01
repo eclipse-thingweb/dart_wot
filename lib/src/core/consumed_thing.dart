@@ -100,9 +100,12 @@ class ConsumedThing implements scripting_api.ConsumedThing {
             '$formIndex"');
       }
     } else {
-      foundForm = forms.firstWhere((form) =>
-          hasClientFor(Uri.parse(form.href).scheme) &&
-          _supportsOperationType(form, affordanceType, operationType));
+      foundForm = forms.firstWhere(
+          (form) =>
+              hasClientFor(Uri.parse(form.href).scheme) &&
+              _supportsOperationType(form, affordanceType, operationType),
+          // TODO(JKRhb): Add custom Exception
+          orElse: () => throw Exception("No matching form found!"));
       final scheme = Uri.parse(foundForm.href).scheme;
       client = servient.clientFor(scheme);
     }
