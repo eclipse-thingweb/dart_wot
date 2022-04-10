@@ -6,16 +6,43 @@
 
 import 'dart:convert';
 
+import 'package:dart_wot/dart_wot.dart';
+import 'package:dart_wot/src/definitions/context_entry.dart';
 import 'package:dart_wot/src/definitions/expected_response.dart';
-import 'package:dart_wot/src/definitions/form.dart';
 import 'package:dart_wot/src/definitions/interaction_affordances/property.dart';
-import 'package:dart_wot/src/definitions/thing_description.dart';
+import 'package:dart_wot/src/definitions/validation/thing_description_schema.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Definitions', () {
     setUp(() {
       // Additional setup goes here.
+    });
+
+    test("should not accept invalid Thing Descriptions", () {
+      final illegalThingDescription = {"hello": "world"};
+
+      expect(() => ThingDescription.fromJson(illegalThingDescription),
+          throwsA(isA<ThingDescriptionValidationException>()));
+    });
+
+    test("should accept valid Thing Descriptions", () {
+      final validThingDescription = {
+        "@context": "https://www.w3.org/2022/wot/td/v1.1",
+        "title": "MyLampThing",
+        "security": "nosec_sc",
+        "securityDefinitions": {
+          "nosec_sc": {"scheme": "nosec"}
+        }
+      };
+
+      final thingDescription = ThingDescription.fromJson(validThingDescription);
+
+      expect(thingDescription.title, "MyLampThing");
+      expect(thingDescription.context,
+          [ContextEntry("https://www.w3.org/2022/wot/td/v1.1", null)]);
+      expect(thingDescription.security, ["nosec_sc"]);
+      expect(thingDescription.securityDefinitions["nosec_sc"]?.scheme, "nosec");
     });
 
     test('Form', () {
