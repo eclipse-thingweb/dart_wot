@@ -7,10 +7,10 @@
 /// Allows for configuring the behavior of CoAP clients and servers.
 class CoapConfig {
   /// The port number used by a client or server. Defaults to 5683.
-  int port;
+  final int port;
 
   /// The preferred block size for blockwise transfer.
-  int? blocksize;
+  final int? blocksize;
 
   /// Creates a new [CoapConfig] object.
   CoapConfig({this.port = 5683, this.blocksize});

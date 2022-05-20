@@ -15,7 +15,7 @@ dev_dependencies:
   mockito: ^5.0.17
 
 dependencies:
-  coap: ^3.5.0
+  coap: ^4.0.0
   cbor: ^5.0.0
   http: ^0.13.4
   http_auth: ^1.0.1
