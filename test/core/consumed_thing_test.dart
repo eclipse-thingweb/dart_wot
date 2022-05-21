@@ -23,7 +23,12 @@ void main() {
     test('Parse Interaction Affordances', () async {
       final thingDescriptionJson = '''
       {
-        "@context": ["http://www.w3.org/ns/td"],
+        "@context": [
+          "http://www.w3.org/ns/td",
+          {
+            "coap": "http://www.example.org/coap-binding#"
+          }
+        ],
         "title": "Test Thing",
         "titles": {
           "en": "Test Thing"

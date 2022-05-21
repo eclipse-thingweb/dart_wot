@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import '../form.dart';
 
 /// Base class for Interaction Affordances (Properties, Actions, and Events).
@@ -34,10 +36,10 @@ abstract class InteractionAffordance {
   List<Form> augmentedForms = [];
 
   /// Parses [forms] represented by a [json] object.
-  void _parseForms(Map<String, dynamic> json) {
+  void _parseForms(Map<String, dynamic> json, PrefixMapping prefixMapping) {
     for (final formJson in json["forms"]) {
       if (formJson is Map<String, dynamic>) {
-        forms.add(Form.fromJson(formJson));
+        forms.add(Form.fromJson(formJson, prefixMapping));
       }
     }
   }
@@ -59,8 +61,9 @@ abstract class InteractionAffordance {
   }
 
   /// Parses the [InteractionAffordance] contained in a [json] object.
-  void parseAffordanceFields(Map<String, dynamic> json) {
-    _parseForms(json);
+  void parseAffordanceFields(
+      Map<String, dynamic> json, PrefixMapping prefixMapping) {
+    _parseForms(json, prefixMapping);
 
     final dynamic title = json["title"];
     if (title is String) {

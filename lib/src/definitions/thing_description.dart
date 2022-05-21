@@ -6,6 +6,8 @@
 
 import 'dart:convert';
 
+import 'package:curie/curie.dart';
+
 import 'context_entry.dart';
 import 'interaction_affordances/action.dart';
 import 'interaction_affordances/event.dart';
@@ -20,6 +22,12 @@ import 'security/oauth2_security_scheme.dart';
 import 'security/psk_security_scheme.dart';
 import 'security/security_scheme.dart';
 import 'thing_model.dart';
+
+const _validContextValues = [
+  "https://www.w3.org/2019/wot/td/v1",
+  "https://www.w3.org/2022/wot/td/v1.1",
+  "http://www.w3.org/ns/td"
+];
 
 /// Represents a WoT Thing Description
 class ThingDescription {
@@ -45,6 +53,9 @@ class ThingDescription {
 
   /// The JSON-LD `@context`, represented by a  [List] of [ContextEntry]s.
   final List<ContextEntry> context = [];
+
+  /// Contains the values of the @context for CURIE expansion.
+  final prefixMapping = PrefixMapping();
 
   /// A [Map] of [Property] Affordances.
   final Map<String, Property> properties = {};
@@ -184,19 +195,33 @@ class ThingDescription {
     if (contextJson is String || contextJson is Map<String, dynamic>) {
       _parseContextListEntry(contextJson);
     } else if (contextJson is List<dynamic>) {
+      var firstEntry = true;
       for (final contextEntry in contextJson) {
-        _parseContextListEntry(contextEntry);
+        _parseContextListEntry(contextEntry, firstEntry: firstEntry);
+        if (contextEntry is String &&
+            _validContextValues.contains(contextEntry)) {
+          firstEntry = false;
+        }
       }
     }
   }
 
-  void _parseContextListEntry(dynamic contextJsonListEntry) {
+  void _parseContextListEntry(dynamic contextJsonListEntry,
+      {bool firstEntry = false}) {
     if (contextJsonListEntry is String) {
       context.add(ContextEntry(contextJsonListEntry, null));
+      if (firstEntry && _validContextValues.contains(contextJsonListEntry)) {
+        prefixMapping.defaultPrefixValue = contextJsonListEntry;
+      }
     } else if (contextJsonListEntry is Map<String, dynamic>) {
       for (final mapEntry in contextJsonListEntry.entries) {
-        if (mapEntry.value is String) {
-          context.add(ContextEntry(mapEntry.value as String, mapEntry.key));
+        final dynamic value = mapEntry.value;
+        final key = mapEntry.key;
+        if (value is String) {
+          context.add(ContextEntry(value, key));
+          if (!key.startsWith("@") && Uri.tryParse(value) != null) {
+            prefixMapping.addPrefix(key, value);
+          }
         }
       }
     }
@@ -217,8 +242,8 @@ class ThingDescription {
   void _parseProperties(Map<String, dynamic> json) {
     for (final property in json.entries) {
       if (property.value is Map<String, dynamic>) {
-        properties[property.key] =
-            Property.fromJson(property.value as Map<String, dynamic>);
+        properties[property.key] = Property.fromJson(
+            property.value as Map<String, dynamic>, prefixMapping);
       }
     }
   }
@@ -226,8 +251,8 @@ class ThingDescription {
   void _parseActions(Map<String, dynamic> json) {
     for (final action in json.entries) {
       if (action.value is Map<String, dynamic>) {
-        actions[action.key] =
-            Action.fromJson(action.value as Map<String, dynamic>);
+        actions[action.key] = Action.fromJson(
+            action.value as Map<String, dynamic>, prefixMapping);
       }
     }
   }
@@ -235,7 +260,8 @@ class ThingDescription {
   void _parseEvents(Map<String, dynamic> json) {
     for (final event in json.entries) {
       if (event.value is Map<String, dynamic>) {
-        events[event.key] = Event.fromJson(event.value as Map<String, dynamic>);
+        events[event.key] =
+            Event.fromJson(event.value as Map<String, dynamic>, prefixMapping);
       }
     }
   }

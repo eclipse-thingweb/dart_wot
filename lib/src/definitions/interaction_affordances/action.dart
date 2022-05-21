@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import '../data_schema.dart';
 import '../form.dart';
 import 'interaction_affordance.dart';
@@ -20,7 +22,8 @@ class Action extends InteractionAffordance {
   Action(List<Form> forms) : super(forms);
 
   /// Creates a new [Action] from a [json] object.
-  Action.fromJson(Map<String, dynamic> json) : super([]) {
-    parseAffordanceFields(json);
+  Action.fromJson(Map<String, dynamic> json, PrefixMapping prefixMapping)
+      : super([]) {
+    parseAffordanceFields(json, prefixMapping);
   }
 }

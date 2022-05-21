@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import '../data_schema.dart';
 import '../form.dart';
 import 'interaction_affordance.dart';
@@ -24,8 +26,9 @@ class Event extends InteractionAffordance {
   Event(List<Form> forms) : super(forms);
 
   /// Creates a new [Event] from a [json] object.
-  Event.fromJson(Map<String, dynamic> json) : super([]) {
-    parseAffordanceFields(json);
+  Event.fromJson(Map<String, dynamic> json, PrefixMapping prefixMapping)
+      : super([]) {
+    parseAffordanceFields(json, prefixMapping);
     _parseEventFields(json);
   }
 

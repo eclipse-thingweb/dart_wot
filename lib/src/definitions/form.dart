@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import 'credentials/credentials.dart';
 import 'expected_response.dart';
 import 'security/security_scheme.dart';
@@ -66,7 +68,7 @@ class Form {
   }
 
   /// Creates a new [Form] from a [json] object.
-  Form.fromJson(Map<String, dynamic> json) {
+  Form.fromJson(Map<String, dynamic> json, PrefixMapping prefixMapping) {
     // TODO(JKRhb): Check if this can be refactored
     if (json["href"] is String) {
       _parsedJsonFields.add("href");
@@ -122,7 +124,7 @@ class Form {
       }
     }
 
-    _addAdditionalFields(json);
+    _addAdditionalFields(json, prefixMapping);
   }
 
   dynamic _getJsonValue(Map<String, dynamic> formJson, String key) {
@@ -130,10 +132,41 @@ class Form {
     return formJson[key];
   }
 
-  void _addAdditionalFields(Map<String, dynamic> formJson) {
+  String _expandCurieKey(String key, PrefixMapping prefixMapping) {
+    if (key.contains(":")) {
+      final prefix = key.split(":")[0];
+      if (prefixMapping.getPrefixValue(prefix) != null) {
+        key = prefixMapping.expandCurieString(key);
+      }
+    }
+    return key;
+  }
+
+  dynamic _expandCurieValue(dynamic value, PrefixMapping prefixMapping) {
+    if (value is String && value.contains(":")) {
+      final prefix = value.split(":")[0];
+      if (prefixMapping.getPrefixValue(prefix) != null) {
+        value = prefixMapping.expandCurieString(value);
+      }
+    } else if (value is Map<String, dynamic>) {
+      return value.map<String, dynamic>((key, dynamic oldValue) {
+        final newKey = _expandCurieKey(key, prefixMapping);
+        final dynamic newValue = _expandCurieValue(oldValue, prefixMapping);
+        return MapEntry<String, dynamic>(newKey, newValue);
+      });
+    }
+
+    return value;
+  }
+
+  void _addAdditionalFields(
+      Map<String, dynamic> formJson, PrefixMapping prefixMapping) {
     for (final entry in formJson.entries) {
       if (!_parsedJsonFields.contains(entry.key)) {
-        additionalFields[entry.key] = entry.value;
+        final String key = _expandCurieKey(entry.key, prefixMapping);
+        final dynamic value = _expandCurieValue(entry.value, prefixMapping);
+
+        additionalFields[key] = value;
       }
     }
   }
@@ -148,7 +181,8 @@ class Form {
       ..securityDefinitions = securityDefinitions
       ..security = security
       ..scopes = scopes
-      ..response = response;
+      ..response = response
+      ..additionalFields.addAll(additionalFields);
     return copiedForm;
   }
 

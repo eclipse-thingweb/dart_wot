@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import '../data_schema.dart';
 import '../form.dart';
 import 'interaction_affordance.dart';
@@ -47,8 +49,9 @@ class Property extends InteractionAffordance implements DataSchema {
   Property(List<Form> forms) : super(forms);
 
   /// Creates a new [Property] from a [json] object.
-  Property.fromJson(Map<String, dynamic> json) : super([]) {
-    parseAffordanceFields(json);
+  Property.fromJson(Map<String, dynamic> json, PrefixMapping prefixMapping)
+      : super([]) {
+    parseAffordanceFields(json, prefixMapping);
     parseDataSchemaJson(this, json);
     rawJson = json;
   }
