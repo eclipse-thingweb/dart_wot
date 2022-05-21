@@ -1,3 +1,9 @@
+## 0.15.0
+
+- Added CURIE expansion for additional TD fields
+- Added support for new CoAP Binding-Template
+- Added experimental CoAPS support
+
 ## 0.14.0
 
 - Fixed constructor of `ThingFilter` class and aligned it with Scripting API
