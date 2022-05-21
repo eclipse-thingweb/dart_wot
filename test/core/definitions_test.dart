@@ -6,6 +6,7 @@
 
 import 'dart:convert';
 
+import 'package:curie/curie.dart';
 import 'package:dart_wot/src/definitions/expected_response.dart';
 import 'package:dart_wot/src/definitions/form.dart';
 import 'package:test/test.dart';
@@ -17,6 +18,8 @@ void main() {
     });
 
     test('Form', () {
+      final prefixMapping = PrefixMapping(
+          defaultPrefixValue: "https://www.w3.org/2019/wot/td/v1");
       final form = Form("https://example.org");
 
       expect(form.href, "https://example.org");
@@ -51,7 +54,8 @@ void main() {
         "test": "test"
       }""");
 
-      final form3 = Form.fromJson(form3Json as Map<String, dynamic>);
+      final form3 =
+          Form.fromJson(form3Json as Map<String, dynamic>, prefixMapping);
 
       expect(form3.href, "https://example.org");
       expect(form3.contentType, "application/json");
@@ -70,7 +74,8 @@ void main() {
         "scopes": "test"
       }""");
 
-      final form4 = Form.fromJson(form4Json as Map<String, dynamic>);
+      final form4 =
+          Form.fromJson(form4Json as Map<String, dynamic>, prefixMapping);
 
       expect(form4.security, ["test"]);
       expect(form4.op, ["writeproperty"]);
@@ -80,7 +85,8 @@ void main() {
       {
       }""");
 
-      expect(() => Form.fromJson(form5Json as Map<String, dynamic>),
+      expect(
+          () => Form.fromJson(form5Json as Map<String, dynamic>, prefixMapping),
           throwsArgumentError);
     });
   });
