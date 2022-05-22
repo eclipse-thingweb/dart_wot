@@ -1,3 +1,7 @@
+## 0.15.1
+
+- Added the new CoAP Binding-Template vocabulary to `complex_example.dart`
+
 ## 0.15.0
 
 - Added CURIE expansion for additional TD fields
