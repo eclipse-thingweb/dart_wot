@@ -8,7 +8,13 @@ import 'package:dart_wot/dart_wot.dart';
 
 final thingDescriptionJson = '''
 {
-  "@context": ["http://www.w3.org/ns/td", {"@language": "de"}],
+  "@context": [
+    "http://www.w3.org/ns/td",
+    {
+      "@language": "de",
+      "coap": "http://www.example.org/coap-binding#"
+    }
+  ],
   "title": "Test Thing",
   "id": "urn:test",
   "base": "coap://coap.me",
@@ -43,7 +49,7 @@ final thingDescriptionJson = '''
       "forms": [
         {
           "href": "coap://coap.me",
-          "cov:methodName": "PUT"
+          "coap:method": "PUT"
         }
       ]
     },
