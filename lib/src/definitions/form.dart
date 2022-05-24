@@ -8,7 +8,6 @@ import 'package:curie/curie.dart';
 import 'package:json_schema2/json_schema2.dart';
 import 'package:uri/uri.dart';
 
-import 'credentials/credentials.dart';
 import 'expected_response.dart';
 import 'interaction_affordances/interaction_affordance.dart';
 import 'security/security_scheme.dart';
@@ -71,12 +70,6 @@ class Form {
       return securityDefinition;
     }).toList();
   }
-
-  /// The credentials associated with this [Form].
-  ///
-  /// Used by augmented [Form]s.
-  // TODO(JKRhb): Move to an agumented Form class.
-  List<Credentials> credentials = [];
 
   /// Creates a new [Form] object.
   ///

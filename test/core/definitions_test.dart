@@ -30,21 +30,18 @@ void main() {
       final form2 = Form(uri, interactionAffordance,
           contentType: "application/json",
           subprotocol: "test",
-          security: ["test"],
           scopes: ["test"],
           response: ExpectedResponse("application/json"),
           additionalFields: <String, dynamic>{"test": "test"});
 
-      expect(form2.href, "https://example.org");
+      expect(form2.href, uri);
       expect(form2.contentType, "application/json");
       expect(form2.subprotocol, "test");
-      expect(form2.security, ["test"]);
       expect(form2.scopes, ["test"]);
       expect(form2.response!.contentType, "application/json");
       expect(form2.additionalFields, {"test": "test"});
 
-      final dynamic form3Json = jsonDecode(
-          """
+      final dynamic form3Json = jsonDecode("""
       {
         "href": "https://example.org",
         "contentType": "application/json",
@@ -53,7 +50,6 @@ void main() {
         "response": {
           "contentType": "application/json"
         },
-        "security": ["test1", "test2"],
         "op": ["writeproperty", "readproperty"],
         "test": "test"
       }""");
@@ -61,17 +57,15 @@ void main() {
       final form3 = Form.fromJson(
           form3Json as Map<String, dynamic>, interactionAffordance);
 
-      expect(form3.href, "https://example.org");
+      expect(form3.href, uri);
       expect(form3.contentType, "application/json");
       expect(form3.subprotocol, "test");
-      expect(form3.security, ["test1", "test2"]);
       expect(form3.op, ["writeproperty", "readproperty"]);
       expect(form3.scopes, ["test1", "test2"]);
       expect(form3.response?.contentType, "application/json");
       expect(form3.additionalFields, {"test": "test"});
 
-      final dynamic form4Json = jsonDecode(
-          """
+      final dynamic form4Json = jsonDecode("""
       {
         "href": "https://example.org",
         "op": "writeproperty",
@@ -91,7 +85,7 @@ void main() {
       expect(
           () => Form.fromJson(
               form5Json as Map<String, dynamic>, interactionAffordance),
-          throwsArgumentError);
+          throwsException);
     });
   });
 }

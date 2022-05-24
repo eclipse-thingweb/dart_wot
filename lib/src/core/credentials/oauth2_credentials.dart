@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../security/oauth2_security_scheme.dart';
+import '../../definitions/security/oauth2_security_scheme.dart';
 import 'credentials.dart';
 
 /// [Credentials] used for the [OAuth2SecurityScheme].

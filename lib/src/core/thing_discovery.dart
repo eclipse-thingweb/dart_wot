@@ -7,8 +7,6 @@
 import 'dart:async';
 
 import '../../scripting_api.dart' as scripting_api;
-import '../definitions/form.dart';
-import '../definitions/interaction_affordances/property.dart';
 import '../definitions/thing_description.dart';
 import 'protocol_interfaces/protocol_client.dart';
 import 'servient.dart';

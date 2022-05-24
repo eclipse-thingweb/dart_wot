@@ -6,6 +6,7 @@
 
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../core/protocol_interfaces/protocol_client_factory.dart';
+import '../core/security_provider.dart';
 import 'http_client.dart';
 import 'http_config.dart';
 
@@ -26,7 +27,9 @@ class HttpClientFactory extends ProtocolClientFactory {
   }
 
   @override
-  ProtocolClient createClient() => HttpClient();
+  ProtocolClient createClient(
+          [ClientSecurityProvider? clientSecurityProvider]) =>
+      HttpClient(clientSecurityProvider);
 
   @override
   bool init() {

@@ -10,13 +10,18 @@ import 'package:http/http.dart';
 import 'package:http_auth/http_auth.dart';
 
 import '../core/content.dart';
+import '../core/credentials/basic_credentials.dart';
+import '../core/credentials/bearer_credentials.dart';
+import '../core/credentials/credentials.dart';
+import '../core/credentials/digest_credentials.dart';
 import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
-import '../definitions/credentials/basic_credentials.dart';
-import '../definitions/credentials/bearer_credentials.dart';
-import '../definitions/credentials/credentials.dart';
-import '../definitions/credentials/digest_credentials.dart';
+import '../core/security_provider.dart';
 import '../definitions/form.dart';
+import '../definitions/security/basic_security_scheme.dart';
+import '../definitions/security/bearer_security_scheme.dart';
+import '../definitions/security/digest_security_scheme.dart';
+import '../definitions/security/security_scheme.dart';
 import '../definitions/thing_description.dart';
 import '../scripting_api/subscription.dart';
 
@@ -72,8 +77,10 @@ typedef _OtherHttpMethod = Future<Response> Function(Uri uri,
 /// [RFC 6750]: https://datatracker.ietf.org/doc/html/rfc6750
 /// [`ComboSecurityScheme`]: https://w3c.github.io/wot-thing-description/#combosecurityscheme
 class HttpClient extends ProtocolClient {
+  final ClientSecurityProvider? _clientSecurityProvider;
+
   /// Creates a new [HttpClient].
-  HttpClient();
+  HttpClient(this._clientSecurityProvider);
 
   Future<Response> _createRequest(
       Form form, OperationType operationType, Object? payload) async {
@@ -82,11 +89,11 @@ class HttpClient extends ProtocolClient {
     final Future<Response> response;
     final Uri uri = form.resolvedHref;
     final headers = _getHeadersFromForm(form);
-    _applySecurityToHeader(form, headers);
+    await _applySecurityToHeader(form, headers);
     final BasicCredentials? basicCredentials =
-        _credentialsFromForm<BasicCredentials>(form);
+        await _getCredentialsFromForm<BasicCredentials>(form);
     final DigestCredentials? digestCredentials =
-        _credentialsFromForm<DigestCredentials>(form);
+        await _getCredentialsFromForm<DigestCredentials>(form);
     switch (requestMethod) {
       case HttpRequestMethod.get:
         final getMethod =
@@ -117,14 +124,54 @@ class HttpClient extends ProtocolClient {
     return response;
   }
 
-  /// Selects the first instance of defined [Credentials] from a [form].
-  static T? _credentialsFromForm<T extends Credentials>(Form form) {
-    final credentials = form.credentials.whereType<T>();
-    if (credentials.isNotEmpty) {
-      return credentials.first;
+  static bool _hasSecurityScheme<T extends SecurityScheme>(Form form) {
+    return form.securityDefinitions.whereType<T>().isNotEmpty;
+  }
+
+  static AsyncClientSecurityCallback<T>?
+      _determineCallback<T extends Credentials>(
+          ClientSecurityProvider securityProvider, Form form) {
+    AsyncClientSecurityCallback<T>? callback;
+
+    switch (T) {
+      case BearerCredentials:
+        if (_hasSecurityScheme<BearerSecurityScheme>(form)) {
+          callback = securityProvider.bearerCredentialsCallback
+              as AsyncClientSecurityCallback<T>?;
+        }
+        break;
+      case DigestCredentials:
+        if (_hasSecurityScheme<DigestSecurityScheme>(form)) {
+          callback = securityProvider.digestCredentialsCallback
+              as AsyncClientSecurityCallback<T>?;
+        }
+        break;
+      case BasicCredentials:
+        if (_hasSecurityScheme<BasicSecurityScheme>(form)) {
+          callback = securityProvider.basicCredentialsCallback
+              as AsyncClientSecurityCallback<T>?;
+        }
+        break;
     }
 
-    return null;
+    return callback;
+  }
+
+  /// Selects the first instance of defined [Credentials] from a [form].
+  Future<T?> _getCredentialsFromForm<T extends Credentials>(Form form) async {
+    final securityProvider = _clientSecurityProvider;
+
+    if (securityProvider == null) {
+      return null;
+    }
+
+    final callback = _determineCallback<T>(securityProvider, form);
+
+    if (callback == null) {
+      return null;
+    }
+
+    return callback(form.resolvedHref, form);
   }
 
   static Map<String, String> _getHeadersFromForm(Form form) {
@@ -197,9 +244,10 @@ class HttpClient extends ProtocolClient {
     throw UnimplementedError();
   }
 
-  void _applySecurityToHeader(Form form, Map<String, String> headers) {
+  Future<void> _applySecurityToHeader(
+      Form form, Map<String, String> headers) async {
     final BearerCredentials? bearerCredentials =
-        _credentialsFromForm<BearerCredentials>(form);
+        await _getCredentialsFromForm<BearerCredentials>(form);
 
     if (bearerCredentials != null) {
       headers[_authorizationHeader] = "Bearer ${bearerCredentials.token}";

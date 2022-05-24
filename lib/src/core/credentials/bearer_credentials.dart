@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../security/bearer_security_scheme.dart';
+import '../../definitions/security/bearer_security_scheme.dart';
 
 import 'credentials.dart';
 

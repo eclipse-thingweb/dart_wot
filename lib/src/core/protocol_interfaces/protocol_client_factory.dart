@@ -4,6 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import '../security_provider.dart';
 import 'protocol_client.dart';
 
 /// Base class for a factory that produces [ProtocolClient]s.
@@ -23,5 +24,5 @@ abstract class ProtocolClientFactory {
 
   /// Creates a new [ProtocolClient] with that supports one or more of the given
   /// [schemes].
-  ProtocolClient createClient();
+  ProtocolClient createClient([ClientSecurityProvider? clientSecurityProvider]);
 }

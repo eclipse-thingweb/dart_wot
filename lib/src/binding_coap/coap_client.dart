@@ -11,13 +11,15 @@ import 'dart:io';
 import 'package:coap/coap.dart' as coap;
 import 'package:coap/config/coap_config_default.dart';
 import 'package:curie/curie.dart';
-import 'package:dart_wot/src/definitions/credentials/psk_credentials.dart';
 
 import '../core/content.dart';
+import '../core/credentials/psk_credentials.dart';
 import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
+import '../core/security_provider.dart';
 import '../core/thing_discovery.dart';
 import '../definitions/form.dart';
+import '../definitions/security/psk_security_scheme.dart';
 import '../definitions/thing_description.dart';
 import '../scripting_api/interaction_options.dart';
 import '../scripting_api/subscription.dart';
@@ -130,7 +132,7 @@ class _InternalCoapConfig extends CoapConfigDefault {
       return;
     }
 
-    if (_hasPskCredentials(_form) && coapConfig.useTinyDtls) {
+    if (_usesPskScheme(_form) && coapConfig.useTinyDtls) {
       dtlsBackend = coap.DtlsBackend.TinyDtls;
     } else if (coapConfig.useOpenSsl) {
       dtlsBackend = coap.DtlsBackend.OpenSsl;
@@ -140,8 +142,8 @@ class _InternalCoapConfig extends CoapConfigDefault {
   bool get _dtlsNeeded => _form.resolvedHref.scheme == "coaps";
 }
 
-bool _hasPskCredentials(Form form) {
-  return form.credentials.whereType<PskCredentials>().isNotEmpty;
+bool _usesPskScheme(Form form) {
+  return form.securityDefinitions.whereType<PskSecurityScheme>().isNotEmpty;
 }
 
 class _CoapRequest {
@@ -165,11 +167,13 @@ class _CoapRequest {
   _CoapRequest(
     this._form,
     this._requestMethod,
-    CoapConfig _coapConfig, [
+    CoapConfig _coapConfig,
+    ClientSecurityProvider? _clientSecurityProvider, [
     this._subprotocol,
   ])  : _coapClient = coap.CoapClient(
             _form.resolvedHref, _InternalCoapConfig(_coapConfig, _form),
-            pskCredentialsCallback: _createPskCallback(_form)),
+            pskCredentialsCallback:
+                _createPskCallback(_form, _clientSecurityProvider)),
         _requestUri = _form.resolvedHref;
 
   // TODO(JKRhb): blockwise parameters cannot be handled at the moment due to
@@ -211,39 +215,27 @@ class _CoapRequest {
     return response;
   }
 
-  static coap.PskCredentials? _retrievePskCredentials(Form form) {
-    final pskCredentialsList = form.credentials.whereType<PskCredentials>();
-
-    for (final pskCredentials in pskCredentialsList) {
-      final identity =
-          pskCredentials.identity ?? pskCredentials.securityScheme?.identity;
-
-      if (identity == null) {
-        continue;
-      }
-
-      final preSharedKey = pskCredentials.preSharedKey;
-
-      return coap.PskCredentials(
-          identity: identity, preSharedKey: preSharedKey);
-    }
-
-    return null;
-  }
-
-  static coap.PskCredentialsCallback? _createPskCallback(Form form) {
-    if (!_hasPskCredentials(form)) {
+  static coap.PskCredentialsCallback? _createPskCallback(
+      Form form, ClientSecurityProvider? clientSecurityProvider) {
+    final pskCredentialsCallback =
+        clientSecurityProvider?.pskCredentialsCallback;
+    if (!_usesPskScheme(form) || pskCredentialsCallback == null) {
       return null;
     }
 
-    final pskCredentials = _retrievePskCredentials(form);
+    return ((identityHint) {
+      final PskCredentials? pskCredentials =
+          pskCredentialsCallback(form.resolvedHref, form, identityHint);
 
-    if (pskCredentials == null) {
-      throw CoapBindingException("No client Identity found for CoAPS request!");
-    }
+      if (pskCredentials == null) {
+        throw CoapBindingException(
+            "Missing PSK credentials for CoAPS request!");
+      }
 
-    // TODO(JKRhb): Should the identityHint be handled?
-    return (identityHint) => pskCredentials;
+      return coap.PskCredentials(
+          identity: pskCredentials.identity,
+          preSharedKey: pskCredentials.preSharedKey);
+    });
   }
 
   int _determineContentFormat(_ContentFormatType _contentFormatType) {
@@ -349,15 +341,18 @@ class CoapClient extends ProtocolClient {
   final List<_CoapRequest> _pendingRequests = [];
   final CoapConfig? _coapConfig;
 
+  final ClientSecurityProvider? _clientSecurityProvider;
+
   /// Creates a new [CoapClient] based on an optional [CoapConfig].
-  CoapClient([this._coapConfig]);
+  CoapClient([this._coapConfig, this._clientSecurityProvider]);
 
   _CoapRequest _createRequest(Form form, OperationType operationType) {
     final requestMethod = _getRequestMethod(form, operationType);
     final _Subprotocol? subprotocol =
         _determineSubprotocol(form, operationType);
     final coapConfig = _coapConfig ?? CoapConfig();
-    final request = _CoapRequest(form, requestMethod, coapConfig, subprotocol);
+    final request = _CoapRequest(
+        form, requestMethod, coapConfig, _clientSecurityProvider, subprotocol);
     _pendingRequests.add(request);
     return request;
   }

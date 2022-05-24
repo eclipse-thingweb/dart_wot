@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../security/apikey_security_scheme.dart';
+import '../../definitions/security/apikey_security_scheme.dart';
 
 import 'credentials.dart';
 

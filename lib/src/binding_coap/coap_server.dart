@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import '../core/protocol_interfaces/protocol_server.dart';
-import '../definitions/credentials/credentials.dart';
+import '../core/security_provider.dart';
 import '../scripting_api/exposed_thing.dart';
 import 'coap_config.dart';
 
@@ -33,7 +33,7 @@ class CoapServer extends ProtocolServer {
   }
 
   @override
-  Future<void> start(Map<String, Map<String, Credentials>> credentials) {
+  Future<void> start([ServerSecurityCallback? serverSecurityCallback]) {
     // TODO(JKRhb): implement start
     throw UnimplementedError();
   }
