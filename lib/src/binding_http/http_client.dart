@@ -17,6 +17,7 @@ import '../definitions/credentials/bearer_credentials.dart';
 import '../definitions/credentials/credentials.dart';
 import '../definitions/credentials/digest_credentials.dart';
 import '../definitions/form.dart';
+import '../definitions/thing_description.dart';
 import '../scripting_api/subscription.dart';
 
 const _authorizationHeader = "Authorization";
@@ -260,6 +261,15 @@ class HttpClient extends ProtocolClient {
       default:
         throw ArgumentError("Invalid HTTP method specified.");
     }
+  }
+
+  @override
+  // TODO(JKRhb): Support Security Bootstrapping as described in
+  //              https://github.com/w3c/wot-discovery/pull/313/files
+  Stream<ThingDescription> discoverDirectly(Uri uri) async* {
+    final response = await get(uri, headers: {"Accept": "application/td+json"});
+    final rawThingDescription = response.body;
+    yield ThingDescription(rawThingDescription);
   }
 }
 

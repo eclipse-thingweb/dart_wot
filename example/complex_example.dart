@@ -132,17 +132,16 @@ Future<void> main() async {
 
   await consumedThing.readProperty("test");
 
-  final thingDiscovery = wot.discover(ThingFilter(
-      url: "https://raw.githubusercontent.com/w3c/wot-testing"
-          "/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs"
-          "/Oracle/oracle-Festo_Shared.td.jsonld",
-      method: DiscoveryMethod.direct));
+  final thingUri = Uri.parse("https://raw.githubusercontent.com/w3c/wot-testing"
+      "/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs"
+      "/Oracle/oracle-Festo_Shared.td.jsonld");
 
-  final discoveredThingDescription = await thingDiscovery.next();
-  thingDiscovery.stop();
-  final consumedDiscoveredThing = await wot.consume(discoveredThingDescription);
+  final thingDiscovery =
+      wot.discover(ThingFilter(url: thingUri, method: DiscoveryMethod.direct));
 
-  print("The title of the fetched TD is "
-      "${consumedDiscoveredThing.thingDescription.title}.");
-  print("Done!");
+  await for (final thingDescription in thingDiscovery) {
+    final consumedDiscoveredThing = await wot.consume(thingDescription);
+    print("The title of the fetched TD is "
+        "${consumedDiscoveredThing.thingDescription.title}.");
+  }
 }

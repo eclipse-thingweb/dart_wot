@@ -21,6 +21,19 @@ class CoapConfig {
   /// Indicates if openSSL is available as a DTLS backend.
   final bool useOpenSsl;
 
+  /// Indicates if multicast should be available for discovery.
+  ///
+  /// Defaults to false for security reasons, as multicast can lead to
+  /// amplication scenarios/attacks (c.f., [WoT Discovery Specification]).
+  ///
+  /// [WoT Discovery Specification]: https://w3c.github.io/wot-discovery/#security-consideration-amp-ddos
+  final bool allowMulticastDiscovery;
+
+  /// The duration after which multicast discovery is supposed to time out.
+  ///
+  /// Defaults to 60 seconds.
+  final Duration multicastDiscoveryTimeout;
+
   /// Creates a new [CoapConfig] object.
   CoapConfig({
     this.port = 5683,
@@ -28,5 +41,7 @@ class CoapConfig {
     this.blocksize,
     this.useTinyDtls = false,
     this.useOpenSsl = false,
+    this.allowMulticastDiscovery = false,
+    this.multicastDiscoveryTimeout = const Duration(minutes: 60),
   });
 }

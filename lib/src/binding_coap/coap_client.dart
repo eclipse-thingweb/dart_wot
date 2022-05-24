@@ -4,7 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:coap/coap.dart' as coap;
 import 'package:coap/config/coap_config_default.dart';
@@ -14,7 +16,9 @@ import 'package:dart_wot/src/definitions/credentials/psk_credentials.dart';
 import '../core/content.dart';
 import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
+import '../core/thing_discovery.dart';
 import '../definitions/form.dart';
+import '../definitions/thing_description.dart';
 import '../scripting_api/interaction_options.dart';
 import '../scripting_api/subscription.dart';
 import 'coap_config.dart';
@@ -421,6 +425,77 @@ class CoapClient extends ProtocolClient {
       request.abort();
     }
     _pendingRequests.clear();
+  }
+
+  ThingDescription _handleDiscoveryResponse(
+      coap.CoapResponse? response, Uri uri) {
+    final rawThingDescription = response?.payloadString;
+
+    if (response == null) {
+      throw DiscoveryException("Direct CoAP Discovery from $uri failed!");
+    }
+
+    return ThingDescription(rawThingDescription);
+  }
+
+  Stream<ThingDescription> _discoverFromMulticast(
+      coap.CoapClient client, Uri uri) async* {
+    // TODO(JKRhb): This method currently does not work with block-wise transfer
+    //               due to a bug in the CoAP library.
+    final streamController = StreamController<ThingDescription>();
+    final request = coap.CoapRequest(coap.CoapCode.get, confirmable: false)
+      // ignore: invalid_use_of_protected_member
+      ..uri = uri
+      ..accept = coap.CoapMediaType.applicationTdJson;
+    final multicastResponseHandler = coap.CoapMulticastResponseHandler(
+        (data) {
+          final thingDescription = _handleDiscoveryResponse(data.resp, uri);
+          streamController.add(thingDescription);
+        },
+        onError: streamController.addError,
+        onDone: () async {
+          await streamController.close();
+        });
+
+    final response =
+        client.send(request, onMulticastResponse: multicastResponseHandler);
+    unawaited(response);
+    unawaited(
+      Future.delayed(
+          _coapConfig?.multicastDiscoveryTimeout ?? Duration(seconds: 20), () {
+        client
+          ..cancel(request)
+          ..close();
+      }),
+    );
+    yield* streamController.stream;
+  }
+
+  Future<ThingDescription> _discoverFromUnicast(
+      coap.CoapClient client, Uri uri) async {
+    final response = await client.get(uri.path,
+        accept: coap.CoapMediaType.applicationTdJson);
+    client.close();
+    return _handleDiscoveryResponse(response, uri);
+  }
+
+  @override
+  Stream<ThingDescription> discoverDirectly(Uri uri) async* {
+    final config = CoapConfigDefault();
+    final client = coap.CoapClient(uri, config);
+
+    if (uri.isMulticastAddress) {
+      yield* _discoverFromMulticast(client, uri);
+    } else {
+      yield await _discoverFromUnicast(client, uri);
+    }
+  }
+}
+
+extension _InternetAddressMethods on Uri {
+  /// Checks whether the host of this [Uri] is a multicast [InternetAddress].
+  bool get isMulticastAddress {
+    return InternetAddress.tryParse(host)?.isMulticast ?? false;
   }
 }
 

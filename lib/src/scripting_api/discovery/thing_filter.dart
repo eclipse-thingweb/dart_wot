@@ -20,7 +20,7 @@ class ThingFilter {
   /// This is, for instance the URL of a Thing Directory (if [method] is
   /// [DiscoveryMethod.directory]), or the URL of a directly targeted Thing (if
   /// [method] is [DiscoveryMethod.direct]).
-  String? url;
+  Uri url;
 
   /// Represents a template object used for matching property by property
   /// against discovered Things.
@@ -28,5 +28,7 @@ class ThingFilter {
 
   /// Constructor.
   ThingFilter(
-      {this.url, this.method = DiscoveryMethod.directory, this.fragment});
+      {required this.url,
+      this.method = DiscoveryMethod.directory,
+      this.fragment});
 }

@@ -37,18 +37,21 @@ abstract class WoT {
   /// this method's implementation is in an experimental state and does not
   /// conform to the specification's latest version.
   ///
-  /// An optional [thingFilter] can be passed for filtering out TDs before they
+  /// A [thingFilter] has to be passed for filtering out TDs before they
   /// are processed. The [thingFilter] also contains relevant information for
   /// controlling the Discovery process, e. g. a URL, the discovery method
-  /// (`direct` or `directory`), and a "fragement" [Map] for filtering out
-  /// properties of a [ThingDescription].
+  /// (`direct` or `directory`), and an optional `fragment` [Map] for filtering
+  /// out properties of a [ThingDescription].
   ///
   /// So far, however, only `direct` discovery is supported. Therefore, despite
   /// its method signature, a compatible [ThingFilter] with a defined URL is
-  /// required. Otherwise, an [ArgumentError] will be thrown.
+  /// required. Also, handling the fragment map is not yet supported.
   ///
   /// The [ThingDiscovery] object that is returned by this function can be used
   /// for stopping the Discovery process and retrieving information about its
-  /// current state (i. e. whether it is still `active` or already `done`).
-  ThingDiscovery discover([ThingFilter? thingFilter]);
+  /// current state (i.e., whether it is still `active`). It implements the
+  /// [Stream] interface, which makes it possible to `listen` for discovered
+  /// [ThingDescription]s or to iterate over the discovered results using the
+  /// `await for` syntax.
+  ThingDiscovery discover(ThingFilter thingFilter);
 }
