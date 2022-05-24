@@ -79,7 +79,7 @@ class HttpClient extends ProtocolClient {
     final requestMethod = _getRequestMethod(form, operationType);
 
     final Future<Response> response;
-    final Uri uri = Uri.parse(form.href);
+    final Uri uri = form.resolvedHref;
     final headers = _getHeadersFromForm(form);
     _applySecurityToHeader(form, headers);
     final BasicCredentials? basicCredentials =

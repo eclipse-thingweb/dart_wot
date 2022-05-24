@@ -133,7 +133,7 @@ class _InternalCoapConfig extends CoapConfigDefault {
     }
   }
 
-  bool get _dtlsNeeded => _form.href.startsWith("coaps");
+  bool get _dtlsNeeded => _form.resolvedHref.scheme == "coaps";
 }
 
 bool _hasPskCredentials(Form form) {
@@ -164,9 +164,9 @@ class _CoapRequest {
     CoapConfig _coapConfig, [
     this._subprotocol,
   ])  : _coapClient = coap.CoapClient(
-            Uri.parse(_form.href), _InternalCoapConfig(_coapConfig, _form),
+            _form.resolvedHref, _InternalCoapConfig(_coapConfig, _form),
             pskCredentialsCallback: _createPskCallback(_form)),
-        _requestUri = Uri.parse(_form.href);
+        _requestUri = _form.resolvedHref;
 
   // TODO(JKRhb): blockwise parameters cannot be handled at the moment due to
   //              limitations of the CoAP library

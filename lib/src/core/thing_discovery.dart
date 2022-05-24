@@ -8,6 +8,7 @@ import 'dart:async';
 
 import '../../scripting_api.dart' as scripting_api;
 import '../definitions/form.dart';
+import '../definitions/interaction_affordances/property.dart';
 import '../definitions/thing_description.dart';
 import 'servient.dart';
 
@@ -91,7 +92,11 @@ class ThingDiscovery implements scripting_api.ThingDiscovery {
     }
     final parsedUri = Uri.parse(uri);
     final client = _servient.clientFor(parsedUri.scheme);
-    final fetchForm = Form(uri, contentType: "application/td+json");
+    // TODO(JKRhb): Get rid of this workaround
+    final thingDescription = ThingDescription(null);
+    final property = Property([], thingDescription);
+    final fetchForm =
+        Form(parsedUri, property, contentType: "application/td+json");
 
     final content = await client.readResource(fetchForm);
     await client.stop();

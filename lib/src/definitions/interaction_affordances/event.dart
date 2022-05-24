@@ -7,7 +7,7 @@
 import 'package:curie/curie.dart';
 
 import '../data_schema.dart';
-import '../form.dart';
+import '../thing_description.dart';
 import 'interaction_affordance.dart';
 
 /// Class representing an [Event] Affordance in a Thing Description.
@@ -23,11 +23,12 @@ class Event extends InteractionAffordance {
   DataSchema? cancellation;
 
   /// Creates a new [Event] from a [List] of [forms].
-  Event(List<Form> forms) : super(forms);
+  Event(super.forms, super.thingDescription);
 
   /// Creates a new [Event] from a [json] object.
-  Event.fromJson(Map<String, dynamic> json, PrefixMapping prefixMapping)
-      : super([]) {
+  Event.fromJson(Map<String, dynamic> json, ThingDescription thingDescription,
+      PrefixMapping prefixMapping)
+      : super([], thingDescription) {
     parseAffordanceFields(json, prefixMapping);
     _parseEventFields(json);
   }

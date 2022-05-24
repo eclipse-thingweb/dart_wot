@@ -88,7 +88,7 @@ class Servient {
       return;
     }
     for (final interactionAffordance in interactionAffordances) {
-      interactionAffordance.forms = [];
+      interactionAffordance.forms.clear();
     }
   }
 

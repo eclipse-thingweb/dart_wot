@@ -72,7 +72,7 @@ Form? _findFormByScoring(
   int maxScore = 0;
   Form? foundForm;
 
-  for (Form currentForm in interaction.augmentedForms) {
+  for (Form currentForm in interaction.forms) {
     int score;
     if (form.op!.contains(operationType)) {
       score = 1;
@@ -80,7 +80,7 @@ Form? _findFormByScoring(
       continue;
     }
 
-    if (Uri.parse(form.href).origin == Uri.parse(currentForm.href).origin) {
+    if (form.resolvedHref.origin == currentForm.resolvedHref.origin) {
       score++;
     }
 
