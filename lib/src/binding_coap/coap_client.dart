@@ -582,12 +582,16 @@ class _CoapSubscription implements Subscription {
 
   @override
   Future<void> stop([InteractionOptions? options]) async {
+    if (!_active) {
+      return;
+    }
+    _active = false;
+
     final observeClientRelation = _observeClientRelation;
     if (observeClientRelation != null) {
       await _coapClient.cancelObserveProactive(observeClientRelation);
     }
     _coapClient.close();
-    _active = false;
     _complete();
   }
 }
