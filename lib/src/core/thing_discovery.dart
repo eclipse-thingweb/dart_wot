@@ -13,12 +13,17 @@ import '../definitions/thing_description.dart';
 import 'servient.dart';
 
 /// Custom [Exception] that is thrown when the discovery process fails.
-class DiscoveryError implements Exception {
+class DiscoveryException implements Exception {
   /// The error message of this exception.
   final String message;
 
-  /// Creates a new [DiscoveryError] with the specified error [message].
-  DiscoveryError(this.message);
+  /// Creates a new [DiscoveryException] with the specified error [message].
+  DiscoveryException(this.message);
+
+  @override
+  String toString() {
+    return "$runtimeType: $message";
+  }
 }
 
 /// Implemention of the [scripting_api.ThingDiscovery] interface.
