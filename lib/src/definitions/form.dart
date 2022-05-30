@@ -285,8 +285,8 @@ class Form {
       final schema = JsonSchema.create(value);
       final result = schema.validate(uriVariables[key]);
 
-        throw ArgumentError("Invalid type for URI variable $key");
       if (!result.isValid) {
+        throw ValidationException("Invalid type for URI variable $key");
       }
     }
   }
