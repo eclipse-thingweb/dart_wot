@@ -6,17 +6,26 @@
 
 import 'package:dart_wot/dart_wot.dart';
 
+/// Matches [PskCredentials] by hostname and URI scheme.
+final Map<Uri, PskCredentials> _pskCredentialsStore = {
+  Uri(host: "californium.eclipseprojects.io", scheme: "coaps"):
+      PskCredentials(identity: "Client_identity", preSharedKey: "secretPSK")
+};
+
+PskCredentials? _pskCredentialsCallback(
+    Uri uri, Form? form, String? identityHint) {
+  final key = Uri(scheme: uri.scheme, host: uri.host);
+
+  return _pskCredentialsStore[key];
+}
+
 Future<void> main(List<String> args) async {
   final CoapClientFactory coapClientFactory =
       CoapClientFactory(CoapConfig(useTinyDtls: true));
-  final servient = Servient()
-    ..addClientFactory(coapClientFactory)
-    ..addCredentials(
-        "coaps://californium.eclipseprojects.io",
-        "psk_sc",
-        PskCredentials("secretPSK"
-            // ,"Client_identity" // Identity can also be set in Credentials
-            ));
+  final securityProvider =
+      ClientSecurityProvider(pskCredentialsCallback: _pskCredentialsCallback);
+  final servient = Servient(clientSecurityProvider: securityProvider)
+    ..addClientFactory(coapClientFactory);
 
   final wot = await servient.start();
 

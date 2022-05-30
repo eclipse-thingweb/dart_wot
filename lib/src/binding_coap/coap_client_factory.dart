@@ -6,7 +6,7 @@
 
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../core/protocol_interfaces/protocol_client_factory.dart';
-
+import '../core/security_provider.dart';
 import 'coap_client.dart';
 import 'coap_config.dart';
 
@@ -28,7 +28,9 @@ class CoapClientFactory extends ProtocolClientFactory {
   }
 
   @override
-  ProtocolClient createClient() => CoapClient(coapConfig);
+  ProtocolClient createClient(
+          [ClientSecurityProvider? clientSecurityProvider]) =>
+      CoapClient(coapConfig, clientSecurityProvider);
 
   @override
   bool init() {

@@ -7,7 +7,7 @@
 import 'package:dart_wot/src/binding_http/http_config.dart';
 
 import '../core/protocol_interfaces/protocol_server.dart';
-import '../definitions/credentials/credentials.dart';
+import '../core/security_provider.dart';
 import '../scripting_api/exposed_thing.dart';
 
 /// A [ProtocolServer] for the Hypertext Transfer Protocol (HTTP).
@@ -37,7 +37,7 @@ class HttpServer extends ProtocolServer {
   }
 
   @override
-  Future<void> start(Map<String, Map<String, Credentials>> credentials) async {
+  Future<void> start([ServerSecurityCallback? serverSecurityCallback]) async {
     // TODO(JKRhb): implement start
     throw UnimplementedError();
   }

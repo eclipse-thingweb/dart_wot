@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../security/psk_security_scheme.dart';
+import '../../definitions/security/psk_security_scheme.dart';
 import 'credentials.dart';
 
 /// [Credentials] used for the [PskSecurityScheme].
@@ -13,11 +13,12 @@ class PskCredentials extends Credentials<PskSecurityScheme> {
   ///
   /// May be omitted if the corresponding Security Definition in the TD already
   /// specifies an identity.
-  String? identity;
+  final String identity;
 
   /// The [preSharedKey] associated with these [PskCredentials].
-  String preSharedKey;
+  final String preSharedKey;
 
   /// Constructor.
-  PskCredentials(this.preSharedKey, [this.identity]) : super("psk");
+  PskCredentials({required this.preSharedKey, required this.identity})
+      : super("psk");
 }

@@ -4,9 +4,6 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:json_schema2/json_schema2.dart';
-import 'package:uri/uri.dart';
-
 import '../../scripting_api.dart' as scripting_api;
 import '../../scripting_api.dart' hide ConsumedThing, InteractionOutput;
 import '../definitions/data_schema.dart';
@@ -17,18 +14,6 @@ import 'interaction_output.dart';
 import 'operation_type.dart';
 import 'protocol_interfaces/protocol_client.dart';
 import 'servient.dart';
-
-/// This [Exception] is thrown when [URI variables] are being used in the [Form]
-/// of a TD but no (valid) values were provided.
-///
-/// [URI variables]: https://www.w3.org/TR/wot-thing-description11/#form-uriVariables
-class UriVariableException implements Exception {
-  /// The error [message].
-  final String message;
-
-  /// Constructor.
-  UriVariableException(this.message);
-}
 
 enum _AffordanceType {
   action,
@@ -66,9 +51,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
   /// Constructor
   ConsumedThing(this.servient, this.thingDescription)
-      : title = thingDescription.title {
-    _augmentInteractionAffordanceForms();
-  }
+      : title = thingDescription.title;
 
   /// Checks if the [Servient] of this [ConsumedThing] supports a protocol
   /// [scheme].
@@ -93,7 +76,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     if (formIndex != null) {
       if (formIndex >= 0 && formIndex < forms.length) {
         foundForm = forms[formIndex];
-        final scheme = Uri.parse(foundForm.href).scheme;
+        final scheme = foundForm.resolvedHref.scheme;
         client = servient.clientFor(scheme);
       } else {
         throw ArgumentError('ConsumedThing "$title" missing formIndex for '
@@ -102,19 +85,15 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     } else {
       foundForm = forms.firstWhere(
           (form) =>
-              hasClientFor(Uri.parse(form.href).scheme) &&
+              hasClientFor(form.resolvedHref.scheme) &&
               _supportsOperationType(form, affordanceType, operationType),
           // TODO(JKRhb): Add custom Exception
           orElse: () => throw Exception("No matching form found!"));
-      final scheme = Uri.parse(foundForm.href).scheme;
+      final scheme = foundForm.resolvedHref.scheme;
       client = servient.clientFor(scheme);
     }
 
-    final credentials = servient.credentials(identifier);
-
-    final form = foundForm.copy()
-      ..href = _resolveUriVariables(interactionAffordance, foundForm, options)
-      ..updateCredentials(credentials);
+    final form = foundForm.resolveUriVariables(options?.uriVariables);
 
     return _ClientAndForm(client, form);
   }
@@ -130,7 +109,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     }
 
     final clientAndForm = _getClientFor(
-        property.augmentedForms,
+        property.forms,
         OperationType.readproperty,
         _AffordanceType.property,
         options,
@@ -155,7 +134,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     }
 
     final clientAndForm = _getClientFor(
-        property.augmentedForms,
+        property.forms,
         OperationType.writeproperty,
         _AffordanceType.property,
         options,
@@ -168,97 +147,6 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     await client.writeResource(form, content);
   }
 
-  void _validateUriVariables(
-      List<String> hrefUriVariables,
-      Map<String, Object?> affordanceUriVariables,
-      Map<String, Object?> uriVariables) {
-    // TODO(JKRhb): Handle global uriVariables
-
-    final missingTdDefinitions =
-        hrefUriVariables.where((element) => !uriVariables.containsKey(element));
-
-    if (missingTdDefinitions.isNotEmpty) {
-      throw UriVariableException("$missingTdDefinitions do not have defined "
-          "uriVariables in the TD");
-    }
-
-    final missingUserInput = hrefUriVariables
-        .where((element) => !affordanceUriVariables.containsKey(element));
-
-    if (missingUserInput.isNotEmpty) {
-      throw UriVariableException("$missingUserInput did not have defined "
-          "Values in the provided InteractionOptions.");
-    }
-
-    // We now assert that all user provided values comply to the Schema
-    // definition in the TD.
-    for (final affordanceUriVariable in affordanceUriVariables.entries) {
-      final key = affordanceUriVariable.key;
-      final value = affordanceUriVariable.value;
-
-      // TODO(JKRhb): Replace with a Draft 7 validator once it is available
-      //              (the original json_schema library which supports Draft 7
-      //              does not support sound null safety, yet, and can therefore
-      //              not be used. json_schema2, on the other hand, only
-      //              supports Draft 6.)
-      final schema = JsonSchema.createSchema(value);
-      final valid = schema.validate(uriVariables[key]);
-
-      if (!valid) {
-        throw ArgumentError("Invalid type for URI variable $key");
-      }
-    }
-  }
-
-  List<String> _filterUriVariables(String href) {
-    final regex = RegExp(r"{[?+#./;&]?([^}]*)}");
-    return regex
-        .allMatches(Uri.decodeFull(href))
-        .map((e) => e.group(1))
-        .whereType<String>()
-        .toList(growable: false);
-  }
-
-  String _resolveUriVariables(InteractionAffordance interactionAffordance,
-      Form form, InteractionOptions? options) {
-    final hrefUriVariables = _filterUriVariables(form.href);
-    final optionUriVariables = options?.uriVariables;
-
-    // Use global URI variables by default and override them with
-    // affordance-level variables, if any
-    final Map<String, Object?> affordanceUriVariables = {}
-      ..addAll(thingDescription.uriVariables ?? {})
-      ..addAll(interactionAffordance.uriVariables ?? {});
-
-    if (hrefUriVariables.isEmpty) {
-      // The href uses no uriVariables, therefore we can abort all further
-      // checks.
-      return form.href;
-    }
-
-    if (affordanceUriVariables.isEmpty) {
-      throw UriVariableException("The Form href ${form.href} contains URI "
-          "variables but the TD does not provide a uriVariables definition.");
-    }
-
-    if (optionUriVariables == null) {
-      throw ArgumentError("The Form href ${form.href} contains URI variables "
-          "but no values were provided as InteractionOptions.");
-    }
-
-    // Perform additional validation
-    _validateUriVariables(
-        hrefUriVariables, affordanceUriVariables, optionUriVariables);
-
-    // As "{" and "}" are "percent encoded" due to Uri.parse(), we need to
-    // revert the encoding first before we can insert the values.
-    final decodedHref = Uri.decodeFull(form.href);
-
-    // Everything should be okay at this point, we can simply insert the values
-    // and return the result.
-    return UriTemplate(decodedHref).expand(optionUriVariables);
-  }
-
   @override
   Future<InteractionOutput> invokeAction(String actionName,
       [Object? interactionInput, InteractionOptions? options]) async {
@@ -269,7 +157,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       throw StateError('ConsumedThing $title does not have action $actionName');
     }
 
-    final clientAndForm = _getClientFor(action.augmentedForms,
+    final clientAndForm = _getClientFor(action.forms,
         OperationType.invokeaction, _AffordanceType.action, options, action);
 
     final form = clientAndForm.form;
@@ -288,22 +176,6 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     return InteractionOutput(
         content, servient.contentSerdes, form, action.output);
-  }
-
-  void _augmentInteractionAffordanceForms() {
-    final interactionAffordanceList = [
-      thingDescription.properties,
-      thingDescription.actions,
-      thingDescription.events
-    ];
-
-    interactionAffordanceList.expand((e) => e.values).forEach(_augmentForms);
-  }
-
-  void _augmentForms(InteractionAffordance interactionAffordance) {
-    interactionAffordance.augmentedForms = interactionAffordance.forms
-        .map((form) => form.augment(thingDescription))
-        .toList(growable: false);
   }
 
   @override
@@ -350,8 +222,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       subscriptions = _subscribedEvents;
     }
 
-    final clientAndForm = _getClientFor(affordance.augmentedForms,
-        operationType, affordanceType, options, affordance);
+    final clientAndForm = _getClientFor(
+        affordance.forms, operationType, affordanceType, options, affordance);
 
     final form = clientAndForm.form;
     final client = clientAndForm.client;

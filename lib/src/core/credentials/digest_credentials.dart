@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../security/digest_security_scheme.dart';
+import '../../definitions/security/digest_security_scheme.dart';
 import 'credentials.dart';
 
 /// [Credentials] used for the [DigestSecurityScheme].

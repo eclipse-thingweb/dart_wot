@@ -22,7 +22,7 @@ void main() {
       expect(defaultServer.port, 80);
       expect(defaultServer.scheme, "http");
 
-      expect(() async => await defaultServer.start({}),
+      expect(() async => await defaultServer.start(),
           throwsA(TypeMatcher<UnimplementedError>()));
       expect(() async => await defaultServer.stop(),
           throwsA(TypeMatcher<UnimplementedError>()));
@@ -97,14 +97,30 @@ void main() {
 
       final parsedTd = ThingDescription(thingDescriptionJson);
 
-      final servient = Servient()
-        ..addClientFactory(HttpClientFactory())
-        ..addCredentials("https://httpbin.org", "basic_sc",
-            BasicCredentials(username, password))
-        ..addCredentials("https://httpbin.org", "digest_sc",
-            DigestCredentials(username, password))
-        ..addCredentials(
-            "https://httpbin.org", "bearer_sc", BearerCredentials(token));
+      final Map<String, BasicCredentials> basicCredentialsStore = {
+        "httpbin.org": BasicCredentials(username, password),
+      };
+
+      final Map<String, DigestCredentials> digestCredentialsStore = {
+        "httpbin.org": DigestCredentials(username, password),
+      };
+
+      final Map<String, BearerCredentials> bearerCredentialsStore = {
+        "httpbin.org": BearerCredentials(token),
+      };
+
+      final clientSecurityProvider = ClientSecurityProvider(
+        basicCredentialsCallback: (uri, form) async {
+          return basicCredentialsStore[uri.host];
+        },
+        digestCredentialsCallback: (uri, form) async =>
+            digestCredentialsStore[uri.host],
+        bearerCredentialsCallback: (uri, form) async =>
+            bearerCredentialsStore[uri.host],
+      );
+
+      final servient = Servient(clientSecurityProvider: clientSecurityProvider)
+        ..addClientFactory(HttpClientFactory());
       final wot = await servient.start();
 
       final consumedThing = await wot.consume(parsedTd);

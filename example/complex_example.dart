@@ -40,7 +40,7 @@ final thingDescriptionJson = '''
           "href": "/.well-known/core"
         },
         {
-          "href": "/hello",
+          "href": "coap://californium.eclipseprojects.io/obs",
           "op": ["observeproperty", "unobserveproperty"]
         }
       ]
@@ -95,15 +95,25 @@ final thingDescriptionJson = '''
 }
 ''';
 
+final Map<String, BasicCredentials> basicCredentials = {
+  "urn:test": BasicCredentials("username", "password")
+};
+
+Future<BasicCredentials?> basicCredentialsCallback(Uri uri, Form? form) async {
+  final id = form?.interactionAffordance.thingDescription.identifier;
+
+  return basicCredentials[id];
+}
+
 Future<void> main() async {
   final coapConfig = CoapConfig(blocksize: 64);
   final CoapClientFactory coapClientFactory = CoapClientFactory(coapConfig);
   final HttpClientFactory httpClientFactory = HttpClientFactory();
-  final servient = Servient()
+  final securityProvider = ClientSecurityProvider(
+      basicCredentialsCallback: basicCredentialsCallback);
+  final servient = Servient(clientSecurityProvider: securityProvider)
     ..addClientFactory(coapClientFactory)
-    ..addClientFactory(httpClientFactory)
-    ..addCredentials(
-        "urn:test", "basic_sc", BasicCredentials("username", "password"));
+    ..addClientFactory(httpClientFactory);
   final wot = await servient.start();
 
   final thingDescription = ThingDescription(thingDescriptionJson);
@@ -123,26 +133,31 @@ Future<void> main() async {
 
   Subscription? subscription;
 
-  // TODO(JKRhb): Turn into a "real" observation example.
+  int observationCounter = 0;
   subscription = await consumedThing.observeProperty("status", (data) async {
-    final value = await data.value();
-    print(value);
-    await subscription?.stop();
+    if (observationCounter++ == 3) {
+      print("Done! Cancelling subscription.");
+      await subscription?.stop();
+    }
+
+    if (subscription?.active ?? false) {
+      final value = await data.value();
+      print("Received observation data: $value");
+    }
   });
 
   await consumedThing.readProperty("test");
 
-  final thingDiscovery = wot.discover(ThingFilter(
-      url: "https://raw.githubusercontent.com/w3c/wot-testing"
-          "/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs"
-          "/Oracle/oracle-Festo_Shared.td.jsonld",
-      method: DiscoveryMethod.direct));
+  final thingUri = Uri.parse("https://raw.githubusercontent.com/w3c/wot-testing"
+      "/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs"
+      "/Oracle/oracle-Festo_Shared.td.jsonld");
 
-  final discoveredThingDescription = await thingDiscovery.next();
-  thingDiscovery.stop();
-  final consumedDiscoveredThing = await wot.consume(discoveredThingDescription);
+  final thingDiscovery =
+      wot.discover(ThingFilter(url: thingUri, method: DiscoveryMethod.direct));
 
-  print("The title of the fetched TD is "
-      "${consumedDiscoveredThing.thingDescription.title}.");
-  print("Done!");
+  await for (final thingDescription in thingDiscovery) {
+    final consumedDiscoveredThing = await wot.consume(thingDescription);
+    print("The title of the fetched TD is "
+        "${consumedDiscoveredThing.thingDescription.title}.");
+  }
 }

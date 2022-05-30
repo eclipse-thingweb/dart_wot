@@ -10,7 +10,15 @@
 
 export 'src/core/codecs/content_codec.dart';
 export 'src/core/content_serdes.dart';
+export 'src/core/credentials/apikey_credentials.dart';
+export 'src/core/credentials/basic_credentials.dart';
+export 'src/core/credentials/bearer_credentials.dart';
+export 'src/core/credentials/credentials.dart';
+export 'src/core/credentials/digest_credentials.dart';
+export 'src/core/credentials/oauth2_credentials.dart';
+export 'src/core/credentials/psk_credentials.dart';
 export 'src/core/protocol_interfaces/protocol_client.dart';
 export 'src/core/protocol_interfaces/protocol_client_factory.dart';
 export 'src/core/protocol_interfaces/protocol_server.dart';
+export 'src/core/security_provider.dart';
 export 'src/core/servient.dart';

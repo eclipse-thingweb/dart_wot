@@ -6,7 +6,6 @@
 
 import 'package:uuid/uuid.dart';
 
-import '../definitions/credentials/credentials.dart';
 import '../definitions/interaction_affordances/interaction_affordance.dart';
 import '../definitions/thing_description.dart';
 import 'consumed_thing.dart';
@@ -15,17 +14,8 @@ import 'exposed_thing.dart';
 import 'protocol_interfaces/protocol_client.dart';
 import 'protocol_interfaces/protocol_client_factory.dart';
 import 'protocol_interfaces/protocol_server.dart';
+import 'security_provider.dart';
 import 'wot.dart';
-
-/// This [Exception] is thrown when the addition or application of [Credentials]
-/// fails.
-class CredentialsException implements Exception {
-  /// The error message of this [CredentialsException].
-  String message;
-
-  /// Constructor.
-  CredentialsException(this.message);
-}
 
 // TODO(JKRhb): Documentation should be improved.
 /// A software stack that implements the WoT building blocks.
@@ -38,7 +28,10 @@ class Servient {
   final Map<String, ProtocolClientFactory> _clientFactories = {};
   final Map<String, ExposedThing> _things = {};
   final Map<String, ConsumedThing> _consumedThings = {};
-  final Map<String, Map<String, Credentials>> _credentialsStore = {};
+
+  final ClientSecurityProvider? _clientSecurityProvider;
+
+  final ServerSecurityCallback? _serverSecurityCallback;
 
   /// The [ContentSerdes] object that is used for serializing/deserializing.
   final ContentSerdes contentSerdes;
@@ -47,8 +40,13 @@ class Servient {
   ///
   /// A custom [contentSerdes] can be passed that supports other media types
   /// than the default ones.
-  Servient([ContentSerdes? contentSerdes])
-      : contentSerdes = contentSerdes ?? ContentSerdes();
+  Servient(
+      {ClientSecurityProvider? clientSecurityProvider,
+      ServerSecurityCallback? serverSecurityCallback,
+      ContentSerdes? contentSerdes})
+      : contentSerdes = contentSerdes ?? ContentSerdes(),
+        _clientSecurityProvider = clientSecurityProvider,
+        _serverSecurityCallback = serverSecurityCallback;
 
   /// Starts this [Servient] and returns a [WoT] runtime object.
   ///
@@ -56,7 +54,7 @@ class Servient {
   /// Things.
   Future<WoT> start() async {
     final serverStatuses = _servers
-        .map((server) => server.start(_credentialsStore))
+        .map((server) => server.start(_serverSecurityCallback))
         .toList(growable: false);
 
     for (final clientFactory in _clientFactories.values) {
@@ -88,7 +86,7 @@ class Servient {
       return;
     }
     for (final interactionAffordance in interactionAffordances) {
-      interactionAffordance.forms = [];
+      interactionAffordance.forms.clear();
     }
   }
 
@@ -153,7 +151,6 @@ class Servient {
     }
 
     _consumedThings[id] = thing;
-    _applyCredentials(id);
     return true;
   }
 
@@ -189,77 +186,15 @@ class Servient {
     }
   }
 
-  /// Adds new [credentials] to this [Servient].
-  ///
-  /// The [definitionKey] must refer to an entry of the `securityDefinitions`
-  /// map of a TD, while the [credentials] have to match the type of the
-  /// Security Scheme they are being assigned to. Otherwise they will be
-  /// ignored.
-  void addCredentials(
-      String id, String definitionKey, Credentials credentials) {
-    final currentCredentials = _credentialsStore[id];
-    if (currentCredentials == null) {
-      _credentialsStore[id] = {definitionKey: credentials};
-    } else {
-      currentCredentials[definitionKey] = credentials;
-    }
-    _applyCredentials(id);
-  }
-
-  /// Removes [Credentials] from this [Servient].
-  ///
-  /// Returns the [Credentials] if the removal was successful, otherwise `null`.
-  Credentials? removeCredentials(String id, String definitionKey) {
-    return _credentialsStore[id]?.remove(definitionKey);
-  }
-
   /// Checks whether a [ProtocolClient] is avaiable for a given [scheme].
   bool hasClientFor(String scheme) => _clientFactories.containsKey(scheme);
 
   /// Returns the [ProtocolClient] associated with a given [scheme].
   ProtocolClient clientFor(String scheme) {
     if (hasClientFor(scheme)) {
-      return _clientFactories[scheme]!.createClient();
+      return _clientFactories[scheme]!.createClient(_clientSecurityProvider);
     } else {
       throw StateError('Servient has no ClientFactory for scheme $scheme');
-    }
-  }
-
-  /// Returns the [Credentials] for a given [identifier].
-  ///
-  /// Returns null if the [identifier] is unknown.
-  Map<String, Credentials>? credentials(String identifier) =>
-      _credentialsStore[identifier];
-
-  /// Links the [Credentials] stored in this [Servient] to the `SecuritySchemes`
-  /// of a [ConsumedThing].
-  ///
-  /// Throws a [CredentialsException] if a type mismatch between [Credentials]
-  /// and a `SecurityScheme` should be detected.
-  void _applyCredentials(String id) {
-    final consumedThing = _consumedThings[id];
-
-    if (consumedThing == null) {
-      return;
-    }
-
-    final securityDefinitions =
-        consumedThing.thingDescription.securityDefinitions;
-
-    for (final entry in securityDefinitions.entries) {
-      final credentials = _credentialsStore[id]?[entry.key];
-      final securityDefinition = entry.value;
-
-      final securitySchemeType = securityDefinition.scheme;
-      final credentialsType = credentials?.securitySchemeType;
-
-      if (securitySchemeType == credentialsType) {
-        credentials?.securityScheme = securityDefinition;
-      } else if (credentials != null) {
-        throw CredentialsException("Type mismatch of credentials for"
-            " thing with id $id! Credentials type was $credentialsType,"
-            " SecurityScheme type was $securitySchemeType");
-      }
     }
   }
 }

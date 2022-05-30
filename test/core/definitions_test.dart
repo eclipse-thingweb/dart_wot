@@ -6,9 +6,10 @@
 
 import 'dart:convert';
 
-import 'package:curie/curie.dart';
 import 'package:dart_wot/src/definitions/expected_response.dart';
 import 'package:dart_wot/src/definitions/form.dart';
+import 'package:dart_wot/src/definitions/interaction_affordances/property.dart';
+import 'package:dart_wot/src/definitions/thing_description.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -18,24 +19,24 @@ void main() {
     });
 
     test('Form', () {
-      final prefixMapping = PrefixMapping(
-          defaultPrefixValue: "https://www.w3.org/2019/wot/td/v1");
-      final form = Form("https://example.org");
+      final thingDescription = ThingDescription(null);
+      final interactionAffordance = Property([], thingDescription);
 
-      expect(form.href, "https://example.org");
+      final uri = Uri.parse("https://example.org");
+      final form = Form(uri, interactionAffordance);
 
-      final form2 = Form("https://example.org",
+      expect(form.href, uri);
+
+      final form2 = Form(uri, interactionAffordance,
           contentType: "application/json",
           subprotocol: "test",
-          security: ["test"],
           scopes: ["test"],
           response: ExpectedResponse("application/json"),
           additionalFields: <String, dynamic>{"test": "test"});
 
-      expect(form2.href, "https://example.org");
+      expect(form2.href, uri);
       expect(form2.contentType, "application/json");
       expect(form2.subprotocol, "test");
-      expect(form2.security, ["test"]);
       expect(form2.scopes, ["test"]);
       expect(form2.response!.contentType, "application/json");
       expect(form2.additionalFields, {"test": "test"});
@@ -49,18 +50,16 @@ void main() {
         "response": {
           "contentType": "application/json"
         },
-        "security": ["test1", "test2"],
         "op": ["writeproperty", "readproperty"],
         "test": "test"
       }""");
 
-      final form3 =
-          Form.fromJson(form3Json as Map<String, dynamic>, prefixMapping);
+      final form3 = Form.fromJson(
+          form3Json as Map<String, dynamic>, interactionAffordance);
 
-      expect(form3.href, "https://example.org");
+      expect(form3.href, uri);
       expect(form3.contentType, "application/json");
       expect(form3.subprotocol, "test");
-      expect(form3.security, ["test1", "test2"]);
       expect(form3.op, ["writeproperty", "readproperty"]);
       expect(form3.scopes, ["test1", "test2"]);
       expect(form3.response?.contentType, "application/json");
@@ -69,15 +68,13 @@ void main() {
       final dynamic form4Json = jsonDecode("""
       {
         "href": "https://example.org",
-        "security": "test",
         "op": "writeproperty",
         "scopes": "test"
       }""");
 
-      final form4 =
-          Form.fromJson(form4Json as Map<String, dynamic>, prefixMapping);
+      final form4 = Form.fromJson(
+          form4Json as Map<String, dynamic>, interactionAffordance);
 
-      expect(form4.security, ["test"]);
       expect(form4.op, ["writeproperty"]);
       expect(form4.scopes, ["test"]);
 
@@ -86,8 +83,9 @@ void main() {
       }""");
 
       expect(
-          () => Form.fromJson(form5Json as Map<String, dynamic>, prefixMapping),
-          throwsArgumentError);
+          () => Form.fromJson(
+              form5Json as Map<String, dynamic>, interactionAffordance),
+          throwsException);
     });
   });
 }

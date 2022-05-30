@@ -7,9 +7,16 @@
 import 'package:curie/curie.dart';
 
 import '../form.dart';
+import '../thing_description.dart';
 
 /// Base class for Interaction Affordances (Properties, Actions, and Events).
 abstract class InteractionAffordance {
+  // TODO(JKRhb): Make fields final
+
+  /// Reference to the [ThingDescription] containing this
+  /// [InteractionAffordance].
+  final ThingDescription thingDescription;
+
   /// The default [title] of this [InteractionAffordance].
   String? title;
 
@@ -23,23 +30,18 @@ abstract class InteractionAffordance {
   Map<String, String>? descriptions;
 
   /// The basic [forms] which can be used for interacting with this resource.
-  List<Form> forms;
+  final List<Form> forms;
 
   /// URI template variables as defined in [RFC 6570].
   ///
   /// [RFC 6570]: http://tools.ietf.org/html/rfc6570
   Map<String, Object?>? uriVariables;
 
-  /// A list of [forms] augmented with additional information.
-  ///
-  /// This information includes base addresses and security definitions.
-  List<Form> augmentedForms = [];
-
   /// Parses [forms] represented by a [json] object.
   void _parseForms(Map<String, dynamic> json, PrefixMapping prefixMapping) {
     for (final formJson in json["forms"]) {
       if (formJson is Map<String, dynamic>) {
-        forms.add(Form.fromJson(formJson, prefixMapping));
+        forms.add(Form.fromJson(formJson, this));
       }
     }
   }
@@ -88,5 +90,5 @@ abstract class InteractionAffordance {
   }
 
   /// Creates a new [InteractionAffordance]. Accepts a [List] of [forms].
-  InteractionAffordance(this.forms);
+  InteractionAffordance(this.forms, this.thingDescription);
 }

@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import '../../definitions/form.dart';
+import '../../definitions/thing_description.dart';
 import '../../scripting_api/subscription.dart';
 import '../content.dart';
 
@@ -15,6 +16,9 @@ abstract class ProtocolClient {
 
   /// Stops this [ProtocolClient].
   Future<void> stop();
+
+  /// Discovers a [ThingDescription] from a [uri].
+  Stream<ThingDescription> discoverDirectly(Uri uri);
 
   /// Requests the client to perform a `readproperty` operation on a [form].
   Future<Content> readResource(Form form);

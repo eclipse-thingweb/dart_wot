@@ -7,7 +7,7 @@
 import 'package:curie/curie.dart';
 
 import '../data_schema.dart';
-import '../form.dart';
+import '../thing_description.dart';
 import 'interaction_affordance.dart';
 
 /// Class representing an [Action] Affordance in a Thing Description.
@@ -19,11 +19,12 @@ class Action extends InteractionAffordance {
   DataSchema? output;
 
   /// Creates a new [Action] from a [List] of [forms].
-  Action(List<Form> forms) : super(forms);
+  Action(super.forms, super.thingDescription);
 
   /// Creates a new [Action] from a [json] object.
-  Action.fromJson(Map<String, dynamic> json, PrefixMapping prefixMapping)
-      : super([]) {
+  Action.fromJson(Map<String, dynamic> json, ThingDescription thingDescription,
+      PrefixMapping prefixMapping)
+      : super([], thingDescription) {
     parseAffordanceFields(json, prefixMapping);
   }
 }

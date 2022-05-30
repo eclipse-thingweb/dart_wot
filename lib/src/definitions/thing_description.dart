@@ -70,7 +70,7 @@ class ThingDescription {
   final List<Link> links = [];
 
   /// The [base] address of this [ThingDescription]. Might be `null`.
-  String? base;
+  Uri? base;
 
   /// The [id] of this [ThingDescription]. Might be `null`.
   String? id;
@@ -98,12 +98,15 @@ class ThingDescription {
   /// However, there seems to be no better solution at the moment.
   // TODO(JKRhb): Revisit ID determination
   String get identifier {
-    return id ?? base ?? title;
+    return id ?? base?.toString() ?? title;
   }
 
   /// Creates a [ThingDescription] from a [rawThingDescription] JSON [String].
   ThingDescription(this.rawThingDescription) {
-    parseThingDescription(rawThingDescription!);
+    final rawThingDescription = this.rawThingDescription;
+    if (rawThingDescription != null) {
+      parseThingDescription(rawThingDescription);
+    }
   }
 
   /// Creates a [ThingDescription] from a [json] object.
@@ -128,7 +131,7 @@ class ThingDescription {
     }
     final dynamic base = json["base"];
     if (base is String) {
-      this.base = base;
+      this.base = Uri.parse(base);
     }
     final dynamic description = json["description"];
     if (description is String) {
@@ -136,6 +139,20 @@ class ThingDescription {
     }
     _parseMultilangString(titles, json, "titles");
     _parseMultilangString(descriptions, json, "descriptions");
+    final dynamic security = json["security"];
+    if (security is List<dynamic>) {
+      this.security.addAll(security.whereType<String>());
+    } else if (security is String) {
+      this.security.add(security);
+    }
+    final dynamic securityDefinitions = json["securityDefinitions"];
+    if (securityDefinitions is Map<String, dynamic>) {
+      _parseSecurityDefinitions(securityDefinitions);
+    }
+    final dynamic jsonUriVariables = json["uriVariables"];
+    if (jsonUriVariables is Map<String, dynamic>) {
+      uriVariables = jsonUriVariables;
+    }
     final dynamic properties = json["properties"];
     if (properties is Map<String, dynamic>) {
       _parseProperties(properties);
@@ -148,23 +165,9 @@ class ThingDescription {
     if (events is Map<String, dynamic>) {
       _parseEvents(events);
     }
-    final dynamic security = json["security"];
-    if (security is List<dynamic>) {
-      this.security.addAll(security.whereType<String>());
-    } else if (security is String) {
-      this.security.add(security);
-    }
-    final dynamic securityDefinitions = json["securityDefinitions"];
-    if (securityDefinitions is Map<String, dynamic>) {
-      _parseSecurityDefinitions(securityDefinitions);
-    }
     final dynamic links = json["links"];
     if (links is List<dynamic>) {
       _parseLinks(links);
-    }
-    final dynamic jsonUriVariables = json["uriVariables"];
-    if (jsonUriVariables is Map<String, dynamic>) {
-      uriVariables = jsonUriVariables;
     }
   }
 
@@ -241,27 +244,28 @@ class ThingDescription {
 
   void _parseProperties(Map<String, dynamic> json) {
     for (final property in json.entries) {
-      if (property.value is Map<String, dynamic>) {
-        properties[property.key] = Property.fromJson(
-            property.value as Map<String, dynamic>, prefixMapping);
+      final dynamic value = property.value;
+      if (value is Map<String, dynamic>) {
+        properties[property.key] =
+            Property.fromJson(value, this, prefixMapping);
       }
     }
   }
 
   void _parseActions(Map<String, dynamic> json) {
     for (final action in json.entries) {
-      if (action.value is Map<String, dynamic>) {
-        actions[action.key] = Action.fromJson(
-            action.value as Map<String, dynamic>, prefixMapping);
+      final dynamic value = action.value;
+      if (value is Map<String, dynamic>) {
+        actions[action.key] = Action.fromJson(value, this, prefixMapping);
       }
     }
   }
 
   void _parseEvents(Map<String, dynamic> json) {
     for (final event in json.entries) {
-      if (event.value is Map<String, dynamic>) {
-        events[event.key] =
-            Event.fromJson(event.value as Map<String, dynamic>, prefixMapping);
+      final dynamic value = event.value;
+      if (value is Map<String, dynamic>) {
+        events[event.key] = Event.fromJson(value, this, prefixMapping);
       }
     }
   }
