@@ -1,3 +1,15 @@
+## 0.16.0
+
+### New/Updated Features
+
+- Reworked credentials system (now uses a callback-based approach)
+- Reworked the API for direct discovery via CoAP and HTTP
+- Performed various refactorings
+
+### Fixes
+
+- fixed subscription implementation for CoAP
+
 ## 0.15.1
 
 - Added the new CoAP Binding-Template vocabulary to `complex_example.dart`
