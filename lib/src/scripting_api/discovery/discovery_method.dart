@@ -20,4 +20,11 @@ enum DiscoveryMethod {
   /// Discovery from a Directory specified by the ThingFilter's url.
   directory,
 
+  /// Discovery using the core link format ([RFC 6690]).
+  ///
+  /// Note: This discovery method is not officially supported by the Scripting
+  /// API specification (yet).
+  ///
+  /// [RFC 6690]: https://datatracker.ietf.org/doc/html/rfc6690
+  coreLinkFormat,
 }

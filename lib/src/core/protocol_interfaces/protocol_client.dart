@@ -18,7 +18,26 @@ abstract class ProtocolClient {
   Future<void> stop();
 
   /// Discovers a [ThingDescription] from a [uri].
-  Stream<ThingDescription> discoverDirectly(Uri uri);
+  ///
+  /// Allows the caller to explicitly [disableMulticast], overriding the
+  /// multicast settings in the config of the underlying binding implementation.
+  Stream<ThingDescription> discoverDirectly(Uri uri,
+      {bool disableMulticast = false});
+
+  /// Discovers [ThingDescription] links from a [uri] using the CoRE Link
+  /// Format and Web Linking (see [RFC 6690]).
+  ///
+  /// The [uri] must point to either the resource lookup interface of a CoRE
+  /// Resource Directory (see [RFC 9176]) or to a CoRE Resource Discovery
+  /// resource like `/.well-known/core`.
+  ///
+  /// Certain protocols (like CoAP) might also use multicast for this discovery
+  /// method if the underlying binding implementation supports it and if it is
+  /// activated in the config.
+  ///
+  /// [RFC 9176]: https://datatracker.ietf.org/doc/html/rfc9176
+  /// [RFC 6690]: https://datatracker.ietf.org/doc/html/rfc6690
+  Stream<Uri> discoverWithCoreLinkFormat(Uri uri);
 
   /// Requests the client to perform a `readproperty` operation on a [form].
   Future<Content> readResource(Form form);

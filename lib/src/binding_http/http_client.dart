@@ -14,6 +14,7 @@ import '../core/credentials/basic_credentials.dart';
 import '../core/credentials/bearer_credentials.dart';
 import '../core/credentials/credentials.dart';
 import '../core/credentials/digest_credentials.dart';
+import '../core/discovery/core_link_format.dart';
 import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../core/security_provider.dart';
@@ -314,10 +315,24 @@ class HttpClient extends ProtocolClient {
   @override
   // TODO(JKRhb): Support Security Bootstrapping as described in
   //              https://github.com/w3c/wot-discovery/pull/313/files
-  Stream<ThingDescription> discoverDirectly(Uri uri) async* {
+  Stream<ThingDescription> discoverDirectly(Uri uri,
+      {bool disableMulticast = false}) async* {
     final response = await get(uri, headers: {"Accept": "application/td+json"});
     final rawThingDescription = response.body;
     yield ThingDescription(rawThingDescription);
+  }
+
+  @override
+  Stream<Uri> discoverWithCoreLinkFormat(Uri uri) async* {
+    // TODO(JKRhb): Support Security Bootstrapping as described in
+    //              https://github.com/w3c/wot-discovery/pull/313/files
+    final discoveryUri = createCoreLinkFormatDiscoveryUri(uri);
+
+    final response =
+        await get(discoveryUri, headers: {"Accept": "application/link-format"});
+
+    yield* Stream.fromIterable(
+        parseCoreLinkFormat(response.body, discoveryUri));
   }
 }
 
