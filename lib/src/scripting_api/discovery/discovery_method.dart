@@ -14,15 +14,10 @@
 //              how to deal with CoAP (multicast) discovery from CoRE Resource
 //              Directories.
 enum DiscoveryMethod {
-  /// "Any" discovery (unspecified).
-  any,
-
   /// Direct fetching of a Thing's Thing Description from the ThingFilter's url.
   direct,
 
   /// Discovery from a Directory specified by the ThingFilter's url.
   directory,
 
-  /// Multicast discovery (unspecified).
-  multicast,
 }
