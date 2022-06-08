@@ -15,4 +15,12 @@ class ContextEntry {
 
   /// Creates a new [ContextEntry].
   ContextEntry(this.value, this.key);
+
+  @override
+  bool operator ==(Object? other) {
+    return hashCode == other.hashCode;
+  }
+
+  @override
+  int get hashCode => Object.hash(value, key);
 }

@@ -12,6 +12,7 @@ import 'package:dart_wot/src/definitions/security/digest_security_scheme.dart';
 import 'package:dart_wot/src/definitions/security/no_security_scheme.dart';
 import 'package:dart_wot/src/definitions/security/oauth2_security_scheme.dart';
 import 'package:dart_wot/src/definitions/security/psk_security_scheme.dart';
+import 'package:dart_wot/src/definitions/validation/validation_exception.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -267,7 +268,7 @@ void main() {
     // status2 expects an integer instead of a String and throws an error if the
     // same value is provided as an input
     expect(consumedThing.readProperty("status2", interactionOptions),
-        throwsA(TypeMatcher<ArgumentError>()));
+        throwsA(TypeMatcher<ValidationException>()));
 
     await servient.shutdown();
     expect(servient.destroyConsumedThing(parsedTd.identifier), false);

@@ -8,7 +8,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:http_parser/http_parser.dart';
-import 'package:json_schema2/json_schema2.dart';
+import 'package:json_schema3/json_schema3.dart';
 
 import '../definitions/data_schema.dart';
 import 'codecs/cbor_codec.dart';
@@ -167,8 +167,9 @@ class ContentSerdes {
     if (dataSchemaJson == null) {
       return;
     }
-    final schema = JsonSchema.createSchema(dataSchemaJson);
-    if (!schema.validate(value)) {
+    final schema =
+        JsonSchema.create(dataSchemaJson, schemaVersion: SchemaVersion.draft7);
+    if (!schema.validate(value).isValid) {
       throw ContentSerdesException("JSON Schema validation failed.");
     }
   }

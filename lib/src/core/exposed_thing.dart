@@ -37,7 +37,8 @@ class ExposedThing implements scripting_api.ExposedThing {
 
   /// Creates a new [ExposedThing] from a [servient] and an [exposedThingInit].
   ExposedThing(this.servient, ExposedThingInit exposedThingInit)
-      : thingDescription = ThingDescription.fromJson(exposedThingInit) {
+      : thingDescription =
+            ThingDescription.fromJson(exposedThingInit, validate: false) {
     title = thingDescription.title;
     id = thingDescription.id;
   }

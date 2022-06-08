@@ -12,3 +12,5 @@
 export 'src/definitions/form.dart';
 export 'src/definitions/thing_description.dart';
 export 'src/definitions/thing_model.dart';
+export 'src/definitions/validation/thing_description_schema.dart'
+    show thingDescriptionSchema;

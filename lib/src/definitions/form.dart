@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import 'package:curie/curie.dart';
-import 'package:json_schema2/json_schema2.dart';
+import 'package:json_schema3/json_schema3.dart';
 import 'package:uri/uri.dart';
 
 import 'expected_response.dart';
@@ -278,16 +278,15 @@ class Form {
       final key = affordanceUriVariable.key;
       final value = affordanceUriVariable.value;
 
-      // TODO(JKRhb): Replace with a Draft 7 validator once it is available
-      //              (the original json_schema library which supports Draft 7
-      //              does not support sound null safety, yet, and can therefore
-      //              not be used. json_schema2, on the other hand, only
-      //              supports Draft 6.)
-      final schema = JsonSchema.createSchema(value);
-      final valid = schema.validate(uriVariables[key]);
+      if (value == null) {
+        throw ValidationException("Missing schema for URI variable $key");
+      }
 
-      if (!valid) {
-        throw ArgumentError("Invalid type for URI variable $key");
+      final schema = JsonSchema.create(value);
+      final result = schema.validate(uriVariables[key]);
+
+      if (!result.isValid) {
+        throw ValidationException("Invalid type for URI variable $key");
       }
     }
   }

@@ -13,6 +13,7 @@ import 'interaction_affordances/action.dart';
 import 'interaction_affordances/event.dart';
 import 'interaction_affordances/property.dart';
 import 'link.dart';
+import 'validation/thing_description_schema.dart';
 import 'security/apikey_security_scheme.dart';
 import 'security/basic_security_scheme.dart';
 import 'security/bearer_security_scheme.dart';
@@ -110,7 +111,13 @@ class ThingDescription {
   }
 
   /// Creates a [ThingDescription] from a [json] object.
-  ThingDescription.fromJson(Map<String, dynamic> json) {
+  ThingDescription.fromJson(Map<String, dynamic> json, {bool validate = true}) {
+    if (validate) {
+      final validationResult = thingDescriptionSchema.validate(json);
+      if (!validationResult.isValid) {
+        throw ThingDescriptionValidationException(json);
+      }
+    }
     _parseJson(json);
   }
 
