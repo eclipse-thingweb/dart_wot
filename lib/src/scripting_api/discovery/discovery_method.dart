@@ -14,15 +14,17 @@
 //              how to deal with CoAP (multicast) discovery from CoRE Resource
 //              Directories.
 enum DiscoveryMethod {
-  /// "Any" discovery (unspecified).
-  any,
-
   /// Direct fetching of a Thing's Thing Description from the ThingFilter's url.
   direct,
 
   /// Discovery from a Directory specified by the ThingFilter's url.
   directory,
 
-  /// Multicast discovery (unspecified).
-  multicast,
+  /// Discovery using the core link format ([RFC 6690]).
+  ///
+  /// Note: This discovery method is not officially supported by the Scripting
+  /// API specification (yet).
+  ///
+  /// [RFC 6690]: https://datatracker.ietf.org/doc/html/rfc6690
+  coreLinkFormat,
 }

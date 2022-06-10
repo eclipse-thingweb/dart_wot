@@ -14,6 +14,7 @@ import 'package:curie/curie.dart';
 
 import '../core/content.dart';
 import '../core/credentials/psk_credentials.dart';
+import '../core/discovery/core_link_format.dart';
 import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../core/security_provider.dart';
@@ -123,7 +124,7 @@ class _InternalCoapConfig extends CoapConfigDefault {
   @override
   coap.DtlsBackend? dtlsBackend;
 
-  final Form _form;
+  final Form? _form;
 
   _InternalCoapConfig(CoapConfig coapConfig, this._form)
       : preferredBlockSize =
@@ -132,14 +133,20 @@ class _InternalCoapConfig extends CoapConfigDefault {
       return;
     }
 
-    if (_usesPskScheme(_form) && coapConfig.useTinyDtls) {
+    final form = _form;
+
+    if (form == null) {
+      return;
+    }
+
+    if (_usesPskScheme(form) && coapConfig.useTinyDtls) {
       dtlsBackend = coap.DtlsBackend.TinyDtls;
     } else if (coapConfig.useOpenSsl) {
       dtlsBackend = coap.DtlsBackend.OpenSsl;
     }
   }
 
-  bool get _dtlsNeeded => _form.resolvedHref.scheme == "coaps";
+  bool get _dtlsNeeded => _form?.resolvedHref.scheme == "coaps";
 }
 
 bool _usesPskScheme(Form form) {
@@ -475,15 +482,56 @@ class CoapClient extends ProtocolClient {
   }
 
   @override
-  Stream<ThingDescription> discoverDirectly(Uri uri) async* {
+  Stream<ThingDescription> discoverDirectly(Uri uri,
+      {bool disableMulticast = false}) async* {
     final config = CoapConfigDefault();
     final client = coap.CoapClient(uri, config);
 
     if (uri.isMulticastAddress) {
-      yield* _discoverFromMulticast(client, uri);
+      if (!disableMulticast) {
+        yield* _discoverFromMulticast(client, uri);
+      }
     } else {
       yield await _discoverFromUnicast(client, uri);
     }
+  }
+
+  @override
+  Stream<Uri> discoverWithCoreLinkFormat(Uri uri) async* {
+    final discoveryUri = createCoreLinkFormatDiscoveryUri(uri);
+    final coapConfig = _coapConfig ?? CoapConfig();
+
+    final coapClient =
+        coap.CoapClient(discoveryUri, _InternalCoapConfig(coapConfig, null));
+
+    // TODO(JKRhb): Multicast could be supported here as well.
+    final request = coap.CoapRequest(coap.CoapCode.get)..uri = discoveryUri;
+    final response = await coapClient.send(request);
+
+    coapClient.close();
+
+    if (response == null) {
+      throw DiscoveryException(
+          "Got no CoRE Link Format Discovery response for $uri");
+    }
+
+    final actualContentFormat = response.contentFormat;
+    final expectedContentFormat = coap.CoapMediaType.applicationLinkFormat;
+
+    if (actualContentFormat != expectedContentFormat) {
+      throw DiscoveryException("Got wrong format for "
+          "CoRE Link Format Discovery (expected $expectedContentFormat, got "
+          "$actualContentFormat).");
+    }
+
+    final payloadString = response.payloadString;
+
+    if (payloadString == null) {
+      throw DiscoveryException(
+          "Received empty payload for CoRE Link Format Discovery from $uri");
+    }
+
+    yield* Stream.fromIterable(parseCoreLinkFormat(payloadString, uri));
   }
 }
 

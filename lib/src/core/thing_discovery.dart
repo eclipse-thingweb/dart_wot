@@ -51,7 +51,11 @@ class ThingDiscovery extends Stream<ThingDescription>
 
     switch (discoveryMethod) {
       case scripting_api.DiscoveryMethod.direct:
-        yield* _discoverDirectly(thingFilter.url);
+        yield* _client.discoverDirectly(thingFilter.url,
+            disableMulticast: false);
+        break;
+      case scripting_api.DiscoveryMethod.coreLinkFormat:
+        yield* _discoverWithCoreLinkFormat(thingFilter.url);
         break;
       default:
         throw UnimplementedError();
@@ -64,8 +68,10 @@ class ThingDiscovery extends Stream<ThingDescription>
     _active = false;
   }
 
-  Stream<ThingDescription> _discoverDirectly(Uri uri) {
-    return _client.discoverDirectly(uri);
+  Stream<ThingDescription> _discoverWithCoreLinkFormat(Uri uri) async* {
+    await for (final coreWebLink in _client.discoverWithCoreLinkFormat(uri)) {
+      yield* _client.discoverDirectly(coreWebLink, disableMulticast: true);
+    }
   }
 
   @override
