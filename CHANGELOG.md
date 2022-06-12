@@ -1,3 +1,8 @@
+# 0.19.0
+
+- Breaking: Set direct as default Discovery method
+- Made linting config even stricter
+
 # 0.18.0
 
 - Added support for parsing of a number of missing TD fields
