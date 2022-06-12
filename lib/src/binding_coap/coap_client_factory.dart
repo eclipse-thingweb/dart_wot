@@ -23,7 +23,6 @@ class CoapClientFactory extends ProtocolClientFactory {
 
   @override
   bool destroy() {
-    // TODO(JKRhb): Check if there is anything to destroy.
     return true;
   }
 
@@ -34,7 +33,6 @@ class CoapClientFactory extends ProtocolClientFactory {
 
   @override
   bool init() {
-    // TODO(JKRhb): Check if there is anything to init.
     return true;
   }
 }
