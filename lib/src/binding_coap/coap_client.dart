@@ -6,116 +6,26 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:coap/coap.dart' as coap;
 import 'package:coap/config/coap_config_default.dart';
-import 'package:curie/curie.dart';
 
 import '../core/content.dart';
 import '../core/credentials/psk_credentials.dart';
 import '../core/discovery/core_link_format.dart';
-import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../core/security_provider.dart';
 import '../core/thing_discovery.dart';
 import '../definitions/form.dart';
+import '../definitions/operation_type.dart';
 import '../definitions/security/psk_security_scheme.dart';
 import '../definitions/thing_description.dart';
-import '../scripting_api/interaction_options.dart';
 import '../scripting_api/subscription.dart';
+import 'coap_binding_exception.dart';
 import 'coap_config.dart';
-
-const _blockwiseVocabularyName = "blockwise";
-const _validBlockwiseValues = [16, 32, 64, 128, 256, 512, 1024];
-
-final _coapPrefixMapping =
-    PrefixMapping(defaultPrefixValue: "http://www.example.org/coap-binding#");
-
-// TODO(JKRhb): Name could be adjusted
-enum _ContentFormatType {
-  format("format"),
-  accept("accept");
-
-  final String stringValue;
-
-  const _ContentFormatType(this.stringValue);
-}
-
-// TODO(JKRhb): Name could be adjusted
-enum _BlockwiseParameterType {
-  block1Size("block2SZX"),
-  block2Size("block1SZX");
-
-  final String stringValue;
-
-  const _BlockwiseParameterType(this.stringValue);
-}
-
-/// Defines the available CoAP request methods.
-enum CoapRequestMethod {
-  /// Corresponds with the GET request method.
-  get,
-
-  /// Corresponds with the PUT request method.
-  put,
-
-  /// Corresponds with the POST request method.
-  post,
-
-  /// Corresponds with the DELETE request method.
-  delete,
-
-  /// Corresponds with the FETCH request method.
-  fetch,
-
-  /// Corresponds with the PATCH request method.
-  patch,
-
-  /// Corresponds with the iPATCH request method.
-  ipatch,
-}
-
-/// Enumeration of available CoAP subprotocols.
-enum _Subprotocol {
-  /// Subprotocol for observing CoAP resources.
-  observe,
-}
-
-extension _CoapRequestMethodExtension on CoapRequestMethod {
-  coap.CoapRequest generateRequest() {
-    switch (this) {
-      case CoapRequestMethod.get:
-        return coap.CoapRequest.newGet();
-      case CoapRequestMethod.post:
-        return coap.CoapRequest.newPost();
-      case CoapRequestMethod.put:
-        return coap.CoapRequest.newPut();
-      case CoapRequestMethod.delete:
-        return coap.CoapRequest.newDelete();
-      default:
-        throw UnimplementedError();
-    }
-  }
-}
-
-/// This [Exception] is thrown when an error within the CoAP Binding occurs.
-// TODO(JRKhb): Move somewhere else
-// TODO(JRKhb): Consider inheriting from a generic BindingException
-class CoapBindingException implements Exception {
-  final String _message;
-
-  /// Constructor.
-  ///
-  /// A [_message] can be passed, which will be displayed when the exception is
-  /// not caught/propagated.
-  CoapBindingException(this._message);
-
-  @override
-  String toString() {
-    return "$runtimeType: $_message";
-  }
-}
+import 'coap_definitions.dart';
+import 'coap_extensions.dart';
+import 'coap_subscription.dart';
 
 class _InternalCoapConfig extends CoapConfigDefault {
   @override
@@ -168,7 +78,7 @@ class _CoapRequest {
   final CoapRequestMethod _requestMethod;
 
   /// The subprotocol that should be used for requests.
-  final _Subprotocol? _subprotocol;
+  final CoapSubprotocol? _subprotocol;
 
   /// Creates a new [_CoapRequest]
   _CoapRequest(
@@ -245,58 +155,19 @@ class _CoapRequest {
     });
   }
 
-  int _determineContentFormat(_ContentFormatType _contentFormatType) {
-    final curieString =
-        _coapPrefixMapping.expandCurieString(_contentFormatType.stringValue);
-    final dynamic formDefinition = _form.additionalFields[curieString];
-    if (formDefinition is int) {
-      return formDefinition;
-    } else if (formDefinition is List<int>) {
-      return formDefinition[0];
-    }
-
-    return coap.CoapMediaType.parse(_form.contentType) ??
-        coap.CoapMediaType.textPlain;
-  }
-
-  int? _determineBlockSize(_BlockwiseParameterType _blockwiseParameterType) {
-    final curieString =
-        _coapPrefixMapping.expandCurieString(_blockwiseVocabularyName);
-    final dynamic formDefinition = _form.additionalFields[curieString];
-
-    if (formDefinition is! Map<String, dynamic>) {
-      return null;
-    }
-
-    final blockwiseParameterName = _coapPrefixMapping
-        .expandCurieString(_blockwiseParameterType.stringValue);
-    final dynamic value = formDefinition[blockwiseParameterName];
-
-    if (value is int && !_validBlockwiseValues.contains(value)) {
-      return value;
-    }
-
-    return null;
-  }
-
   // TODO(JKRhb): Revisit name of this method
   Future<Content> resolveInteraction(String? payload) async {
-    final contentFormat = _determineContentFormat(_ContentFormatType.format);
-    final acceptFormat = _determineContentFormat(_ContentFormatType.accept);
-    final block1Size = _determineBlockSize(_BlockwiseParameterType.block1Size);
-    final block2Size = _determineBlockSize(_BlockwiseParameterType.block2Size);
-
     final response = await _makeRequest(payload,
-        format: contentFormat,
-        accept: acceptFormat,
-        block1Size: block1Size,
-        block2Size: block2Size);
+        format: _form.format,
+        accept: _form.accept,
+        block1Size: _form.block1Size,
+        block2Size: _form.block2Size);
     final type = coap.CoapMediaType.name(response.contentFormat);
     final body = _getPayloadFromResponse(response);
     return Content(type, body);
   }
 
-  Future<_CoapSubscription> startObservation(
+  Future<CoapSubscription> startObservation(
       void Function(Content content) next, void Function() complete) async {
     void handleResponse(coap.CoapResponse? response) {
       if (response == null) {
@@ -309,22 +180,21 @@ class _CoapRequest {
       next(content);
     }
 
-    final requestContentFormat =
-        _determineContentFormat(_ContentFormatType.format);
+    final requestContentFormat = _form.format;
 
-    if (_subprotocol == _Subprotocol.observe) {
+    if (_subprotocol == CoapSubprotocol.observe) {
       final request = _requestMethod.generateRequest()
         ..contentFormat = requestContentFormat;
       final observeClientRelation = await _coapClient.observe(request);
       observeClientRelation.stream.listen((event) {
         handleResponse(event.resp);
       });
-      return _CoapSubscription(_coapClient, observeClientRelation, complete);
+      return CoapSubscription(_coapClient, observeClientRelation, complete);
     }
 
     final response = await _makeRequest(null, format: requestContentFormat);
     handleResponse(response);
-    return _CoapSubscription(_coapClient, null, complete);
+    return CoapSubscription(_coapClient, null, complete);
   }
 
   /// Aborts the request and closes the client.
@@ -354,9 +224,10 @@ class CoapClient extends ProtocolClient {
   CoapClient([this._coapConfig, this._clientSecurityProvider]);
 
   _CoapRequest _createRequest(Form form, OperationType operationType) {
-    final requestMethod = _getRequestMethod(form, operationType);
-    final _Subprotocol? subprotocol =
-        _determineSubprotocol(form, operationType);
+    final requestMethod =
+        CoapRequestMethod.fromForm(form) ?? operationType.requestMethod;
+    final CoapSubprotocol? subprotocol =
+        form.coapSubprotocol ?? operationType.subprotocol;
     final coapConfig = _coapConfig ?? CoapConfig();
     final request = _CoapRequest(
         form, requestMethod, coapConfig, _clientSecurityProvider, subprotocol);
@@ -397,23 +268,18 @@ class CoapClient extends ProtocolClient {
     void Function(Exception error)? error,
     required void Function() complete,
   }) async {
-    final OperationType operationType = _determineSubscribeOperationType(form);
+    final OperationType operationType = form.op.firstWhere(
+        (element) => [
+              OperationType.subscribeevent,
+              OperationType.observeproperty
+            ].contains(element),
+        orElse: () => throw CoapBindingException(
+            "Subscription form contained neither 'subscribeevent'"
+            "nor 'observeproperty' operation type."));
 
     final request = _createRequest(form, operationType);
 
     return await request.startObservation(next, complete);
-  }
-
-  static OperationType _determineSubscribeOperationType(Form form) {
-    final op = form.op ?? [];
-    if (op.contains("subscribeevent")) {
-      return OperationType.subscribeevent;
-    } else if (op.contains("observeproperty")) {
-      return OperationType.observeproperty;
-    }
-
-    throw ArgumentError("Subscription form contained neither 'subscribeevent'"
-        "nor 'observeproperty' operation type.");
   }
 
   @override
@@ -532,114 +398,5 @@ class CoapClient extends ProtocolClient {
     }
 
     yield* Stream.fromIterable(parseCoreLinkFormat(payloadString, uri));
-  }
-}
-
-extension _InternetAddressMethods on Uri {
-  /// Checks whether the host of this [Uri] is a multicast [InternetAddress].
-  bool get isMulticastAddress {
-    return InternetAddress.tryParse(host)?.isMulticast ?? false;
-  }
-}
-
-_Subprotocol? _determineSubprotocol(Form form, OperationType operationType) {
-  if ([
-    OperationType.subscribeevent,
-    OperationType.unsubscribeevent,
-    OperationType.observeproperty,
-    OperationType.unobserveproperty
-  ].contains(operationType)) {
-    return _Subprotocol.observe;
-  }
-
-  if (form.additionalFields["subprotocol"] ==
-      _coapPrefixMapping.expandCurieString("observe")) {
-    return _Subprotocol.observe;
-  }
-
-  return null;
-}
-
-CoapRequestMethod _requestMethodFromOperationType(OperationType operationType) {
-  switch (operationType) {
-    case OperationType.readproperty:
-    case OperationType.readmultipleproperties:
-    case OperationType.readallproperties:
-      return CoapRequestMethod.get;
-    case OperationType.writeproperty:
-    case OperationType.writemultipleproperties:
-      return CoapRequestMethod.put;
-    case OperationType.invokeaction:
-      return CoapRequestMethod.post;
-    case OperationType.observeproperty:
-    case OperationType.unobserveproperty:
-      return CoapRequestMethod.get;
-    case OperationType.subscribeevent:
-    case OperationType.unsubscribeevent:
-      return CoapRequestMethod.get;
-  }
-}
-
-CoapRequestMethod? _requestMethodFromString(String formDefinition) {
-  // TODO(JKRhb): Handle FETCH, PATCH, and iPATCH
-  switch (formDefinition) {
-    case "POST":
-      return CoapRequestMethod.post;
-    case "PUT":
-      return CoapRequestMethod.put;
-    case "DELETE":
-      return CoapRequestMethod.delete;
-    case "GET":
-      return CoapRequestMethod.get;
-    default:
-      return null;
-  }
-}
-
-CoapRequestMethod _getRequestMethod(Form form, OperationType operationType) {
-  final curieString =
-      _coapPrefixMapping.expandCurie(Curie(reference: "method"));
-  final dynamic formDefinition = form.additionalFields[curieString];
-  if (formDefinition is String) {
-    final requestMethod = _requestMethodFromString(formDefinition);
-    if (requestMethod != null) {
-      return requestMethod;
-    }
-  }
-
-  return _requestMethodFromOperationType(operationType);
-}
-
-class _CoapSubscription implements Subscription {
-  final coap.CoapClient _coapClient;
-
-  final coap.CoapObserveClientRelation? _observeClientRelation;
-
-  bool _active;
-
-  @override
-  bool get active => _active;
-
-  /// Callback used to pass by the servient that is used to signal it that an
-  /// observation has been cancelled.
-  final void Function() _complete;
-
-  _CoapSubscription(
-      this._coapClient, this._observeClientRelation, this._complete)
-      : _active = true;
-
-  @override
-  Future<void> stop([InteractionOptions? options]) async {
-    if (!_active) {
-      return;
-    }
-    _active = false;
-
-    final observeClientRelation = _observeClientRelation;
-    if (observeClientRelation != null) {
-      await _coapClient.cancelObserveProactive(observeClientRelation);
-    }
-    _coapClient.close();
-    _complete();
   }
 }

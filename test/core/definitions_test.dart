@@ -10,6 +10,7 @@ import 'package:dart_wot/dart_wot.dart';
 import 'package:dart_wot/src/definitions/context_entry.dart';
 import 'package:dart_wot/src/definitions/expected_response.dart';
 import 'package:dart_wot/src/definitions/interaction_affordances/property.dart';
+import 'package:dart_wot/src/definitions/operation_type.dart';
 import 'package:dart_wot/src/definitions/validation/thing_description_schema.dart';
 import 'package:test/test.dart';
 
@@ -87,7 +88,8 @@ void main() {
       expect(form3.href, uri);
       expect(form3.contentType, "application/json");
       expect(form3.subprotocol, "test");
-      expect(form3.op, ["writeproperty", "readproperty"]);
+      expect(
+          form3.op, [OperationType.writeproperty, OperationType.readproperty]);
       expect(form3.scopes, ["test1", "test2"]);
       expect(form3.response?.contentType, "application/json");
       expect(form3.additionalFields, {"test": "test"});
@@ -102,7 +104,7 @@ void main() {
       final form4 = Form.fromJson(
           form4Json as Map<String, dynamic>, interactionAffordance);
 
-      expect(form4.op, ["writeproperty"]);
+      expect(form4.op, [OperationType.writeproperty]);
       expect(form4.scopes, ["test"]);
 
       final dynamic form5Json = jsonDecode("""

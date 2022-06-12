@@ -9,7 +9,11 @@ import 'package:json_schema3/json_schema3.dart';
 import 'package:uri/uri.dart';
 
 import 'expected_response.dart';
+import 'interaction_affordances/action.dart';
+import 'interaction_affordances/event.dart';
 import 'interaction_affordances/interaction_affordance.dart';
+import 'interaction_affordances/property.dart';
+import 'operation_type.dart';
 import 'security/security_scheme.dart';
 import 'validation/validation_exception.dart';
 
@@ -34,7 +38,7 @@ class Form {
   String? subprotocol;
 
   /// The operation types supported by this [Form].
-  List<String>? op;
+  final List<OperationType> op;
 
   /// The [contentType] supported by this [Form].
   String contentType = "application/json";
@@ -78,13 +82,14 @@ class Form {
       {this.contentType = "application/json",
       this.subprotocol,
       this.security,
-      this.op,
+      List<String>? op,
       this.scopes,
       this.response,
       Map<String, dynamic>? additionalFields})
       : resolvedHref = _expandHref(href, interactionAffordance),
         securityDefinitions =
-            _filterSecurityDefinitions(interactionAffordance, security) {
+            _filterSecurityDefinitions(interactionAffordance, security),
+        op = _setOpValue(interactionAffordance, op) {
     if (additionalFields != null) {
       this.additionalFields.addAll(additionalFields);
     }
@@ -189,6 +194,31 @@ class Form {
         additionalFields: additionalFields);
   }
 
+  static List<OperationType> _setOpValue(
+      InteractionAffordance interactionAffordance, List<String>? opStrings) {
+    if (opStrings != null) {
+      return opStrings.map(OperationType.fromString).toList();
+    }
+
+    if (interactionAffordance is Action) {
+      return [OperationType.invokeaction];
+    } else if (interactionAffordance is Property) {
+      final List<OperationType> op = [];
+      if (!(interactionAffordance.readOnly ?? false)) {
+        op.add(OperationType.readproperty);
+      }
+      if (!(interactionAffordance.writeOnly ?? false)) {
+        op.add(OperationType.writeproperty);
+      }
+      return op;
+    } else if (interactionAffordance is Event) {
+      return [OperationType.subscribeevent, OperationType.unsubscribeevent];
+    }
+
+    throw StateError("Encountered unknown InteractionAffordance "
+        "${interactionAffordance.runtimeType} encountered");
+  }
+
   static dynamic _getJsonValue(Map<String, dynamic> formJson, String key,
       List<String> parsedJsonFields) {
     parsedJsonFields.add(key);
@@ -241,14 +271,14 @@ class Form {
   /// Creates a deep copy of this [Form].
   Form _copy(Uri newHref) {
     // TODO(JKRhb): Make deep copies of security, scopes, and response.
-    final copiedForm = Form(newHref, interactionAffordance)
-      ..contentType = contentType
-      ..op = op
-      ..subprotocol = subprotocol
-      ..security = security
-      ..scopes = scopes
-      ..response = response
-      ..additionalFields.addAll(additionalFields);
+    final copiedForm = Form(newHref, interactionAffordance,
+        op: op.map((opValue) => opValue.name).toList(),
+        contentType: contentType,
+        subprotocol: subprotocol,
+        security: security,
+        scopes: scopes,
+        response: response,
+        additionalFields: <String, dynamic>{}..addAll(additionalFields));
     return copiedForm;
   }
 

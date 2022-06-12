@@ -8,6 +8,12 @@ import 'package:dart_wot/dart_wot.dart';
 
 const propertyName = "string";
 
+extension PrintExtension on InteractionOutput {
+  Future<void> printValue() async {
+    print(await value());
+  }
+}
+
 Future<void> main(List<String> args) async {
   final servient = Servient()..addClientFactory(CoapClientFactory());
 
@@ -20,11 +26,11 @@ Future<void> main(List<String> args) async {
 
     try {
       await consumedThing.writeProperty(propertyName, "Hello World!");
-      var value = await consumedThing.readProperty(propertyName);
-      print(value);
+      var output = await consumedThing.readProperty(propertyName);
+      await output.printValue();
       await consumedThing.writeProperty(propertyName, "Bye World!");
-      value = await consumedThing.readProperty(propertyName);
-      print(value);
+      output = await consumedThing.readProperty(propertyName);
+      await output.printValue();
     } on Exception catch (e) {
       print(e);
     }

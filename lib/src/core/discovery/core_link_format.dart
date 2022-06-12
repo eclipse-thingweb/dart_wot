@@ -4,8 +4,8 @@ import 'package:coap/coap.dart';
 /// 6690) and returns an [Iterable] of [Uri]s, which can be used for direct
 /// discovery.
 ///
-/// If the [Uri]s contained in the [encodedLinks] are relative, they are turned into
-/// absolute [Uri]s using the original [discoveryUri] as a basis.
+/// If the [Uri]s contained in the [encodedLinks] are relative, they are turned
+/// into absolute [Uri]s using the original [discoveryUri] as a basis.
 Iterable<Uri> parseCoreLinkFormat(String encodedLinks, Uri discoveryUri) {
   return CoapLinkFormat.parse(encodedLinks)
       .where((link) =>

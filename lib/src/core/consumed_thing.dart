@@ -9,9 +9,9 @@ import '../../scripting_api.dart' hide ConsumedThing, InteractionOutput;
 import '../definitions/data_schema.dart';
 import '../definitions/form.dart';
 import '../definitions/interaction_affordances/interaction_affordance.dart';
+import '../definitions/operation_type.dart';
 import '../definitions/thing_description.dart';
 import 'interaction_output.dart';
-import 'operation_type.dart';
 import 'protocol_interfaces/protocol_client.dart';
 import 'servient.dart';
 
@@ -318,27 +318,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
   static bool _supportsOperationType(
       Form form, _AffordanceType affordanceType, OperationType operationType) {
-    List<String>? operationTypes = form.op;
-
-    switch (affordanceType) {
-      case _AffordanceType.property:
-        operationTypes ??= [
-          OperationType.readproperty.toShortString(),
-          OperationType.writeproperty.toShortString()
-        ];
-        break;
-      case _AffordanceType.action:
-        operationTypes ??= [OperationType.invokeaction.toShortString()];
-        break;
-      case _AffordanceType.event:
-        operationTypes ??= [
-          OperationType.subscribeevent.toShortString(),
-          OperationType.unsubscribeevent.toShortString()
-        ];
-        break;
-    }
-
-    return operationTypes.contains(operationType.toShortString());
+    return form.op.contains(operationType);
   }
 
   /// Cleans up the resources used by this [ConsumedThing].
