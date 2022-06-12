@@ -13,8 +13,7 @@ Iterable<Uri> parseCoreLinkFormat(String encodedLinks, Uri discoveryUri) {
           //              moment.
           //              IMHO this is a bug in the CoAP library that should be
           //              fixed.
-          link.attributes.getResourceTypes()?.contains("\"wot.thing\"") ??
-          false)
+          link.attributes.getResourceTypes()?.contains('"wot.thing"') ?? false)
       .map((link) {
     final uri = Uri.tryParse(link.uri);
     if (uri == null) {
@@ -37,5 +36,5 @@ Iterable<Uri> parseCoreLinkFormat(String encodedLinks, Uri discoveryUri) {
 ///
 /// [WoT Disovery Specification]: https://w3c.github.io/wot-discovery/#introduction-core-rd
 Uri createCoreLinkFormatDiscoveryUri(Uri uri) {
-  return uri.replace(queryParameters: <String, dynamic>{"rt": "wot.thing"});
+  return uri.replace(queryParameters: <String, dynamic>{'rt': 'wot.thing'});
 }

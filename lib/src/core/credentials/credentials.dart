@@ -8,9 +8,9 @@ import '../../definitions/security/security_scheme.dart';
 
 /// Base class used for defining credentials for Thing Interactions.
 abstract class Credentials<T extends SecurityScheme> {
-  /// The name of the SecurityScheme these [Credentials] are associated with.
-  final String securitySchemeType;
-
   /// Constructor.
   Credentials(this.securitySchemeType);
+
+  /// The name of the SecurityScheme these [Credentials] are associated with.
+  final String securitySchemeType;
 }

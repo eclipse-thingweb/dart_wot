@@ -24,34 +24,34 @@ enum _AffordanceType {
 /// This [Exception] is thrown when the body of a response is encoded
 /// differently than expected.
 class UnexpectedReponseException implements Exception {
-  /// The error [message].
-  final String message;
-
   /// Creates a new [UnexpectedReponseException] from an error [message].
   UnexpectedReponseException(this.message);
 
+  /// The error [message].
+  final String message;
+
   @override
-  String toString() {
-    return message;
-  }
+  String toString() => 'UnexpectedReponseException: $message';
 }
 
 /// This Exception is thrown when
 class SubscriptionException implements Exception {
-  /// The error [message].
-  final String message;
-
   /// Creates a new [SubscriptionException] from an error [message].
   SubscriptionException(this.message);
 
+  /// The error [message].
+  final String message;
+
   @override
-  String toString() {
-    return message;
-  }
+  String toString() => 'SubscriptionException: $message';
 }
 
 /// Implementation of the [scripting_api.ConsumedThing] interface.
 class ConsumedThing implements scripting_api.ConsumedThing {
+  /// Constructor
+  ConsumedThing(this.servient, this.thingDescription)
+      : title = thingDescription.title;
+
   /// The [Servient] corresponding with this [ConsumedThing].
   final Servient servient;
 
@@ -68,23 +68,21 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   /// Determines the id of this [ConsumedThing].
   String get identifier => thingDescription.identifier;
 
-  /// Constructor
-  ConsumedThing(this.servient, this.thingDescription)
-      : title = thingDescription.title;
-
   /// Checks if the [Servient] of this [ConsumedThing] supports a protocol
   /// [scheme].
   bool hasClientFor(String scheme) => servient.hasClientFor(scheme);
 
   _ClientAndForm _getClientFor(
-      List<Form> forms,
-      OperationType operationType,
-      _AffordanceType affordanceType,
-      InteractionOptions? options,
-      InteractionAffordance interactionAffordance) {
+    List<Form> forms,
+    OperationType operationType,
+    _AffordanceType affordanceType,
+    InteractionOptions? options,
+    InteractionAffordance interactionAffordance,
+  ) {
     if (forms.isEmpty) {
       throw StateError(
-          'ConsumedThing "$title" has no links for this interaction');
+        'ConsumedThing "$title" has no links for this interaction',
+      );
     }
 
     final ProtocolClient client;
@@ -99,17 +97,19 @@ class ConsumedThing implements scripting_api.ConsumedThing {
         client = servient.clientFor(scheme);
       } else {
         throw ArgumentError(
-            'ConsumedThing "$title" missing formIndex for '
-                '$formIndex"',
-            "options.formIndex");
+          'ConsumedThing "$title" missing formIndex for '
+              '$formIndex"',
+          'options.formIndex',
+        );
       }
     } else {
       foundForm = forms.firstWhere(
-          (form) =>
-              hasClientFor(form.resolvedHref.scheme) &&
-              _supportsOperationType(form, affordanceType, operationType),
-          // TODO(JKRhb): Add custom Exception
-          orElse: () => throw Exception("No matching form found!"));
+        (form) =>
+            hasClientFor(form.resolvedHref.scheme) &&
+            _supportsOperationType(form, affordanceType, operationType),
+        // TODO(JKRhb): Add custom Exception
+        orElse: () => throw Exception('No matching form found!'),
+      );
       final scheme = foundForm.resolvedHref.scheme;
       client = servient.clientFor(scheme);
     }
@@ -120,22 +120,26 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   }
 
   @override
-  Future<InteractionOutput> readProperty(String propertyName,
-      [InteractionOptions? options]) async {
+  Future<InteractionOutput> readProperty(
+    String propertyName, [
+    InteractionOptions? options,
+  ]) async {
     final property = thingDescription.properties[propertyName];
 
     if (property == null) {
       throw ArgumentError(
-          'ConsumedThing $title does not have property $propertyName',
-          "propertyName");
+        'ConsumedThing $title does not have property $propertyName',
+        'propertyName',
+      );
     }
 
     final clientAndForm = _getClientFor(
-        property.forms,
-        OperationType.readproperty,
-        _AffordanceType.property,
-        options,
-        property);
+      property.forms,
+      OperationType.readproperty,
+      _AffordanceType.property,
+      options,
+      property,
+    );
 
     final form = clientAndForm.form;
     final client = clientAndForm.client;
@@ -145,23 +149,28 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   }
 
   @override
-  Future<void> writeProperty(String propertyName, Object? interactionInput,
-      [InteractionOptions? options]) async {
+  Future<void> writeProperty(
+    String propertyName,
+    Object? interactionInput, [
+    InteractionOptions? options,
+  ]) async {
     // TODO(JKRhb): Refactor
     final property = thingDescription.properties[propertyName];
 
     if (property == null) {
       throw ArgumentError(
-          'ConsumedThing $title does not have property $propertyName',
-          "propertyName");
+        'ConsumedThing $title does not have property $propertyName',
+        'propertyName',
+      );
     }
 
     final clientAndForm = _getClientFor(
-        property.forms,
-        OperationType.writeproperty,
-        _AffordanceType.property,
-        options,
-        property);
+      property.forms,
+      OperationType.writeproperty,
+      _AffordanceType.property,
+      options,
+      property,
+    );
 
     final form = clientAndForm.form;
     final client = clientAndForm.client;
@@ -171,19 +180,28 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   }
 
   @override
-  Future<InteractionOutput> invokeAction(String actionName,
-      [Object? interactionInput, InteractionOptions? options]) async {
+  Future<InteractionOutput> invokeAction(
+    String actionName, [
+    Object? interactionInput,
+    InteractionOptions? options,
+  ]) async {
     // TODO(JKRhb): Refactor
     final action = thingDescription.actions[actionName];
 
     if (action == null) {
       throw ArgumentError(
-          'ConsumedThing $title does not have action $actionName',
-          "actionName");
+        'ConsumedThing $title does not have action $actionName',
+        'actionName',
+      );
     }
 
-    final clientAndForm = _getClientFor(action.forms,
-        OperationType.invokeaction, _AffordanceType.action, options, action);
+    final clientAndForm = _getClientFor(
+      action.forms,
+      OperationType.invokeaction,
+      _AffordanceType.action,
+      options,
+      action,
+    );
 
     final form = clientAndForm.form;
     final client = clientAndForm.client;
@@ -200,29 +218,45 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     }
 
     return InteractionOutput(
-        content, servient.contentSerdes, form, action.output);
+      content,
+      servient.contentSerdes,
+      form,
+      action.output,
+    );
   }
 
   @override
   Future<Subscription> observeProperty(
-      String propertyName, scripting_api.InteractionListener listener,
-      [scripting_api.ErrorListener? onError,
-      InteractionOptions? options]) async {
+    String propertyName,
+    scripting_api.InteractionListener listener, [
+    scripting_api.ErrorListener? onError,
+    InteractionOptions? options,
+  ]) async {
     final property = thingDescription.properties[propertyName];
 
     if (property == null) {
       throw ArgumentError(
-          'ConsumedThing $title does not have property $propertyName',
-          "propertyName");
+        'ConsumedThing $title does not have property $propertyName',
+        'propertyName',
+      );
     }
 
     if (_observedProperties.containsKey(propertyName)) {
-      throw StateError("ConsumedThing '$title' already has a function "
-          "subscribed to $propertyName. You can only observe once");
+      throw StateError(
+        "ConsumedThing '$title' already has a function "
+        'subscribed to $propertyName. You can only observe once',
+      );
     }
 
-    return _createSubscription(property, options, listener, onError,
-        propertyName, property, SubscriptionType.property);
+    return _createSubscription(
+      property,
+      options,
+      listener,
+      onError,
+      propertyName,
+      property,
+      SubscriptionType.property,
+    );
   }
 
   Future<Subscription> _createSubscription(
@@ -249,7 +283,12 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     }
 
     final clientAndForm = _getClientFor(
-        affordance.forms, operationType, affordanceType, options, affordance);
+      affordance.forms,
+      operationType,
+      affordanceType,
+      options,
+      affordance,
+    );
 
     final form = clientAndForm.form;
     final client = clientAndForm.client;
@@ -257,7 +296,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final subscription = await client.subscribeResource(
       form,
       next: (content) => listener(
-          InteractionOutput(content, servient.contentSerdes, form, dataSchema)),
+        InteractionOutput(content, servient.contentSerdes, form, dataSchema),
+      ),
       error: (error) {
         if (onError != null) {
           onError(error);
@@ -277,7 +317,9 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   }
 
   Future<PropertyReadMap> _readProperties(
-      List<String> propertyNames, InteractionOptions? options) async {
+    List<String> propertyNames,
+    InteractionOptions? options,
+  ) async {
     final Map<String, Future<InteractionOutput>> outputs = {};
 
     for (final propertyName in propertyNames) {
@@ -298,38 +340,56 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   }
 
   @override
-  Future<PropertyReadMap> readMultipleProperties(List<String> propertyNames,
-      [InteractionOptions? options]) {
+  Future<PropertyReadMap> readMultipleProperties(
+    List<String> propertyNames, [
+    InteractionOptions? options,
+  ]) {
     return _readProperties(propertyNames, options);
   }
 
   @override
   Future<Subscription> subscribeEvent(
-      String eventName, scripting_api.InteractionListener listener,
-      [scripting_api.ErrorListener? onError, InteractionOptions? options]) {
+    String eventName,
+    scripting_api.InteractionListener listener, [
+    scripting_api.ErrorListener? onError,
+    InteractionOptions? options,
+  ]) {
     // TODO(JKRhb): Handle subscription and cancellation data.
     final event = thingDescription.events[eventName];
 
     if (event == null) {
       throw ArgumentError(
-          'ConsumedThing $title does not have event $eventName', "eventName");
+        'ConsumedThing $title does not have event $eventName',
+        'eventName',
+      );
     }
 
     if (_subscribedEvents.containsKey(eventName)) {
       throw SubscriptionException(
-          "ConsumedThing '$title' already has a function "
-          "subscribed to $eventName. You can only subscribe once.");
+        "ConsumedThing '$title' already has a function "
+        'subscribed to $eventName. You can only subscribe once.',
+      );
     }
 
-    return _createSubscription(event, options, listener, onError, eventName,
-        event.data, SubscriptionType.event);
+    return _createSubscription(
+      event,
+      options,
+      listener,
+      onError,
+      eventName,
+      event.data,
+      SubscriptionType.event,
+    );
   }
 
   @override
-  Future<void> writeMultipleProperties(PropertyWriteMap valueMap,
-      [InteractionOptions? options]) async {
+  Future<void> writeMultipleProperties(
+    PropertyWriteMap valueMap, [
+    InteractionOptions? options,
+  ]) async {
     await Future.wait(
-        valueMap.keys.map((key) => writeProperty(key, valueMap[key])));
+      valueMap.keys.map((key) => writeProperty(key, valueMap[key])),
+    );
   }
 
   /// Removes a subscription with a specified [key] and [type].
@@ -345,7 +405,10 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   }
 
   static bool _supportsOperationType(
-      Form form, _AffordanceType affordanceType, OperationType operationType) {
+    Form form,
+    _AffordanceType affordanceType,
+    OperationType operationType,
+  ) {
     return form.op.contains(operationType);
   }
 
@@ -364,9 +427,9 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
 /// Private class providing a tuple of a [ProtocolClient] and a [Form].
 class _ClientAndForm {
+  _ClientAndForm(this.client, this.form);
+
   // TODO(JKRhb): Check if this class is actually needed
   final ProtocolClient client;
   final Form form;
-
-  _ClientAndForm(this.client, this.form);
 }

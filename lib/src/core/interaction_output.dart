@@ -14,6 +14,14 @@ import 'content_serdes.dart';
 
 /// Implementation of the [scripting_api.InteractionOutput] interface.
 class InteractionOutput implements scripting_api.InteractionOutput {
+  /// Creates a new [InteractionOutput] based on a [Content] object.
+  ///
+  /// A [ContentSerdes] object has to be passed for decoding the raw
+  /// payload contained in the [Content] object.
+  InteractionOutput(this._content, this._contentSerdes,
+      [this._form, this._schema])
+      : _data = _content.body;
+
   final Content _content;
   final Form? _form;
   final DataSchema? _schema;
@@ -23,18 +31,10 @@ class InteractionOutput implements scripting_api.InteractionOutput {
 
   bool _dataUsed = false;
 
-  /// Creates a new [InteractionOutput] based on a [Content] object.
-  ///
-  /// A [ContentSerdes] object has to be passed for decoding the raw
-  /// payload contained in the [Content] object.
-  InteractionOutput(this._content, this._contentSerdes,
-      [this._form, this._schema])
-      : _data = _content.body;
-
   @override
   Future<ByteBuffer> arrayBuffer() async {
     _dataUsed = true;
-    return await _content.byteBuffer;
+    return _content.byteBuffer;
   }
 
   @override
@@ -43,7 +43,7 @@ class InteractionOutput implements scripting_api.InteractionOutput {
   @override
   Future<Object?> value() async {
     _dataUsed = true;
-    return await _contentSerdes.contentToValue(_content, schema);
+    return _contentSerdes.contentToValue(_content, schema);
   }
 
   @override

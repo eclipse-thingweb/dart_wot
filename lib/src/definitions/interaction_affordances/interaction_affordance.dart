@@ -13,6 +13,9 @@ import '../thing_description.dart';
 abstract class InteractionAffordance {
   // TODO(JKRhb): Make fields final
 
+  /// Creates a new [InteractionAffordance]. Accepts a [List] of [forms].
+  InteractionAffordance(this.forms, this.thingDescription);
+
   /// Reference to the [ThingDescription] containing this
   /// [InteractionAffordance].
   final ThingDescription thingDescription;
@@ -39,7 +42,7 @@ abstract class InteractionAffordance {
 
   /// Parses [forms] represented by a [json] object.
   void _parseForms(Map<String, dynamic> json, PrefixMapping prefixMapping) {
-    for (final formJson in json["forms"]) {
+    for (final formJson in json['forms']) {
       if (formJson is Map<String, dynamic>) {
         forms.add(Form.fromJson(formJson, this));
       }
@@ -67,28 +70,25 @@ abstract class InteractionAffordance {
       Map<String, dynamic> json, PrefixMapping prefixMapping) {
     _parseForms(json, prefixMapping);
 
-    final dynamic title = json["title"];
+    final dynamic title = json['title'];
     if (title is String) {
       this.title = title;
     }
 
-    titles = _parseMultilangString(json, "titles");
+    titles = _parseMultilangString(json, 'titles');
 
-    final dynamic description = json["description"];
+    final dynamic description = json['description'];
     if (description is String) {
       this.description = description;
     }
 
-    descriptions = _parseMultilangString(json, "descriptions");
+    descriptions = _parseMultilangString(json, 'descriptions');
 
-    if (json["uriVariables"] != null) {
-      final dynamic jsonUriVariables = json["uriVariables"];
+    if (json['uriVariables'] != null) {
+      final dynamic jsonUriVariables = json['uriVariables'];
       if (jsonUriVariables is Map<String, dynamic>) {
         uriVariables = jsonUriVariables;
       }
     }
   }
-
-  /// Creates a new [InteractionAffordance]. Accepts a [List] of [forms].
-  InteractionAffordance(this.forms, this.thingDescription);
 }

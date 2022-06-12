@@ -6,16 +6,16 @@
 
 /// This [Exception] is thrown when an error within the CoAP Binding occurs.
 class CoapBindingException implements Exception {
-  final String _message;
-
   /// Constructor.
   ///
   /// A [_message] can be passed, which will be displayed when the exception is
   /// not caught/propagated.
   CoapBindingException(this._message);
 
+  final String _message;
+
   @override
   String toString() {
-    return "$runtimeType: $_message";
+    return 'CoapBindingException: $_message';
   }
 }

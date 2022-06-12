@@ -6,7 +6,7 @@
 
 import 'package:dart_wot/dart_wot.dart';
 
-const propertyName = "string";
+const propertyName = 'string';
 
 extension PrintExtension on InteractionOutput {
   Future<void> printValue() async {
@@ -20,15 +20,15 @@ Future<void> main(List<String> args) async {
   final wot = await servient.start();
 
   await for (final thingDescription in wot.discover(ThingFilter(
-      url: Uri.parse("coap://plugfest.thingweb.io:5683/testthing"),
+      url: Uri.parse('coap://plugfest.thingweb.io:5683/testthing'),
       method: DiscoveryMethod.direct))) {
     final consumedThing = await wot.consume(thingDescription);
 
     try {
-      await consumedThing.writeProperty(propertyName, "Hello World!");
+      await consumedThing.writeProperty(propertyName, 'Hello World!');
       var output = await consumedThing.readProperty(propertyName);
       await output.printValue();
-      await consumedThing.writeProperty(propertyName, "Bye World!");
+      await consumedThing.writeProperty(propertyName, 'Bye World!');
       output = await consumedThing.readProperty(propertyName);
       await output.printValue();
     } on Exception catch (e) {

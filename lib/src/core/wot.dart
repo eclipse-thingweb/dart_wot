@@ -14,41 +14,41 @@ import 'thing_discovery.dart' show ThingDiscovery;
 /// This [Exception] is thrown if an error during the consumption of a
 /// [ThingDescription] occurs.
 class ThingConsumptionException implements Exception {
-  /// The identifier of the [ThingDescription] that triggered this [Exception].
-  final String identifier;
-
   /// Constructor
   ThingConsumptionException(this.identifier);
 
+  /// The identifier of the [ThingDescription] that triggered this [Exception].
+  final String identifier;
+
   @override
   String toString() {
-    return "$runtimeType: A ConsumedThing with identifier $identifier already "
-        "exists.";
+    return 'ThingConsumptionException: A ConsumedThing with identifier '
+        '$identifier already exists.';
   }
 }
 
 /// This [Exception] is thrown if an error during the production of a
 /// [ThingDescription] occurs.
 class ThingProductionException implements Exception {
-  /// The identifier of the [ThingDescription] that triggered this [Exception].
-  final String identifier;
-
   /// Constructor
   ThingProductionException(this.identifier);
 
+  /// The identifier of the [ThingDescription] that triggered this [Exception].
+  final String identifier;
+
   @override
   String toString() {
-    return "$runtimeType: An ExposedThing with identifier $identifier already "
-        "exists.";
+    return 'ThingProductionException: An ExposedThing with identifier '
+        '$identifier already exists.';
   }
 }
 
 /// Implementation of the [scripting_api.WoT] runtime interface.
 class WoT implements scripting_api.WoT {
-  final Servient _servient;
-
   /// Creates a new [WoT] runtime based on a [Servient].
   WoT(this._servient);
+
+  final Servient _servient;
 
   /// Consumes a [ThingDescription] and returns a [scripting_api.ConsumedThing].
   ///

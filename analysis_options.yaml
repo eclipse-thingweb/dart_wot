@@ -6,7 +6,7 @@
 # or consuming Dart code, and enforces writing Dart using a single, idiomatic
 # style and format.
 
-include: package:lints/recommended.yaml
+include: package:strict_analyzer/analysis_options.yaml
 
 # For more information about the core and recommended set of lints, see
 # https://dart.dev/go/core-lints

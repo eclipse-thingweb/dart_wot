@@ -26,13 +26,36 @@ import 'validation/thing_description_schema.dart';
 import 'validation/validation_exception.dart';
 
 const _validContextValues = [
-  "https://www.w3.org/2019/wot/td/v1",
-  "https://www.w3.org/2022/wot/td/v1.1",
-  "http://www.w3.org/ns/td"
+  'https://www.w3.org/2019/wot/td/v1',
+  'https://www.w3.org/2022/wot/td/v1.1',
+  'http://www.w3.org/ns/td'
 ];
 
 /// Represents a WoT Thing Description
 class ThingDescription {
+  /// Creates a [ThingDescription] from a [rawThingDescription] JSON [String].
+  ThingDescription(this.rawThingDescription) {
+    final rawThingDescription = this.rawThingDescription;
+    if (rawThingDescription != null) {
+      parseThingDescription(rawThingDescription);
+    }
+  }
+
+  /// Creates a [ThingDescription] from a [json] object.
+  ThingDescription.fromJson(Map<String, dynamic> json, {bool validate = true}) {
+    if (validate) {
+      final validationResult = thingDescriptionSchema.validate(json);
+      if (!validationResult.isValid) {
+        throw ThingDescriptionValidationException(json);
+      }
+    }
+    _parseJson(json);
+  }
+
+  /// Creates a [ThingDescription] from a [ThingModel].
+  ThingDescription.fromThingModel(ThingModel thingModel)
+      : rawThingModel = thingModel;
+
   /// The [String] representation of this [ThingDescription], if it was created
   /// from one.
   String? rawThingDescription;
@@ -103,25 +126,6 @@ class ThingDescription {
     return id ?? base?.toString() ?? title;
   }
 
-  /// Creates a [ThingDescription] from a [rawThingDescription] JSON [String].
-  ThingDescription(this.rawThingDescription) {
-    final rawThingDescription = this.rawThingDescription;
-    if (rawThingDescription != null) {
-      parseThingDescription(rawThingDescription);
-    }
-  }
-
-  /// Creates a [ThingDescription] from a [json] object.
-  ThingDescription.fromJson(Map<String, dynamic> json, {bool validate = true}) {
-    if (validate) {
-      final validationResult = thingDescriptionSchema.validate(json);
-      if (!validationResult.isValid) {
-        throw ThingDescriptionValidationException(json);
-      }
-    }
-    _parseJson(json);
-  }
-
   /// Creates the [ThingDescription] fields from a JSON [String].
   void parseThingDescription(String thingDescription) {
     final thingDescriptionJson =
@@ -131,49 +135,49 @@ class ThingDescription {
   }
 
   void _parseJson(Map<String, dynamic> json) {
-    _parseTitle(json["title"]);
-    _parseContext(json["@context"]);
-    final dynamic id = json["id"];
+    _parseTitle(json['title']);
+    _parseContext(json['@context']);
+    final dynamic id = json['id'];
     if (id is String) {
       this.id = id;
     }
-    final dynamic base = json["base"];
+    final dynamic base = json['base'];
     if (base is String) {
       this.base = Uri.parse(base);
     }
-    final dynamic description = json["description"];
+    final dynamic description = json['description'];
     if (description is String) {
       this.description = description;
     }
-    _parseMultilangString(titles, json, "titles");
-    _parseMultilangString(descriptions, json, "descriptions");
-    final dynamic security = json["security"];
+    _parseMultilangString(titles, json, 'titles');
+    _parseMultilangString(descriptions, json, 'descriptions');
+    final dynamic security = json['security'];
     if (security is List<dynamic>) {
       this.security.addAll(security.whereType<String>());
     } else if (security is String) {
       this.security.add(security);
     }
-    final dynamic securityDefinitions = json["securityDefinitions"];
+    final dynamic securityDefinitions = json['securityDefinitions'];
     if (securityDefinitions is Map<String, dynamic>) {
       _parseSecurityDefinitions(securityDefinitions);
     }
-    final dynamic jsonUriVariables = json["uriVariables"];
+    final dynamic jsonUriVariables = json['uriVariables'];
     if (jsonUriVariables is Map<String, dynamic>) {
       uriVariables = jsonUriVariables;
     }
-    final dynamic properties = json["properties"];
+    final dynamic properties = json['properties'];
     if (properties is Map<String, dynamic>) {
       _parseProperties(properties);
     }
-    final dynamic actions = json["actions"];
+    final dynamic actions = json['actions'];
     if (actions is Map<String, dynamic>) {
       _parseActions(actions);
     }
-    final dynamic events = json["events"];
+    final dynamic events = json['events'];
     if (events is Map<String, dynamic>) {
       _parseEvents(events);
     }
-    final dynamic links = json["links"];
+    final dynamic links = json['links'];
     if (links is List<dynamic>) {
       _parseLinks(links);
     }
@@ -197,8 +201,8 @@ class ThingDescription {
     if (titleJson is String) {
       title = titleJson;
     } else {
-      throw ValidationException("Thing Description type is not a "
-          "String but ${title.runtimeType}");
+      throw ValidationException('Thing Description type is not a '
+          'String but ${title.runtimeType}');
     }
   }
 
@@ -230,17 +234,13 @@ class ThingDescription {
         final key = mapEntry.key;
         if (value is String) {
           context.add(ContextEntry(value, key));
-          if (!key.startsWith("@") && Uri.tryParse(value) != null) {
+          if (!key.startsWith('@') && Uri.tryParse(value) != null) {
             prefixMapping.addPrefix(key, value);
           }
         }
       }
     }
   }
-
-  /// Creates a [ThingDescription] from a [ThingModel].
-  ThingDescription.fromThingModel(ThingModel thingModel)
-      : rawThingModel = thingModel;
 
   void _parseLinks(List<dynamic> json) {
     for (final link in json) {
@@ -283,38 +283,38 @@ class ThingDescription {
       final dynamic value = securityDefinition.value;
       if (value is Map<String, dynamic>) {
         SecurityScheme securityScheme;
-        switch (value["scheme"]) {
-          case "basic":
+        switch (value['scheme']) {
+          case 'basic':
             {
               securityScheme = BasicSecurityScheme.fromJson(value);
               break;
             }
-          case "bearer":
+          case 'bearer':
             {
               securityScheme = BearerSecurityScheme.fromJson(value);
               break;
             }
-          case "nosec":
+          case 'nosec':
             {
               securityScheme = NoSecurityScheme.fromJson(value);
               break;
             }
-          case "psk":
+          case 'psk':
             {
               securityScheme = PskSecurityScheme.fromJson(value);
               break;
             }
-          case "digest":
+          case 'digest':
             {
               securityScheme = DigestSecurityScheme.fromJson(value);
               break;
             }
-          case "apikey":
+          case 'apikey':
             {
               securityScheme = ApiKeySecurityScheme.fromJson(value);
               break;
             }
-          case "oauth2":
+          case 'oauth2':
             {
               securityScheme = OAuth2SecurityScheme.fromJson(value);
               break;

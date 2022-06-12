@@ -12,14 +12,14 @@ import 'http_config.dart';
 
 /// A [ProtocolClientFactory] that produces HTTP and HTTPS clients.
 class HttpClientFactory extends ProtocolClientFactory {
+  /// Creates a new [HttpClientFactory] based on an optional [HttpConfig].
+  HttpClientFactory([this.httpConfig]);
+
   @override
-  Set<String> get schemes => {"http", "https"};
+  Set<String> get schemes => {'http', 'https'};
 
   /// The [HttpConfig] used to configure new clients.
   final HttpConfig? httpConfig;
-
-  /// Creates a new [HttpClientFactory] based on an optional [HttpConfig].
-  HttpClientFactory([this.httpConfig]);
 
   @override
   bool destroy() {

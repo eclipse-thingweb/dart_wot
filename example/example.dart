@@ -14,7 +14,7 @@ Future<void> main(List<String> args) async {
     ..addClientFactory(httpClientFactory);
   final wot = await servient.start();
 
-  final thingDescriptionJson = '''
+  const thingDescriptionJson = '''
   {
     "@context": "http://www.w3.org/ns/td",
     "title": "Test Thing",
@@ -39,22 +39,22 @@ Future<void> main(List<String> args) async {
 
   final thingDescription = ThingDescription(thingDescriptionJson);
   final consumedThing = await wot.consume(thingDescription);
-  final status = await consumedThing.readProperty("status");
+  final status = await consumedThing.readProperty('status');
   final value = await status.value();
   print(value);
 
-  final thingUri = Uri.parse("https://raw.githubusercontent.com/w3c/wot-testing"
-      "/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs"
-      "/Oracle/oracle-Festo_Shared.td.jsonld");
+  final thingUri = Uri.parse('https://raw.githubusercontent.com/w3c/wot-testing'
+      '/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs'
+      '/Oracle/oracle-Festo_Shared.td.jsonld');
 
   final thingDiscovery =
       wot.discover(ThingFilter(url: thingUri, method: DiscoveryMethod.direct));
 
   await for (final thingDescription in thingDiscovery) {
     final consumedDiscoveredThing = await wot.consume(thingDescription);
-    print("The title of the fetched TD is "
-        "${consumedDiscoveredThing.thingDescription.title}.");
+    print('The title of the fetched TD is '
+        '${consumedDiscoveredThing.thingDescription.title}.');
   }
 
-  print("Done!");
+  print('Done!');
 }

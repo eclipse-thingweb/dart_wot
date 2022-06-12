@@ -12,6 +12,12 @@ import 'discovery_method.dart';
 ///
 /// [spec link]: https://w3c.github.io/wot-scripting-api/#the-thingfilter-dictionary
 class ThingFilter {
+  /// Constructor.
+  ThingFilter(
+      {required this.url,
+      this.method = DiscoveryMethod.directory,
+      this.fragment});
+
   /// Represents the discovery type that should be used in the discovery process
   DiscoveryMethod method;
 
@@ -25,10 +31,4 @@ class ThingFilter {
   /// Represents a template object used for matching property by property
   /// against discovered Things.
   Map<String, dynamic>? fragment;
-
-  /// Constructor.
-  ThingFilter(
-      {required this.url,
-      this.method = DiscoveryMethod.directory,
-      this.fragment});
 }

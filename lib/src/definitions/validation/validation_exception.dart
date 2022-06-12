@@ -6,14 +6,14 @@
 
 /// An [Exception] that is thrown when the validation of a definition fails.
 class ValidationException implements Exception {
-  /// The error message of this [ValidationException].
-  final String message;
-
   /// Constructor.
   ValidationException(this.message);
 
+  /// The error message of this [ValidationException].
+  final String message;
+
   @override
   String toString() {
-    return "$runtimeType: $message";
+    return 'ValidationException: $message';
   }
 }

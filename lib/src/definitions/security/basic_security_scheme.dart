@@ -10,50 +10,51 @@ import 'security_scheme.dart';
 /// Basic Authentication security configuration identified by the Vocabulary
 /// Term `basic`.
 class BasicSecurityScheme extends SecurityScheme {
-  @override
-  String get scheme => "basic";
-
-  /// Name for query, header, cookie, or uri parameters.
-  String? name;
-
-  /// Specifies the location of security authentication information.
-  late String in_ = "header";
-
-  final List<String> _parsedJsonFields = [];
-
   /// Constructor.
-  BasicSecurityScheme(
-      {String? description,
-      String? proxy,
-      this.name,
-      String? in_,
-      Map<String, String>? descriptions})
-      : in_ = in_ ?? "header" {
+  BasicSecurityScheme({
+    String? description,
+    String? proxy,
+    this.name,
+    String? in_,
+    Map<String, String>? descriptions,
+  }) : in_ = in_ ?? 'header' {
     this.description = description;
+    this.proxy = proxy;
     this.descriptions.addAll(descriptions ?? {});
-  }
-
-  dynamic _getJsonValue(Map<String, dynamic> json, String key) {
-    _parsedJsonFields.add(key);
-    return json[key];
   }
 
   /// Creates a [BasicSecurityScheme] from a [json] object.
   BasicSecurityScheme.fromJson(Map<String, dynamic> json) {
     _parsedJsonFields.addAll(parseSecurityJson(this, json));
 
-    final dynamic jsonIn = _getJsonValue(json, "in");
+    final dynamic jsonIn = _getJsonValue(json, 'in');
     if (jsonIn is String) {
       in_ = jsonIn;
-      _parsedJsonFields.add("in");
+      _parsedJsonFields.add('in');
     }
 
-    final dynamic jsonName = _getJsonValue(json, "name");
+    final dynamic jsonName = _getJsonValue(json, 'name');
     if (jsonName is String) {
       name = jsonName;
-      _parsedJsonFields.add("name");
+      _parsedJsonFields.add('name');
     }
 
     parseAdditionalFields(additionalFields, json, _parsedJsonFields);
+  }
+
+  @override
+  String get scheme => 'basic';
+
+  /// Name for query, header, cookie, or uri parameters.
+  String? name;
+
+  /// Specifies the location of security authentication information.
+  late String in_ = 'header';
+
+  final List<String> _parsedJsonFields = [];
+
+  dynamic _getJsonValue(Map<String, dynamic> json, String key) {
+    _parsedJsonFields.add(key);
+    return json[key];
   }
 }

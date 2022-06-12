@@ -10,9 +10,9 @@ import 'credentials.dart';
 
 /// [Credentials] used for the `APIKeySecurityScheme`.
 class ApiKeyCredentials extends Credentials<ApiKeySecurityScheme> {
+  /// Constructor.
+  ApiKeyCredentials(this.apiKey) : super('apikey');
+
   /// The [apiKey] associated with these [ApiKeyCredentials].
   String apiKey;
-
-  /// Constructor.
-  ApiKeyCredentials(this.apiKey) : super("apikey");
 }

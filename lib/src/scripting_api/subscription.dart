@@ -11,13 +11,13 @@ import 'interaction_options.dart';
 
 /// [Exception] that is thrown when error during the unsubscribe process occurs.
 class UnsubscribeException implements Exception {
-  final String _message;
-
   /// Constructor.
   UnsubscribeException(this._message);
 
+  final String _message;
+
   @override
-  String toString() => "$runtimeType: $_message";
+  String toString() => 'UnsubscribeException: $_message';
 }
 
 /// Indicates the type of the subscription.
@@ -58,7 +58,7 @@ abstract class Subscription {
 Form findUnsubscribeForm(InteractionAffordance interaction,
     SubscriptionType type, Form form, int? formIndex) {
   if (formIndex != null) {
-    interaction.forms[formIndex];
+    return interaction.forms[formIndex];
   }
 
   final operationType = type.operationType;
@@ -72,7 +72,7 @@ Form findUnsubscribeForm(InteractionAffordance interaction,
   final unsubscribeForm = _findFormByScoring(interaction, form, operationType);
 
   if (unsubscribeForm == null) {
-    throw UnsubscribeException("Could not find matching form for unsubscribe");
+    throw UnsubscribeException('Could not find matching form for unsubscribe');
   }
 
   return unsubscribeForm;
@@ -83,7 +83,7 @@ Form? _findFormByScoring(
   int maxScore = 0;
   Form? foundForm;
 
-  for (Form currentForm in interaction.forms) {
+  for (final Form currentForm in interaction.forms) {
     int score;
     if (form.op.contains(operationType)) {
       score = 1;

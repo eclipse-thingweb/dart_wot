@@ -19,13 +19,13 @@ import 'wot.dart';
 
 /// Exception that is thrown by a [Servient].
 class ServientException implements Exception {
-  final String _message;
-
   /// Constructor
   ServientException(this._message);
 
+  final String _message;
+
   @override
-  String toString() => "$runtimeType: $_message";
+  String toString() => 'ServientException: $_message';
 }
 
 // TODO(JKRhb): Documentation should be improved.
@@ -35,18 +35,6 @@ class ServientException implements Exception {
 /// Things. Servients can support multiple Protocol Bindings to enable
 /// interaction with different IoT platforms.
 class Servient {
-  final List<ProtocolServer> _servers = [];
-  final Map<String, ProtocolClientFactory> _clientFactories = {};
-  final Map<String, ExposedThing> _things = {};
-  final Map<String, ConsumedThing> _consumedThings = {};
-
-  final ClientSecurityProvider? _clientSecurityProvider;
-
-  final ServerSecurityCallback? _serverSecurityCallback;
-
-  /// The [ContentSerdes] object that is used for serializing/deserializing.
-  final ContentSerdes contentSerdes;
-
   /// Creates a new [Servient].
   ///
   /// A custom [contentSerdes] can be passed that supports other media types
@@ -58,6 +46,18 @@ class Servient {
       : contentSerdes = contentSerdes ?? ContentSerdes(),
         _clientSecurityProvider = clientSecurityProvider,
         _serverSecurityCallback = serverSecurityCallback;
+
+  final List<ProtocolServer> _servers = [];
+  final Map<String, ProtocolClientFactory> _clientFactories = {};
+  final Map<String, ExposedThing> _things = {};
+  final Map<String, ConsumedThing> _consumedThings = {};
+
+  final ClientSecurityProvider? _clientSecurityProvider;
+
+  final ServerSecurityCallback? _serverSecurityCallback;
+
+  /// The [ContentSerdes] object that is used for serializing/deserializing.
+  final ContentSerdes contentSerdes;
 
   /// Starts this [Servient] and returns a [WoT] runtime object.
   ///
@@ -123,7 +123,7 @@ class Servient {
   /// Returns `false` if the [thing] has already been registered, otherwise
   /// `true`.
   bool addThing(ExposedThing thing) {
-    final uuid = Uuid();
+    const uuid = Uuid();
     thing.id ??= 'urn:uuid:${uuid.v4()}';
 
     if (_things.containsKey(thing.id)) {
@@ -179,9 +179,7 @@ class Servient {
 
   /// Registers a new [ProtocolServer].
   void addServer(ProtocolServer server) {
-    for (final thing in _things.values) {
-      server.expose(thing);
-    }
+    _things.values.forEach(server.expose);
 
     _servers.add(server);
   }

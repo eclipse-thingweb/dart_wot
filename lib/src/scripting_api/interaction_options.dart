@@ -11,6 +11,9 @@
 ///
 /// [spec link]: https://w3c.github.io/wot-scripting-api/#the-interactionoptions-dictionary
 class InteractionOptions {
+  /// Constructor
+  InteractionOptions({this.formIndex, this.uriVariables, this.data});
+
   /// Represents an application hint for which Form definition should be used
   /// for the given interaction.
   int? formIndex;
@@ -21,7 +24,4 @@ class InteractionOptions {
   /// Represents additional opaque data that needs to be passed to the
   /// interaction.
   Object? data;
-
-  /// Constructor
-  InteractionOptions({this.formIndex, this.uriVariables, this.data});
 }

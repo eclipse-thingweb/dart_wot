@@ -12,6 +12,65 @@ import 'validation/validation_exception.dart';
 /// type resource at link target", where the optional target attributes may
 /// further describe the resource.
 class Link {
+  /// Constructor.
+  Link(
+    String href, {
+    this.type,
+    this.rel,
+    String? anchor,
+    this.sizes,
+    this.hreflang,
+    Map<String, dynamic>? additionalFields,
+  })  : href = Uri.parse(href),
+        anchor = anchor != null ? Uri.parse(anchor) : null {
+    if (additionalFields != null) {
+      this.additionalFields.addAll(additionalFields);
+    }
+  }
+
+  /// Creates a new [Link] from a [json] object.
+  Link.fromJson(Map<String, dynamic> json) {
+    // TODO(JKRhb): Check if this can be refactored
+    if (json['href'] is String) {
+      _parsedJsonFields.add('href');
+      final hrefString = json['href'] as String;
+      href = Uri.parse(hrefString);
+    } else {
+      // [href] *must* be initialized.
+      throw ValidationException("'href' field must exist as a string.");
+    }
+
+    if (json['type'] is String) {
+      _parsedJsonFields.add('type');
+      type = json['type'] as String;
+    }
+
+    if (json['rel'] is String) {
+      _parsedJsonFields.add('rel');
+      rel = json['rel'] as String;
+    }
+
+    if (json['anchor'] is String) {
+      _parsedJsonFields.add('anchor');
+      anchor = Uri.parse(json['anchor'] as String);
+    }
+
+    if (json['sizes'] is String) {
+      _parsedJsonFields.add('sizes');
+      sizes = json['sizes'] as String;
+    }
+
+    final dynamic hreflang = json['hreflang'];
+    _parsedJsonFields.add('hreflang');
+    if (hreflang is String) {
+      this.hreflang = [hreflang];
+    } else if (hreflang is List<dynamic>) {
+      this.hreflang = hreflang.whereType<String>().toList();
+    }
+
+    _addAdditionalFields(json);
+  }
+
   /// Target IRI of a link or submission target of a form.
   late final Uri href;
 
@@ -43,65 +102,6 @@ class Link {
 
   /// Additional fields collected during the parsing of a JSON object.
   final Map<String, dynamic> additionalFields = <String, dynamic>{};
-
-  /// Constructor.
-  Link(
-    String href, {
-    this.type,
-    this.rel,
-    String? anchor,
-    this.sizes,
-    this.hreflang,
-    Map<String, dynamic>? additionalFields,
-  })  : href = Uri.parse(href),
-        anchor = anchor != null ? Uri.parse(anchor) : null {
-    if (additionalFields != null) {
-      this.additionalFields.addAll(additionalFields);
-    }
-  }
-
-  /// Creates a new [Link] from a [json] object.
-  Link.fromJson(Map<String, dynamic> json) {
-    // TODO(JKRhb): Check if this can be refactored
-    if (json["href"] is String) {
-      _parsedJsonFields.add("href");
-      final hrefString = json["href"] as String;
-      href = Uri.parse(hrefString);
-    } else {
-      // [href] *must* be initialized.
-      throw ValidationException("'href' field must exist as a string.");
-    }
-
-    if (json["type"] is String) {
-      _parsedJsonFields.add("type");
-      type = json["type"] as String;
-    }
-
-    if (json["rel"] is String) {
-      _parsedJsonFields.add("rel");
-      rel = json["rel"] as String;
-    }
-
-    if (json["anchor"] is String) {
-      _parsedJsonFields.add("anchor");
-      anchor = Uri.parse(json["anchor"] as String);
-    }
-
-    if (json["sizes"] is String) {
-      _parsedJsonFields.add("sizes");
-      sizes = json["sizes"] as String;
-    }
-
-    final dynamic hreflang = json["hreflang"];
-    _parsedJsonFields.add("hreflang");
-    if (hreflang is String) {
-      this.hreflang = [hreflang];
-    } else if (hreflang is List<dynamic>) {
-      this.hreflang = hreflang.whereType<String>().toList();
-    }
-
-    _addAdditionalFields(json);
-  }
 
   void _addAdditionalFields(Map<String, dynamic> formJson) {
     for (final entry in formJson.entries) {

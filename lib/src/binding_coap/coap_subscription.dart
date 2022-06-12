@@ -13,6 +13,11 @@ import '../scripting_api/subscription.dart';
 ///
 /// [RFC 7641]: https://datatracker.ietf.org/doc/html/rfc7641
 class CoapSubscription implements Subscription {
+  /// Constructor
+  CoapSubscription(
+      this._coapClient, this._observeClientRelation, this._complete)
+      : _active = true;
+
   final CoapClient _coapClient;
 
   final CoapObserveClientRelation? _observeClientRelation;
@@ -25,11 +30,6 @@ class CoapSubscription implements Subscription {
   /// Callback used to pass by the servient that is used to signal it that an
   /// observation has been cancelled.
   final void Function() _complete;
-
-  /// Constructor
-  CoapSubscription(
-      this._coapClient, this._observeClientRelation, this._complete)
-      : _active = true;
 
   @override
   Future<void> stop([InteractionOptions? options]) async {

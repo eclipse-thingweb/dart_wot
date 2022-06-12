@@ -8,8 +8,8 @@ import 'package:dart_wot/dart_wot.dart';
 
 /// Matches [PskCredentials] by hostname and URI scheme.
 final Map<Uri, PskCredentials> _pskCredentialsStore = {
-  Uri(host: "californium.eclipseprojects.io", scheme: "coaps"):
-      PskCredentials(identity: "Client_identity", preSharedKey: "secretPSK")
+  Uri(host: 'californium.eclipseprojects.io', scheme: 'coaps'):
+      PskCredentials(identity: 'Client_identity', preSharedKey: 'secretPSK')
 };
 
 PskCredentials? _pskCredentialsCallback(
@@ -29,7 +29,7 @@ Future<void> main(List<String> args) async {
 
   final wot = await servient.start();
 
-  final thingDescriptionJson = '''
+  const thingDescriptionJson = '''
   {
     "@context": "http://www.w3.org/ns/td",
     "title": "Test Thing",
@@ -55,7 +55,7 @@ Future<void> main(List<String> args) async {
 
   final thingDescription = ThingDescription(thingDescriptionJson);
   final consumedThing = await wot.consume(thingDescription);
-  final status = await consumedThing.readProperty("status");
+  final status = await consumedThing.readProperty('status');
   final value = await status.value();
   print(value);
 }

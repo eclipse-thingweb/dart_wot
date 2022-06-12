@@ -12,6 +12,23 @@ import 'interaction_affordance.dart';
 
 /// Class representing a [Property] Affordance in a Thing Description.
 class Property extends InteractionAffordance implements DataSchema {
+  /// Default constructor that creates a [Property] from a [List] of [forms].
+  Property(super.forms, super.thingDescription);
+
+  /// Creates a new [Property] from a [json] object.
+  Property.fromJson(Map<String, dynamic> json,
+      ThingDescription thingDescription, PrefixMapping prefixMapping)
+      : super([], thingDescription) {
+    final dynamic observable = json['observable'];
+    if (observable is bool) {
+      _observable = observable;
+    }
+
+    parseAffordanceFields(json, prefixMapping);
+    parseDataSchemaJson(this, json);
+    rawJson = json;
+  }
+
   @override
   List<String>? atType;
 
@@ -51,21 +68,4 @@ class Property extends InteractionAffordance implements DataSchema {
 
   @override
   Map<String, dynamic>? rawJson;
-
-  /// Default constructor that creates a [Property] from a [List] of [forms].
-  Property(super.forms, super.thingDescription);
-
-  /// Creates a new [Property] from a [json] object.
-  Property.fromJson(Map<String, dynamic> json,
-      ThingDescription thingDescription, PrefixMapping prefixMapping)
-      : super([], thingDescription) {
-    final dynamic observable = json["observable"];
-    if (observable is bool) {
-      _observable = observable;
-    }
-
-    parseAffordanceFields(json, prefixMapping);
-    parseDataSchemaJson(this, json);
-    rawJson = json;
-  }
 }

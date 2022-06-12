@@ -6,6 +6,17 @@
 
 /// Allows for configuring the behavior of CoAP clients and servers.
 class CoapConfig {
+  /// Creates a new [CoapConfig] object.
+  CoapConfig({
+    this.port = 5683,
+    this.securePort = 5684,
+    this.blocksize,
+    this.useTinyDtls = false,
+    this.useOpenSsl = false,
+    this.allowMulticastDiscovery = false,
+    this.multicastDiscoveryTimeout = const Duration(minutes: 60),
+  });
+
   /// The port number used by a client or server. Defaults to 5683.
   final int port;
 
@@ -33,15 +44,4 @@ class CoapConfig {
   ///
   /// Defaults to 60 seconds.
   final Duration multicastDiscoveryTimeout;
-
-  /// Creates a new [CoapConfig] object.
-  CoapConfig({
-    this.port = 5683,
-    this.securePort = 5684,
-    this.blocksize,
-    this.useTinyDtls = false,
-    this.useOpenSsl = false,
-    this.allowMulticastDiscovery = false,
-    this.multicastDiscoveryTimeout = const Duration(minutes: 60),
-  });
 }
