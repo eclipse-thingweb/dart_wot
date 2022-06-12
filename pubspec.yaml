@@ -25,3 +25,4 @@ dependencies:
   uri: ^1.0.0
   uuid: ^3.0.5
   curie: ^0.1.0
+  collection: ^1.16.0
