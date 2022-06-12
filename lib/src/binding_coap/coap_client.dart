@@ -15,11 +15,11 @@ import 'package:curie/curie.dart';
 import '../core/content.dart';
 import '../core/credentials/psk_credentials.dart';
 import '../core/discovery/core_link_format.dart';
-import '../core/operation_type.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../core/security_provider.dart';
 import '../core/thing_discovery.dart';
 import '../definitions/form.dart';
+import '../definitions/operation_type.dart';
 import '../definitions/security/psk_security_scheme.dart';
 import '../definitions/thing_description.dart';
 import '../scripting_api/interaction_options.dart';
@@ -397,23 +397,18 @@ class CoapClient extends ProtocolClient {
     void Function(Exception error)? error,
     required void Function() complete,
   }) async {
-    final OperationType operationType = _determineSubscribeOperationType(form);
+    final OperationType operationType = form.op.firstWhere(
+        (element) => [
+              OperationType.subscribeevent,
+              OperationType.observeproperty
+            ].contains(element),
+        orElse: () => throw CoapBindingException(
+            "Subscription form contained neither 'subscribeevent'"
+            "nor 'observeproperty' operation type."));
 
     final request = _createRequest(form, operationType);
 
     return await request.startObservation(next, complete);
-  }
-
-  static OperationType _determineSubscribeOperationType(Form form) {
-    final op = form.op ?? [];
-    if (op.contains("subscribeevent")) {
-      return OperationType.subscribeevent;
-    } else if (op.contains("observeproperty")) {
-      return OperationType.observeproperty;
-    }
-
-    throw ArgumentError("Subscription form contained neither 'subscribeevent'"
-        "nor 'observeproperty' operation type.");
   }
 
   @override

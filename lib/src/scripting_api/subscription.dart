@@ -6,6 +6,7 @@
 
 import '../definitions/form.dart';
 import '../definitions/interaction_affordances/interaction_affordance.dart';
+import '../definitions/operation_type.dart';
 import 'interaction_options.dart';
 
 /// Indicates the type of the subscription.
@@ -14,7 +15,17 @@ enum SubscriptionType {
   property,
 
   /// The subscription is for an Event.
-  event,
+  event;
+
+  /// Gets the corresponding [OperationType] for this [SubscriptionType].
+  OperationType get operationType {
+    switch (this) {
+      case SubscriptionType.property:
+        return OperationType.observeproperty;
+      case SubscriptionType.event:
+        return OperationType.subscribeevent;
+    }
+  }
 }
 
 /// Represents a subscription to Property change and Event interactions.
@@ -39,11 +50,11 @@ Form findUnsubscribeForm(InteractionAffordance interaction,
     interaction.forms[formIndex];
   }
 
-  final operationType = _determineOpType(type);
+  final operationType = type.operationType;
   final formOperations = form.op;
 
   // The default op value also contains the unsubscribe/unobserve operation.
-  if (formOperations == null || formOperations.contains(operationType)) {
+  if (formOperations.contains(operationType)) {
     return form;
   }
 
@@ -56,25 +67,14 @@ Form findUnsubscribeForm(InteractionAffordance interaction,
   return unsubscribeForm;
 }
 
-String _determineOpType(SubscriptionType? subscriptionType) {
-  switch (subscriptionType) {
-    case SubscriptionType.event:
-      return "unsubscribeevent";
-    case SubscriptionType.property:
-      return "unobserveproperty";
-    default:
-      throw ArgumentError();
-  }
-}
-
 Form? _findFormByScoring(
-    InteractionAffordance interaction, Form form, String operationType) {
+    InteractionAffordance interaction, Form form, OperationType operationType) {
   int maxScore = 0;
   Form? foundForm;
 
   for (Form currentForm in interaction.forms) {
     int score;
-    if (form.op!.contains(operationType)) {
+    if (form.op.contains(operationType)) {
       score = 1;
     } else {
       continue;

@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'validation/validation_exception.dart';
+
 /// Enumeration for the possible WoT operation types.
 ///
 /// See W3C WoT Thing Description specification, [section 5.3.4.2.][spec link].
@@ -39,13 +41,20 @@ enum OperationType {
   subscribeevent,
 
   /// Corresponds with the `unsubscribeevent` operation type.
-  unsubscribeevent,
-}
+  unsubscribeevent;
 
-/// Adds a [toShortString] function to the [OperationType] enum.
-extension ParseToString on OperationType {
-  /// Creates a String representation with the leading "OperationType".
-  String toShortString() {
-    return toString().split('.').last;
+  /// Constructor
+  const OperationType();
+
+  /// Creates an [OperationType] from a [stringValue].
+  static OperationType fromString(String stringValue) {
+    for (final value in OperationType.values) {
+      if (stringValue == value.name) {
+        return value;
+      }
+    }
+
+    throw ValidationException(
+        "Encountered unknown OperationType $stringValue.");
   }
 }
