@@ -1,3 +1,9 @@
+# 0.18.0
+
+- Added support for parsing of a number of missing TD fields
+- Replaced a number of Errors with Exceptions to make library more stable
+- Made various refactorings, applying a stricter linting config
+
 # 0.17.0
 
 - Added JSON Schema Validation for TDs
