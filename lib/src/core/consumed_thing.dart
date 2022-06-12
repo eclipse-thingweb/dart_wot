@@ -83,7 +83,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       InteractionOptions? options,
       InteractionAffordance interactionAffordance) {
     if (forms.isEmpty) {
-      throw ArgumentError(
+      throw StateError(
           'ConsumedThing "$title" has no links for this interaction');
     }
 
@@ -98,8 +98,10 @@ class ConsumedThing implements scripting_api.ConsumedThing {
         final scheme = foundForm.resolvedHref.scheme;
         client = servient.clientFor(scheme);
       } else {
-        throw ArgumentError('ConsumedThing "$title" missing formIndex for '
-            '$formIndex"');
+        throw ArgumentError(
+            'ConsumedThing "$title" missing formIndex for '
+                '$formIndex"',
+            "options.formIndex");
       }
     } else {
       foundForm = forms.firstWhere(
@@ -123,8 +125,9 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final property = thingDescription.properties[propertyName];
 
     if (property == null) {
-      throw StateError(
-          'ConsumedThing $title does not have property $propertyName');
+      throw ArgumentError(
+          'ConsumedThing $title does not have property $propertyName',
+          "propertyName");
     }
 
     final clientAndForm = _getClientFor(
@@ -148,8 +151,9 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final property = thingDescription.properties[propertyName];
 
     if (property == null) {
-      throw StateError(
-          'ConsumedThing $title does not have property $propertyName');
+      throw ArgumentError(
+          'ConsumedThing $title does not have property $propertyName',
+          "propertyName");
     }
 
     final clientAndForm = _getClientFor(
@@ -173,7 +177,9 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final action = thingDescription.actions[actionName];
 
     if (action == null) {
-      throw StateError('ConsumedThing $title does not have action $actionName');
+      throw ArgumentError(
+          'ConsumedThing $title does not have action $actionName',
+          "actionName");
     }
 
     final clientAndForm = _getClientFor(action.forms,
@@ -205,12 +211,13 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final property = thingDescription.properties[propertyName];
 
     if (property == null) {
-      throw StateError(
-          'ConsumedThing $title does not have property $propertyName');
+      throw ArgumentError(
+          'ConsumedThing $title does not have property $propertyName',
+          "propertyName");
     }
 
     if (_observedProperties.containsKey(propertyName)) {
-      throw ArgumentError("ConsumedThing '$title' already has a function "
+      throw StateError("ConsumedThing '$title' already has a function "
           "subscribed to $propertyName. You can only observe once");
     }
 
@@ -304,7 +311,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final event = thingDescription.events[eventName];
 
     if (event == null) {
-      throw StateError('ConsumedThing $title does not have event $eventName');
+      throw ArgumentError(
+          'ConsumedThing $title does not have event $eventName', "eventName");
     }
 
     if (_subscribedEvents.containsKey(eventName)) {
