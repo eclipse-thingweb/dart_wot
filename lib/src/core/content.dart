@@ -18,6 +18,11 @@ class ContentDeserializationException implements Exception {
 
   /// Creates a new [ContentDeserializationException] with an error [message].
   ContentDeserializationException(this.message, this.error);
+
+  @override
+  String toString() {
+    return "$runtimeType: $message";
+  }
 }
 
 void _onError(Object error) {

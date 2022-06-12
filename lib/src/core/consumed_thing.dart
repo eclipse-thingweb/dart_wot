@@ -29,6 +29,11 @@ class UnexpectedReponseException implements Exception {
 
   /// Creates a new [UnexpectedReponseException] from an error [message].
   UnexpectedReponseException(this.message);
+
+  @override
+  String toString() {
+    return message;
+  }
 }
 
 /// Implementation of the [scripting_api.ConsumedThing] interface.

@@ -414,4 +414,9 @@ class UriVariableException implements Exception {
 
   /// Constructor.
   UriVariableException(this.message);
+
+  @override
+  String toString() {
+    return "$runtimeType: $message";
+  }
 }
