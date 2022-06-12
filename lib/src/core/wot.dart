@@ -27,6 +27,22 @@ class ThingConsumptionException implements Exception {
   }
 }
 
+/// This [Exception] is thrown if an error during the production of a
+/// [ThingDescription] occurs.
+class ThingProductionException implements Exception {
+  /// The identifier of the [ThingDescription] that triggered this [Exception].
+  final String identifier;
+
+  /// Constructor
+  ThingProductionException(this.identifier);
+
+  @override
+  String toString() {
+    return "$runtimeType: An ExposedThing with identifier $identifier already "
+        "exists.";
+  }
+}
+
 /// Implementation of the [scripting_api.WoT] runtime interface.
 class WoT implements scripting_api.WoT {
   final Servient _servient;
@@ -59,7 +75,8 @@ class WoT implements scripting_api.WoT {
     if (_servient.addThing(newThing)) {
       return newThing;
     } else {
-      throw StateError('Thing already exists: ${newThing.title}');
+      final id = newThing.thingDescription.identifier;
+      throw ThingProductionException(id);
     }
   }
 

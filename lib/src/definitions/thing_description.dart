@@ -23,6 +23,7 @@ import 'security/psk_security_scheme.dart';
 import 'security/security_scheme.dart';
 import 'thing_model.dart';
 import 'validation/thing_description_schema.dart';
+import 'validation/validation_exception.dart';
 
 const _validContextValues = [
   "https://www.w3.org/2019/wot/td/v1",
@@ -196,7 +197,7 @@ class ThingDescription {
     if (titleJson is String) {
       title = titleJson;
     } else {
-      throw ArgumentError("Thing Description type is not a "
+      throw ValidationException("Thing Description type is not a "
           "String but ${title.runtimeType}");
     }
   }

@@ -9,6 +9,17 @@ import '../definitions/interaction_affordances/interaction_affordance.dart';
 import '../definitions/operation_type.dart';
 import 'interaction_options.dart';
 
+/// [Exception] that is thrown when error during the unsubscribe process occurs.
+class UnsubscribeException implements Exception {
+  final String _message;
+
+  /// Constructor.
+  UnsubscribeException(this._message);
+
+  @override
+  String toString() => "$runtimeType: $_message";
+}
+
 /// Indicates the type of the subscription.
 enum SubscriptionType {
   /// The subscription is the observation of a property.
@@ -61,7 +72,7 @@ Form findUnsubscribeForm(InteractionAffordance interaction,
   final unsubscribeForm = _findFormByScoring(interaction, form, operationType);
 
   if (unsubscribeForm == null) {
-    throw StateError("Could not find matching form for unsubscribe");
+    throw UnsubscribeException("Could not find matching form for unsubscribe");
   }
 
   return unsubscribeForm;

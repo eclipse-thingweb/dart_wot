@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'validation/validation_exception.dart';
+
 /// Represents an element of the `links` array in a Thing Description.
 ///
 /// A link can be viewed as a statement of the form "link context has a relation
@@ -67,7 +69,7 @@ class Link {
       href = Uri.parse(hrefString);
     } else {
       // [href] *must* be initialized.
-      throw ArgumentError("'href' field must exist as a string.", "formJson");
+      throw ValidationException("'href' field must exist as a string.");
     }
 
     if (json["type"] is String) {

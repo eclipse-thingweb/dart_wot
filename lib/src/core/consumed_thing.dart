@@ -36,6 +36,20 @@ class UnexpectedReponseException implements Exception {
   }
 }
 
+/// This Exception is thrown when
+class SubscriptionException implements Exception {
+  /// The error [message].
+  final String message;
+
+  /// Creates a new [SubscriptionException] from an error [message].
+  SubscriptionException(this.message);
+
+  @override
+  String toString() {
+    return message;
+  }
+}
+
 /// Implementation of the [scripting_api.ConsumedThing] interface.
 class ConsumedThing implements scripting_api.ConsumedThing {
   /// The [Servient] corresponding with this [ConsumedThing].
@@ -294,7 +308,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     }
 
     if (_subscribedEvents.containsKey(eventName)) {
-      throw ArgumentError("ConsumedThing '$title' already has a function "
+      throw SubscriptionException(
+          "ConsumedThing '$title' already has a function "
           "subscribed to $eventName. You can only subscribe once.");
     }
 
