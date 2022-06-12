@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+// ignore_for_file: avoid_print
+
 import 'package:dart_wot/dart_wot.dart';
 
 /// Matches [PskCredentials] by hostname and URI scheme.
@@ -13,7 +15,10 @@ final Map<Uri, PskCredentials> _pskCredentialsStore = {
 };
 
 PskCredentials? _pskCredentialsCallback(
-    Uri uri, Form? form, String? identityHint) {
+  Uri uri,
+  Form? form,
+  String? identityHint,
+) {
   final key = Uri(scheme: uri.scheme, host: uri.host);
 
   return _pskCredentialsStore[key];

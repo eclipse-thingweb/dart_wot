@@ -24,8 +24,10 @@ void main() {
     test('should not accept invalid Thing Descriptions', () {
       final illegalThingDescription = {'hello': 'world'};
 
-      expect(() => ThingDescription.fromJson(illegalThingDescription),
-          throwsA(isA<ThingDescriptionValidationException>()));
+      expect(
+        () => ThingDescription.fromJson(illegalThingDescription),
+        throwsA(isA<ThingDescriptionValidationException>()),
+      );
     });
 
     test('should accept valid Thing Descriptions', () {
@@ -41,8 +43,10 @@ void main() {
       final thingDescription = ThingDescription.fromJson(validThingDescription);
 
       expect(thingDescription.title, 'MyLampThing');
-      expect(thingDescription.context,
-          [const ContextEntry('https://www.w3.org/2022/wot/td/v1.1', null)]);
+      expect(
+        thingDescription.context,
+        [const ContextEntry('https://www.w3.org/2022/wot/td/v1.1', null)],
+      );
       expect(thingDescription.security, ['nosec_sc']);
       expect(thingDescription.securityDefinitions['nosec_sc']?.scheme, 'nosec');
     });
@@ -56,11 +60,14 @@ void main() {
 
       expect(form.href, uri);
 
-      final form2 = Form(uri, interactionAffordance,
-          subprotocol: 'test',
-          scopes: ['test'],
-          response: ExpectedResponse('application/json'),
-          additionalFields: <String, dynamic>{'test': 'test'});
+      final form2 = Form(
+        uri,
+        interactionAffordance,
+        subprotocol: 'test',
+        scopes: ['test'],
+        response: ExpectedResponse('application/json'),
+        additionalFields: <String, dynamic>{'test': 'test'},
+      );
 
       expect(form2.href, uri);
       expect(form2.contentType, 'application/json');
@@ -69,7 +76,8 @@ void main() {
       expect(form2.response!.contentType, 'application/json');
       expect(form2.additionalFields, {'test': 'test'});
 
-      final dynamic form3Json = jsonDecode('''
+      final dynamic form3Json = jsonDecode(
+        '''
       {
         "href": "https://example.org",
         "contentType": "application/json",
@@ -84,47 +92,65 @@ void main() {
         },
         "op": ["writeproperty", "readproperty"],
         "test": "test"
-      }''');
+      }''',
+      );
 
       final form3 = Form.fromJson(
-          form3Json as Map<String, dynamic>, interactionAffordance);
+        form3Json as Map<String, dynamic>,
+        interactionAffordance,
+      );
 
       expect(form3.href, uri);
       expect(form3.contentType, 'application/json');
       expect(form3.subprotocol, 'test');
       expect(
-          form3.op, [OperationType.writeproperty, OperationType.readproperty]);
+        form3.op,
+        [OperationType.writeproperty, OperationType.readproperty],
+      );
       expect(form3.scopes, ['test1', 'test2']);
       expect(form3.response?.contentType, 'application/json');
       expect(form3.additionalResponses, [
-        AdditionalExpectedResponse('application/json',
-            success: false, schema: 'hallo')
+        AdditionalExpectedResponse(
+          'application/json',
+          success: false,
+          schema: 'hallo',
+        )
       ]);
       expect(form3.additionalFields, {'test': 'test'});
 
-      final dynamic form4Json = jsonDecode('''
+      final dynamic form4Json = jsonDecode(
+        '''
       {
         "href": "https://example.org",
         "op": "writeproperty",
         "scopes": "test"
-      }''');
+      }''',
+      );
 
       final form4 = Form.fromJson(
-          form4Json as Map<String, dynamic>, interactionAffordance);
+        form4Json as Map<String, dynamic>,
+        interactionAffordance,
+      );
 
       expect(form4.op, [OperationType.writeproperty]);
       expect(form4.scopes, ['test']);
 
-      final dynamic form5Json = jsonDecode('''
+      final dynamic form5Json = jsonDecode(
+        '''
       {
-      }''');
+      }''',
+      );
 
       expect(
-          () => Form.fromJson(
-              form5Json as Map<String, dynamic>, interactionAffordance),
-          throwsException);
+        () => Form.fromJson(
+          form5Json as Map<String, dynamic>,
+          interactionAffordance,
+        ),
+        throwsException,
+      );
 
-      final dynamic form6Json = jsonDecode('''
+      final dynamic form6Json = jsonDecode(
+        '''
       {
         "href": "https://example.org",
         "contentType": "application/cbor",
@@ -137,10 +163,13 @@ void main() {
         ],
         "op": ["writeproperty", "readproperty"],
         "test": "test"
-      }''');
+      }''',
+      );
 
       final form6 = Form.fromJson(
-          form6Json as Map<String, dynamic>, interactionAffordance);
+        form6Json as Map<String, dynamic>,
+        interactionAffordance,
+      );
 
       final additionalResponses = form6.additionalResponses;
 

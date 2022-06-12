@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+// ignore_for_file: avoid_print
+
 import 'package:dart_wot/dart_wot.dart';
 
 const propertyName = 'string';
@@ -19,9 +21,12 @@ Future<void> main(List<String> args) async {
 
   final wot = await servient.start();
 
-  await for (final thingDescription in wot.discover(ThingFilter(
+  await for (final thingDescription in wot.discover(
+    ThingFilter(
       url: Uri.parse('coap://plugfest.thingweb.io:5683/testthing'),
-      method: DiscoveryMethod.direct))) {
+      method: DiscoveryMethod.direct,
+    ),
+  )) {
     final consumedThing = await wot.consume(thingDescription);
 
     try {

@@ -24,7 +24,10 @@ import 'credentials/psk_credentials.dart';
 /// an [identityHint] that might be given by the server. In the case of
 /// interactions, the corresponding [Form] is also provided.
 typedef ClientPskCallback = PskCredentials? Function(
-    Uri uri, Form? form, String? identityHint);
+  Uri uri,
+  Form? form,
+  String? identityHint,
+);
 
 /// Function signature for a synchronous callback for providing client
 /// [Credentials] at runtime.

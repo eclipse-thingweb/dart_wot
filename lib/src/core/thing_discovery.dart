@@ -75,10 +75,11 @@ class ThingDiscovery extends Stream<ThingDescription>
 
   @override
   StreamSubscription<ThingDescription> listen(
-      void Function(ThingDescription event)? onData,
-      {Function? onError,
-      void Function()? onDone,
-      bool? cancelOnError}) {
+    void Function(ThingDescription event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
     Future<void> cleanUpAndDone() async {
       await stop();
       if (onDone != null) {
@@ -86,7 +87,11 @@ class ThingDiscovery extends Stream<ThingDescription>
       }
     }
 
-    return _stream.listen(onData,
-        onError: onError, onDone: cleanUpAndDone, cancelOnError: cancelOnError);
+    return _stream.listen(
+      onData,
+      onError: onError,
+      onDone: cleanUpAndDone,
+      cancelOnError: cancelOnError,
+    );
   }
 }

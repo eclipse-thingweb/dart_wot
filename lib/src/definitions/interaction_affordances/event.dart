@@ -16,9 +16,11 @@ class Event extends InteractionAffordance {
   Event(super.forms, super.thingDescription);
 
   /// Creates a new [Event] from a [json] object.
-  Event.fromJson(Map<String, dynamic> json, ThingDescription thingDescription,
-      PrefixMapping prefixMapping)
-      : super([], thingDescription) {
+  Event.fromJson(
+    Map<String, dynamic> json,
+    ThingDescription thingDescription,
+    PrefixMapping prefixMapping,
+  ) : super([], thingDescription) {
     parseAffordanceFields(json, prefixMapping);
     _parseEventFields(json);
   }

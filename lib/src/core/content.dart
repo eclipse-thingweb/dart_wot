@@ -25,7 +25,9 @@ class ContentDeserializationException implements Exception {
 
 void _onError(Object error) {
   throw ContentDeserializationException(
-      'Error occurred when reading data from stream: $error', error);
+    'Error occurred when reading data from stream: $error',
+    error,
+  );
 }
 
 /// This class contains binary input or output data and indicates the media

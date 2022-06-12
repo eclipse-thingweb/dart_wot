@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+// ignore_for_file: avoid_print
+
 import 'package:dart_wot/dart_wot.dart';
 
 const propertyName = 'status';

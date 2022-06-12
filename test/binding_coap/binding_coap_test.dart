@@ -26,12 +26,18 @@ void main() {
       expect(defaultServer.port, 5683);
       expect(defaultServer.scheme, 'coap');
 
-      expect(() async => defaultServer.start(),
-          throwsA(const TypeMatcher<UnimplementedError>()));
-      expect(() async => defaultServer.stop(),
-          throwsA(const TypeMatcher<UnimplementedError>()));
-      expect(() async => defaultServer.expose(MockExposedThing()),
-          throwsA(const TypeMatcher<UnimplementedError>()));
+      expect(
+        () async => defaultServer.start(),
+        throwsA(const TypeMatcher<UnimplementedError>()),
+      );
+      expect(
+        () async => defaultServer.stop(),
+        throwsA(const TypeMatcher<UnimplementedError>()),
+      );
+      expect(
+        () async => defaultServer.expose(MockExposedThing()),
+        throwsA(const TypeMatcher<UnimplementedError>()),
+      );
 
       final customServer = CoapServer(CoapConfig(port: 9001, blocksize: 64));
 

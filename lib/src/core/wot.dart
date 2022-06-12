@@ -58,7 +58,8 @@ class WoT implements scripting_api.WoT {
   /// If a [ThingDescription] with the same identifier has already been
   @override
   Future<scripting_api.ConsumedThing> consume(
-      ThingDescription thingDescription) async {
+    ThingDescription thingDescription,
+  ) async {
     final newThing = ConsumedThing(_servient, thingDescription);
     if (_servient.addConsumedThing(newThing)) {
       return newThing;

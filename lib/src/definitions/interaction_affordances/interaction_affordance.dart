@@ -50,7 +50,9 @@ abstract class InteractionAffordance {
   }
 
   Map<String, String>? _parseMultilangString(
-      Map<String, dynamic> json, String jsonKey) {
+    Map<String, dynamic> json,
+    String jsonKey,
+  ) {
     Map<String, String>? field;
     final dynamic jsonEntries = json[jsonKey];
     if (jsonEntries is Map<String, dynamic>) {
@@ -67,7 +69,9 @@ abstract class InteractionAffordance {
 
   /// Parses the [InteractionAffordance] contained in a [json] object.
   void parseAffordanceFields(
-      Map<String, dynamic> json, PrefixMapping prefixMapping) {
+    Map<String, dynamic> json,
+    PrefixMapping prefixMapping,
+  ) {
     _parseForms(json, prefixMapping);
 
     final dynamic title = json['title'];

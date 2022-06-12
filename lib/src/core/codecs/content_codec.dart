@@ -12,9 +12,15 @@ import '../../definitions/data_schema.dart';
 abstract class ContentCodec {
   /// Converts an [Object] to its byte representation in the given media type.
   ByteBuffer valueToBytes(
-      Object? value, DataSchema? dataSchema, Map<String, String>? parameters);
+    Object? value,
+    DataSchema? dataSchema,
+    Map<String, String>? parameters,
+  );
 
   /// Converts a payload of the given media type to an [Object].
-  Object? bytesToValue(ByteBuffer bytes, DataSchema? dataSchema,
-      Map<String, String>? parameters);
+  Object? bytesToValue(
+    ByteBuffer bytes,
+    DataSchema? dataSchema,
+    Map<String, String>? parameters,
+  );
 }

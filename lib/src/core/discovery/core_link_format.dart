@@ -8,12 +8,14 @@ import 'package:coap/coap.dart';
 /// into absolute [Uri]s using the original [discoveryUri] as a basis.
 Iterable<Uri> parseCoreLinkFormat(String encodedLinks, Uri discoveryUri) {
   return CoapLinkFormat.parse(encodedLinks)
-      .where((link) =>
-          // TODO(JKRhb): Resource Types need to contain " characters at the
-          //              moment.
-          //              IMHO this is a bug in the CoAP library that should be
-          //              fixed.
-          link.attributes.getResourceTypes()?.contains('"wot.thing"') ?? false)
+      .where(
+    (link) =>
+        // TODO(JKRhb): Resource Types need to contain " characters at the
+        //              moment.
+        //              IMHO this is a bug in the CoAP library that should be
+        //              fixed.
+        link.attributes.getResourceTypes()?.contains('"wot.thing"') ?? false,
+  )
       .map((link) {
     final uri = Uri.tryParse(link.uri);
     if (uri == null) {

@@ -27,8 +27,9 @@ class CoapClientFactory extends ProtocolClientFactory {
   }
 
   @override
-  ProtocolClient createClient(
-          [ClientSecurityProvider? clientSecurityProvider]) =>
+  ProtocolClient createClient([
+    ClientSecurityProvider? clientSecurityProvider,
+  ]) =>
       CoapClient(coapConfig, clientSecurityProvider);
 
   @override

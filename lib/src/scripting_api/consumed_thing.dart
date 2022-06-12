@@ -30,39 +30,57 @@ abstract class ConsumedThing {
   ThingDescription get thingDescription;
 
   /// Reads a property with the given [propertyName].
-  Future<InteractionOutput> readProperty(String propertyName,
-      [InteractionOptions? options]);
+  Future<InteractionOutput> readProperty(
+    String propertyName, [
+    InteractionOptions? options,
+  ]);
 
   /// Reads all properties.
   Future<PropertyReadMap> readAllProperties([InteractionOptions? options]);
 
   /// Reads a number of properties with the given [propertyNames].
-  Future<PropertyReadMap> readMultipleProperties(List<String> propertyNames,
-      [InteractionOptions? options]);
+  Future<PropertyReadMap> readMultipleProperties(
+    List<String> propertyNames, [
+    InteractionOptions? options,
+  ]);
 
   /// Writes a [value] to a property with the given [propertyName].
-  Future<void> writeProperty(String propertyName, InteractionInput value,
-      [InteractionOptions? options]);
+  Future<void> writeProperty(
+    String propertyName,
+    InteractionInput value, [
+    InteractionOptions? options,
+  ]);
 
   /// Writes multiple values to multiple properties, as described in a
   /// [valueMap].
-  Future<void> writeMultipleProperties(PropertyWriteMap valueMap,
-      [InteractionOptions? options]);
+  Future<void> writeMultipleProperties(
+    PropertyWriteMap valueMap, [
+    InteractionOptions? options,
+  ]);
 
   /// Invokes an action with the given [actionName]. Accepts an optional
   /// [input].
   ///
   /// After (asynchronous )completion, it might return an [InteractionOutput].
-  Future<InteractionOutput> invokeAction(String actionName,
-      [InteractionInput input, InteractionOptions? options]);
+  Future<InteractionOutput> invokeAction(
+    String actionName, [
+    InteractionInput input,
+    InteractionOptions? options,
+  ]);
 
   /// Observes a property with the given [propertyName].
   Future<Subscription> observeProperty(
-      String propertyName, InteractionListener listener,
-      [ErrorListener? onError, InteractionOptions? options]);
+    String propertyName,
+    InteractionListener listener, [
+    ErrorListener? onError,
+    InteractionOptions? options,
+  ]);
 
   /// Subscribes to an event with the given [eventName].
   Future<Subscription> subscribeEvent(
-      String eventName, InteractionListener listener,
-      [ErrorListener? onError, InteractionOptions? options]);
+    String eventName,
+    InteractionListener listener, [
+    ErrorListener? onError,
+    InteractionOptions? options,
+  ]);
 }

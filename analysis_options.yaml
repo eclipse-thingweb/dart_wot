@@ -1,87 +1,28 @@
-# This file configures the static analysis results for your project (errors,
-# warnings, and lints).
-#
-# This enables the 'recommended' set of lints from `package:lints`.
-# This set helps identify many issues that may lead to problems when running
-# or consuming Dart code, and enforces writing Dart using a single, idiomatic
-# style and format.
+# This file configures the analyzer to use the lint rule set from `package:lint`
 
-include: package:strict_analyzer/analysis_options.yaml
+include: package:lint/analysis_options_package.yaml
 
-# For more information about the core and recommended set of lints, see
-# https://dart.dev/go/core-lints
-
-# For additional information about configuring this file, see
-# https://dart.dev/guides/language/analysis-options
-
-analyzer:
-  strong-mode:
-    implicit-casts: false
-    implicit-dynamic: false
-  errors:
-    missing_required_param: warning
-    missing_return: warning
-    package_api_docs: warning
-    public_member_api_docs: warning
-    prefer_interpolation_to_compose_strings: warning
-    unnecessary_lambdas: warning
-    avoid_catches_without_on_clauses: warning
-    avoid_catching_errors: warning
-    prefer_mixin: warning
-    use_setters_to_change_properties: warning
-    avoid_setters_without_getters: warning
-    type_annotate_public_apis: warning
-    always_declare_return_types: warning
-    avoid_void_async: warning
-    only_throw_errors: warning
-    prefer_final_locals: warning
-    prefer_null_aware_method_calls: warning
-    unawaited_futures: warning
-    depend_on_referenced_packages: warning
-    flutter_style_todos: info
-    deprecated_member_use_from_same_package: info
-    todo: ignore
-
-# Rules in addition to recommended set
+# Adjusted linting rules
 linter:
   rules:
-    - directives_ordering
-    - package_api_docs
-    - public_member_api_docs
-    - comment_references
-    - prefer_interpolation_to_compose_strings
-    - unnecessary_lambdas
-    - lines_longer_than_80_chars
-    - avoid_catches_without_on_clauses  # no pokémon exception handling (at least only catch Exception)
-    - avoid_catching_errors
-    - use_to_and_as_if_applicable  # this rule may cause false positives, if so, just disable it
-    - prefer_mixin
-    - use_setters_to_change_properties
-    - avoid_setters_without_getters  # use a method instead
-    - avoid_returning_this  # use cascades instead
-    - type_annotate_public_apis
-    - avoid_types_on_closure_parameters
-    - avoid_positional_boolean_parameters
-    - avoid_dynamic_calls
-    - avoid_returning_null_for_future
-    - avoid_slow_async_io
-    - cancel_subscriptions
-    - close_sinks
-    - always_declare_return_types
-    - avoid_void_async
-    - cascade_invocations
-    - eol_at_end_of_file
-    - flutter_style_todos
-    - leading_newlines_in_multiline_strings
-    - only_throw_errors
-    - prefer_final_locals
-    - prefer_null_aware_method_calls
-    - unawaited_futures
-    - unnecessary_null_aware_assignments
-    - use_if_null_to_convert_nulls_to_bools
-    - use_is_even_rather_than_modulo
-    - depend_on_referenced_packages
-
+    always_use_package_imports: false
+    prefer_relative_imports: true
+    prefer_single_quotes: true
+    sort_constructors_first: true
+    unawaited_futures: true
+    public_member_api_docs: true
+    comment_references: true
+    unnecessary_lambdas: true
+    lines_longer_than_80_chars: true
+    avoid_catches_without_on_clauses: true
+    use_to_and_as_if_applicable: true
+    avoid_returning_this: true
+    avoid_types_on_closure_parameters: true
+    avoid_slow_async_io: true
+    close_sinks: true
+    cascade_invocations: true
+    only_throw_errors: true
+    # prefer_final_parameters: true
 
 dart_code_metrics:
   anti-patterns:

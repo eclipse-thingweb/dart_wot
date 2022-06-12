@@ -11,13 +11,13 @@ import 'security_scheme.dart';
 /// Term `apikey`.
 class ApiKeySecurityScheme extends SecurityScheme {
   /// Constructor.
-  ApiKeySecurityScheme(
-      {String? description,
-      String? proxy,
-      this.name,
-      String? in_,
-      Map<String, String>? descriptions})
-      : in_ = in_ ?? 'query' {
+  ApiKeySecurityScheme({
+    String? description,
+    String? proxy,
+    this.name,
+    String? in_,
+    Map<String, String>? descriptions,
+  }) : in_ = in_ ?? 'query' {
     this.description = description;
     this.proxy = proxy;
     this.descriptions.addAll(descriptions ?? {});

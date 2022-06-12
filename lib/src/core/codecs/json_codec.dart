@@ -15,7 +15,10 @@ import 'content_codec.dart';
 class JsonCodec extends ContentCodec {
   @override
   ByteBuffer valueToBytes(
-      Object? value, DataSchema? dataSchema, Map<String, String>? parameters) {
+    Object? value,
+    DataSchema? dataSchema,
+    Map<String, String>? parameters,
+  ) {
     if (value == null) {
       return Uint8List(0).buffer;
     } else {
@@ -26,8 +29,11 @@ class JsonCodec extends ContentCodec {
   }
 
   @override
-  Object? bytesToValue(ByteBuffer bytes, DataSchema? dataSchema,
-      Map<String, String>? parameters) {
+  Object? bytesToValue(
+    ByteBuffer bytes,
+    DataSchema? dataSchema,
+    Map<String, String>? parameters,
+  ) {
     // TODO(JKRhb): Use dataSchema for validation
 
     return jsonDecode(utf8.decoder.convert(bytes.asUint8List()));

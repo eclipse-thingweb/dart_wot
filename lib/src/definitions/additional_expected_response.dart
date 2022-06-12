@@ -21,8 +21,9 @@ class AdditionalExpectedResponse {
 
   /// Creates an [AdditionalExpectedResponse] from a [json] object.
   AdditionalExpectedResponse.fromJson(
-      Map<String, dynamic> json, String formContentType)
-      : contentType = _parseJson(json, 'contentType') ?? formContentType,
+    Map<String, dynamic> json,
+    String formContentType,
+  )   : contentType = _parseJson(json, 'contentType') ?? formContentType,
         _success = _parseJson(json, 'success'),
         _schema = _parseJson(json, 'schema') {
     const parsedFields = ['contentType', 'schema', 'success'];

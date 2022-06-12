@@ -13,13 +13,15 @@ import 'security_scheme.dart';
 /// Vocabulary Term `oauth2`.
 class OAuth2SecurityScheme extends SecurityScheme {
   /// Constructor.
-  OAuth2SecurityScheme(this.flow,
-      {String? description,
-      this.authorization,
-      this.scopes,
-      this.refresh,
-      this.token,
-      Map<String, String>? descriptions}) {
+  OAuth2SecurityScheme(
+    this.flow, {
+    String? description,
+    this.authorization,
+    this.scopes,
+    this.refresh,
+    this.token,
+    Map<String, String>? descriptions,
+  }) {
     this.description = description;
     this.descriptions.addAll(descriptions ?? {});
   }

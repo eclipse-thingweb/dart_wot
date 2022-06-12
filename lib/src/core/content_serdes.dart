@@ -81,8 +81,11 @@ class ContentSerdes {
   ///
   /// If the [contentType] is being [offered], then exposed Things will provide
   /// additional Forms in their Thing Description.
-  void addContentTypeSupport(String contentType, String codecName,
-      {bool offered = false}) {
+  void addContentTypeSupport(
+    String contentType,
+    String codecName, {
+    bool offered = false,
+  }) {
     if (!_supportedCodecs.containsKey(codecName)) {
       throw UnsupportedError('$codecName has no registered ContentCodec.');
     }
@@ -184,7 +187,10 @@ class ContentSerdes {
   /// A [dataSchema] can be passed for validating the input [value] before the
   /// conversion.
   Content valueToContent(
-      Object? value, DataSchema? dataSchema, String? contentType) {
+    Object? value,
+    DataSchema? dataSchema,
+    String? contentType,
+  ) {
     _validateValue(value, dataSchema);
 
     final resolvedContentType = contentType ?? defaultContentType;
@@ -215,7 +221,9 @@ class ContentSerdes {
   /// specified in the [content] is not supported, its body is converted to an
   /// UTF-8 string.
   Future<Object?> contentToValue(
-      Content content, DataSchema? dataSchema) async {
+    Content content,
+    DataSchema? dataSchema,
+  ) async {
     final parsedMediaType = MediaType.parse(content.type);
     final mimeType = parsedMediaType.mimeType;
     final parameters = parsedMediaType.parameters;

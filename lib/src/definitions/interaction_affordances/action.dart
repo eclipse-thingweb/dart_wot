@@ -16,9 +16,11 @@ class Action extends InteractionAffordance {
   Action(super.forms, super.thingDescription);
 
   /// Creates a new [Action] from a [json] object.
-  Action.fromJson(Map<String, dynamic> json, ThingDescription thingDescription,
-      PrefixMapping prefixMapping)
-      : super([], thingDescription) {
+  Action.fromJson(
+    Map<String, dynamic> json,
+    ThingDescription thingDescription,
+    PrefixMapping prefixMapping,
+  ) : super([], thingDescription) {
     final List<String> parsedFields = [];
     _parseActionFields(json, parsedFields);
     parseAffordanceFields(json, prefixMapping);
@@ -58,7 +60,10 @@ class Action extends InteractionAffordance {
   bool? get synchronous => _synchronous;
 
   T? _parseJsonValue<T>(
-      Map<String, dynamic> json, String key, final List<String> parsedFields) {
+    Map<String, dynamic> json,
+    String key,
+    final List<String> parsedFields,
+  ) {
     parsedFields.add(key);
     final dynamic value = json[key];
     if (value is T) {
@@ -69,7 +74,9 @@ class Action extends InteractionAffordance {
   }
 
   void _parseIdempotent(
-      Map<String, dynamic> json, final List<String> parsedFields) {
+    Map<String, dynamic> json,
+    final List<String> parsedFields,
+  ) {
     _idempotent =
         _parseJsonValue<bool>(json, 'idempotent', parsedFields) ?? _idempotent;
   }
@@ -79,12 +86,16 @@ class Action extends InteractionAffordance {
   }
 
   void _parseSynchronous(
-      Map<String, dynamic> json, final List<String> parsedFields) {
+    Map<String, dynamic> json,
+    final List<String> parsedFields,
+  ) {
     _synchronous = _parseJsonValue<bool>(json, 'synchronous', parsedFields);
   }
 
   void _parseActionFields(
-      Map<String, dynamic> json, final List<String> parsedFields) {
+    Map<String, dynamic> json,
+    final List<String> parsedFields,
+  ) {
     _parseIdempotent(json, parsedFields);
     _parseSafe(json, parsedFields);
     _parseSynchronous(json, parsedFields);

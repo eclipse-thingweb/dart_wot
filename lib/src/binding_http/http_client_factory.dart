@@ -27,8 +27,9 @@ class HttpClientFactory extends ProtocolClientFactory {
   }
 
   @override
-  ProtocolClient createClient(
-          [ClientSecurityProvider? clientSecurityProvider]) =>
+  ProtocolClient createClient([
+    ClientSecurityProvider? clientSecurityProvider,
+  ]) =>
       HttpClient(clientSecurityProvider);
 
   @override

@@ -28,18 +28,22 @@ void main() {
         DataSchema.fromJson(<String, dynamic>{'type': 'number'});
 
     expect(
-        await contentSerdes.contentToValue(testContent1, successfulSchema), 42);
+      await contentSerdes.contentToValue(testContent1, successfulSchema),
+      42,
+    );
 
     final testContent2 = _getTestContent();
     final failingSchema =
         DataSchema.fromJson(<String, dynamic>{'type': 'string'});
 
-    expect(contentSerdes.contentToValue(testContent2, failingSchema),
-        throwsA(const TypeMatcher<ContentSerdesException>()));
+    expect(
+      contentSerdes.contentToValue(testContent2, failingSchema),
+      throwsA(const TypeMatcher<ContentSerdesException>()),
+    );
 
     expect(
-        () =>
-            contentSerdes.valueToContent(42, failingSchema, 'application/json'),
-        throwsA(const TypeMatcher<ContentSerdesException>()));
+      () => contentSerdes.valueToContent(42, failingSchema, 'application/json'),
+      throwsA(const TypeMatcher<ContentSerdesException>()),
+    );
   });
 }

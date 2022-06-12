@@ -18,9 +18,12 @@ class InteractionOutput implements scripting_api.InteractionOutput {
   ///
   /// A [ContentSerdes] object has to be passed for decoding the raw
   /// payload contained in the [Content] object.
-  InteractionOutput(this._content, this._contentSerdes,
-      [this._form, this._schema])
-      : _data = _content.body;
+  InteractionOutput(
+    this._content,
+    this._contentSerdes, [
+    this._form,
+    this._schema,
+  ]) : _data = _content.body;
 
   final Content _content;
   final Form? _form;
