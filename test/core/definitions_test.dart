@@ -193,5 +193,44 @@ void main() {
       expect(actionWithDefaults?.idempotent, false);
       expect(actionWithDefaults?.synchronous, null);
     });
+
+    test("should correctly parse properties", () {
+      final validThingDescription = {
+        "@context": "https://www.w3.org/2022/wot/td/v1.1",
+        "title": "MyLampThing",
+        "security": "nosec_sc",
+        "securityDefinitions": {
+          "nosec_sc": {"scheme": "nosec"}
+        },
+        "properties": {
+          "property": {
+            "writeOnly": true,
+            "readOnly": true,
+            "observable": true,
+            "forms": [
+              {"href": "https://example.org"}
+            ]
+          },
+          "propertyWithDefaults": {
+            "forms": [
+              {"href": "https://example.org"}
+            ]
+          }
+        }
+      };
+
+      final thingDescription = ThingDescription.fromJson(validThingDescription);
+
+      final property = thingDescription.properties["property"];
+      expect(property?.writeOnly, true);
+      expect(property?.readOnly, true);
+      expect(property?.observable, true);
+
+      final propertyWithDefaults =
+          thingDescription.properties["propertyWithDefaults"];
+      expect(propertyWithDefaults?.writeOnly, false);
+      expect(propertyWithDefaults?.readOnly, false);
+      expect(propertyWithDefaults?.observable, false);
+    });
   });
 }
