@@ -30,6 +30,13 @@ class Link {
   /// {Height}x{Width} (e.g., "16x16", "16x16 32x32").
   String? sizes;
 
+  /// The hreflang attribute specifies the language of a linked document.
+  ///
+  /// The value of this must be a valid language tag [BCP47][BCP47 link].
+  ///
+  /// [BCP47 link]: https://tools.ietf.org/search/bcp47
+  List<String>? hreflang;
+
   final List<String> _parsedJsonFields = [];
 
   /// Additional fields collected during the parsing of a JSON object.
@@ -42,6 +49,7 @@ class Link {
     this.rel,
     String? anchor,
     this.sizes,
+    this.hreflang,
     Map<String, dynamic>? additionalFields,
   })  : href = Uri.parse(href),
         anchor = anchor != null ? Uri.parse(anchor) : null {
@@ -80,6 +88,14 @@ class Link {
     if (json["sizes"] is String) {
       _parsedJsonFields.add("sizes");
       sizes = json["sizes"] as String;
+    }
+
+    final dynamic hreflang = json["hreflang"];
+    _parsedJsonFields.add("hreflang");
+    if (hreflang is String) {
+      this.hreflang = [hreflang];
+    } else if (hreflang is List<dynamic>) {
+      this.hreflang = hreflang.whereType<String>().toList();
     }
 
     _addAdditionalFields(json);

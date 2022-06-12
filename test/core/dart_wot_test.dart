@@ -48,7 +48,12 @@ void main() {
             "anchor": "https://example.org",
             "type": "test",
             "sizes": "42",
-            "test": "test"
+            "test": "test",
+            "hreflang": "de"
+          },
+          {
+            "href": "https://example.org",
+            "hreflang": ["de", "en"]
           }
         ],
         "securityDefinitions": {
@@ -81,7 +86,11 @@ void main() {
       expect(parsedLink.anchor, Uri.parse("https://example.org"));
       expect(parsedLink.type, "test");
       expect(parsedLink.sizes, "42");
+      expect(parsedLink.hreflang, ["de"]);
       expect(parsedLink.additionalFields["test"], "test");
+
+      final secondParsedLink = parsedTd.links[1];
+      expect(secondParsedLink.hreflang, ["de", "en"]);
     });
 
     test('Link Tests', () {
@@ -90,10 +99,12 @@ void main() {
           rel: "test",
           anchor: "https://example.org",
           sizes: "42",
-          additionalFields: <String, dynamic>{"test": "test"});
+          additionalFields: <String, dynamic>{"test": "test"},
+          hreflang: ["de"]);
       expect(link.href, Uri.parse("https://example.org"));
       expect(link.rel, "test");
       expect(link.anchor, Uri.parse("https://example.org"));
+      expect(link.hreflang, ["de"]);
       expect(link.type, "test");
       expect(link.sizes, "42");
       expect(link.additionalFields["test"], "test");
