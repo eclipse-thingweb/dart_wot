@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'validation/validation_exception.dart';
+
 /// Communication metadata describing the expected response message for the
 /// primary response.
 class ExpectedResponse {
@@ -18,7 +20,7 @@ class ExpectedResponse {
 
   static String _parseContentType(dynamic contentType) {
     if (contentType is! String) {
-      throw ArgumentError("contentType of response map is not a String!");
+      throw ValidationException("contentType of response map is not a String!");
     }
     return contentType;
   }

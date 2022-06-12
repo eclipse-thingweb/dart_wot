@@ -385,7 +385,7 @@ class Form {
     }
 
     if (uriVariables == null) {
-      throw ArgumentError("The Form href $href contains URI variables "
+      throw ValidationException("The Form href $href contains URI variables "
           "but no values were provided as InteractionOptions.");
     }
 
@@ -414,4 +414,9 @@ class UriVariableException implements Exception {
 
   /// Constructor.
   UriVariableException(this.message);
+
+  @override
+  String toString() {
+    return "$runtimeType: $message";
+  }
 }

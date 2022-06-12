@@ -4,6 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import '../validation/validation_exception.dart';
 import 'helper_functions.dart';
 import 'security_scheme.dart';
 
@@ -92,7 +93,7 @@ class OAuth2SecurityScheme extends SecurityScheme {
       flow = jsonFlow;
       _parsedJsonFields.add("flow");
     } else {
-      throw ArgumentError("flow must be of type 'string'!");
+      throw ValidationException("flow must be of type 'string'!");
     }
 
     parseAdditionalFields(additionalFields, json, _parsedJsonFields);

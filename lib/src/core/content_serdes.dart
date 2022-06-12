@@ -37,6 +37,11 @@ class ContentSerdesException implements Exception {
 
   /// Constructor.
   ContentSerdesException(this.message);
+
+  @override
+  String toString() {
+    return "$runtimeType: $message";
+  }
 }
 
 /// Class providing serializing and deserializing capabilities.

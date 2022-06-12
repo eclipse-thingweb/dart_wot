@@ -14,14 +14,33 @@ import 'thing_discovery.dart' show ThingDiscovery;
 /// This [Exception] is thrown if an error during the consumption of a
 /// [ThingDescription] occurs.
 class ThingConsumptionException implements Exception {
-  /// The actual error message.
-  String message;
-
   /// The identifier of the [ThingDescription] that triggered this [Exception].
-  String identifier;
+  final String identifier;
 
   /// Constructor
-  ThingConsumptionException(this.message, this.identifier);
+  ThingConsumptionException(this.identifier);
+
+  @override
+  String toString() {
+    return "$runtimeType: A ConsumedThing with identifier $identifier already "
+        "exists.";
+  }
+}
+
+/// This [Exception] is thrown if an error during the production of a
+/// [ThingDescription] occurs.
+class ThingProductionException implements Exception {
+  /// The identifier of the [ThingDescription] that triggered this [Exception].
+  final String identifier;
+
+  /// Constructor
+  ThingProductionException(this.identifier);
+
+  @override
+  String toString() {
+    return "$runtimeType: An ExposedThing with identifier $identifier already "
+        "exists.";
+  }
 }
 
 /// Implementation of the [scripting_api.WoT] runtime interface.
@@ -45,8 +64,7 @@ class WoT implements scripting_api.WoT {
       return newThing;
     } else {
       final id = thingDescription.identifier;
-      throw ThingConsumptionException(
-          "A ConsumedThing with identifier $id already exists", id);
+      throw ThingConsumptionException(id);
     }
   }
 
@@ -57,7 +75,8 @@ class WoT implements scripting_api.WoT {
     if (_servient.addThing(newThing)) {
       return newThing;
     } else {
-      throw StateError('Thing already exists: ${newThing.title}');
+      final id = newThing.thingDescription.identifier;
+      throw ThingProductionException(id);
     }
   }
 

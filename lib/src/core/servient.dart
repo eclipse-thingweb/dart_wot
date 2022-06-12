@@ -17,6 +17,17 @@ import 'protocol_interfaces/protocol_server.dart';
 import 'security_provider.dart';
 import 'wot.dart';
 
+/// Exception that is thrown by a [Servient].
+class ServientException implements Exception {
+  final String _message;
+
+  /// Constructor
+  ServientException(this._message);
+
+  @override
+  String toString() => "$runtimeType: $_message";
+}
+
 // TODO(JKRhb): Documentation should be improved.
 /// A software stack that implements the WoT building blocks.
 ///
@@ -194,7 +205,8 @@ class Servient {
     if (hasClientFor(scheme)) {
       return _clientFactories[scheme]!.createClient(_clientSecurityProvider);
     } else {
-      throw StateError('Servient has no ClientFactory for scheme $scheme');
+      throw ServientException(
+          'Servient has no ClientFactory for scheme $scheme');
     }
   }
 }
