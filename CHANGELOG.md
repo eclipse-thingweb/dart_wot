@@ -1,3 +1,8 @@
+# 0.17.0
+
+- Added JSON Schema Validation for TDs
+- Added support for basic CoRE Resource Discovery
+
 ## 0.16.0
 
 ### New/Updated Features
