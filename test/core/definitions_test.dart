@@ -116,5 +116,43 @@ void main() {
               form5Json as Map<String, dynamic>, interactionAffordance),
           throwsException);
     });
+
+    test("should correctly parse actions", () {
+      final validThingDescription = {
+        "@context": "https://www.w3.org/2022/wot/td/v1.1",
+        "title": "MyLampThing",
+        "security": "nosec_sc",
+        "securityDefinitions": {
+          "nosec_sc": {"scheme": "nosec"}
+        },
+        "actions": {
+          "action": {
+            "safe": true,
+            "idempotent": true,
+            "synchronous": true,
+            "forms": [
+              {"href": "https://example.org"}
+            ]
+          },
+          "actionWithDefaults": {
+            "forms": [
+              {"href": "https://example.org"}
+            ]
+          }
+        }
+      };
+
+      final thingDescription = ThingDescription.fromJson(validThingDescription);
+
+      final action = thingDescription.actions["action"];
+      expect(action?.safe, true);
+      expect(action?.idempotent, true);
+      expect(action?.synchronous, true);
+
+      final actionWithDefaults = thingDescription.actions["actionWithDefaults"];
+      expect(actionWithDefaults?.safe, false);
+      expect(actionWithDefaults?.idempotent, false);
+      expect(actionWithDefaults?.synchronous, null);
+    });
   });
 }

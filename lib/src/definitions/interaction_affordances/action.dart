@@ -18,6 +18,33 @@ class Action extends InteractionAffordance {
   /// The schema of the [output] data this [Action] produces.
   DataSchema? output;
 
+  bool _idempotent = false;
+
+  /// Indicates whether the Action is idempotent (=true) or not.
+  ///
+  /// Informs whether the Action can be called repeatedly with the same result,
+  /// if present, based on the same input.
+  bool get idempotent => _idempotent;
+
+  bool _safe = false;
+
+  /// Signals if the Action is safe (=true) or not.
+  ///
+  /// Used to signal if there is no internal state (cf. resource state) is
+  /// changed when invoking an Action. In that case responses can be cached as
+  /// example.
+  bool get safe => _safe;
+
+  bool? _synchronous;
+
+  /// Indicates whether the action is synchronous (=true) or not.
+  ///
+  /// A synchronous action means that the response of action contains all the
+  /// information about the result of the action and no further querying about
+  /// the status of the action is needed. Lack of this keyword means that no
+  /// claim on the synchronicity of the action can be made.
+  bool? get synchronous => _synchronous;
+
   /// Creates a new [Action] from a [List] of [forms].
   Action(super.forms, super.thingDescription);
 
@@ -25,6 +52,41 @@ class Action extends InteractionAffordance {
   Action.fromJson(Map<String, dynamic> json, ThingDescription thingDescription,
       PrefixMapping prefixMapping)
       : super([], thingDescription) {
+    final List<String> parsedFields = [];
+    _parseActionFields(json, parsedFields);
     parseAffordanceFields(json, prefixMapping);
+  }
+
+  T? _parseJsonValue<T>(
+      Map<String, dynamic> json, String key, final List<String> parsedFields) {
+    parsedFields.add(key);
+    final dynamic value = json[key];
+    if (value is T) {
+      return value;
+    }
+
+    return null;
+  }
+
+  void _parseIdempotent(
+      Map<String, dynamic> json, final List<String> parsedFields) {
+    _idempotent =
+        _parseJsonValue<bool>(json, "idempotent", parsedFields) ?? _idempotent;
+  }
+
+  void _parseSafe(Map<String, dynamic> json, final List<String> parsedFields) {
+    _safe = _parseJsonValue<bool>(json, "safe", parsedFields) ?? _safe;
+  }
+
+  void _parseSynchronous(
+      Map<String, dynamic> json, final List<String> parsedFields) {
+    _synchronous = _parseJsonValue<bool>(json, "synchronous", parsedFields);
+  }
+
+  void _parseActionFields(
+      Map<String, dynamic> json, final List<String> parsedFields) {
+    _parseIdempotent(json, parsedFields);
+    _parseSafe(json, parsedFields);
+    _parseSynchronous(json, parsedFields);
   }
 }
