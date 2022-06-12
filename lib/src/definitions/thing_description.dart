@@ -13,7 +13,6 @@ import 'interaction_affordances/action.dart';
 import 'interaction_affordances/event.dart';
 import 'interaction_affordances/property.dart';
 import 'link.dart';
-import 'validation/thing_description_schema.dart';
 import 'security/apikey_security_scheme.dart';
 import 'security/basic_security_scheme.dart';
 import 'security/bearer_security_scheme.dart';
@@ -23,6 +22,7 @@ import 'security/oauth2_security_scheme.dart';
 import 'security/psk_security_scheme.dart';
 import 'security/security_scheme.dart';
 import 'thing_model.dart';
+import 'validation/thing_description_schema.dart';
 
 const _validContextValues = [
   "https://www.w3.org/2019/wot/td/v1",
