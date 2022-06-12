@@ -90,7 +90,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final ProtocolClient client;
     final Form foundForm;
 
-    final int? formIndex = options?.formIndex;
+    final formIndex = options?.formIndex;
 
     if (formIndex != null) {
       if (formIndex >= 0 && formIndex < forms.length) {
