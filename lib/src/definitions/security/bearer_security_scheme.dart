@@ -11,16 +11,16 @@ import 'security_scheme.dart';
 /// `bearer`.
 class BearerSecurityScheme extends SecurityScheme {
   /// Constructor.
-  BearerSecurityScheme(
-      {String? description,
-      String? proxy,
-      this.name,
-      String? alg,
-      String? format,
-      this.authorization,
-      String? in_,
-      Map<String, String>? descriptions})
-      : in_ = in_ ?? 'header',
+  BearerSecurityScheme({
+    String? description,
+    String? proxy,
+    this.name,
+    String? alg,
+    String? format,
+    this.authorization,
+    String? in_,
+    Map<String, String>? descriptions,
+  })  : in_ = in_ ?? 'header',
         alg = alg ?? 'ES256',
         format = format ?? 'jwt' {
     this.description = description;

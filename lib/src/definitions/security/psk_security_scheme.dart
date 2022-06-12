@@ -11,11 +11,12 @@ import 'security_scheme.dart';
 /// Vocabulary Term `psk`.
 class PskSecurityScheme extends SecurityScheme {
   /// Constructor.
-  PskSecurityScheme(
-      {this.identity,
-      String? description,
-      String? proxy,
-      Map<String, String>? descriptions}) {
+  PskSecurityScheme({
+    this.identity,
+    String? description,
+    String? proxy,
+    Map<String, String>? descriptions,
+  }) {
     this.description = description;
     this.proxy = proxy;
     this.descriptions.addAll(descriptions ?? {});

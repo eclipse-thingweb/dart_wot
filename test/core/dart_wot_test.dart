@@ -94,13 +94,15 @@ void main() {
     });
 
     test('Link Tests', () {
-      final link = Link('https://example.org',
-          type: 'test',
-          rel: 'test',
-          anchor: 'https://example.org',
-          sizes: '42',
-          additionalFields: <String, dynamic>{'test': 'test'},
-          hreflang: ['de']);
+      final link = Link(
+        'https://example.org',
+        type: 'test',
+        rel: 'test',
+        anchor: 'https://example.org',
+        sizes: '42',
+        additionalFields: <String, dynamic>{'test': 'test'},
+        hreflang: ['de'],
+      );
       expect(link.href, Uri.parse('https://example.org'));
       expect(link.rel, 'test');
       expect(link.anchor, Uri.parse('https://example.org'));

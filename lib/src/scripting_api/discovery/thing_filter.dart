@@ -13,10 +13,11 @@ import 'discovery_method.dart';
 /// [spec link]: https://w3c.github.io/wot-scripting-api/#the-thingfilter-dictionary
 class ThingFilter {
   /// Constructor.
-  ThingFilter(
-      {required this.url,
-      this.method = DiscoveryMethod.directory,
-      this.fragment});
+  ThingFilter({
+    required this.url,
+    this.method = DiscoveryMethod.directory,
+    this.fragment,
+  });
 
   /// Represents the discovery type that should be used in the discovery process
   DiscoveryMethod method;

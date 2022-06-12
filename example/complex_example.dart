@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+// ignore_for_file: avoid_print
+
 import 'package:dart_wot/dart_wot.dart';
 
 const thingDescriptionJson = '''
@@ -110,7 +112,8 @@ Future<void> main() async {
   final CoapClientFactory coapClientFactory = CoapClientFactory(coapConfig);
   final HttpClientFactory httpClientFactory = HttpClientFactory();
   final securityProvider = ClientSecurityProvider(
-      basicCredentialsCallback: basicCredentialsCallback);
+    basicCredentialsCallback: basicCredentialsCallback,
+  );
   final servient = Servient(clientSecurityProvider: securityProvider)
     ..addClientFactory(coapClientFactory)
     ..addClientFactory(httpClientFactory);
@@ -127,7 +130,9 @@ Future<void> main() async {
   print(value2);
 
   final status3 = await consumedThing.readProperty(
-      'anotherStatus', InteractionOptions(uriVariables: {'test': 'hi'}));
+    'anotherStatus',
+    InteractionOptions(uriVariables: {'test': 'hi'}),
+  );
   final value3 = await status3.value();
   print(value3);
 
@@ -148,16 +153,20 @@ Future<void> main() async {
 
   await consumedThing.readProperty('test');
 
-  final thingUri = Uri.parse('https://raw.githubusercontent.com/w3c/wot-testing'
-      '/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs'
-      '/Oracle/oracle-Festo_Shared.td.jsonld');
+  final thingUri = Uri.parse(
+    'https://raw.githubusercontent.com/w3c/wot-testing'
+    '/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs'
+    '/Oracle/oracle-Festo_Shared.td.jsonld',
+  );
 
   final thingDiscovery =
       wot.discover(ThingFilter(url: thingUri, method: DiscoveryMethod.direct));
 
   await for (final thingDescription in thingDiscovery) {
     final consumedDiscoveredThing = await wot.consume(thingDescription);
-    print('The title of the fetched TD is '
-        '${consumedDiscoveredThing.thingDescription.title}.');
+    print(
+      'The title of the fetched TD is '
+      '${consumedDiscoveredThing.thingDescription.title}.',
+    );
   }
 }

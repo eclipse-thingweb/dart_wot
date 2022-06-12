@@ -21,8 +21,10 @@ abstract class ProtocolClient {
   ///
   /// Allows the caller to explicitly [disableMulticast], overriding the
   /// multicast settings in the config of the underlying binding implementation.
-  Stream<ThingDescription> discoverDirectly(Uri uri,
-      {bool disableMulticast = false});
+  Stream<ThingDescription> discoverDirectly(
+    Uri uri, {
+    bool disableMulticast = false,
+  });
 
   /// Discovers [ThingDescription] links from a [uri] using the CoRE Link
   /// Format and Web Linking (see [RFC 6690]).
@@ -52,8 +54,10 @@ abstract class ProtocolClient {
 
   /// Requests the client to perform a `subscribeproperty` operation on a
   /// [form].
-  Future<Subscription> subscribeResource(Form form,
-      {required void Function(Content content) next,
-      void Function(Exception error)? error,
-      required void Function() complete});
+  Future<Subscription> subscribeResource(
+    Form form, {
+    required void Function(Content content) next,
+    void Function(Exception error)? error,
+    required void Function() complete,
+  });
 }

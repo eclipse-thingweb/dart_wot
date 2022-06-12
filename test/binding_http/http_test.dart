@@ -22,12 +22,18 @@ void main() {
       expect(defaultServer.port, 80);
       expect(defaultServer.scheme, 'http');
 
-      expect(() async => defaultServer.start(),
-          throwsA(const TypeMatcher<UnimplementedError>()));
-      expect(() async => defaultServer.stop(),
-          throwsA(const TypeMatcher<UnimplementedError>()));
-      expect(() async => defaultServer.expose(MockExposedThing()),
-          throwsA(const TypeMatcher<UnimplementedError>()));
+      expect(
+        () async => defaultServer.start(),
+        throwsA(const TypeMatcher<UnimplementedError>()),
+      );
+      expect(
+        () async => defaultServer.stop(),
+        throwsA(const TypeMatcher<UnimplementedError>()),
+      );
+      expect(
+        () async => defaultServer.expose(MockExposedThing()),
+        throwsA(const TypeMatcher<UnimplementedError>()),
+      );
 
       final customServer1 = HttpServer(HttpConfig(secure: true));
 

@@ -172,37 +172,41 @@ void main() {
       final basicSc = parsedTd.securityDefinitions['basic_sc'];
       expect(basicSc is BasicSecurityScheme, true);
       expect(basicSc?.description, 'Test');
-      expect((basicSc as BasicSecurityScheme).in_, 'query');
+      expect((basicSc as BasicSecurityScheme?)!.in_, 'query');
 
       final pskSc = parsedTd.securityDefinitions['psk_sc'];
       expect(pskSc is PskSecurityScheme, true);
-      expect((pskSc as PskSecurityScheme).identity, 'Test');
+      expect((pskSc as PskSecurityScheme?)!.identity, 'Test');
 
       final apikeySc = parsedTd.securityDefinitions['apikey_sc'];
       expect(apikeySc is ApiKeySecurityScheme, true);
-      expect((apikeySc as ApiKeySecurityScheme).name, 'Test');
-      expect(apikeySc.in_, 'body');
+      expect((apikeySc as ApiKeySecurityScheme?)!.name, 'Test');
+      expect(apikeySc!.in_, 'body');
 
       final digestSc = parsedTd.securityDefinitions['digest_sc'];
       expect(digestSc is DigestSecurityScheme, true);
-      expect((digestSc as DigestSecurityScheme).name, 'Test');
-      expect(digestSc.in_, 'cookie');
+      expect((digestSc as DigestSecurityScheme?)!.name, 'Test');
+      expect(digestSc!.in_, 'cookie');
       expect(digestSc.qop, 'auth-int');
 
       final bearerSc = parsedTd.securityDefinitions['bearer_sc'];
       expect(bearerSc is BearerSecurityScheme, true);
-      expect((bearerSc as BearerSecurityScheme).authorization,
-          'http://example.org');
-      expect(bearerSc.name, 'Test');
+      expect(
+        (bearerSc as BearerSecurityScheme?)!.authorization,
+        'http://example.org',
+      );
+      expect(bearerSc!.name, 'Test');
       expect(bearerSc.alg, 'ES256');
       expect(bearerSc.format, 'jws');
       expect(bearerSc.in_, 'uri');
 
       final oauth2Sc = parsedTd.securityDefinitions['oauth2_sc'];
       expect(oauth2Sc is OAuth2SecurityScheme, true);
-      expect((oauth2Sc as OAuth2SecurityScheme).authorization,
-          'http://example.org');
-      expect(oauth2Sc.refresh, 'http://example.org');
+      expect(
+        (oauth2Sc as OAuth2SecurityScheme?)!.authorization,
+        'http://example.org',
+      );
+      expect(oauth2Sc!.refresh, 'http://example.org');
       expect(oauth2Sc.token, 'http://example.org');
       expect(oauth2Sc.scopes, ['test']);
       expect(oauth2Sc.flow, 'client');
@@ -267,8 +271,10 @@ void main() {
 
     // status2 expects an integer instead of a String and throws an error if the
     // same value is provided as an input
-    expect(consumedThing.readProperty('status2', interactionOptions),
-        throwsA(const TypeMatcher<ValidationException>()));
+    expect(
+      consumedThing.readProperty('status2', interactionOptions),
+      throwsA(const TypeMatcher<ValidationException>()),
+    );
 
     await servient.shutdown();
     expect(servient.destroyConsumedThing(parsedTd.identifier), false);

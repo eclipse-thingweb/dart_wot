@@ -55,6 +55,7 @@ enum OperationType {
     }
 
     throw ValidationException(
-        'Encountered unknown OperationType $stringValue.');
+      'Encountered unknown OperationType $stringValue.',
+    );
   }
 }

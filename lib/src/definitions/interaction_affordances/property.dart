@@ -16,9 +16,11 @@ class Property extends InteractionAffordance implements DataSchema {
   Property(super.forms, super.thingDescription);
 
   /// Creates a new [Property] from a [json] object.
-  Property.fromJson(Map<String, dynamic> json,
-      ThingDescription thingDescription, PrefixMapping prefixMapping)
-      : super([], thingDescription) {
+  Property.fromJson(
+    Map<String, dynamic> json,
+    ThingDescription thingDescription,
+    PrefixMapping prefixMapping,
+  ) : super([], thingDescription) {
     final dynamic observable = json['observable'];
     if (observable is bool) {
       _observable = observable;

@@ -55,8 +55,12 @@ abstract class Subscription {
 /// Uses either a dedicated [formIndex] or determines the [Form] using
 /// the [interaction] Affordance and the [type] of subscription it belongs to.
 // TODO(JKRhb): Using an index does not seem the best idea to me.
-Form findUnsubscribeForm(InteractionAffordance interaction,
-    SubscriptionType type, Form form, int? formIndex) {
+Form findUnsubscribeForm(
+  InteractionAffordance interaction,
+  SubscriptionType type,
+  Form form,
+  int? formIndex,
+) {
   if (formIndex != null) {
     return interaction.forms[formIndex];
   }
@@ -79,7 +83,10 @@ Form findUnsubscribeForm(InteractionAffordance interaction,
 }
 
 Form? _findFormByScoring(
-    InteractionAffordance interaction, Form form, OperationType operationType) {
+  InteractionAffordance interaction,
+  Form form,
+  OperationType operationType,
+) {
   int maxScore = 0;
   Form? foundForm;
 

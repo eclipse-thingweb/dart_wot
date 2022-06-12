@@ -50,13 +50,19 @@ enum HttpRequestMethod {
 ///
 /// Does not have a `body` or `encoding` parameter, in contrast to
 /// [OtherHttpMethod].
-typedef GetMethod = Future<Response> Function(Uri uri,
-    {Map<String, String> headers});
+typedef GetMethod = Future<Response> Function(
+  Uri uri, {
+  Map<String, String> headers,
+});
 
 /// Signature of Dart's methods used for HTTP POST, DELETE, PATCH, or PUT
 /// requests.
-typedef OtherHttpMethod = Future<Response> Function(Uri uri,
-    {Map<String, String>? headers, Object? body, Encoding? encoding});
+typedef OtherHttpMethod = Future<Response> Function(
+  Uri uri, {
+  Map<String, String>? headers,
+  Object? body,
+  Encoding? encoding,
+});
 
 /// A [ProtocolClient] for the Hypertext Transfer Protocol (HTTP).
 ///
@@ -84,7 +90,10 @@ class HttpClient extends ProtocolClient {
   final ClientSecurityProvider? _clientSecurityProvider;
 
   Future<Response> _createRequest(
-      Form form, OperationType operationType, Object? payload) async {
+    Form form,
+    OperationType operationType,
+    Object? payload,
+  ) async {
     final requestMethod = _getRequestMethod(form, operationType);
 
     final Future<Response> response;
@@ -103,22 +112,38 @@ class HttpClient extends ProtocolClient {
         break;
       case HttpRequestMethod.post:
         final postMethod = _determineHttpMethod(
-            headers, requestMethod, digestCredentials, basicCredentials);
+          headers,
+          requestMethod,
+          digestCredentials,
+          basicCredentials,
+        );
         response = postMethod(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.delete:
         final deleteMethod = _determineHttpMethod(
-            headers, requestMethod, digestCredentials, basicCredentials);
+          headers,
+          requestMethod,
+          digestCredentials,
+          basicCredentials,
+        );
         response = deleteMethod(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.put:
         final putMethod = _determineHttpMethod(
-            headers, requestMethod, digestCredentials, basicCredentials);
+          headers,
+          requestMethod,
+          digestCredentials,
+          basicCredentials,
+        );
         response = putMethod(uri, headers: headers, body: payload);
         break;
       case HttpRequestMethod.patch:
         final patchMethod = _determineHttpMethod(
-            headers, requestMethod, digestCredentials, basicCredentials);
+          headers,
+          requestMethod,
+          digestCredentials,
+          basicCredentials,
+        );
         response = patchMethod(uri, headers: headers, body: payload);
         break;
     }
@@ -131,7 +156,9 @@ class HttpClient extends ProtocolClient {
 
   static AsyncClientSecurityCallback<T>?
       _determineCallback<T extends Credentials>(
-          ClientSecurityProvider securityProvider, Form form) {
+    ClientSecurityProvider securityProvider,
+    Form form,
+  ) {
     AsyncClientSecurityCallback<T>? callback;
 
     switch (T) {
@@ -237,16 +264,20 @@ class HttpClient extends ProtocolClient {
   }
 
   @override
-  Future<Subscription> subscribeResource(Form form,
-      {required void Function(Content content) next,
-      void Function(Exception error)? error,
-      required void Function() complete}) async {
+  Future<Subscription> subscribeResource(
+    Form form, {
+    required void Function(Content content) next,
+    void Function(Exception error)? error,
+    required void Function() complete,
+  }) async {
     // TODO(JKRhb): implement subscribeResource
     throw UnimplementedError();
   }
 
   Future<void> _applySecurityToHeader(
-      Form form, Map<String, String> headers) async {
+    Form form,
+    Map<String, String> headers,
+  ) async {
     final BearerCredentials? bearerCredentials =
         await _getCredentialsFromForm<BearerCredentials>(form);
 
@@ -256,9 +287,10 @@ class HttpClient extends ProtocolClient {
   }
 
   static GetMethod _determineGetMethod(
-      Map<String, String> headers,
-      DigestCredentials? digestCredentials,
-      BasicCredentials? basicCredentials) {
+    Map<String, String> headers,
+    DigestCredentials? digestCredentials,
+    BasicCredentials? basicCredentials,
+  ) {
     if (headers.containsKey(_authorizationHeader)) {
       // Bearer Security has already been defined. Therefore, we use the get
       // method of a "regular"  HTTP client.
@@ -267,22 +299,25 @@ class HttpClient extends ProtocolClient {
 
     if (digestCredentials != null) {
       return DigestAuthClient(
-              digestCredentials.username, digestCredentials.password)
-          .get;
+        digestCredentials.username,
+        digestCredentials.password,
+      ).get;
     } else if (basicCredentials != null) {
       return BasicAuthClient(
-              basicCredentials.username, basicCredentials.password)
-          .get;
+        basicCredentials.username,
+        basicCredentials.password,
+      ).get;
     } else {
       return get;
     }
   }
 
   static OtherHttpMethod _determineHttpMethod(
-      Map<String, String> headers,
-      HttpRequestMethod requestMethod,
-      DigestCredentials? digestCredentials,
-      BasicCredentials? basicCredentials) {
+    Map<String, String> headers,
+    HttpRequestMethod requestMethod,
+    DigestCredentials? digestCredentials,
+    BasicCredentials? basicCredentials,
+  ) {
     DigestAuthClient? digestClient;
     BasicAuthClient? basicClient;
 
@@ -291,10 +326,14 @@ class HttpClient extends ProtocolClient {
       // we should use an HTTP client for Digest or Basic Authentication.
       if (digestCredentials != null) {
         digestClient = DigestAuthClient(
-            digestCredentials.username, digestCredentials.password);
+          digestCredentials.username,
+          digestCredentials.password,
+        );
       } else if (basicCredentials != null) {
         basicClient = BasicAuthClient(
-            basicCredentials.username, basicCredentials.password);
+          basicCredentials.username,
+          basicCredentials.password,
+        );
       }
     }
 
@@ -315,8 +354,10 @@ class HttpClient extends ProtocolClient {
   @override
   // TODO(JKRhb): Support Security Bootstrapping as described in
   //              https://github.com/w3c/wot-discovery/pull/313/files
-  Stream<ThingDescription> discoverDirectly(Uri uri,
-      {bool disableMulticast = false}) async* {
+  Stream<ThingDescription> discoverDirectly(
+    Uri uri, {
+    bool disableMulticast = false,
+  }) async* {
     final response = await get(uri, headers: {'Accept': 'application/td+json'});
     final rawThingDescription = response.body;
     yield ThingDescription(rawThingDescription);
@@ -332,7 +373,8 @@ class HttpClient extends ProtocolClient {
         await get(discoveryUri, headers: {'Accept': 'application/link-format'});
 
     yield* Stream.fromIterable(
-        parseCoreLinkFormat(response.body, discoveryUri));
+      parseCoreLinkFormat(response.body, discoveryUri),
+    );
   }
 }
 

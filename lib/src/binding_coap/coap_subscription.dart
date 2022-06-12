@@ -15,8 +15,10 @@ import '../scripting_api/subscription.dart';
 class CoapSubscription implements Subscription {
   /// Constructor
   CoapSubscription(
-      this._coapClient, this._observeClientRelation, this._complete)
-      : _active = true;
+    this._coapClient,
+    this._observeClientRelation,
+    this._complete,
+  ) : _active = true;
 
   final CoapClient _coapClient;
 

@@ -39,11 +39,11 @@ class Servient {
   ///
   /// A custom [contentSerdes] can be passed that supports other media types
   /// than the default ones.
-  Servient(
-      {ClientSecurityProvider? clientSecurityProvider,
-      ServerSecurityCallback? serverSecurityCallback,
-      ContentSerdes? contentSerdes})
-      : contentSerdes = contentSerdes ?? ContentSerdes(),
+  Servient({
+    ClientSecurityProvider? clientSecurityProvider,
+    ServerSecurityCallback? serverSecurityCallback,
+    ContentSerdes? contentSerdes,
+  })  : contentSerdes = contentSerdes ?? ContentSerdes(),
         _clientSecurityProvider = clientSecurityProvider,
         _serverSecurityCallback = serverSecurityCallback;
 
@@ -204,7 +204,8 @@ class Servient {
       return _clientFactories[scheme]!.createClient(_clientSecurityProvider);
     } else {
       throw ServientException(
-          'Servient has no ClientFactory for scheme $scheme');
+        'Servient has no ClientFactory for scheme $scheme',
+      );
     }
   }
 }

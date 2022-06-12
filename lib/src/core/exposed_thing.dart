@@ -113,7 +113,9 @@ class ExposedThing implements scripting_api.ExposedThing {
 
   @override
   void setEventUnsubscribeHandler(
-      String name, EventSubscriptionHandler handler) {
+    String name,
+    EventSubscriptionHandler handler,
+  ) {
     // TODO(JKRhb): implement setEventUnsubscribeHandler
   }
 }

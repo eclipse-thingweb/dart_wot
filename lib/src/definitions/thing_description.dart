@@ -185,7 +185,10 @@ class ThingDescription {
 
   // TODO(JKRhb): Refactor
   void _parseMultilangString(
-      Map<String, String> field, Map<String, dynamic> json, String jsonKey) {
+    Map<String, String> field,
+    Map<String, dynamic> json,
+    String jsonKey,
+  ) {
     final dynamic jsonEntries = json[jsonKey];
     if (jsonEntries is Map<String, dynamic>) {
       for (final entry in jsonEntries.entries) {
@@ -201,8 +204,10 @@ class ThingDescription {
     if (titleJson is String) {
       title = titleJson;
     } else {
-      throw ValidationException('Thing Description type is not a '
-          'String but ${title.runtimeType}');
+      throw ValidationException(
+        'Thing Description type is not a '
+        'String but ${title.runtimeType}',
+      );
     }
   }
 
@@ -221,8 +226,10 @@ class ThingDescription {
     }
   }
 
-  void _parseContextListEntry(dynamic contextJsonListEntry,
-      {bool firstEntry = false}) {
+  void _parseContextListEntry(
+    dynamic contextJsonListEntry, {
+    bool firstEntry = false,
+  }) {
     if (contextJsonListEntry is String) {
       context.add(ContextEntry(contextJsonListEntry, null));
       if (firstEntry && _validContextValues.contains(contextJsonListEntry)) {

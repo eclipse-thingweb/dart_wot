@@ -12,22 +12,28 @@ import 'types.dart';
 /// A function that is called when an external request for reading a Property is
 /// received and defines what to do with such requests.
 typedef PropertyReadHandler = Future<InteractionInput> Function(
-    InteractionOptions? options);
+  InteractionOptions? options,
+);
 
 /// A function that is called when an external request for writing a Property is
 ///  received and defines what to do with such requests.
 typedef PropertyWriteHandler = Future<void> Function(
-    InteractionOutput value, InteractionOptions? options);
+  InteractionOutput value,
+  InteractionOptions? options,
+);
 
 /// A function that is called when an external request for invoking an Action
 /// is received and defines what to do with such requests.
 typedef ActionHandler = Future<void> Function(
-    InteractionOutput params, InteractionOptions? options);
+  InteractionOutput params,
+  InteractionOptions? options,
+);
 
 /// A function that is called when an external request for subscribing to an
 /// Event is received and defines what to do with such requests.
 typedef EventSubscriptionHandler = Future<void> Function(
-    InteractionOptions? options);
+  InteractionOptions? options,
+);
 
 /// A function that is called when an associated Event is triggered and provides
 /// the data to be sent with the Event to subscribers.
@@ -94,7 +100,9 @@ abstract class ExposedThing {
   /// If the event is ubsubscribed, the [handler] function will be called
   /// to handle the interaction.
   void setEventUnsubscribeHandler(
-      String name, EventSubscriptionHandler handler);
+    String name,
+    EventSubscriptionHandler handler,
+  );
 
   /// Assigns a [handler] function to an event with a given [name].
   ///

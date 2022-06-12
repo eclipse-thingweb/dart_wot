@@ -23,16 +23,18 @@ class Form {
   /// Creates a new [Form] object.
   ///
   /// An [href] has to be provided. A [contentType] is optional.
-  Form(this.href, this.interactionAffordance,
-      {this.contentType = 'application/json',
-      this.subprotocol,
-      this.security,
-      List<String>? op,
-      this.scopes,
-      this.response,
-      this.additionalResponses,
-      Map<String, dynamic>? additionalFields})
-      : resolvedHref = _expandHref(href, interactionAffordance),
+  Form(
+    this.href,
+    this.interactionAffordance, {
+    this.contentType = 'application/json',
+    this.subprotocol,
+    this.security,
+    List<String>? op,
+    this.scopes,
+    this.response,
+    this.additionalResponses,
+    Map<String, dynamic>? additionalFields,
+  })  : resolvedHref = _expandHref(href, interactionAffordance),
         securityDefinitions =
             _filterSecurityDefinitions(interactionAffordance, security),
         op = _setOpValue(interactionAffordance, op) {
@@ -43,7 +45,9 @@ class Form {
 
   /// Creates a new [Form] from a [json] object.
   factory Form.fromJson(
-      Map<String, dynamic> json, InteractionAffordance interactionAffordance) {
+    Map<String, dynamic> json,
+    InteractionAffordance interactionAffordance,
+  ) {
     final List<String> parsedJsonFields = [];
     final href = _parseHref(json, parsedJsonFields);
 
@@ -122,18 +126,24 @@ class Form {
       }
     }
 
-    final additionalFields = _parseAdditionalFields(json, parsedJsonFields,
-        interactionAffordance.thingDescription.prefixMapping);
+    final additionalFields = _parseAdditionalFields(
+      json,
+      parsedJsonFields,
+      interactionAffordance.thingDescription.prefixMapping,
+    );
 
-    return Form(href, interactionAffordance,
-        contentType: contentType,
-        subprotocol: subprotocol,
-        op: op,
-        scopes: scopes,
-        security: security,
-        response: response,
-        additionalResponses: additionalResponses,
-        additionalFields: additionalFields);
+    return Form(
+      href,
+      interactionAffordance,
+      contentType: contentType,
+      subprotocol: subprotocol,
+      op: op,
+      scopes: scopes,
+      security: security,
+      response: response,
+      additionalResponses: additionalResponses,
+      additionalFields: additionalFields,
+    );
   }
 
   /// The [href] pointing to the resource.
@@ -181,7 +191,9 @@ class Form {
   final Map<String, dynamic> additionalFields = <String, dynamic>{};
 
   static List<SecurityScheme> _filterSecurityDefinitions(
-      InteractionAffordance interactionAffordance, List<String>? security) {
+    InteractionAffordance interactionAffordance,
+    List<String>? security,
+  ) {
     final thingDescription = interactionAffordance.thingDescription;
     final securityKeys = security ?? thingDescription.security;
     final securityDefinitions =
@@ -191,9 +203,11 @@ class Form {
       final securityDefinition = securityDefinitions[securityKey];
 
       if (securityDefinition == null) {
-        throw ValidationException('Form requires a security definition with '
-            'key $securityKey, but the Thing Description does not define a '
-            'security definition with such a key!');
+        throw ValidationException(
+          'Form requires a security definition with '
+          'key $securityKey, but the Thing Description does not define a '
+          'security definition with such a key!',
+        );
       }
 
       return securityDefinition;
@@ -201,20 +215,26 @@ class Form {
   }
 
   static Uri _expandHref(
-      Uri href, InteractionAffordance interactionAffordance) {
+    Uri href,
+    InteractionAffordance interactionAffordance,
+  ) {
     final base = interactionAffordance.thingDescription.base;
     if (href.isAbsolute) {
       return href;
     } else if (base != null) {
       return base.resolveUri(href);
     } else {
-      throw ValidationException("The form's $href is not an absolute URI, "
-          'but the Thing Description does not provide a base field!');
+      throw ValidationException(
+        "The form's $href is not an absolute URI, "
+        'but the Thing Description does not provide a base field!',
+      );
     }
   }
 
   static Uri _parseHref(
-      Map<String, dynamic> json, List<String> parsedJsonFields) {
+    Map<String, dynamic> json,
+    List<String> parsedJsonFields,
+  ) {
     final dynamic href = json['href'];
     parsedJsonFields.add('href');
     if (href is String) {
@@ -225,7 +245,9 @@ class Form {
   }
 
   static List<OperationType> _setOpValue(
-      InteractionAffordance interactionAffordance, List<String>? opStrings) {
+    InteractionAffordance interactionAffordance,
+    List<String>? opStrings,
+  ) {
     if (opStrings != null) {
       return opStrings.map(OperationType.fromString).toList();
     }
@@ -245,12 +267,17 @@ class Form {
       return [OperationType.subscribeevent, OperationType.unsubscribeevent];
     }
 
-    throw StateError('Encountered unknown InteractionAffordance '
-        '${interactionAffordance.runtimeType} encountered');
+    throw StateError(
+      'Encountered unknown InteractionAffordance '
+      '${interactionAffordance.runtimeType} encountered',
+    );
   }
 
-  static dynamic _getJsonValue(Map<String, dynamic> formJson, String key,
-      List<String> parsedJsonFields) {
+  static dynamic _getJsonValue(
+    Map<String, dynamic> formJson,
+    String key,
+    List<String> parsedJsonFields,
+  ) {
     parsedJsonFields.add(key);
     return formJson[key];
   }
@@ -283,9 +310,10 @@ class Form {
   }
 
   static Map<String, dynamic> _parseAdditionalFields(
-      Map<String, dynamic> formJson,
-      List<String> parsedJsonFields,
-      PrefixMapping prefixMapping) {
+    Map<String, dynamic> formJson,
+    List<String> parsedJsonFields,
+    PrefixMapping prefixMapping,
+  ) {
     final additionalFields = <String, dynamic>{};
     for (final entry in formJson.entries) {
       if (!parsedJsonFields.contains(entry.key)) {
@@ -301,35 +329,43 @@ class Form {
   /// Creates a deep copy of this [Form].
   Form _copy(Uri newHref) {
     // TODO(JKRhb): Make deep copies of security, scopes, and response.
-    final copiedForm = Form(newHref, interactionAffordance,
-        op: op.map((opValue) => opValue.name).toList(),
-        contentType: contentType,
-        subprotocol: subprotocol,
-        security: security,
-        scopes: scopes,
-        response: response,
-        additionalFields: <String, dynamic>{}..addAll(additionalFields));
+    final copiedForm = Form(
+      newHref,
+      interactionAffordance,
+      op: op.map((opValue) => opValue.name).toList(),
+      contentType: contentType,
+      subprotocol: subprotocol,
+      security: security,
+      scopes: scopes,
+      response: response,
+      additionalFields: <String, dynamic>{}..addAll(additionalFields),
+    );
     return copiedForm;
   }
 
   void _validateUriVariables(
-      List<String> hrefUriVariables,
-      Map<String, Object?> affordanceUriVariables,
-      Map<String, Object?> uriVariables) {
+    List<String> hrefUriVariables,
+    Map<String, Object?> affordanceUriVariables,
+    Map<String, Object?> uriVariables,
+  ) {
     final missingTdDefinitions =
         hrefUriVariables.where((element) => !uriVariables.containsKey(element));
 
     if (missingTdDefinitions.isNotEmpty) {
-      throw UriVariableException('$missingTdDefinitions do not have defined '
-          'uriVariables in the TD');
+      throw UriVariableException(
+        '$missingTdDefinitions do not have defined '
+        'uriVariables in the TD',
+      );
     }
 
     final missingUserInput = hrefUriVariables
         .where((element) => !affordanceUriVariables.containsKey(element));
 
     if (missingUserInput.isNotEmpty) {
-      throw UriVariableException('$missingUserInput did not have defined '
-          'Values in the provided InteractionOptions.');
+      throw UriVariableException(
+        '$missingUserInput did not have defined '
+        'Values in the provided InteractionOptions.',
+      );
     }
 
     // We now assert that all user provided values comply to the Schema
@@ -380,18 +416,25 @@ class Form {
     }
 
     if (affordanceUriVariables.isEmpty) {
-      throw UriVariableException('The Form href $href contains URI '
-          'variables but the TD does not provide a uriVariables definition.');
+      throw UriVariableException(
+        'The Form href $href contains URI '
+        'variables but the TD does not provide a uriVariables definition.',
+      );
     }
 
     if (uriVariables == null) {
-      throw ValidationException('The Form href $href contains URI variables '
-          'but no values were provided as InteractionOptions.');
+      throw ValidationException(
+        'The Form href $href contains URI variables '
+        'but no values were provided as InteractionOptions.',
+      );
     }
 
     // Perform additional validation
     _validateUriVariables(
-        hrefUriVariables, affordanceUriVariables, uriVariables);
+      hrefUriVariables,
+      affordanceUriVariables,
+      uriVariables,
+    );
 
     // As "{" and "}" are "percent encoded" due to Uri.parse(), we need to
     // revert the encoding first before we can insert the values.
