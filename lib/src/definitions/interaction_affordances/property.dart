@@ -31,7 +31,7 @@ class Property extends InteractionAffordance implements DataSchema {
   List<DataSchema>? oneOf;
 
   @override
-  bool? readOnly;
+  bool? readOnly = false;
 
   @override
   String? type;
@@ -40,7 +40,8 @@ class Property extends InteractionAffordance implements DataSchema {
   String? unit;
 
   @override
-  bool? writeOnly;
+  bool? writeOnly = false;
+
 
   @override
   Map<String, dynamic>? rawJson;
