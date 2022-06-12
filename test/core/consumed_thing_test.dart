@@ -22,7 +22,7 @@ void main() {
     });
 
     test('Parse Interaction Affordances', () async {
-      final thingDescriptionJson = '''
+      const thingDescriptionJson = '''
       {
         "@context": [
           "http://www.w3.org/ns/td",
@@ -139,78 +139,78 @@ void main() {
       final parsedTd = ThingDescription(thingDescriptionJson);
 
       final security = parsedTd.security;
-      expect(security, ["nosec_sc"]);
+      expect(security, ['nosec_sc']);
 
-      expect(parsedTd.title, "Test Thing");
-      expect(parsedTd.titles, {"en": "Test Thing"});
-      expect(parsedTd.description, "A Test Thing used for Testing.");
-      expect(parsedTd.descriptions, {"en": "A Test Thing used for Testing."});
+      expect(parsedTd.title, 'Test Thing');
+      expect(parsedTd.titles, {'en': 'Test Thing'});
+      expect(parsedTd.description, 'A Test Thing used for Testing.');
+      expect(parsedTd.descriptions, {'en': 'A Test Thing used for Testing.'});
 
-      final statusProperty = parsedTd.properties["status"];
-      expect(statusProperty!.title, "Status");
-      expect(statusProperty.titles!["en"], "Status");
-      expect(statusProperty.description, "Status of this Lamp");
-      expect(statusProperty.descriptions!["en"], "Status of this Lamp");
+      final statusProperty = parsedTd.properties['status'];
+      expect(statusProperty!.title, 'Status');
+      expect(statusProperty.titles!['en'], 'Status');
+      expect(statusProperty.description, 'Status of this Lamp');
+      expect(statusProperty.descriptions!['en'], 'Status of this Lamp');
 
-      final toggleAction = parsedTd.actions["toggle"];
-      expect(toggleAction!.title, "Toggle");
-      expect(toggleAction.titles!["en"], "Toggle");
-      expect(toggleAction.description, "Toggle this Lamp");
-      expect(toggleAction.descriptions!["en"], "Toggle this Lamp");
+      final toggleAction = parsedTd.actions['toggle'];
+      expect(toggleAction!.title, 'Toggle');
+      expect(toggleAction.titles!['en'], 'Toggle');
+      expect(toggleAction.description, 'Toggle this Lamp');
+      expect(toggleAction.descriptions!['en'], 'Toggle this Lamp');
 
-      final eventAction = parsedTd.events["overheating"];
-      expect(eventAction!.title, "Overheating");
-      expect(eventAction.titles!["en"], "Overheating");
-      expect(eventAction.description, "Overheating of this Lamp");
-      expect(eventAction.descriptions!["en"], "Overheating of this Lamp");
+      final eventAction = parsedTd.events['overheating'];
+      expect(eventAction!.title, 'Overheating');
+      expect(eventAction.titles!['en'], 'Overheating');
+      expect(eventAction.description, 'Overheating of this Lamp');
+      expect(eventAction.descriptions!['en'], 'Overheating of this Lamp');
 
-      final nosecSc = parsedTd.securityDefinitions["nosec_sc"];
+      final nosecSc = parsedTd.securityDefinitions['nosec_sc'];
       expect(nosecSc is NoSecurityScheme, true);
-      expect(nosecSc?.proxy, "http://example.org");
-      expect(nosecSc?.jsonLdType, ["Test"]);
+      expect(nosecSc?.proxy, 'http://example.org');
+      expect(nosecSc?.jsonLdType, ['Test']);
 
-      final basicSc = parsedTd.securityDefinitions["basic_sc"];
+      final basicSc = parsedTd.securityDefinitions['basic_sc'];
       expect(basicSc is BasicSecurityScheme, true);
-      expect(basicSc?.description, "Test");
-      expect((basicSc as BasicSecurityScheme).in_, "query");
+      expect(basicSc?.description, 'Test');
+      expect((basicSc as BasicSecurityScheme).in_, 'query');
 
-      final pskSc = parsedTd.securityDefinitions["psk_sc"];
+      final pskSc = parsedTd.securityDefinitions['psk_sc'];
       expect(pskSc is PskSecurityScheme, true);
-      expect((pskSc as PskSecurityScheme).identity, "Test");
+      expect((pskSc as PskSecurityScheme).identity, 'Test');
 
-      final apikeySc = parsedTd.securityDefinitions["apikey_sc"];
+      final apikeySc = parsedTd.securityDefinitions['apikey_sc'];
       expect(apikeySc is ApiKeySecurityScheme, true);
-      expect((apikeySc as ApiKeySecurityScheme).name, "Test");
-      expect((apikeySc).in_, "body");
+      expect((apikeySc as ApiKeySecurityScheme).name, 'Test');
+      expect(apikeySc.in_, 'body');
 
-      final digestSc = parsedTd.securityDefinitions["digest_sc"];
+      final digestSc = parsedTd.securityDefinitions['digest_sc'];
       expect(digestSc is DigestSecurityScheme, true);
-      expect((digestSc as DigestSecurityScheme).name, "Test");
-      expect((digestSc).in_, "cookie");
-      expect((digestSc).qop, "auth-int");
+      expect((digestSc as DigestSecurityScheme).name, 'Test');
+      expect(digestSc.in_, 'cookie');
+      expect(digestSc.qop, 'auth-int');
 
-      final bearerSc = parsedTd.securityDefinitions["bearer_sc"];
+      final bearerSc = parsedTd.securityDefinitions['bearer_sc'];
       expect(bearerSc is BearerSecurityScheme, true);
       expect((bearerSc as BearerSecurityScheme).authorization,
-          "http://example.org");
-      expect((bearerSc).name, "Test");
-      expect((bearerSc).alg, "ES256");
-      expect((bearerSc).format, "jws");
-      expect((bearerSc).in_, "uri");
+          'http://example.org');
+      expect(bearerSc.name, 'Test');
+      expect(bearerSc.alg, 'ES256');
+      expect(bearerSc.format, 'jws');
+      expect(bearerSc.in_, 'uri');
 
-      final oauth2Sc = parsedTd.securityDefinitions["oauth2_sc"];
+      final oauth2Sc = parsedTd.securityDefinitions['oauth2_sc'];
       expect(oauth2Sc is OAuth2SecurityScheme, true);
       expect((oauth2Sc as OAuth2SecurityScheme).authorization,
-          "http://example.org");
-      expect((oauth2Sc).refresh, "http://example.org");
-      expect((oauth2Sc).token, "http://example.org");
-      expect((oauth2Sc).scopes, ["test"]);
-      expect((oauth2Sc).flow, "client");
+          'http://example.org');
+      expect(oauth2Sc.refresh, 'http://example.org');
+      expect(oauth2Sc.token, 'http://example.org');
+      expect(oauth2Sc.scopes, ['test']);
+      expect(oauth2Sc.flow, 'client');
     });
   });
 
   test('Use of URI Template Variables', () async {
-    final thingDescriptionJson = '''
+    const thingDescriptionJson = '''
       {
         "@context": ["http://www.w3.org/ns/td"],
         "title": "Test Thing",
@@ -256,19 +256,19 @@ void main() {
     final servient = Servient()..addClientFactory(HttpClientFactory());
     final wot = await servient.start();
 
-    final uriVariables = {"value": "SFRUUEJJTiBpcyBhd2Vzb21l"};
+    final uriVariables = {'value': 'SFRUUEJJTiBpcyBhd2Vzb21l'};
     final interactionOptions = InteractionOptions(uriVariables: uriVariables);
 
     final consumedThing = await wot.consume(parsedTd);
     final result =
-        await consumedThing.readProperty("status", interactionOptions);
+        await consumedThing.readProperty('status', interactionOptions);
     final value = await result.value();
-    expect(value, "HTTPBIN is awesome");
+    expect(value, 'HTTPBIN is awesome');
 
     // status2 expects an integer instead of a String and throws an error if the
     // same value is provided as an input
-    expect(consumedThing.readProperty("status2", interactionOptions),
-        throwsA(TypeMatcher<ValidationException>()));
+    expect(consumedThing.readProperty('status2', interactionOptions),
+        throwsA(const TypeMatcher<ValidationException>()));
 
     await servient.shutdown();
     expect(servient.destroyConsumedThing(parsedTd.identifier), false);

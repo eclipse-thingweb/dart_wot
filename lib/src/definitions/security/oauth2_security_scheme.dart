@@ -12,8 +12,61 @@ import 'security_scheme.dart';
 /// RFC 6749, RFC 8252 and (for the device flow) RFC 8628, identified by the
 /// Vocabulary Term `oauth2`.
 class OAuth2SecurityScheme extends SecurityScheme {
+  /// Constructor.
+  OAuth2SecurityScheme(this.flow,
+      {String? description,
+      this.authorization,
+      this.scopes,
+      this.refresh,
+      this.token,
+      Map<String, String>? descriptions}) {
+    this.description = description;
+    this.descriptions.addAll(descriptions ?? {});
+  }
+
+  /// Creates a [OAuth2SecurityScheme] from a [json] object.
+  OAuth2SecurityScheme.fromJson(Map<String, dynamic> json) {
+    _parsedJsonFields.addAll(parseSecurityJson(this, json));
+
+    final dynamic jsonAuthorization = _getJsonValue(json, 'authorization');
+    if (jsonAuthorization is String) {
+      authorization = jsonAuthorization;
+      _parsedJsonFields.add('authorization');
+    }
+
+    final dynamic jsonToken = _getJsonValue(json, 'token');
+    if (jsonToken is String) {
+      token = jsonToken;
+      _parsedJsonFields.add('token');
+    }
+
+    final dynamic jsonRefresh = _getJsonValue(json, 'refresh');
+    if (jsonRefresh is String) {
+      refresh = jsonRefresh;
+      _parsedJsonFields.add('refresh');
+    }
+
+    final dynamic jsonScopes = _getJsonValue(json, 'scopes');
+    if (jsonScopes is String) {
+      scopes = [jsonScopes];
+      _parsedJsonFields.add('scopes');
+    } else if (jsonScopes is List<dynamic>) {
+      scopes = jsonScopes.whereType<String>().toList(growable: false);
+      _parsedJsonFields.add('scopes');
+    }
+
+    final dynamic jsonFlow = _getJsonValue(json, 'flow');
+    if (jsonFlow is String) {
+      flow = jsonFlow;
+      _parsedJsonFields.add('flow');
+    } else {
+      throw ValidationException("flow must be of type 'string'!");
+    }
+
+    parseAdditionalFields(additionalFields, json, _parsedJsonFields);
+  }
   @override
-  String get scheme => "oauth2";
+  String get scheme => 'oauth2';
 
   /// URI of the authorization server.
   ///
@@ -40,62 +93,8 @@ class OAuth2SecurityScheme extends SecurityScheme {
 
   final List<String> _parsedJsonFields = [];
 
-  /// Constructor.
-  OAuth2SecurityScheme(this.flow,
-      {String? description,
-      this.authorization,
-      this.scopes,
-      this.refresh,
-      this.token,
-      Map<String, String>? descriptions}) {
-    this.description = description;
-    this.descriptions.addAll(descriptions ?? {});
-  }
-
   dynamic _getJsonValue(Map<String, dynamic> json, String key) {
     _parsedJsonFields.add(key);
     return json[key];
-  }
-
-  /// Creates a [OAuth2SecurityScheme] from a [json] object.
-  OAuth2SecurityScheme.fromJson(Map<String, dynamic> json) {
-    _parsedJsonFields.addAll(parseSecurityJson(this, json));
-
-    final dynamic jsonAuthorization = _getJsonValue(json, "authorization");
-    if (jsonAuthorization is String) {
-      authorization = jsonAuthorization;
-      _parsedJsonFields.add("authorization");
-    }
-
-    final dynamic jsonToken = _getJsonValue(json, "token");
-    if (jsonToken is String) {
-      token = jsonToken;
-      _parsedJsonFields.add("token");
-    }
-
-    final dynamic jsonRefresh = _getJsonValue(json, "refresh");
-    if (jsonRefresh is String) {
-      refresh = jsonRefresh;
-      _parsedJsonFields.add("refresh");
-    }
-
-    final dynamic jsonScopes = _getJsonValue(json, "scopes");
-    if (jsonScopes is String) {
-      scopes = [jsonScopes];
-      _parsedJsonFields.add("scopes");
-    } else if (jsonScopes is List<dynamic>) {
-      scopes = jsonScopes.whereType<String>().toList(growable: false);
-      _parsedJsonFields.add("scopes");
-    }
-
-    final dynamic jsonFlow = _getJsonValue(json, "flow");
-    if (jsonFlow is String) {
-      flow = jsonFlow;
-      _parsedJsonFields.add("flow");
-    } else {
-      throw ValidationException("flow must be of type 'string'!");
-    }
-
-    parseAdditionalFields(additionalFields, json, _parsedJsonFields);
   }
 }

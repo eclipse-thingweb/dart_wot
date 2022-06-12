@@ -11,20 +11,20 @@ import 'coap_config.dart';
 
 /// A [ProtocolServer] for the Constrained Application Protocol (CoAP).
 class CoapServer extends ProtocolServer {
+  /// Creates a new [CoapServer] which can be configured using a [CoapConfig].
+  CoapServer([CoapConfig? coapConfig])
+      : port = coapConfig?.port ?? 5683,
+        preferredBlockSize = coapConfig?.blocksize;
+
   // TODO(JKRhb): Consider other protocol schemes.
   @override
-  final String scheme = "coap";
+  final String scheme = 'coap';
 
   @override
   final int port;
 
   /// Preferred payload size by the server when using block-wise transfer.
   final int? preferredBlockSize;
-
-  /// Creates a new [CoapServer] which can be configured using a [CoapConfig].
-  CoapServer([CoapConfig? coapConfig])
-      : port = coapConfig?.port ?? 5683,
-        preferredBlockSize = coapConfig?.blocksize;
 
   @override
   Future<void> expose(ExposedThing thing) {

@@ -50,6 +50,16 @@ typedef AsyncClientSecurityCallback<T extends Credentials> = Future<T?>
 /// Note that not all security schemes are implemented yet, therefore not every
 /// callback might actually be usable in practice.
 class ClientSecurityProvider {
+  /// Constructor.
+  ClientSecurityProvider({
+    this.pskCredentialsCallback,
+    this.basicCredentialsCallback,
+    this.bearerCredentialsCallback,
+    this.digestCredentialsCallback,
+    this.apikeyCredentialsCallback,
+    this.oauth2CredentialsCallback,
+  });
+
   /// Asychronous callback for [ApiKeyCredentials].
   final AsyncClientSecurityCallback<ApiKeyCredentials>?
       apikeyCredentialsCallback;
@@ -72,16 +82,6 @@ class ClientSecurityProvider {
   /// Asychronous callback for [OAuth2Credentials].
   final AsyncClientSecurityCallback<OAuth2Credentials>?
       oauth2CredentialsCallback;
-
-  /// Constructor.
-  ClientSecurityProvider({
-    this.pskCredentialsCallback,
-    this.basicCredentialsCallback,
-    this.bearerCredentialsCallback,
-    this.digestCredentialsCallback,
-    this.apikeyCredentialsCallback,
-    this.oauth2CredentialsCallback,
-  });
 }
 
 /// Function signature for a synchronous callback retrieving server

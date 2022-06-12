@@ -20,18 +20,18 @@ void main() {
       // Additional setup goes here.
     });
 
-    test("Server tests", () {
-      final defaultServer = CoapServer(null);
+    test('Server tests', () {
+      final defaultServer = CoapServer();
 
       expect(defaultServer.port, 5683);
-      expect(defaultServer.scheme, "coap");
+      expect(defaultServer.scheme, 'coap');
 
-      expect(() async => await defaultServer.start(),
-          throwsA(TypeMatcher<UnimplementedError>()));
-      expect(() async => await defaultServer.stop(),
-          throwsA(TypeMatcher<UnimplementedError>()));
-      expect(() async => await defaultServer.expose(MockExposedThing()),
-          throwsA(TypeMatcher<UnimplementedError>()));
+      expect(() async => defaultServer.start(),
+          throwsA(const TypeMatcher<UnimplementedError>()));
+      expect(() async => defaultServer.stop(),
+          throwsA(const TypeMatcher<UnimplementedError>()));
+      expect(() async => defaultServer.expose(MockExposedThing()),
+          throwsA(const TypeMatcher<UnimplementedError>()));
 
       final customServer = CoapServer(CoapConfig(port: 9001, blocksize: 64));
 
@@ -39,8 +39,8 @@ void main() {
       expect(customServer.preferredBlockSize, 64);
     });
 
-    test("ClientFactory tests", () async {
-      final defaultClientFactory = CoapClientFactory(null);
+    test('ClientFactory tests', () async {
+      final defaultClientFactory = CoapClientFactory();
 
       expect(defaultClientFactory.coapConfig, null);
       expect(defaultClientFactory.init(), true);

@@ -16,40 +16,40 @@ void main() {
       // Additional setup goes here.
     });
 
-    test("Server tests", () {
+    test('Server tests', () {
       final defaultServer = HttpServer(null);
 
       expect(defaultServer.port, 80);
-      expect(defaultServer.scheme, "http");
+      expect(defaultServer.scheme, 'http');
 
-      expect(() async => await defaultServer.start(),
-          throwsA(TypeMatcher<UnimplementedError>()));
-      expect(() async => await defaultServer.stop(),
-          throwsA(TypeMatcher<UnimplementedError>()));
-      expect(() async => await defaultServer.expose(MockExposedThing()),
-          throwsA(TypeMatcher<UnimplementedError>()));
+      expect(() async => defaultServer.start(),
+          throwsA(const TypeMatcher<UnimplementedError>()));
+      expect(() async => defaultServer.stop(),
+          throwsA(const TypeMatcher<UnimplementedError>()));
+      expect(() async => defaultServer.expose(MockExposedThing()),
+          throwsA(const TypeMatcher<UnimplementedError>()));
 
       final customServer1 = HttpServer(HttpConfig(secure: true));
 
       expect(customServer1.port, 443);
-      expect(customServer1.scheme, "https");
+      expect(customServer1.scheme, 'https');
 
       final customServer2 = HttpServer(HttpConfig(port: 9001, secure: true));
 
       expect(customServer2.port, 9001);
-      expect(customServer2.scheme, "https");
+      expect(customServer2.scheme, 'https');
     });
 
     test('HTTP Security Schemes', () async {
-      const username = "username";
-      const password = "password";
-      const token = "thisIsTheMostAwesomeTokenEver!";
+      const username = 'username';
+      const password = 'password';
+      const token = 'thisIsTheMostAwesomeTokenEver!';
 
       // TODO(JKRhb): Does not have an effect in the TD yet (and is negotiated
       //              automatically by http_auth instead)
-      const qop = "auth-int";
+      const qop = 'auth-int';
 
-      final thingDescriptionJson = '''
+      const thingDescriptionJson = '''
       {
         "@context": ["http://www.w3.org/ns/td"],
         "title": "Test Thing",
@@ -98,15 +98,15 @@ void main() {
       final parsedTd = ThingDescription(thingDescriptionJson);
 
       final Map<String, BasicCredentials> basicCredentialsStore = {
-        "httpbin.org": BasicCredentials(username, password),
+        'httpbin.org': BasicCredentials(username, password),
       };
 
       final Map<String, DigestCredentials> digestCredentialsStore = {
-        "httpbin.org": DigestCredentials(username, password),
+        'httpbin.org': DigestCredentials(username, password),
       };
 
       final Map<String, BearerCredentials> bearerCredentialsStore = {
-        "httpbin.org": BearerCredentials(token),
+        'httpbin.org': BearerCredentials(token),
       };
 
       final clientSecurityProvider = ClientSecurityProvider(
@@ -124,17 +124,17 @@ void main() {
       final wot = await servient.start();
 
       final consumedThing = await wot.consume(parsedTd);
-      final result = await consumedThing.readProperty("status");
+      final result = await consumedThing.readProperty('status');
       final value = await result.value();
-      expect(value, {"authenticated": true, "user": username});
+      expect(value, {'authenticated': true, 'user': username});
 
-      final result2 = await consumedThing.readProperty("status2");
+      final result2 = await consumedThing.readProperty('status2');
       final value2 = await result2.value();
-      expect(value2, {"authenticated": true, "user": username});
+      expect(value2, {'authenticated': true, 'user': username});
 
-      final result3 = await consumedThing.readProperty("status3");
+      final result3 = await consumedThing.readProperty('status3');
       final value3 = await result3.value();
-      expect(value3, {"authenticated": true, "token": token});
+      expect(value3, {'authenticated': true, 'token': token});
     });
   });
 }

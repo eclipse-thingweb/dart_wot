@@ -7,24 +7,24 @@
 /// Parses a [json] object and adds its contents to a [dataSchema].
 void parseDataSchemaJson(DataSchema dataSchema, Map<String, dynamic> json) {
   // TODO(JKRhb): Parse more DataSchema values
-  final Object? atType = json["@type"];
+  final Object? atType = json['@type'];
   if (atType is String) {
     dataSchema.atType = [atType];
   } else if (atType is List<String>) {
     dataSchema.atType = atType;
   }
 
-  final Object? type = json["type"];
+  final Object? type = json['type'];
   if (type is String) {
     dataSchema.type = type;
   }
 
-  final Object? readOnly = json["readOnly"];
+  final Object? readOnly = json['readOnly'];
   if (readOnly is bool) {
     dataSchema.readOnly = readOnly;
   }
 
-  final Object? writeOnly = json["writeOnly"];
+  final Object? writeOnly = json['writeOnly'];
   if (writeOnly is bool) {
     dataSchema.writeOnly = writeOnly;
   }
@@ -36,6 +36,12 @@ void parseDataSchemaJson(DataSchema dataSchema, Map<String, dynamic> json) {
 ///
 /// [spec link]: https://w3c.github.io/wot-thing-description/#dataschema
 class DataSchema {
+  /// Creates a new [DataSchema] from a [json] object.
+  DataSchema.fromJson(Map<String, dynamic> json) {
+    parseDataSchemaJson(this, json);
+    rawJson = json;
+  }
+
   /// JSON-LD keyword (@type) to label the object with semantic tags (or types).
   List<String>? atType;
 
@@ -87,10 +93,4 @@ class DataSchema {
 
   /// The original JSON object that was parsed when creating this [DataSchema].
   Map<String, dynamic>? rawJson;
-
-  /// Creates a new [DataSchema] from a [json] object.
-  DataSchema.fromJson(Map<String, dynamic> json) {
-    parseDataSchemaJson(this, json);
-    rawJson = json;
-  }
 }

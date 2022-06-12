@@ -6,7 +6,7 @@
 
 import 'package:dart_wot/dart_wot.dart';
 
-final thingDescriptionJson = '''
+const thingDescriptionJson = '''
 {
   "@context": [
     "http://www.w3.org/ns/td",
@@ -96,7 +96,7 @@ final thingDescriptionJson = '''
 ''';
 
 final Map<String, BasicCredentials> basicCredentials = {
-  "urn:test": BasicCredentials("username", "password")
+  'urn:test': BasicCredentials('username', 'password')
 };
 
 Future<BasicCredentials?> basicCredentialsCallback(Uri uri, Form? form) async {
@@ -118,46 +118,46 @@ Future<void> main() async {
 
   final thingDescription = ThingDescription(thingDescriptionJson);
   final consumedThing = await wot.consume(thingDescription);
-  final status = await consumedThing.readProperty("status");
+  final status = await consumedThing.readProperty('status');
   final value1 = await status.value();
   print(value1);
-  await consumedThing.invokeAction("toggle");
-  final status2 = await consumedThing.readProperty("differentStatus");
+  await consumedThing.invokeAction('toggle');
+  final status2 = await consumedThing.readProperty('differentStatus');
   final value2 = await status2.value();
   print(value2);
 
   final status3 = await consumedThing.readProperty(
-      "anotherStatus", InteractionOptions(uriVariables: {"test": "hi"}));
+      'anotherStatus', InteractionOptions(uriVariables: {'test': 'hi'}));
   final value3 = await status3.value();
   print(value3);
 
   Subscription? subscription;
 
   int observationCounter = 0;
-  subscription = await consumedThing.observeProperty("status", (data) async {
+  subscription = await consumedThing.observeProperty('status', (data) async {
     if (observationCounter++ == 3) {
-      print("Done! Cancelling subscription.");
+      print('Done! Cancelling subscription.');
       await subscription?.stop();
     }
 
     if (subscription?.active ?? false) {
       final value = await data.value();
-      print("Received observation data: $value");
+      print('Received observation data: $value');
     }
   });
 
-  await consumedThing.readProperty("test");
+  await consumedThing.readProperty('test');
 
-  final thingUri = Uri.parse("https://raw.githubusercontent.com/w3c/wot-testing"
-      "/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs"
-      "/Oracle/oracle-Festo_Shared.td.jsonld");
+  final thingUri = Uri.parse('https://raw.githubusercontent.com/w3c/wot-testing'
+      '/b07fa6124bca7796e6ca752a3640fac264d3bcbc/events/2021.03.Online/TDs'
+      '/Oracle/oracle-Festo_Shared.td.jsonld');
 
   final thingDiscovery =
       wot.discover(ThingFilter(url: thingUri, method: DiscoveryMethod.direct));
 
   await for (final thingDescription in thingDiscovery) {
     final consumedDiscoveredThing = await wot.consume(thingDescription);
-    print("The title of the fetched TD is "
-        "${consumedDiscoveredThing.thingDescription.title}.");
+    print('The title of the fetched TD is '
+        '${consumedDiscoveredThing.thingDescription.title}.');
   }
 }

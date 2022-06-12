@@ -10,14 +10,6 @@ import 'security_scheme.dart';
 /// Pre-shared key authentication security configuration identified by the
 /// Vocabulary Term `psk`.
 class PskSecurityScheme extends SecurityScheme {
-  @override
-  String get scheme => "psk";
-
-  /// Name for query, header, cookie, or uri parameters.
-  String? identity;
-
-  final List<String> _parsedJsonFields = [];
-
   /// Constructor.
   PskSecurityScheme(
       {this.identity,
@@ -25,24 +17,33 @@ class PskSecurityScheme extends SecurityScheme {
       String? proxy,
       Map<String, String>? descriptions}) {
     this.description = description;
+    this.proxy = proxy;
     this.descriptions.addAll(descriptions ?? {});
-  }
-
-  dynamic _getJsonValue(Map<String, dynamic> json, String key) {
-    _parsedJsonFields.add(key);
-    return json[key];
   }
 
   /// Creates a [PskSecurityScheme] from a [json] object.
   PskSecurityScheme.fromJson(Map<String, dynamic> json) {
     _parsedJsonFields.addAll(parseSecurityJson(this, json));
 
-    final dynamic jsonIdentity = _getJsonValue(json, "identity");
+    final dynamic jsonIdentity = _getJsonValue(json, 'identity');
     if (jsonIdentity is String) {
       identity = jsonIdentity;
-      _parsedJsonFields.add("identity");
+      _parsedJsonFields.add('identity');
     }
 
     parseAdditionalFields(additionalFields, json, _parsedJsonFields);
+  }
+
+  @override
+  String get scheme => 'psk';
+
+  /// Name for query, header, cookie, or uri parameters.
+  String? identity;
+
+  final List<String> _parsedJsonFields = [];
+
+  dynamic _getJsonValue(Map<String, dynamic> json, String key) {
+    _parsedJsonFields.add(key);
+    return json[key];
   }
 }

@@ -32,15 +32,15 @@ const defaultContentType = jsonContentType;
 /// Custom [Exception] that is thrown when Serialization or Deserialization
 /// fails.
 class ContentSerdesException implements Exception {
-  /// The error message of this [ContentSerdesException].
-  String? message;
-
   /// Constructor.
   ContentSerdesException(this.message);
 
+  /// The error message of this [ContentSerdesException].
+  String? message;
+
   @override
   String toString() {
-    return "$runtimeType: $message";
+    return 'ContentSerdesException: $message';
   }
 }
 
@@ -49,6 +49,12 @@ class ContentSerdesException implements Exception {
 // TODO(JKRhb): Decide if a class-based approach is the right way to go.
 // TODO(JKRhb): Getters and setters might have to be revisited
 class ContentSerdes {
+  /// Creates a new [ContentSerdes] object which supports JSON and CBOR based
+  /// media types by default.
+  ContentSerdes() {
+    _addDefaultCodecs();
+  }
+
   final Map<String, ContentCodec> _supportedCodecs = {};
 
   final Map<String, String> _supportedContentTypes = {};
@@ -56,15 +62,9 @@ class ContentSerdes {
   /// Codecs offered by a new ExposedThing.
   Set<String> offeredContentTypes = {};
 
-  /// Creates a new [ContentSerdes] object which supports JSON and CBOR based
-  /// media types by default.
-  ContentSerdes() {
-    _addDefaultCodecs();
-  }
-
   void _addDefaultCodecs() {
-    _supportedCodecs["JSON"] = JsonCodec();
-    _supportedCodecs["CBOR"] = CborCodec();
+    _supportedCodecs['JSON'] = JsonCodec();
+    _supportedCodecs['CBOR'] = CborCodec();
 
     // TODO(JKRhb): Add codecs for text-based media types
     // TODO(JKRhb): Add codecs for XML based media types
@@ -84,7 +84,7 @@ class ContentSerdes {
   void addContentTypeSupport(String contentType, String codecName,
       {bool offered = false}) {
     if (!_supportedCodecs.containsKey(codecName)) {
-      throw UnsupportedError("$codecName has no registered ContentCodec.");
+      throw UnsupportedError('$codecName has no registered ContentCodec.');
     }
 
     _supportedContentTypes[contentType] = codecName;
@@ -96,38 +96,38 @@ class ContentSerdes {
 
   /// Adds the JSON based Content-Types that are supported by default.
   void _addDefaultJsonContentTypes() {
-    addContentTypeSupport(jsonContentType, "JSON", offered: true);
+    addContentTypeSupport(jsonContentType, 'JSON', offered: true);
 
     const jsonContentTypes = [
-      "application/json-patch+json",
-      "application/merge-patch+json",
-      "application/senml+json",
-      "application/sensml+json",
-      "application/coap-group+json",
-      "application/senml-etch+json",
+      'application/json-patch+json',
+      'application/merge-patch+json',
+      'application/senml+json',
+      'application/sensml+json',
+      'application/coap-group+json',
+      'application/senml-etch+json',
       tdContentType,
       jsonLdContentType,
     ];
 
     for (final contentType in jsonContentTypes) {
-      addContentTypeSupport(contentType, "JSON");
+      addContentTypeSupport(contentType, 'JSON');
     }
   }
 
   /// Adds the CBOR based Content-Types that are supported by default.
   void _addDefaultCborContentTypes() {
-    addContentTypeSupport("application/cbor", "CBOR", offered: true);
+    addContentTypeSupport('application/cbor', 'CBOR', offered: true);
 
     const cborContentTypes = [
-      "application/ace+cbor",
-      "application/senml+cbor",
-      "application/sensml+cbor",
-      "application/dots+cbor",
-      "application/senml-etch+cbor",
+      'application/ace+cbor',
+      'application/senml+cbor',
+      'application/sensml+cbor',
+      'application/dots+cbor',
+      'application/senml-etch+cbor',
     ];
 
     for (final contentType in cborContentTypes) {
-      addContentTypeSupport(contentType, "CBOR");
+      addContentTypeSupport(contentType, 'CBOR');
     }
   }
 
@@ -175,7 +175,7 @@ class ContentSerdes {
     final schema =
         JsonSchema.create(dataSchemaJson, schemaVersion: SchemaVersion.draft7);
     if (!schema.validate(value).isValid) {
-      throw ContentSerdesException("JSON Schema validation failed.");
+      throw ContentSerdesException('JSON Schema validation failed.');
     }
   }
 
@@ -187,9 +187,9 @@ class ContentSerdes {
       Object? value, DataSchema? dataSchema, String? contentType) {
     _validateValue(value, dataSchema);
 
-    contentType ??= defaultContentType;
+    final resolvedContentType = contentType ?? defaultContentType;
 
-    final parsedMediaType = MediaType.parse(contentType);
+    final parsedMediaType = MediaType.parse(resolvedContentType);
     final mimeType = parsedMediaType.mimeType;
     final parameters = parsedMediaType.parameters;
 
@@ -206,7 +206,7 @@ class ContentSerdes {
 
     // TODO(JKRhb): Make sure this list does not need to be growable
     final byteList = bytes.asUint8List().toList(growable: false);
-    return Content(contentType, Stream.value(byteList));
+    return Content(resolvedContentType, Stream.value(byteList));
   }
 
   /// Converts a [Content] object to a typed [Object].

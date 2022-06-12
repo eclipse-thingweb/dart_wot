@@ -10,7 +10,7 @@ import 'package:dart_wot/src/definitions/data_schema.dart';
 import 'package:test/test.dart';
 
 Content _getTestContent() {
-  return Content("application/json", Stream<List<int>>.value('42'.codeUnits));
+  return Content('application/json', Stream<List<int>>.value('42'.codeUnits));
 }
 
 void main() {
@@ -25,21 +25,21 @@ void main() {
 
     final testContent1 = _getTestContent();
     final successfulSchema =
-        DataSchema.fromJson(<String, dynamic>{"type": "number"});
+        DataSchema.fromJson(<String, dynamic>{'type': 'number'});
 
     expect(
         await contentSerdes.contentToValue(testContent1, successfulSchema), 42);
 
     final testContent2 = _getTestContent();
     final failingSchema =
-        DataSchema.fromJson(<String, dynamic>{"type": "string"});
+        DataSchema.fromJson(<String, dynamic>{'type': 'string'});
 
     expect(contentSerdes.contentToValue(testContent2, failingSchema),
-        throwsA(TypeMatcher<ContentSerdesException>()));
+        throwsA(const TypeMatcher<ContentSerdesException>()));
 
     expect(
         () =>
-            contentSerdes.valueToContent(42, failingSchema, "application/json"),
-        throwsA(TypeMatcher<ContentSerdesException>()));
+            contentSerdes.valueToContent(42, failingSchema, 'application/json'),
+        throwsA(const TypeMatcher<ContentSerdesException>()));
   });
 }

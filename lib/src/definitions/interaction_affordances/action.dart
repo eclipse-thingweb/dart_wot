@@ -12,6 +12,18 @@ import 'interaction_affordance.dart';
 
 /// Class representing an [Action] Affordance in a Thing Description.
 class Action extends InteractionAffordance {
+  /// Creates a new [Action] from a [List] of [forms].
+  Action(super.forms, super.thingDescription);
+
+  /// Creates a new [Action] from a [json] object.
+  Action.fromJson(Map<String, dynamic> json, ThingDescription thingDescription,
+      PrefixMapping prefixMapping)
+      : super([], thingDescription) {
+    final List<String> parsedFields = [];
+    _parseActionFields(json, parsedFields);
+    parseAffordanceFields(json, prefixMapping);
+  }
+
   /// The schema of the [input] data this [Action] accepts.
   DataSchema? input;
 
@@ -45,18 +57,6 @@ class Action extends InteractionAffordance {
   /// claim on the synchronicity of the action can be made.
   bool? get synchronous => _synchronous;
 
-  /// Creates a new [Action] from a [List] of [forms].
-  Action(super.forms, super.thingDescription);
-
-  /// Creates a new [Action] from a [json] object.
-  Action.fromJson(Map<String, dynamic> json, ThingDescription thingDescription,
-      PrefixMapping prefixMapping)
-      : super([], thingDescription) {
-    final List<String> parsedFields = [];
-    _parseActionFields(json, parsedFields);
-    parseAffordanceFields(json, prefixMapping);
-  }
-
   T? _parseJsonValue<T>(
       Map<String, dynamic> json, String key, final List<String> parsedFields) {
     parsedFields.add(key);
@@ -71,16 +71,16 @@ class Action extends InteractionAffordance {
   void _parseIdempotent(
       Map<String, dynamic> json, final List<String> parsedFields) {
     _idempotent =
-        _parseJsonValue<bool>(json, "idempotent", parsedFields) ?? _idempotent;
+        _parseJsonValue<bool>(json, 'idempotent', parsedFields) ?? _idempotent;
   }
 
   void _parseSafe(Map<String, dynamic> json, final List<String> parsedFields) {
-    _safe = _parseJsonValue<bool>(json, "safe", parsedFields) ?? _safe;
+    _safe = _parseJsonValue<bool>(json, 'safe', parsedFields) ?? _safe;
   }
 
   void _parseSynchronous(
       Map<String, dynamic> json, final List<String> parsedFields) {
-    _synchronous = _parseJsonValue<bool>(json, "synchronous", parsedFields);
+    _synchronous = _parseJsonValue<bool>(json, 'synchronous', parsedFields);
   }
 
   void _parseActionFields(

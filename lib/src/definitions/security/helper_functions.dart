@@ -8,20 +8,22 @@ import 'security_scheme.dart';
 
 /// Parses the fields shared by all [SecurityScheme]s.
 List<String> parseSecurityJson(
-    SecurityScheme securityScheme, Map<String, dynamic> json) {
-  final List<String> parsedJsonFields = ["scheme"];
+  SecurityScheme securityScheme,
+  Map<String, dynamic> json,
+) {
+  final List<String> parsedJsonFields = ['scheme'];
 
-  final dynamic proxy = json["proxy"];
+  final dynamic proxy = json['proxy'];
   if (proxy is String) {
     securityScheme.proxy = proxy;
   }
 
-  final dynamic description = json["description"];
+  final dynamic description = json['description'];
   if (description is String) {
     securityScheme.description = description;
   }
 
-  final dynamic descriptions = json["descriptions"];
+  final dynamic descriptions = json['descriptions'];
   if (descriptions is Map<String, dynamic>) {
     for (final entry in descriptions.entries) {
       final dynamic value = entry.value;
@@ -31,7 +33,7 @@ List<String> parseSecurityJson(
     }
   }
 
-  final dynamic jsonLdType = json["@type"];
+  final dynamic jsonLdType = json['@type'];
   if (jsonLdType is String) {
     securityScheme.jsonLdType = [jsonLdType];
   } else if (jsonLdType is List<dynamic>) {
@@ -43,8 +45,11 @@ List<String> parseSecurityJson(
 }
 
 /// Parses additional fields which are not part of the WoT specification.
-void parseAdditionalFields(Map<String, dynamic> additionalFields,
-    Map<String, dynamic> json, List<String> parsedJsonFields) {
+void parseAdditionalFields(
+  Map<String, dynamic> additionalFields,
+  Map<String, dynamic> json,
+  List<String> parsedJsonFields,
+) {
   final additionEntries = json.entries
       .where((jsonEntry) => !parsedJsonFields.contains(jsonEntry.key));
   additionalFields.addEntries(additionEntries);

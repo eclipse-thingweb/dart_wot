@@ -6,6 +6,9 @@
 
 /// Allows for configuring the behavior of HTTP clients and servers.
 class HttpConfig {
+  /// Creates a new [HttpConfig] object.
+  HttpConfig({this.port, this.secure});
+
   /// Custom port number that should be used by a server.
   ///
   /// Defaults to 80 for HTTP and 443 for HTTPS.
@@ -13,7 +16,4 @@ class HttpConfig {
 
   /// Indicates if the client or server should use HTTPS.
   bool? secure;
-
-  /// Creates a new [HttpConfig] object.
-  HttpConfig({this.port, this.secure});
 }

@@ -9,6 +9,9 @@ import 'credentials.dart';
 
 /// [Credentials] used for the [OAuth2SecurityScheme].
 class OAuth2Credentials extends Credentials<OAuth2SecurityScheme> {
+  /// Constructor.
+  OAuth2Credentials([this.secret]) : super('oauth2');
+
   /// The optional secret for these [OAuth2Credentials].
   String? secret;
 
@@ -16,7 +19,4 @@ class OAuth2Credentials extends Credentials<OAuth2SecurityScheme> {
   ///
   /// Used to store obtained credentials from an authorization server.
   String? credentialsJson;
-
-  /// Constructor.
-  OAuth2Credentials([this.secret]) : super("oauth2");
 }

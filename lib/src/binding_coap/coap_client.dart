@@ -28,14 +28,6 @@ import 'coap_extensions.dart';
 import 'coap_subscription.dart';
 
 class _InternalCoapConfig extends CoapConfigDefault {
-  @override
-  int preferredBlockSize;
-
-  @override
-  coap.DtlsBackend? dtlsBackend;
-
-  final Form? _form;
-
   _InternalCoapConfig(CoapConfig coapConfig, this._form)
       : preferredBlockSize =
             coapConfig.blocksize ?? coap.CoapConstants.preferredBlockSize {
@@ -56,7 +48,15 @@ class _InternalCoapConfig extends CoapConfigDefault {
     }
   }
 
-  bool get _dtlsNeeded => _form?.resolvedHref.scheme == "coaps";
+  @override
+  int preferredBlockSize;
+
+  @override
+  coap.DtlsBackend? dtlsBackend;
+
+  final Form? _form;
+
+  bool get _dtlsNeeded => _form?.resolvedHref.scheme == 'coaps';
 }
 
 bool _usesPskScheme(Form form) {
@@ -64,6 +64,19 @@ bool _usesPskScheme(Form form) {
 }
 
 class _CoapRequest {
+  /// Creates a new [_CoapRequest]
+  _CoapRequest(
+    this._form,
+    this._requestMethod,
+    CoapConfig _coapConfig,
+    ClientSecurityProvider? _clientSecurityProvider, [
+    this._subprotocol,
+  ])  : _coapClient = coap.CoapClient(
+            _form.resolvedHref, _InternalCoapConfig(_coapConfig, _form),
+            pskCredentialsCallback:
+                _createPskCallback(_form, _clientSecurityProvider)),
+        _requestUri = _form.resolvedHref;
+
   /// The [CoapClient] which sends out request messages.
   final coap.CoapClient _coapClient;
 
@@ -79,19 +92,6 @@ class _CoapRequest {
 
   /// The subprotocol that should be used for requests.
   final CoapSubprotocol? _subprotocol;
-
-  /// Creates a new [_CoapRequest]
-  _CoapRequest(
-    this._form,
-    this._requestMethod,
-    CoapConfig _coapConfig,
-    ClientSecurityProvider? _clientSecurityProvider, [
-    this._subprotocol,
-  ])  : _coapClient = coap.CoapClient(
-            _form.resolvedHref, _InternalCoapConfig(_coapConfig, _form),
-            pskCredentialsCallback:
-                _createPskCallback(_form, _clientSecurityProvider)),
-        _requestUri = _form.resolvedHref;
 
   // TODO(JKRhb): blockwise parameters cannot be handled at the moment due to
   //              limitations of the CoAP library
@@ -109,25 +109,23 @@ class _CoapRequest {
             earlyBlock2Negotiation: true, accept: accept);
         break;
       case CoapRequestMethod.post:
-        payload ??= "";
         response = await _coapClient.post(_requestUri.path,
-            payload: payload, format: format);
+            payload: payload ?? '', format: format);
         break;
       case CoapRequestMethod.put:
-        payload ??= "";
         response = await _coapClient.put(_requestUri.path,
-            payload: payload, format: format);
+            payload: payload ?? '', format: format);
         break;
       case CoapRequestMethod.delete:
         response = await _coapClient.delete(_requestUri.path);
         break;
       default:
         throw UnimplementedError(
-            "CoAP request method $_requestMethod is not supported yet.");
+            'CoAP request method $_requestMethod is not supported yet.');
     }
     _coapClient.close();
     if (response == null) {
-      throw CoapBindingException("Sending CoAP request to $_requestUri failed");
+      throw CoapBindingException('Sending CoAP request to $_requestUri failed');
     }
     return response;
   }
@@ -140,19 +138,19 @@ class _CoapRequest {
       return null;
     }
 
-    return ((identityHint) {
+    return (identityHint) {
       final PskCredentials? pskCredentials =
           pskCredentialsCallback(form.resolvedHref, form, identityHint);
 
       if (pskCredentials == null) {
         throw CoapBindingException(
-            "Missing PSK credentials for CoAPS request!");
+            'Missing PSK credentials for CoAPS request!');
       }
 
       return coap.PskCredentials(
           identity: pskCredentials.identity,
           preSharedKey: pskCredentials.preSharedKey);
-    });
+    };
   }
 
   // TODO(JKRhb): Revisit name of this method
@@ -209,19 +207,19 @@ Stream<List<int>> _getPayloadFromResponse(coap.CoapResponse response) {
   if (response.payload != null) {
     return Stream.value(response.payload!);
   } else {
-    return Stream.empty();
+    return const Stream.empty();
   }
 }
 
 /// A [ProtocolClient] for the Constrained Application Protocol (CoAP).
 class CoapClient extends ProtocolClient {
+  /// Creates a new [CoapClient] based on an optional [CoapConfig].
+  CoapClient([this._coapConfig, this._clientSecurityProvider]);
+
   final List<_CoapRequest> _pendingRequests = [];
   final CoapConfig? _coapConfig;
 
   final ClientSecurityProvider? _clientSecurityProvider;
-
-  /// Creates a new [CoapClient] based on an optional [CoapConfig].
-  CoapClient([this._coapConfig, this._clientSecurityProvider]);
 
   _CoapRequest _createRequest(Form form, OperationType operationType) {
     final requestMethod =
@@ -244,7 +242,7 @@ class CoapClient extends ProtocolClient {
   @override
   Future<Content> readResource(Form form) async {
     final request = _createRequest(form, OperationType.readproperty);
-    return await request.resolveInteraction(null);
+    return request.resolveInteraction(null);
   }
 
   @override
@@ -258,7 +256,7 @@ class CoapClient extends ProtocolClient {
   Future<Content> invokeResource(Form form, Content content) async {
     final request = _createRequest(form, OperationType.invokeaction);
     final input = await _getInputFromContent(content);
-    return await request.resolveInteraction(input);
+    return request.resolveInteraction(input);
   }
 
   @override
@@ -274,12 +272,12 @@ class CoapClient extends ProtocolClient {
               OperationType.observeproperty
             ].contains(element),
         orElse: () => throw CoapBindingException(
-            "Subscription form contained neither 'subscribeevent'"
+            "Subscription form contained neither 'subscribeevent' "
             "nor 'observeproperty' operation type."));
 
     final request = _createRequest(form, operationType);
 
-    return await request.startObservation(next, complete);
+    return request.startObservation(next, complete);
   }
 
   @override
@@ -300,7 +298,7 @@ class CoapClient extends ProtocolClient {
     final rawThingDescription = response?.payloadString;
 
     if (response == null) {
-      throw DiscoveryException("Direct CoAP Discovery from $uri failed!");
+      throw DiscoveryException('Direct CoAP Discovery from $uri failed!');
     }
 
     return ThingDescription(rawThingDescription);
@@ -330,7 +328,8 @@ class CoapClient extends ProtocolClient {
     unawaited(response);
     unawaited(
       Future.delayed(
-          _coapConfig?.multicastDiscoveryTimeout ?? Duration(seconds: 20), () {
+          _coapConfig?.multicastDiscoveryTimeout ?? const Duration(seconds: 20),
+          () {
         client
           ..cancel(request)
           ..close();
@@ -371,6 +370,7 @@ class CoapClient extends ProtocolClient {
         coap.CoapClient(discoveryUri, _InternalCoapConfig(coapConfig, null));
 
     // TODO(JKRhb): Multicast could be supported here as well.
+    // ignore: invalid_use_of_protected_member
     final request = coap.CoapRequest(coap.CoapCode.get)..uri = discoveryUri;
     final response = await coapClient.send(request);
 
@@ -378,23 +378,23 @@ class CoapClient extends ProtocolClient {
 
     if (response == null) {
       throw DiscoveryException(
-          "Got no CoRE Link Format Discovery response for $uri");
+          'Got no CoRE Link Format Discovery response for $uri');
     }
 
     final actualContentFormat = response.contentFormat;
-    final expectedContentFormat = coap.CoapMediaType.applicationLinkFormat;
+    const expectedContentFormat = coap.CoapMediaType.applicationLinkFormat;
 
     if (actualContentFormat != expectedContentFormat) {
-      throw DiscoveryException("Got wrong format for "
-          "CoRE Link Format Discovery (expected $expectedContentFormat, got "
-          "$actualContentFormat).");
+      throw DiscoveryException('Got wrong format for '
+          'CoRE Link Format Discovery (expected $expectedContentFormat, got '
+          '$actualContentFormat).');
     }
 
     final payloadString = response.payloadString;
 
     if (payloadString == null) {
       throw DiscoveryException(
-          "Received empty payload for CoRE Link Format Discovery from $uri");
+          'Received empty payload for CoRE Link Format Discovery from $uri');
     }
 
     yield* Stream.fromIterable(parseCoreLinkFormat(payloadString, uri));

@@ -20,6 +20,122 @@ import 'validation/validation_exception.dart';
 
 /// Contains the information needed for performing interactions with a Thing.
 class Form {
+  /// Creates a new [Form] object.
+  ///
+  /// An [href] has to be provided. A [contentType] is optional.
+  Form(this.href, this.interactionAffordance,
+      {this.contentType = 'application/json',
+      this.subprotocol,
+      this.security,
+      List<String>? op,
+      this.scopes,
+      this.response,
+      this.additionalResponses,
+      Map<String, dynamic>? additionalFields})
+      : resolvedHref = _expandHref(href, interactionAffordance),
+        securityDefinitions =
+            _filterSecurityDefinitions(interactionAffordance, security),
+        op = _setOpValue(interactionAffordance, op) {
+    if (additionalFields != null) {
+      this.additionalFields.addAll(additionalFields);
+    }
+  }
+
+  /// Creates a new [Form] from a [json] object.
+  factory Form.fromJson(
+      Map<String, dynamic> json, InteractionAffordance interactionAffordance) {
+    final List<String> parsedJsonFields = [];
+    final href = _parseHref(json, parsedJsonFields);
+
+    String? subprotocol;
+    if (json['subprotocol'] is String) {
+      parsedJsonFields.add('subprotocol');
+      subprotocol = json['subprotocol'] as String;
+    }
+
+    List<String>? op;
+    if (json['op'] != null) {
+      final dynamic jsonOp = _getJsonValue(json, 'op', parsedJsonFields);
+      if (jsonOp is String) {
+        op = [jsonOp];
+      } else if (jsonOp is List<dynamic>) {
+        op = jsonOp.whereType<String>().toList(growable: false);
+      }
+    }
+
+    String contentType = 'application/json';
+    if (json['contentType'] != null) {
+      final dynamic jsonContentType =
+          _getJsonValue(json, 'contentType', parsedJsonFields);
+      if (jsonContentType is String) {
+        contentType = jsonContentType;
+      }
+    }
+
+    List<String>? security;
+    if (json['security'] != null) {
+      final dynamic jsonSecurity =
+          _getJsonValue(json, 'security', parsedJsonFields);
+      if (jsonSecurity is String) {
+        security = [jsonSecurity];
+      } else if (jsonSecurity is List<dynamic>) {
+        security = jsonSecurity.whereType<String>().toList(growable: false);
+      }
+    }
+
+    List<String>? scopes;
+    if (json['scopes'] != null) {
+      final dynamic jsonScopes =
+          _getJsonValue(json, 'scopes', parsedJsonFields);
+      if (jsonScopes is String) {
+        scopes = [jsonScopes];
+      } else if (jsonScopes is List<dynamic>) {
+        scopes = jsonScopes.whereType<String>().toList(growable: false);
+      }
+    }
+
+    ExpectedResponse? response;
+    if (json['response'] != null) {
+      final dynamic jsonResponse =
+          _getJsonValue(json, 'response', parsedJsonFields);
+      if (jsonResponse is Map<String, dynamic>) {
+        response = ExpectedResponse.fromJson(jsonResponse);
+      }
+    }
+
+    List<AdditionalExpectedResponse>? additionalResponses;
+    if (json['additionalResponses'] != null) {
+      final dynamic jsonResponse =
+          _getJsonValue(json, 'additionalResponses', parsedJsonFields);
+      if (jsonResponse is Map<String, dynamic>) {
+        additionalResponses = [
+          AdditionalExpectedResponse.fromJson(jsonResponse, contentType)
+        ];
+      } else if (jsonResponse is List<dynamic>) {
+        additionalResponses = [];
+        for (final entry in jsonResponse) {
+          if (entry is Map<String, dynamic>) {
+            additionalResponses
+                .add(AdditionalExpectedResponse.fromJson(entry, contentType));
+          }
+        }
+      }
+    }
+
+    final additionalFields = _parseAdditionalFields(json, parsedJsonFields,
+        interactionAffordance.thingDescription.prefixMapping);
+
+    return Form(href, interactionAffordance,
+        contentType: contentType,
+        subprotocol: subprotocol,
+        op: op,
+        scopes: scopes,
+        security: security,
+        response: response,
+        additionalResponses: additionalResponses,
+        additionalFields: additionalFields);
+  }
+
   /// The [href] pointing to the resource.
   ///
   /// Can be a relative or absolute URI.
@@ -42,7 +158,7 @@ class Form {
   final List<OperationType> op;
 
   /// The [contentType] supported by this [Form].
-  String contentType = "application/json";
+  String contentType = 'application/json';
 
   /// The list of [security] definitions applied to this [Form].
   List<String>? security;
@@ -75,34 +191,13 @@ class Form {
       final securityDefinition = securityDefinitions[securityKey];
 
       if (securityDefinition == null) {
-        throw ValidationException("Form requires a security definition with "
-            "key $securityKey, but the Thing Description does not define a "
-            "security definition with such a key!");
+        throw ValidationException('Form requires a security definition with '
+            'key $securityKey, but the Thing Description does not define a '
+            'security definition with such a key!');
       }
 
       return securityDefinition;
     }).toList();
-  }
-
-  /// Creates a new [Form] object.
-  ///
-  /// An [href] has to be provided. A [contentType] is optional.
-  Form(this.href, this.interactionAffordance,
-      {this.contentType = "application/json",
-      this.subprotocol,
-      this.security,
-      List<String>? op,
-      this.scopes,
-      this.response,
-      this.additionalResponses,
-      Map<String, dynamic>? additionalFields})
-      : resolvedHref = _expandHref(href, interactionAffordance),
-        securityDefinitions =
-            _filterSecurityDefinitions(interactionAffordance, security),
-        op = _setOpValue(interactionAffordance, op) {
-    if (additionalFields != null) {
-      this.additionalFields.addAll(additionalFields);
-    }
   }
 
   static Uri _expandHref(
@@ -114,114 +209,19 @@ class Form {
       return base.resolveUri(href);
     } else {
       throw ValidationException("The form's $href is not an absolute URI, "
-          "but the Thing Description does not provide a base field!");
+          'but the Thing Description does not provide a base field!');
     }
   }
 
   static Uri _parseHref(
       Map<String, dynamic> json, List<String> parsedJsonFields) {
-    final dynamic href = json["href"];
-    parsedJsonFields.add("href");
+    final dynamic href = json['href'];
+    parsedJsonFields.add('href');
     if (href is String) {
       return Uri.parse(href);
     } else {
       throw ValidationException("'href' field must be a string.");
     }
-  }
-
-  /// Creates a new [Form] from a [json] object.
-  factory Form.fromJson(
-      Map<String, dynamic> json, InteractionAffordance interactionAffordance) {
-    final List<String> parsedJsonFields = [];
-    final href = _parseHref(json, parsedJsonFields);
-
-    String? subprotocol;
-    if (json["subprotocol"] is String) {
-      parsedJsonFields.add("subprotocol");
-      subprotocol = json["subprotocol"] as String;
-    }
-
-    List<String>? op;
-    if (json["op"] != null) {
-      final dynamic jsonOp = _getJsonValue(json, "op", parsedJsonFields);
-      if (jsonOp is String) {
-        op = [jsonOp];
-      } else if (jsonOp is List<dynamic>) {
-        op = jsonOp.whereType<String>().toList(growable: false);
-      }
-    }
-
-    String contentType = "application/json";
-    if (json["contentType"] != null) {
-      final dynamic jsonContentType =
-          _getJsonValue(json, "contentType", parsedJsonFields);
-      if (jsonContentType is String) {
-        contentType = jsonContentType;
-      }
-    }
-
-    List<String>? security;
-    if (json["security"] != null) {
-      final dynamic jsonSecurity =
-          _getJsonValue(json, "security", parsedJsonFields);
-      if (jsonSecurity is String) {
-        security = [jsonSecurity];
-      } else if (jsonSecurity is List<dynamic>) {
-        security = jsonSecurity.whereType<String>().toList(growable: false);
-      }
-    }
-
-    List<String>? scopes;
-    if (json["scopes"] != null) {
-      final dynamic jsonScopes =
-          _getJsonValue(json, "scopes", parsedJsonFields);
-      if (jsonScopes is String) {
-        scopes = [jsonScopes];
-      } else if (jsonScopes is List<dynamic>) {
-        scopes = jsonScopes.whereType<String>().toList(growable: false);
-      }
-    }
-
-    ExpectedResponse? response;
-    if (json["response"] != null) {
-      final dynamic jsonResponse =
-          _getJsonValue(json, "response", parsedJsonFields);
-      if (jsonResponse is Map<String, dynamic>) {
-        response = ExpectedResponse.fromJson(jsonResponse);
-      }
-    }
-
-    List<AdditionalExpectedResponse>? additionalResponses;
-    if (json["additionalResponses"] != null) {
-      final dynamic jsonResponse =
-          _getJsonValue(json, "additionalResponses", parsedJsonFields);
-      if (jsonResponse is Map<String, dynamic>) {
-        additionalResponses = [
-          AdditionalExpectedResponse.fromJson(jsonResponse, contentType)
-        ];
-      } else if (jsonResponse is List<dynamic>) {
-        additionalResponses = [];
-        for (final entry in jsonResponse) {
-          if (entry is Map<String, dynamic>) {
-            additionalResponses
-                .add(AdditionalExpectedResponse.fromJson(entry, contentType));
-          }
-        }
-      }
-    }
-
-    final additionalFields = _parseAdditionalFields(json, parsedJsonFields,
-        interactionAffordance.thingDescription.prefixMapping);
-
-    return Form(href, interactionAffordance,
-        contentType: contentType,
-        subprotocol: subprotocol,
-        op: op,
-        scopes: scopes,
-        security: security,
-        response: response,
-        additionalResponses: additionalResponses,
-        additionalFields: additionalFields);
   }
 
   static List<OperationType> _setOpValue(
@@ -245,8 +245,8 @@ class Form {
       return [OperationType.subscribeevent, OperationType.unsubscribeevent];
     }
 
-    throw StateError("Encountered unknown InteractionAffordance "
-        "${interactionAffordance.runtimeType} encountered");
+    throw StateError('Encountered unknown InteractionAffordance '
+        '${interactionAffordance.runtimeType} encountered');
   }
 
   static dynamic _getJsonValue(Map<String, dynamic> formJson, String key,
@@ -256,20 +256,20 @@ class Form {
   }
 
   static String _expandCurieKey(String key, PrefixMapping prefixMapping) {
-    if (key.contains(":")) {
-      final prefix = key.split(":")[0];
+    if (key.contains(':')) {
+      final prefix = key.split(':')[0];
       if (prefixMapping.getPrefixValue(prefix) != null) {
-        key = prefixMapping.expandCurieString(key);
+        return prefixMapping.expandCurieString(key);
       }
     }
     return key;
   }
 
   static dynamic _expandCurieValue(dynamic value, PrefixMapping prefixMapping) {
-    if (value is String && value.contains(":")) {
-      final prefix = value.split(":")[0];
+    if (value is String && value.contains(':')) {
+      final prefix = value.split(':')[0];
       if (prefixMapping.getPrefixValue(prefix) != null) {
-        value = prefixMapping.expandCurieString(value);
+        return prefixMapping.expandCurieString(value);
       }
     } else if (value is Map<String, dynamic>) {
       return value.map<String, dynamic>((key, dynamic oldValue) {
@@ -320,16 +320,16 @@ class Form {
         hrefUriVariables.where((element) => !uriVariables.containsKey(element));
 
     if (missingTdDefinitions.isNotEmpty) {
-      throw UriVariableException("$missingTdDefinitions do not have defined "
-          "uriVariables in the TD");
+      throw UriVariableException('$missingTdDefinitions do not have defined '
+          'uriVariables in the TD');
     }
 
     final missingUserInput = hrefUriVariables
         .where((element) => !affordanceUriVariables.containsKey(element));
 
     if (missingUserInput.isNotEmpty) {
-      throw UriVariableException("$missingUserInput did not have defined "
-          "Values in the provided InteractionOptions.");
+      throw UriVariableException('$missingUserInput did not have defined '
+          'Values in the provided InteractionOptions.');
     }
 
     // We now assert that all user provided values comply to the Schema
@@ -339,20 +339,20 @@ class Form {
       final value = affordanceUriVariable.value;
 
       if (value == null) {
-        throw ValidationException("Missing schema for URI variable $key");
+        throw ValidationException('Missing schema for URI variable $key');
       }
 
       final schema = JsonSchema.create(value);
       final result = schema.validate(uriVariables[key]);
 
       if (!result.isValid) {
-        throw ValidationException("Invalid type for URI variable $key");
+        throw ValidationException('Invalid type for URI variable $key');
       }
     }
   }
 
   List<String> _filterUriVariables(Uri href) {
-    final regex = RegExp(r"{[?+#./;&]?([^}]*)}");
+    final regex = RegExp('{[?+#./;&]?([^}]*)}');
     final decodedUri = Uri.decodeFull(href.toString());
     return regex
         .allMatches(decodedUri)
@@ -380,13 +380,13 @@ class Form {
     }
 
     if (affordanceUriVariables.isEmpty) {
-      throw UriVariableException("The Form href $href contains URI "
-          "variables but the TD does not provide a uriVariables definition.");
+      throw UriVariableException('The Form href $href contains URI '
+          'variables but the TD does not provide a uriVariables definition.');
     }
 
     if (uriVariables == null) {
-      throw ValidationException("The Form href $href contains URI variables "
-          "but no values were provided as InteractionOptions.");
+      throw ValidationException('The Form href $href contains URI variables '
+          'but no values were provided as InteractionOptions.');
     }
 
     // Perform additional validation
@@ -409,14 +409,14 @@ class Form {
 ///
 /// [URI variables]: https://www.w3.org/TR/wot-thing-description11/#form-uriVariables
 class UriVariableException implements Exception {
-  /// The error [message].
-  final String message;
-
   /// Constructor.
   UriVariableException(this.message);
 
+  /// The error [message].
+  final String message;
+
   @override
   String toString() {
-    return "$runtimeType: $message";
+    return 'UriVariableException: $message';
   }
 }

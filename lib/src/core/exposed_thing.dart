@@ -14,6 +14,23 @@ import 'servient.dart';
 
 /// Implemention of the [scripting_api.ExposedThing] interface.
 class ExposedThing implements scripting_api.ExposedThing {
+  /// Creates a new [ExposedThing] from a [servient] and an [exposedThingInit].
+  ExposedThing(this.servient, ExposedThingInit exposedThingInit)
+      : thingDescription =
+            ThingDescription.fromJson(exposedThingInit, validate: false) {
+    title = thingDescription.title;
+    id = thingDescription.id;
+  }
+
+  /// Creates an [ExposedThing] from a [ThingModel].
+  ///
+  // TODO(JKRhb): Additional parameters for bindings etc. might be needed
+  ExposedThing.fromThingModel(this.servient, ThingModel thingModel)
+      : thingDescription = ThingDescription.fromThingModel(thingModel) {
+    title = thingDescription.title;
+    id = thingDescription.id;
+  }
+
   @override
   final ThingDescription thingDescription;
 
@@ -34,23 +51,6 @@ class ExposedThing implements scripting_api.ExposedThing {
 
   /// A [Map] of all the [events] of this [ExposedThing].
   final Map<String, Event>? events = {};
-
-  /// Creates a new [ExposedThing] from a [servient] and an [exposedThingInit].
-  ExposedThing(this.servient, ExposedThingInit exposedThingInit)
-      : thingDescription =
-            ThingDescription.fromJson(exposedThingInit, validate: false) {
-    title = thingDescription.title;
-    id = thingDescription.id;
-  }
-
-  /// Creates an [ExposedThing] from a [ThingModel].
-  ///
-  // TODO(JKRhb): Additional parameters for bindings etc. might be needed
-  ExposedThing.fromThingModel(this.servient, ThingModel thingModel)
-      : thingDescription = ThingDescription.fromThingModel(thingModel) {
-    title = thingDescription.title;
-    id = thingDescription.id;
-  }
 
   @override
   Future<void> emitPropertyChange(String name) {

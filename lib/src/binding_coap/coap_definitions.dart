@@ -11,7 +11,7 @@ import '../definitions/form.dart';
 
 /// [PrefixMapping] for expanding CoAP Vocabulary terms from compact IRIs.
 final coapPrefixMapping =
-    PrefixMapping(defaultPrefixValue: "http://www.example.org/coap-binding#");
+    PrefixMapping(defaultPrefixValue: 'http://www.example.org/coap-binding#');
 
 /// Defines the available CoAP request methods.
 enum CoapRequestMethod {
@@ -54,13 +54,13 @@ enum CoapRequestMethod {
 
   static CoapRequestMethod? _fromString(String stringValue) {
     switch (stringValue) {
-      case "POST":
+      case 'POST':
         return CoapRequestMethod.post;
-      case "PUT":
+      case 'PUT':
         return CoapRequestMethod.put;
-      case "DELETE":
+      case 'DELETE':
         return CoapRequestMethod.delete;
-      case "GET":
+      case 'GET':
         return CoapRequestMethod.get;
       default:
         return null;
@@ -70,7 +70,7 @@ enum CoapRequestMethod {
   /// Determines the [CoapRequestMethod] to use based on a given [form].
   static CoapRequestMethod? fromForm(Form form) {
     final curieString =
-        coapPrefixMapping.expandCurie(Curie(reference: "method"));
+        coapPrefixMapping.expandCurie(Curie(reference: 'method'));
     final dynamic formDefinition = form.additionalFields[curieString];
     if (formDefinition is String) {
       final requestMethod = CoapRequestMethod._fromString(formDefinition);

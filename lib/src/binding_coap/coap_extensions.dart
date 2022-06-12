@@ -21,7 +21,7 @@ extension InternetAddressMethods on Uri {
 extension CoapFormExtension on Form {
   /// Get the [CoapSubprotocol] for this [Form], if one is set.
   CoapSubprotocol? get coapSubprotocol {
-    if (subprotocol == coapPrefixMapping.expandCurieString("observe")) {
+    if (subprotocol == coapPrefixMapping.expandCurieString('observe')) {
       return CoapSubprotocol.observe;
     }
 
@@ -42,17 +42,17 @@ extension CoapFormExtension on Form {
 
   /// The Content-Format for CoAP request and response payloads.
   int get format {
-    return _determineContentFormat("format");
+    return _determineContentFormat('format');
   }
 
   /// The Content-Format for the Accept option CoAP request and response
   /// payloads.
   int get accept {
-    return _determineContentFormat("accept");
+    return _determineContentFormat('accept');
   }
 
   int? _determineBlockSize(String fieldName) {
-    const _blockwiseVocabularyName = "blockwise";
+    const _blockwiseVocabularyName = 'blockwise';
     final curieString =
         coapPrefixMapping.expandCurieString(_blockwiseVocabularyName);
     final dynamic formDefinition = additionalFields[curieString];
@@ -73,10 +73,10 @@ extension CoapFormExtension on Form {
   }
 
   /// Indicates the Block2 size preferred by a server.
-  int? get block2Size => _determineBlockSize("block2SZX");
+  int? get block2Size => _determineBlockSize('block2SZX');
 
   /// Indicates the Block1 size preferred by a server.
-  int? get block1Size => _determineBlockSize("block1SZX");
+  int? get block1Size => _determineBlockSize('block1SZX');
 }
 
 /// Extension for determining the corresponding [CoapRequestMethod] and

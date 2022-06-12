@@ -12,16 +12,6 @@ import 'interaction_affordance.dart';
 
 /// Class representing an [Event] Affordance in a Thing Description.
 class Event extends InteractionAffordance {
-  /// Defines data that needs to be passed upon [subscription].
-  DataSchema? subscription;
-
-  /// Defines the [DataSchema] of the Event instance messages pushed by the
-  /// Thing.
-  DataSchema? data;
-
-  /// Defines any data that needs to be passed to cancel a subscription.
-  DataSchema? cancellation;
-
   /// Creates a new [Event] from a [List] of [forms].
   Event(super.forms, super.thingDescription);
 
@@ -32,6 +22,16 @@ class Event extends InteractionAffordance {
     parseAffordanceFields(json, prefixMapping);
     _parseEventFields(json);
   }
+
+  /// Defines data that needs to be passed upon [subscription].
+  DataSchema? subscription;
+
+  /// Defines the [DataSchema] of the Event instance messages pushed by the
+  /// Thing.
+  DataSchema? data;
+
+  /// Defines any data that needs to be passed to cancel a subscription.
+  DataSchema? cancellation;
 
   void _parseEventFields(Map<String, dynamic> json) {
     subscription = DataSchema.fromJson(json);

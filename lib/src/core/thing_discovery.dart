@@ -13,21 +13,27 @@ import 'servient.dart';
 
 /// Custom [Exception] that is thrown when the discovery process fails.
 class DiscoveryException implements Exception {
-  /// The error message of this exception.
-  final String message;
-
   /// Creates a new [DiscoveryException] with the specified error [message].
   DiscoveryException(this.message);
 
+  /// The error message of this exception.
+  final String message;
+
   @override
   String toString() {
-    return "$runtimeType: $message";
+    return 'DiscoveryException: $message';
   }
 }
 
 /// Implemention of the [scripting_api.ThingDiscovery] interface.
 class ThingDiscovery extends Stream<ThingDescription>
     implements scripting_api.ThingDiscovery {
+  /// Creates a new [ThingDiscovery] object with a given [thingFilter].
+  ThingDiscovery(this.thingFilter, Servient servient)
+      : _client = servient.clientFor(thingFilter.url.scheme) {
+    _stream = _start();
+  }
+
   bool _active = true;
 
   @override
@@ -40,19 +46,12 @@ class ThingDiscovery extends Stream<ThingDescription>
 
   final ProtocolClient _client;
 
-  /// Creates a new [ThingDiscovery] object with a given [thingFilter].
-  ThingDiscovery(this.thingFilter, Servient servient)
-      : _client = servient.clientFor(thingFilter.url.scheme) {
-    _stream = _start();
-  }
-
   Stream<ThingDescription> _start() async* {
     final discoveryMethod = thingFilter.method;
 
     switch (discoveryMethod) {
       case scripting_api.DiscoveryMethod.direct:
-        yield* _client.discoverDirectly(thingFilter.url,
-            disableMulticast: false);
+        yield* _client.discoverDirectly(thingFilter.url);
         break;
       case scripting_api.DiscoveryMethod.coreLinkFormat:
         yield* _discoverWithCoreLinkFormat(thingFilter.url);

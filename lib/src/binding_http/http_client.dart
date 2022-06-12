@@ -26,7 +26,7 @@ import '../definitions/security/security_scheme.dart';
 import '../definitions/thing_description.dart';
 import '../scripting_api/subscription.dart';
 
-const _authorizationHeader = "Authorization";
+const _authorizationHeader = 'Authorization';
 
 /// Defines the available HTTP request methods.
 enum HttpRequestMethod {
@@ -49,13 +49,13 @@ enum HttpRequestMethod {
 /// Signature of Dart's method used for HTTP GET requests.
 ///
 /// Does not have a `body` or `encoding` parameter, in contrast to
-/// [_OtherHttpMethod].
-typedef _GetMethod = Future<Response> Function(Uri uri,
+/// [OtherHttpMethod].
+typedef GetMethod = Future<Response> Function(Uri uri,
     {Map<String, String> headers});
 
 /// Signature of Dart's methods used for HTTP POST, DELETE, PATCH, or PUT
 /// requests.
-typedef _OtherHttpMethod = Future<Response> Function(Uri uri,
+typedef OtherHttpMethod = Future<Response> Function(Uri uri,
     {Map<String, String>? headers, Object? body, Encoding? encoding});
 
 /// A [ProtocolClient] for the Hypertext Transfer Protocol (HTTP).
@@ -78,10 +78,10 @@ typedef _OtherHttpMethod = Future<Response> Function(Uri uri,
 /// [RFC 6750]: https://datatracker.ietf.org/doc/html/rfc6750
 /// [`ComboSecurityScheme`]: https://w3c.github.io/wot-thing-description/#combosecurityscheme
 class HttpClient extends ProtocolClient {
-  final ClientSecurityProvider? _clientSecurityProvider;
-
   /// Creates a new [HttpClient].
   HttpClient(this._clientSecurityProvider);
+
+  final ClientSecurityProvider? _clientSecurityProvider;
 
   Future<Response> _createRequest(
       Form form, OperationType operationType, Object? payload) async {
@@ -176,13 +176,13 @@ class HttpClient extends ProtocolClient {
   }
 
   static Map<String, String> _getHeadersFromForm(Form form) {
-    final Map<String, String> headers = {"Content-Type": form.contentType};
+    final Map<String, String> headers = {'Content-Type': form.contentType};
 
-    final dynamic formHeaders = form.additionalFields["htv:headers"];
+    final dynamic formHeaders = form.additionalFields['htv:headers'];
     if (formHeaders is List<Map<String, String>>) {
       for (final formHeader in formHeaders) {
-        final key = formHeader["htv:fieldName"];
-        final value = formHeader["htv:fieldValue"];
+        final key = formHeader['htv:fieldName'];
+        final value = formHeader['htv:fieldValue'];
 
         if (key != null && value != null) {
           headers[key] = value;
@@ -200,7 +200,7 @@ class HttpClient extends ProtocolClient {
   }
 
   static Content _contentFromResponse(Form form, Response response) {
-    final type = response.headers["Content-Type"] ?? form.contentType;
+    final type = response.headers['Content-Type'] ?? form.contentType;
     final body = Stream.value(response.bodyBytes);
     return Content(type, body);
   }
@@ -251,11 +251,11 @@ class HttpClient extends ProtocolClient {
         await _getCredentialsFromForm<BearerCredentials>(form);
 
     if (bearerCredentials != null) {
-      headers[_authorizationHeader] = "Bearer ${bearerCredentials.token}";
+      headers[_authorizationHeader] = 'Bearer ${bearerCredentials.token}';
     }
   }
 
-  static _GetMethod _determineGetMethod(
+  static GetMethod _determineGetMethod(
       Map<String, String> headers,
       DigestCredentials? digestCredentials,
       BasicCredentials? basicCredentials) {
@@ -278,7 +278,7 @@ class HttpClient extends ProtocolClient {
     }
   }
 
-  static _OtherHttpMethod _determineHttpMethod(
+  static OtherHttpMethod _determineHttpMethod(
       Map<String, String> headers,
       HttpRequestMethod requestMethod,
       DigestCredentials? digestCredentials,
@@ -308,7 +308,7 @@ class HttpClient extends ProtocolClient {
       case HttpRequestMethod.put:
         return digestClient?.put ?? basicClient?.put ?? put;
       default:
-        throw ArgumentError("Invalid HTTP method specified.");
+        throw ArgumentError('Invalid HTTP method specified.');
     }
   }
 
@@ -317,7 +317,7 @@ class HttpClient extends ProtocolClient {
   //              https://github.com/w3c/wot-discovery/pull/313/files
   Stream<ThingDescription> discoverDirectly(Uri uri,
       {bool disableMulticast = false}) async* {
-    final response = await get(uri, headers: {"Accept": "application/td+json"});
+    final response = await get(uri, headers: {'Accept': 'application/td+json'});
     final rawThingDescription = response.body;
     yield ThingDescription(rawThingDescription);
   }
@@ -329,7 +329,7 @@ class HttpClient extends ProtocolClient {
     final discoveryUri = createCoreLinkFormatDiscoveryUri(uri);
 
     final response =
-        await get(discoveryUri, headers: {"Accept": "application/link-format"});
+        await get(discoveryUri, headers: {'Accept': 'application/link-format'});
 
     yield* Stream.fromIterable(
         parseCoreLinkFormat(response.body, discoveryUri));
@@ -355,15 +355,15 @@ HttpRequestMethod _requestMethodFromOperationType(OperationType operationType) {
 
 HttpRequestMethod? _requestMethodFromString(String formDefinition) {
   switch (formDefinition) {
-    case "POST":
+    case 'POST':
       return HttpRequestMethod.post;
-    case "PUT":
+    case 'PUT':
       return HttpRequestMethod.put;
-    case "DELETE":
+    case 'DELETE':
       return HttpRequestMethod.delete;
-    case "GET":
+    case 'GET':
       return HttpRequestMethod.get;
-    case "PATCH":
+    case 'PATCH':
       return HttpRequestMethod.patch;
     default:
       return null;
@@ -371,7 +371,7 @@ HttpRequestMethod? _requestMethodFromString(String formDefinition) {
 }
 
 HttpRequestMethod _getRequestMethod(Form form, OperationType operationType) {
-  final dynamic formDefinition = form.additionalFields["htv:methodName"];
+  final dynamic formDefinition = form.additionalFields['htv:methodName'];
   if (formDefinition is String) {
     final requestMethod = _requestMethodFromString(formDefinition);
     if (requestMethod != null) {
