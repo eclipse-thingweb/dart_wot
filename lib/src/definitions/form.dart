@@ -8,6 +8,7 @@ import 'package:curie/curie.dart';
 import 'package:json_schema3/json_schema3.dart';
 import 'package:uri/uri.dart';
 
+import 'additional_expected_response.dart';
 import 'expected_response.dart';
 import 'interaction_affordances/action.dart';
 import 'interaction_affordances/event.dart';
@@ -52,6 +53,14 @@ class Form {
   /// The [response] a consumer can expect from interacting with this [Form].
   ExpectedResponse? response;
 
+  /// This optional term can be used if additional expected responses are
+  /// possible, e.g. for error reporting.
+  ///
+  /// Each additional response needs to be distinguished from others in some way
+  /// (for example, by specifying a protocol-specific error code), and may also
+  ///  have its own data schema.
+  List<AdditionalExpectedResponse>? additionalResponses;
+
   /// Additional fields collected during the parsing of a JSON object.
   final Map<String, dynamic> additionalFields = <String, dynamic>{};
 
@@ -85,6 +94,7 @@ class Form {
       List<String>? op,
       this.scopes,
       this.response,
+      this.additionalResponses,
       Map<String, dynamic>? additionalFields})
       : resolvedHref = _expandHref(href, interactionAffordance),
         securityDefinitions =
@@ -181,6 +191,25 @@ class Form {
       }
     }
 
+    List<AdditionalExpectedResponse>? additionalResponses;
+    if (json["additionalResponses"] != null) {
+      final dynamic jsonResponse =
+          _getJsonValue(json, "additionalResponses", parsedJsonFields);
+      if (jsonResponse is Map<String, dynamic>) {
+        additionalResponses = [
+          AdditionalExpectedResponse.fromJson(jsonResponse, contentType)
+        ];
+      } else if (jsonResponse is List<dynamic>) {
+        additionalResponses = [];
+        for (final entry in jsonResponse) {
+          if (entry is Map<String, dynamic>) {
+            additionalResponses
+                .add(AdditionalExpectedResponse.fromJson(entry, contentType));
+          }
+        }
+      }
+    }
+
     final additionalFields = _parseAdditionalFields(json, parsedJsonFields,
         interactionAffordance.thingDescription.prefixMapping);
 
@@ -191,6 +220,7 @@ class Form {
         scopes: scopes,
         security: security,
         response: response,
+        additionalResponses: additionalResponses,
         additionalFields: additionalFields);
   }
 

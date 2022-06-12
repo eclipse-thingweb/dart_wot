@@ -7,6 +7,10 @@
 import 'helper_functions.dart';
 import 'security_scheme.dart';
 
+const _defaultInValue = "header";
+
+const _defaultQoPValue = "auth";
+
 /// Digest Access Authentication security configuration identified by the
 /// Vocabulary Term `digest`.
 class DigestSecurityScheme extends SecurityScheme {
@@ -14,13 +18,17 @@ class DigestSecurityScheme extends SecurityScheme {
   String get scheme => "digest";
 
   /// Name for query, header, cookie, or uri parameters.
-  String? name;
+  final String? name;
+
+  String? _in;
 
   /// Specifies the location of security authentication information.
-  late String in_ = "header";
+  String get in_ => _in ?? _defaultInValue;
+
+  String? _qop;
 
   /// Quality of protection.
-  late String qop = "auth";
+  String get qop => _qop ?? _defaultQoPValue;
 
   final List<String> _parsedJsonFields = [];
 
@@ -32,37 +40,42 @@ class DigestSecurityScheme extends SecurityScheme {
       String? in_,
       String? qop,
       Map<String, String>? descriptions})
-      : in_ = in_ ?? "header",
-        qop = qop ?? "auth" {
+      : _in = in_,
+        _qop = qop {
     this.description = description;
     this.descriptions.addAll(descriptions ?? {});
   }
 
-  dynamic _getJsonValue(Map<String, dynamic> json, String key) {
-    _parsedJsonFields.add(key);
+  static dynamic _getJsonValue(Map<String, dynamic> json, String key,
+      [List<String>? parsedJsonFields]) {
+    parsedJsonFields?.add(key);
     return json[key];
   }
 
-  /// Creates a [DigestSecurityScheme] from a [json] object.
-  DigestSecurityScheme.fromJson(Map<String, dynamic> json) {
-    _parsedJsonFields.addAll(parseSecurityJson(this, json));
-
-    final dynamic jsonIn = _getJsonValue(json, "in");
-    if (jsonIn is String) {
-      in_ = jsonIn;
-      _parsedJsonFields.add("in");
-    }
-
-    final dynamic jsonQop = _getJsonValue(json, "qop");
-    if (jsonQop is String) {
-      qop = jsonQop;
-      _parsedJsonFields.add("qop");
-    }
-
+  static String? _parseNameJson(Map<String, dynamic> json) {
     final dynamic jsonName = _getJsonValue(json, "name");
     if (jsonName is String) {
-      name = jsonName;
-      _parsedJsonFields.add("name");
+      return jsonName;
+    }
+
+    return null;
+  }
+
+  /// Creates a [DigestSecurityScheme] from a [json] object.
+  DigestSecurityScheme.fromJson(Map<String, dynamic> json)
+      : name = _parseNameJson(json) {
+    _parsedJsonFields
+      ..addAll(parseSecurityJson(this, json))
+      ..add("name");
+
+    final dynamic jsonIn = _getJsonValue(json, "in", _parsedJsonFields);
+    if (jsonIn is String) {
+      _in = jsonIn;
+    }
+
+    final dynamic jsonQop = _getJsonValue(json, "qop", _parsedJsonFields);
+    if (jsonQop is String) {
+      _qop = jsonQop;
     }
 
     parseAdditionalFields(additionalFields, json, _parsedJsonFields);

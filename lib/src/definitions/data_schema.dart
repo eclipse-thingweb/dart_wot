@@ -13,6 +13,21 @@ void parseDataSchemaJson(DataSchema dataSchema, Map<String, dynamic> json) {
   } else if (atType is List<String>) {
     dataSchema.atType = atType;
   }
+
+  final Object? type = json["type"];
+  if (type is String) {
+    dataSchema.type = type;
+  }
+
+  final Object? readOnly = json["readOnly"];
+  if (readOnly is bool) {
+    dataSchema.readOnly = readOnly;
+  }
+
+  final Object? writeOnly = json["writeOnly"];
+  if (writeOnly is bool) {
+    dataSchema.writeOnly = writeOnly;
+  }
 }
 
 /// Metadata that describes the data format used. It can be used for validation.

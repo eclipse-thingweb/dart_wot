@@ -7,6 +7,7 @@
 import 'dart:convert';
 
 import 'package:dart_wot/dart_wot.dart';
+import 'package:dart_wot/src/definitions/additional_expected_response.dart';
 import 'package:dart_wot/src/definitions/context_entry.dart';
 import 'package:dart_wot/src/definitions/expected_response.dart';
 import 'package:dart_wot/src/definitions/interaction_affordances/property.dart';
@@ -78,6 +79,10 @@ void main() {
         "response": {
           "contentType": "application/json"
         },
+        "additionalResponses": {
+          "success": false,
+          "schema": "hallo"
+        },
         "op": ["writeproperty", "readproperty"],
         "test": "test"
       }""");
@@ -92,6 +97,10 @@ void main() {
           form3.op, [OperationType.writeproperty, OperationType.readproperty]);
       expect(form3.scopes, ["test1", "test2"]);
       expect(form3.response?.contentType, "application/json");
+      expect(form3.additionalResponses, [
+        AdditionalExpectedResponse("application/json",
+            success: false, schema: "hallo")
+      ]);
       expect(form3.additionalFields, {"test": "test"});
 
       final dynamic form4Json = jsonDecode("""
@@ -115,6 +124,113 @@ void main() {
           () => Form.fromJson(
               form5Json as Map<String, dynamic>, interactionAffordance),
           throwsException);
+
+      final dynamic form6Json = jsonDecode("""
+      {
+        "href": "https://example.org",
+        "contentType": "application/cbor",
+        "additionalResponses": [
+          {
+            "schema": "hallo"
+          }, {
+            "contentType": "text/plain"
+          }
+        ],
+        "op": ["writeproperty", "readproperty"],
+        "test": "test"
+      }""");
+
+      final form6 = Form.fromJson(
+          form6Json as Map<String, dynamic>, interactionAffordance);
+
+      final additionalResponses = form6.additionalResponses;
+
+      final additionalResponse1 = additionalResponses![0];
+      final additionalResponse2 = additionalResponses[1];
+
+      expect(additionalResponse1.contentType, "application/cbor");
+      expect(additionalResponse1.schema, "hallo");
+      expect(additionalResponse1.success, false);
+
+      expect(additionalResponse2.contentType, "text/plain");
+      expect(additionalResponse2.schema, null);
+    });
+
+    test("should correctly parse actions", () {
+      final validThingDescription = {
+        "@context": "https://www.w3.org/2022/wot/td/v1.1",
+        "title": "MyLampThing",
+        "security": "nosec_sc",
+        "securityDefinitions": {
+          "nosec_sc": {"scheme": "nosec"}
+        },
+        "actions": {
+          "action": {
+            "safe": true,
+            "idempotent": true,
+            "synchronous": true,
+            "forms": [
+              {"href": "https://example.org"}
+            ]
+          },
+          "actionWithDefaults": {
+            "forms": [
+              {"href": "https://example.org"}
+            ]
+          }
+        }
+      };
+
+      final thingDescription = ThingDescription.fromJson(validThingDescription);
+
+      final action = thingDescription.actions["action"];
+      expect(action?.safe, true);
+      expect(action?.idempotent, true);
+      expect(action?.synchronous, true);
+
+      final actionWithDefaults = thingDescription.actions["actionWithDefaults"];
+      expect(actionWithDefaults?.safe, false);
+      expect(actionWithDefaults?.idempotent, false);
+      expect(actionWithDefaults?.synchronous, null);
+    });
+
+    test("should correctly parse properties", () {
+      final validThingDescription = {
+        "@context": "https://www.w3.org/2022/wot/td/v1.1",
+        "title": "MyLampThing",
+        "security": "nosec_sc",
+        "securityDefinitions": {
+          "nosec_sc": {"scheme": "nosec"}
+        },
+        "properties": {
+          "property": {
+            "writeOnly": true,
+            "readOnly": true,
+            "observable": true,
+            "forms": [
+              {"href": "https://example.org"}
+            ]
+          },
+          "propertyWithDefaults": {
+            "forms": [
+              {"href": "https://example.org"}
+            ]
+          }
+        }
+      };
+
+      final thingDescription = ThingDescription.fromJson(validThingDescription);
+
+      final property = thingDescription.properties["property"];
+      expect(property?.writeOnly, true);
+      expect(property?.readOnly, true);
+      expect(property?.observable, true);
+
+      final propertyWithDefaults =
+          thingDescription.properties["propertyWithDefaults"];
+      expect(propertyWithDefaults?.writeOnly, false);
+      expect(propertyWithDefaults?.readOnly, false);
+      expect(propertyWithDefaults?.observable, false);
     });
   });
 }
