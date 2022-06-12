@@ -24,7 +24,6 @@ Future<void> main(List<String> args) async {
   await for (final thingDescription in wot.discover(
     ThingFilter(
       url: Uri.parse('coap://plugfest.thingweb.io:5683/testthing'),
-      method: DiscoveryMethod.direct,
     ),
   )) {
     final consumedThing = await wot.consume(thingDescription);
