@@ -10,12 +10,17 @@ import 'discovery_method.dart';
 ///
 /// See [WoT Scripting API Specification, Section 10.3][spec link].
 ///
+/// Note that the default method here is set to [DiscoveryMethod.direct] instead
+/// of [DiscoveryMethod.directory], contrary to the Scripting API specification.
+/// This might change in future versions, depending on how his part of the
+/// specification is going to evolve.
+///
 /// [spec link]: https://w3c.github.io/wot-scripting-api/#the-thingfilter-dictionary
 class ThingFilter {
   /// Constructor.
   ThingFilter({
     required this.url,
-    this.method = DiscoveryMethod.directory,
+    this.method = DiscoveryMethod.direct,
     this.fragment,
   });
 
