@@ -68,7 +68,12 @@ class ThingDiscovery extends Stream<ThingDescription>
   }
 
   Stream<ThingDescription> _discoverWithCoreLinkFormat(Uri uri) async* {
+    final Set<Uri> discoveredUris = {};
     await for (final coreWebLink in _client.discoverWithCoreLinkFormat(uri)) {
+      if (discoveredUris.contains(coreWebLink)) {
+        continue;
+      }
+      discoveredUris.add(coreWebLink);
       yield* _client.discoverDirectly(coreWebLink, disableMulticast: true);
     }
   }
