@@ -1,3 +1,7 @@
+# 0.19.1
+
+- fix: prevent CoRE Web Links from being fetched twice
+
 # 0.19.0
 
 - Breaking: Set direct as default Discovery method
