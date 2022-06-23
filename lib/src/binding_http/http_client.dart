@@ -25,26 +25,9 @@ import '../definitions/security/digest_security_scheme.dart';
 import '../definitions/security/security_scheme.dart';
 import '../definitions/thing_description.dart';
 import '../scripting_api/subscription.dart';
+import 'http_request_method.dart';
 
 const _authorizationHeader = 'Authorization';
-
-/// Defines the available HTTP request methods.
-enum HttpRequestMethod {
-  /// Corresponds with the GET request method.
-  get,
-
-  /// Corresponds with the PUT request method.
-  put,
-
-  /// Corresponds with the POST request method.
-  post,
-
-  /// Corresponds with the DELETE request method.
-  delete,
-
-  /// Corresponds with the PATCH request method.
-  patch,
-}
 
 /// Signature of Dart's method used for HTTP GET requests.
 ///
@@ -94,7 +77,8 @@ class HttpClient extends ProtocolClient {
     OperationType operationType,
     Object? payload,
   ) async {
-    final requestMethod = _getRequestMethod(form, operationType);
+    final requestMethod =
+        HttpRequestMethod.getRequestMethod(form, operationType);
 
     final Future<Response> response;
     final Uri uri = form.resolvedHref;
@@ -376,50 +360,4 @@ class HttpClient extends ProtocolClient {
       parseCoreLinkFormat(response.body, discoveryUri),
     );
   }
-}
-
-HttpRequestMethod _requestMethodFromOperationType(OperationType operationType) {
-  // TODO(JKRhb): Handle observe/subscribe case
-  switch (operationType) {
-    case OperationType.readproperty:
-    case OperationType.readmultipleproperties:
-    case OperationType.readallproperties:
-      return HttpRequestMethod.get;
-    case OperationType.writeproperty:
-    case OperationType.writemultipleproperties:
-      return HttpRequestMethod.put;
-    case OperationType.invokeaction:
-      return HttpRequestMethod.post;
-    default:
-      throw UnimplementedError();
-  }
-}
-
-HttpRequestMethod? _requestMethodFromString(String formDefinition) {
-  switch (formDefinition) {
-    case 'POST':
-      return HttpRequestMethod.post;
-    case 'PUT':
-      return HttpRequestMethod.put;
-    case 'DELETE':
-      return HttpRequestMethod.delete;
-    case 'GET':
-      return HttpRequestMethod.get;
-    case 'PATCH':
-      return HttpRequestMethod.patch;
-    default:
-      return null;
-  }
-}
-
-HttpRequestMethod _getRequestMethod(Form form, OperationType operationType) {
-  final dynamic formDefinition = form.additionalFields['htv:methodName'];
-  if (formDefinition is String) {
-    final requestMethod = _requestMethodFromString(formDefinition);
-    if (requestMethod != null) {
-      return requestMethod;
-    }
-  }
-
-  return _requestMethodFromOperationType(operationType);
 }
