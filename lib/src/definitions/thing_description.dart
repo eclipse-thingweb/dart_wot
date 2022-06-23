@@ -14,6 +14,7 @@ import 'interaction_affordances/event.dart';
 import 'interaction_affordances/property.dart';
 import 'link.dart';
 import 'security/apikey_security_scheme.dart';
+import 'security/auto_security_scheme.dart';
 import 'security/basic_security_scheme.dart';
 import 'security/bearer_security_scheme.dart';
 import 'security/digest_security_scheme.dart';
@@ -291,6 +292,11 @@ class ThingDescription {
       if (value is Map<String, dynamic>) {
         SecurityScheme securityScheme;
         switch (value['scheme']) {
+          case 'auto':
+            {
+              securityScheme = AutoSecurityScheme.fromJson(value);
+              break;
+            }
           case 'basic':
             {
               securityScheme = BasicSecurityScheme.fromJson(value);

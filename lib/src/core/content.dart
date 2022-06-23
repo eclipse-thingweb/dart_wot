@@ -8,28 +8,6 @@ import 'dart:typed_data';
 
 import 'package:typed_data/typed_data.dart';
 
-/// Is thrown when the Deserialization of a [Content] object fails.
-class ContentDeserializationException implements Exception {
-  /// Creates a new [ContentDeserializationException] with an error [message].
-  ContentDeserializationException(this.message, this.error);
-
-  /// The error message associated with this [ContentDeserializationException].
-  final String message;
-
-  /// The original error.
-  final Object error;
-
-  @override
-  String toString() => 'ContentDeserializationException: $message';
-}
-
-void _onError(Object error) {
-  throw ContentDeserializationException(
-    'Error occurred when reading data from stream: $error',
-    error,
-  );
-}
-
 /// This class contains binary input or output data and indicates the media
 /// type this data is encoded in.
 class Content {
@@ -47,13 +25,9 @@ class Content {
   /// Converts the [body] of the content to a [ByteBuffer] asynchronously.
   Future<ByteBuffer> get byteBuffer async {
     final buffer = Uint8Buffer();
-    final subscription = body.listen(
-      buffer.addAll,
-      onError: _onError,
-      cancelOnError: true,
-    );
-    await subscription.asFuture<void>();
-    await subscription.cancel();
+    await for (final bytes in body) {
+      buffer.addAll(bytes);
+    }
     return buffer.buffer;
   }
 }
