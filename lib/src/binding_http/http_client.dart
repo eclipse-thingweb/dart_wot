@@ -242,9 +242,11 @@ class HttpClient extends ProtocolClient {
         .convert(inputBuffer.asUint8List().toList(growable: false));
   }
 
-  static Content _contentFromResponse(Form form, StreamedResponse response) {
+  Content _contentFromResponse(Form form, StreamedResponse response) {
     final type = response.headers['Content-Type'] ?? form.contentType;
-    return Content(type, response.stream);
+    final responseStream = response.stream.asBroadcastStream()
+      ..listen(null, onDone: stop);
+    return Content(type, responseStream);
   }
 
   @override
