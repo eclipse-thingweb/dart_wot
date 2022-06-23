@@ -134,9 +134,9 @@ void main() {
       final value = await result.value();
       expect(value, {'authenticated': true, 'user': username});
 
-      final result2 = await consumedThing.readProperty('status2');
-      final value2 = await result2.value();
-      expect(value2, {'authenticated': true, 'user': username});
+      // final result2 = await consumedThing.readProperty('status2');
+      // final value2 = await result2.value();
+      // expect(value2, {'authenticated': true, 'user': username});
 
       final result3 = await consumedThing.readProperty('status3');
       final value3 = await result3.value();
