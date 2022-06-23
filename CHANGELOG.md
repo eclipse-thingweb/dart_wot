@@ -1,3 +1,7 @@
+# 0.19.2
+
+- fix: temporarily set `coap` version to 4.1.0
+
 # 0.19.1
 
 - fix: prevent CoRE Web Links from being fetched twice
