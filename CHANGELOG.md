@@ -1,3 +1,11 @@
+# 0.20.0
+
+- feat: add data model for AutoSecurityScheme
+- refactor: refactor HttpRequestMethod as enhanced enum
+- feat(binding-http): rework security implementation, add security bootstrapping
+  for discovery
+- feat: add example for basic and auto security
+
 # 0.19.2
 
 - fix: temporarily set `coap` version to 4.1.0

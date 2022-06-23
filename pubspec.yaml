@@ -1,6 +1,6 @@
 name: dart_wot
 description: A W3C Web of Things implementation written in Dart. Supports interacting with Things using CoAP(S) and HTTP(S).
-version: 0.19.2
+version: 0.20.0
 homepage: https://github.com/namib-project/dart_wot
 
 environment:
