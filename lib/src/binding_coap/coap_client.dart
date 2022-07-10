@@ -368,16 +368,16 @@ class CoapClient extends ProtocolClient {
     yield* streamController.stream;
   }
 
-  Future<ThingDescription> _discoverFromUnicast(
+  Stream<ThingDescription> _discoverFromUnicast(
     coap.CoapClient client,
     Uri uri,
-  ) async {
+  ) async* {
     final response = await client.get(
       uri.path,
       accept: coap.CoapMediaType.applicationTdJson,
     );
     client.close();
-    return _handleDiscoveryResponse(response, uri);
+    yield _handleDiscoveryResponse(response, uri);
   }
 
   @override
@@ -393,7 +393,7 @@ class CoapClient extends ProtocolClient {
         yield* _discoverFromMulticast(client, uri);
       }
     } else {
-      yield await _discoverFromUnicast(client, uri);
+      yield* _discoverFromUnicast(client, uri);
     }
   }
 
