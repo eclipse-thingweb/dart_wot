@@ -6,6 +6,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:coap/coap.dart' as coap;
 import 'package:coap/config/coap_config_default.dart';
@@ -107,17 +108,17 @@ class _CoapRequest {
   //              limitations of the CoAP library
   Future<coap.CoapResponse> _makeRequest(
     String? payload, {
-    int format = coap.CoapMediaType.textPlain,
-    int accept = coap.CoapMediaType.textPlain,
+    coap.CoapMediaType format = coap.CoapMediaType.applicationJson,
+    coap.CoapMediaType accept = coap.CoapMediaType.applicationJson,
     int? block1Size,
     int? block2Size,
   }) async {
     // TODO: Add support for block2 size back in
 
     final request = _requestMethod.generateRequest()
-      ..uri = _requestUri
+      ..uriPath = _requestUri.path
       ..contentFormat = format
-      ..accept;
+      ..accept = accept;
 
     if (payload != null) {
       request.payload = Uint8Buffer()..addAll(payload.codeUnits);
@@ -132,10 +133,6 @@ class _CoapRequest {
 
     final response = await _coapClient.send(request);
     _coapClient.close();
-
-    if (response == null) {
-      throw CoapBindingException('Sending CoAP request to $_requestUri failed');
-    }
 
     return _handleResponse(request, response);
   }
@@ -231,8 +228,7 @@ class _CoapRequest {
 
     _checkAceProfile(aceCredentials);
 
-    final identity =
-        String.fromCharCodes(aceCredentials.accessToken.accessToken);
+    final identity = Uint8List.fromList(aceCredentials.accessToken.accessToken);
 
     final cnf = aceCredentials.accessToken.cnf;
 
@@ -242,7 +238,7 @@ class _CoapRequest {
       );
     }
 
-    final psk = String.fromCharCodes(cnf.serialize());
+    final psk = Uint8List.fromList(cnf.serialize());
 
     final client = coap.CoapClient(
       request.uri.replace(scheme: 'coaps'),
@@ -322,7 +318,8 @@ class _CoapRequest {
       block1Size: _form.block1Size,
       block2Size: _form.block2Size,
     );
-    final type = coap.CoapMediaType.name(response.contentFormat);
+    final type =
+        response.contentFormat?.contentType.toString() ?? _form.contentType;
     final body = _getPayloadFromResponse(response);
     return Content(type, body);
   }
@@ -336,7 +333,8 @@ class _CoapRequest {
         return;
       }
 
-      final type = coap.CoapMediaType.name(response.contentFormat);
+      final type =
+          response.contentFormat?.contentType.toString() ?? _form.contentType;
       final body = _getPayloadFromResponse(response);
       final content = Content(type, body);
       next(content);
@@ -557,12 +555,6 @@ class CoapClient extends ProtocolClient {
     final response = await coapClient.send(request);
 
     coapClient.close();
-
-    if (response == null) {
-      throw DiscoveryException(
-        'Got no CoRE Link Format Discovery response for $uri',
-      );
-    }
 
     final actualContentFormat = response.contentFormat;
     const expectedContentFormat = coap.CoapMediaType.applicationLinkFormat;
