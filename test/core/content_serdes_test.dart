@@ -45,5 +45,11 @@ void main() {
       () => contentSerdes.valueToContent(42, failingSchema, 'application/json'),
       throwsA(const TypeMatcher<ContentSerdesException>()),
     );
+
+    final testContent3 = _getTestContent('');
+    expect(
+      await contentSerdes.contentToValue(testContent3, null),
+      null,
+    );
   });
 }

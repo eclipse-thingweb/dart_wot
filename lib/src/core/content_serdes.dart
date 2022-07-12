@@ -230,6 +230,11 @@ class ContentSerdes {
 
     final bytes = await content.byteBuffer;
 
+    // TODO: Should null be returned in this case?
+    if (bytes.lengthInBytes == 0) {
+      return null;
+    }
+
     final codec = _getCodecFromMediaType(mimeType);
     if (codec != null) {
       final value = codec.bytesToValue(bytes, dataSchema, parameters);
