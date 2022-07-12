@@ -9,8 +9,8 @@ import 'package:dart_wot/src/core/content_serdes.dart';
 import 'package:dart_wot/src/definitions/data_schema.dart';
 import 'package:test/test.dart';
 
-Content _getTestContent() {
-  return Content('application/json', Stream<List<int>>.value('42'.codeUnits));
+Content _getTestContent(String input) {
+  return Content('application/json', Stream<List<int>>.value(input.codeUnits));
 }
 
 void main() {
@@ -23,7 +23,7 @@ void main() {
   test('Content Validation', () async {
     final contentSerdes = ContentSerdes();
 
-    final testContent1 = _getTestContent();
+    final testContent1 = _getTestContent('42');
     final successfulSchema =
         DataSchema.fromJson(<String, dynamic>{'type': 'number'});
 
@@ -32,7 +32,7 @@ void main() {
       42,
     );
 
-    final testContent2 = _getTestContent();
+    final testContent2 = _getTestContent('42');
     final failingSchema =
         DataSchema.fromJson(<String, dynamic>{'type': 'string'});
 
@@ -44,6 +44,12 @@ void main() {
     expect(
       () => contentSerdes.valueToContent(42, failingSchema, 'application/json'),
       throwsA(const TypeMatcher<ContentSerdesException>()),
+    );
+
+    final testContent3 = _getTestContent('');
+    expect(
+      await contentSerdes.contentToValue(testContent3, null),
+      null,
     );
   });
 }
