@@ -339,8 +339,7 @@ class CoapClient extends ProtocolClient {
     //               due to a bug in the CoAP library.
     final streamController = StreamController<ThingDescription>();
     final request = coap.CoapRequest(coap.CoapCode.get, confirmable: false)
-      // ignore: invalid_use_of_protected_member
-      ..uri = uri
+      ..uriPath = uri.path
       ..accept = coap.CoapMediaType.applicationTdJson;
     final multicastResponseHandler = coap.CoapMulticastResponseHandler(
       (data) {
@@ -406,8 +405,8 @@ class CoapClient extends ProtocolClient {
         coap.CoapClient(discoveryUri, _InternalCoapConfig(coapConfig, null));
 
     // TODO(JKRhb): Multicast could be supported here as well.
-    // ignore: invalid_use_of_protected_member
-    final request = coap.CoapRequest(coap.CoapCode.get)..uri = discoveryUri;
+    final request = coap.CoapRequest(coap.CoapCode.get)
+      ..uriPath = discoveryUri.path;
     final response = await coapClient.send(request);
 
     coapClient.close();
