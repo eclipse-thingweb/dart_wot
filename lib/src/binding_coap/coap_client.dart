@@ -406,7 +406,8 @@ class CoapClient extends ProtocolClient {
 
     // TODO(JKRhb): Multicast could be supported here as well.
     final request = coap.CoapRequest(coap.CoapCode.get)
-      ..uriPath = discoveryUri.path;
+      ..uriPath = discoveryUri.path
+      ..accept = coap.CoapMediaType.applicationLinkFormat;
     final response = await coapClient.send(request);
 
     coapClient.close();
