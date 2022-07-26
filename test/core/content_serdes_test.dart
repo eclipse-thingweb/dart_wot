@@ -58,7 +58,7 @@ void main() {
 
     expect(
       contentSerdes.supportedMediaTypes,
-      ['application/json', 'application/cbor'],
+      ['application/json', 'application/cbor', 'application/link-format'],
     );
 
     expect(
@@ -95,6 +95,16 @@ void main() {
     contentSerdes
       ..assignCodec('application/xml', JsonCodec())
       ..addOfferedMediaType('application/xml');
+
+    expect(
+      contentSerdes.supportedMediaTypes,
+      [
+        'application/json',
+        'application/cbor',
+        'application/link-format',
+        'application/xml',
+      ],
+    );
 
     expect(
       contentSerdes.offeredMediaTypes,
