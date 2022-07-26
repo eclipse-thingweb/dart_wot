@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:coap/coap.dart';
 
+import '../core/content.dart';
 import '../definitions/form.dart';
 import '../definitions/operation_type.dart';
+import '../definitions/security/psk_security_scheme.dart';
 import 'coap_definitions.dart';
 
 const _validBlockwiseValues = [16, 32, 64, 128, 256, 512, 1024];
@@ -19,6 +21,10 @@ extension InternetAddressMethods on Uri {
 
 /// CoAP-specific extensions for the [Form] class.
 extension CoapFormExtension on Form {
+  /// Determines if this [Form] supports the [PskSecurityScheme].
+  bool get usesPskScheme =>
+      securityDefinitions.whereType<PskSecurityScheme>().isNotEmpty;
+
   /// Get the [CoapSubprotocol] for this [Form], if one is set.
   CoapSubprotocol? get coapSubprotocol {
     if (subprotocol == coapPrefixMapping.expandCurieString('observe')) {
@@ -117,5 +123,31 @@ extension OperationTypeExtension on OperationType {
     }
 
     return null;
+  }
+}
+
+/// Extension for easily extracting the [content] from a [CoapResponse].
+extension ResponseExtension on CoapResponse {
+  Stream<List<int>> get _payloadStream {
+    final payload = this.payload;
+    if (payload != null) {
+      return Stream.value(payload);
+    } else {
+      return const Stream.empty();
+    }
+  }
+
+  String get _contentType {
+    // FIXME: Replace once new CoAP library version has been released.
+    if (contentFormat == CoapMediaType.undefined) {
+      return 'application/json';
+    }
+
+    return CoapMediaType.name(contentFormat);
+  }
+
+  /// Extract the [Content] of this [CoapResponse].
+  Content get content {
+    return Content(_contentType, _payloadStream);
   }
 }
