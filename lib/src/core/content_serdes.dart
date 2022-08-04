@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:http_parser/http_parser.dart';
@@ -12,25 +13,20 @@ import 'package:json_schema3/json_schema3.dart';
 
 import '../definitions/data_schema.dart';
 import 'codecs/cbor_codec.dart';
+import 'codecs/codec_media_type.dart';
 import 'codecs/content_codec.dart';
 import 'codecs/json_codec.dart';
 import 'content.dart';
 
-// TODO(JKRhb): Check if these constants are actually necessary
-/// Constant for the media type `application/json`.
-const jsonContentType = 'application/json';
-
-/// Constant for the media type `application/td+json`.
-const tdContentType = 'application/td+json';
-
-/// Constant for the media type `application/ld+json`.
-const jsonLdContentType = 'application/ld+json';
-
 /// Defines `application/json` as the default content type.
-const defaultContentType = jsonContentType;
+const defaultMediaType = 'application/json';
 
 /// Custom [Exception] that is thrown when Serialization or Deserialization
 /// fails.
+// TODO(JKRhb): Add codecs for text-based media types
+// TODO(JKRhb): Add codecs for XML based media types
+// TODO(JKRhb): Add codecs for Base64 media types
+// TODO(JKRhb): Add codec for OctetStream media type
 class ContentSerdesException implements Exception {
   /// Constructor.
   ContentSerdesException(this.message);
@@ -51,123 +47,95 @@ class ContentSerdesException implements Exception {
 class ContentSerdes {
   /// Creates a new [ContentSerdes] object which supports JSON and CBOR based
   /// media types by default.
-  ContentSerdes() {
-    _addDefaultCodecs();
-  }
+  ContentSerdes();
 
-  final Map<String, ContentCodec> _supportedCodecs = {};
-
-  final Map<String, String> _supportedContentTypes = {};
-
-  /// Codecs offered by a new ExposedThing.
-  Set<String> offeredContentTypes = {};
-
-  void _addDefaultCodecs() {
-    _supportedCodecs['JSON'] = JsonCodec();
-    _supportedCodecs['CBOR'] = CborCodec();
-
-    // TODO(JKRhb): Add codecs for text-based media types
-    // TODO(JKRhb): Add codecs for XML based media types
-    // TODO(JKRhb): Add codecs for Base64 media types
-    // TODO(JKRhb): Add codec for OctetStream media type
-    // TODO(JKRhb): Add codec for CoRE Link Format
-
-    _addDefaultJsonContentTypes();
-    _addDefaultCborContentTypes();
-  }
-
-  /// Adds support for a new [contentType] that has to use a [Codec] that has
-  /// previously been registered by using a [codecName] as key.
+  /// The supported codecs by this [ContentSerdes] object.
   ///
-  /// If the [contentType] is being [offered], then exposed Things will provide
-  /// additional Forms in their Thing Description.
-  void addContentTypeSupport(
-    String contentType,
-    String codecName, {
-    bool offered = false,
-  }) {
-    if (!_supportedCodecs.containsKey(codecName)) {
-      throw UnsupportedError('$codecName has no registered ContentCodec.');
-    }
+  /// Is initialized with support for JSON, CBOR, and the CoRE Link-Format.
+  final _codecs = {
+    CodecMediaType('application', 'json'): JsonCodec(),
+    CodecMediaType('application', 'cbor'): CborCodec(),
+  };
 
-    _supportedContentTypes[contentType] = codecName;
+  final Set<String> _offeredMediaTypes = {
+    'application/json',
+    'application/cbor'
+  };
 
-    if (offered) {
-      offeredContentTypes.add(contentType);
-    }
-  }
-
-  /// Adds the JSON based Content-Types that are supported by default.
-  void _addDefaultJsonContentTypes() {
-    addContentTypeSupport(jsonContentType, 'JSON', offered: true);
-
-    const jsonContentTypes = [
-      'application/json-patch+json',
-      'application/merge-patch+json',
-      'application/senml+json',
-      'application/sensml+json',
-      'application/coap-group+json',
-      'application/senml-etch+json',
-      tdContentType,
-      jsonLdContentType,
-    ];
-
-    for (final contentType in jsonContentTypes) {
-      addContentTypeSupport(contentType, 'JSON');
-    }
-  }
-
-  /// Adds the CBOR based Content-Types that are supported by default.
-  void _addDefaultCborContentTypes() {
-    addContentTypeSupport('application/cbor', 'CBOR', offered: true);
-
-    const cborContentTypes = [
-      'application/ace+cbor',
-      'application/senml+cbor',
-      'application/sensml+cbor',
-      'application/dots+cbor',
-      'application/senml-etch+cbor',
-    ];
-
-    for (final contentType in cborContentTypes) {
-      addContentTypeSupport(contentType, 'CBOR');
-    }
-  }
-
-  /// Registers a new [contentCodec] to a given [codecName].
-  void addCodec(ContentCodec contentCodec, String codecName) {
-    _supportedCodecs[codecName] = contentCodec;
-  }
-
-  /// Removes a [ContentCodec] with the given [codecName] from the registry.
+  /// Parses a [String]-based [mediaType] and adds it to the set of
+  /// [offeredMediaTypes].
   ///
-  /// Returns the [ContentCodec] in question if removal was successful and null
-  /// otherwise.
-  ContentCodec? removeCodec(String codecName) {
-    final contentCodec = _supportedCodecs.remove(codecName);
-    if (contentCodec != null) {
-      _supportedContentTypes.removeWhere((key, value) => value == codecName);
+  /// Throws an [HttpException] if the [mediaType] cannot be parsed and an
+  /// [ArgumentError] if the [mediaType] should not be supported.
+  void addOfferedMediaType(String mediaType) {
+    final parsedMediaType = ContentType.parse(mediaType).toString();
+    if (!isSupportedMediaType(parsedMediaType)) {
+      throw ArgumentError.value(
+        mediaType,
+        'addOfferedMediaType',
+        'Not a supported media type',
+      );
     }
-    return contentCodec;
+
+    _offeredMediaTypes.add(parsedMediaType);
+  }
+
+  /// Parses a [String]-based [mediaType] and removes it from the set of
+  /// [offeredMediaTypes].
+  ///
+  /// Throws an [HttpException] if the [mediaType] cannot be parsed.
+  void removeOfferedMediaType(String mediaType) {
+    final parsedMediaType = ContentType.parse(mediaType).toString();
+    _offeredMediaTypes.remove(parsedMediaType);
+  }
+
+  /// Register a new [codec] for a basic [codecMediaType].
+  ///
+  /// The [codecMediaType] should be a basic MIME-Type, consisting of a
+  /// primary type (like `text` or `application`) and a basic subtype (like
+  /// `plain` or`json`). Anything before a `+` (as in `application/td+json`)
+  /// in a subtype as well as parameters (like `charset=utf-8`) are ignored when
+  /// assigning the codec.
+  ///
+  /// Therefore, a codec assigned to `application/foo+bar;charset=utf-8` would
+  /// be applied to all Content-Types that are derived from `application/bar`
+  /// (like `application/baz+bar`, for example).
+  ///
+  /// If the [codecMediaType] cannot be parsed, an [ArgumentError] is thrown.
+  void assignCodec(
+    String codecMediaType,
+    ContentCodec codec,
+  ) {
+    final parsedMediaType = CodecMediaType.parse(codecMediaType);
+
+    if (parsedMediaType == null) {
+      throw ArgumentError.value(
+        codecMediaType,
+        'codecMediaType',
+        'Incorrect format',
+      );
+    }
+
+    _codecs[parsedMediaType] = codec;
   }
 
   /// Checks if a given [mediaType] is supported.
-  bool isSupportedMediaType(String mediaType) {
-    final String? codecName = _supportedContentTypes[mediaType];
-    return _supportedCodecs.containsKey(codecName);
-  }
+  bool isSupportedMediaType(String mediaType) =>
+      _getCodecFromMediaType(mediaType) != null;
 
-  /// Returns a [List] of supported media types.
-  List<String> get supportedMediaTypes =>
-      _supportedContentTypes.keys.toList(growable: false);
+  /// Returns a [List] of basic supported media types.
+  List<String> get supportedMediaTypes => _codecs.keys
+      .map((e) => '${e.prefix}/${e.suffix}')
+      .toList(growable: false);
 
   /// Returns a [List] of media types which are offered when a Thing is exposed.
   List<String> get offeredMediaTypes =>
-      offeredContentTypes.toList(growable: false);
+      _offeredMediaTypes.toList(growable: false);
 
   ContentCodec? _getCodecFromMediaType(String mediaType) {
-    final codecName = _supportedContentTypes[mediaType];
-    return _supportedCodecs[codecName];
+    final parsedMediaType = CodecMediaType.parse(mediaType);
+
+    return _codecs[parsedMediaType];
   }
 
   void _validateValue(Object? value, DataSchema? dataSchema) {
@@ -182,20 +150,20 @@ class ContentSerdes {
     }
   }
 
-  /// Converts an [Object] to a byte representation based on its [contentType].
+  /// Converts an [Object] to a byte representation based on its [mediaType].
   ///
   /// A [dataSchema] can be passed for validating the input [value] before the
   /// conversion.
   Content valueToContent(
     Object? value,
     DataSchema? dataSchema,
-    String? contentType,
+    String? mediaType,
   ) {
     _validateValue(value, dataSchema);
 
-    final resolvedContentType = contentType ?? defaultContentType;
+    final resolvedMediaType = mediaType ?? defaultMediaType;
 
-    final parsedMediaType = MediaType.parse(resolvedContentType);
+    final parsedMediaType = MediaType.parse(resolvedMediaType);
     final mimeType = parsedMediaType.mimeType;
     final parameters = parsedMediaType.parameters;
 
@@ -210,9 +178,8 @@ class ContentSerdes {
       bytes = utf8.encoder.convert(value.toString()).buffer;
     }
 
-    // TODO(JKRhb): Make sure this list does not need to be growable
     final byteList = bytes.asUint8List().toList(growable: false);
-    return Content(resolvedContentType, Stream.value(byteList));
+    return Content(resolvedMediaType, Stream.value(byteList));
   }
 
   /// Converts a [Content] object to a typed [Object].
