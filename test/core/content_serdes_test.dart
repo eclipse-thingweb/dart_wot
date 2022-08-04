@@ -4,6 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:dart_wot/src/core/codecs/json_codec.dart';
 import 'package:dart_wot/src/core/content.dart';
 import 'package:dart_wot/src/core/content_serdes.dart';
 import 'package:dart_wot/src/definitions/data_schema.dart';
@@ -50,6 +51,63 @@ void main() {
     expect(
       await contentSerdes.contentToValue(testContent3, null),
       null,
+    );
+  });
+  test('Codec Registration', () async {
+    final contentSerdes = ContentSerdes();
+
+    expect(
+      contentSerdes.supportedMediaTypes,
+      ['application/json', 'application/cbor'],
+    );
+
+    expect(
+      contentSerdes.offeredMediaTypes,
+      ['application/json', 'application/cbor'],
+    );
+
+    expect(
+      () => contentSerdes.addOfferedMediaType('application/xml'),
+      throwsArgumentError,
+    );
+
+    contentSerdes.addOfferedMediaType('application/td+json; charset=utf-8');
+
+    expect(
+      contentSerdes.offeredMediaTypes,
+      [
+        'application/json',
+        'application/cbor',
+        'application/td+json; charset=utf-8',
+      ],
+    );
+
+    contentSerdes.removeOfferedMediaType('application/json');
+
+    expect(
+      contentSerdes.offeredMediaTypes,
+      [
+        'application/cbor',
+        'application/td+json; charset=utf-8',
+      ],
+    );
+
+    contentSerdes
+      ..assignCodec('application/xml', JsonCodec())
+      ..addOfferedMediaType('application/xml');
+
+    expect(
+      contentSerdes.offeredMediaTypes,
+      [
+        'application/cbor',
+        'application/td+json; charset=utf-8',
+        'application/xml',
+      ],
+    );
+
+    expect(
+      () => contentSerdes.assignCodec('foo', JsonCodec()),
+      throwsArgumentError,
     );
   });
 }
