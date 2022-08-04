@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'dart:collection';
+
 import 'package:coap/coap.dart';
 import 'package:curie/curie.dart';
 
@@ -16,70 +18,55 @@ final coapPrefixMapping =
 /// Defines the available CoAP request methods.
 enum CoapRequestMethod {
   /// Corresponds with the GET request method.
-  get,
+  get(CoapCode.get, 'GET'),
 
   /// Corresponds with the PUT request method.
-  put,
+  put(CoapCode.put, 'PUT'),
 
   /// Corresponds with the POST request method.
-  post,
+  post(CoapCode.post, 'POST'),
 
   /// Corresponds with the DELETE request method.
-  delete,
+  delete(CoapCode.delete, 'DELETE'),
 
   /// Corresponds with the FETCH request method.
-  fetch,
+  fetch(CoapCode.notSet),
 
   /// Corresponds with the PATCH request method.
-  patch,
+  patch(CoapCode.notSet),
 
   /// Corresponds with the iPATCH request method.
-  ipatch;
+  ipatch(CoapCode.notSet);
 
-  /// Generate a new [CoapRequest] based on this [CoapRequestMethod].
-  CoapRequest generateRequest() {
-    switch (this) {
-      case CoapRequestMethod.get:
-        return CoapRequest.newGet();
-      case CoapRequestMethod.post:
-        return CoapRequest.newPost();
-      case CoapRequestMethod.put:
-        return CoapRequest.newPut();
-      case CoapRequestMethod.delete:
-        return CoapRequest.newDelete();
-      default:
-        throw UnimplementedError();
-    }
-  }
+  /// Constructor
+  const CoapRequestMethod(this.code, [this.stringValue]);
 
-  static CoapRequestMethod? _fromString(String stringValue) {
-    switch (stringValue) {
-      case 'POST':
-        return CoapRequestMethod.post;
-      case 'PUT':
-        return CoapRequestMethod.put;
-      case 'DELETE':
-        return CoapRequestMethod.delete;
-      case 'GET':
-        return CoapRequestMethod.get;
-      default:
-        return null;
-    }
-  }
+  /// The numeric code of this [CoapRequestMethod].
+  final int code;
+
+  /// The string value of this request method value (e.g., `GET` or `POST`).
+  final String? stringValue;
+
+  static final _registry = HashMap.fromEntries(
+    values
+        .where((element) => element.stringValue != null)
+        .map((e) => MapEntry(e.stringValue, e)),
+  );
+
+  static CoapRequestMethod? _fromString(String stringValue) =>
+      _registry[stringValue];
 
   /// Determines the [CoapRequestMethod] to use based on a given [form].
   static CoapRequestMethod? fromForm(Form form) {
     final curieString =
         coapPrefixMapping.expandCurie(Curie(reference: 'method'));
     final dynamic formDefinition = form.additionalFields[curieString];
-    if (formDefinition is String) {
-      final requestMethod = CoapRequestMethod._fromString(formDefinition);
-      if (requestMethod != null) {
-        return requestMethod;
-      }
+
+    if (formDefinition is! String) {
+      return null;
     }
 
-    return null;
+    return CoapRequestMethod._fromString(formDefinition);
   }
 }
 
