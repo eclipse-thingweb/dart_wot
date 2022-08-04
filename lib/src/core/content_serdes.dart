@@ -16,6 +16,7 @@ import 'codecs/cbor_codec.dart';
 import 'codecs/codec_media_type.dart';
 import 'codecs/content_codec.dart';
 import 'codecs/json_codec.dart';
+import 'codecs/link_format_codec.dart';
 import 'content.dart';
 
 /// Defines `application/json` as the default content type.
@@ -55,6 +56,7 @@ class ContentSerdes {
   final _codecs = {
     CodecMediaType('application', 'json'): JsonCodec(),
     CodecMediaType('application', 'cbor'): CborCodec(),
+    CodecMediaType('application', 'link-format'): LinkFormatCodec(),
   };
 
   final Set<String> _offeredMediaTypes = {
