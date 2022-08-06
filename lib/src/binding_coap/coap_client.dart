@@ -96,20 +96,14 @@ class CoapClient extends ProtocolClient {
   final ClientSecurityProvider? _clientSecurityProvider;
 
   Future<coap.CoapRequest> _createRequest(
-    int code,
+    coap.CoapCode code,
     Uri uri, {
     Content? content,
-    int? format,
-    int? accept,
+    coap.CoapMediaType? format,
+    coap.CoapMediaType? accept,
     int? block1Size,
     int? block2Size,
   }) async {
-    if (!coap.CoapCode.isRequest(code)) {
-      throw CoapBindingException(
-        '$code is not a valid request method code.',
-      );
-    }
-
     final payload = Uint8Buffer();
     if (content != null) {
       payload.addAll((await content.byteBuffer).asUint8List());
@@ -118,8 +112,8 @@ class CoapClient extends ProtocolClient {
     return coap.CoapRequest(code)
       ..payload = payload
       ..uriPath = uri.path
-      ..accept = accept ?? coap.CoapMediaType.undefined
-      ..contentFormat = format ?? coap.CoapMediaType.undefined;
+      ..accept = accept
+      ..contentFormat = format;
   }
 
   Future<Content> _sendRequestFromForm(
@@ -145,11 +139,11 @@ class CoapClient extends ProtocolClient {
   //              limitations of the CoAP library
   Future<Content> _sendRequest(
     Uri uri,
-    int method, {
+    coap.CoapCode method, {
     Content? content,
     required Form? form,
-    int? format,
-    int? accept,
+    coap.CoapMediaType? format,
+    coap.CoapMediaType? accept,
     int? block1Size,
     int? block2Size,
     coap.CoapMulticastResponseHandler? multicastResponseHandler,
@@ -176,9 +170,6 @@ class CoapClient extends ProtocolClient {
       onMulticastResponse: multicastResponseHandler,
     );
     coapClient.close();
-    if (response == null) {
-      throw CoapBindingException('Sending CoAP request to $uri failed');
-    }
     return response.content;
   }
 
