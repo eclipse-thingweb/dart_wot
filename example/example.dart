@@ -8,23 +8,44 @@
 
 import 'package:dart_wot/dart_wot.dart';
 
+final Map<String, BasicCredentials> basicCredentials = {
+  'urn:test': BasicCredentials('rw', 'readwrite')
+};
+
+Future<BasicCredentials?> basicCredentialsCallback(
+  Uri uri,
+  Form? form, [
+  BasicCredentials? invalidCredentials,
+]) async {
+  final id = form?.interactionAffordance.thingDescription.identifier;
+
+  return basicCredentials[id];
+}
+
 Future<void> main(List<String> args) async {
   final CoapClientFactory coapClientFactory = CoapClientFactory();
   final HttpClientFactory httpClientFactory = HttpClientFactory();
-  final servient = Servient()
+  final MqttClientFactory mqttClientFactory = MqttClientFactory();
+  final servient = Servient(
+    clientSecurityProvider: ClientSecurityProvider(
+      basicCredentialsCallback: basicCredentialsCallback,
+    ),
+  )
     ..addClientFactory(coapClientFactory)
-    ..addClientFactory(httpClientFactory);
+    ..addClientFactory(httpClientFactory)
+    ..addClientFactory(mqttClientFactory);
   final wot = await servient.start();
 
   const thingDescriptionJson = '''
   {
     "@context": "http://www.w3.org/ns/td",
     "title": "Test Thing",
+    "id": "urn:test",
     "base": "coap://coap.me",
-    "security": ["nosec_sc"],
+    "security": ["auto_sc"],
     "securityDefinitions": {
-      "nosec_sc": {
-        "scheme": "nosec"
+      "auto_sc": {
+        "scheme": "auto"
       }
     },
     "properties": {
@@ -32,6 +53,28 @@ Future<void> main(List<String> args) async {
         "forms": [
           {
             "href": "/hello"
+          }
+        ]
+      },
+      "status2": {
+        "observable": true,
+        "forms": [
+          {
+            "href": "mqtt://test.mosquitto.org:1884",
+            "mqv:filter": "test",
+            "op": ["readproperty", "observeproperty"],
+            "contentType": "text/plain"
+          }
+        ]
+      }
+    },
+    "actions": {
+      "toggle": {
+        "forms": [
+          {
+            "href": "mqtt://test.mosquitto.org:1884",
+            "mqv:topic": "test",
+            "mqv:retain": true
           }
         ]
       }
@@ -44,6 +87,19 @@ Future<void> main(List<String> args) async {
   final status = await consumedThing.readProperty('status');
   final value = await status.value();
   print(value);
+  final subscription = await consumedThing.observeProperty(
+    'status2',
+    (data) async {
+      final value = await data.value();
+      print(value);
+    },
+  );
+
+  await consumedThing.invokeAction('toggle', 'Hello World!');
+  await consumedThing.invokeAction('toggle', 'Hello World!');
+  await consumedThing.invokeAction('toggle', 'Hello World!');
+  await consumedThing.invokeAction('toggle', 'Hello World!');
+  await subscription.stop();
 
   final thingUri = Uri.parse(
     'https://raw.githubusercontent.com/w3c/wot-testing'
@@ -61,5 +117,15 @@ Future<void> main(List<String> args) async {
     );
   }
 
+  await consumedThing.invokeAction('toggle', 'Bye World!');
+  await consumedThing.readAndPrintProperty('status2');
   print('Done!');
+}
+
+extension ReadAndPrintExtension on ConsumedThing {
+  Future<void> readAndPrintProperty(String propertyName) async {
+    final output = await readProperty(propertyName);
+    final value = await output.value();
+    print(value);
+  }
 }
