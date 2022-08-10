@@ -12,10 +12,10 @@ import 'http_config.dart';
 /// A [ProtocolServer] for the Hypertext Transfer Protocol (HTTP).
 class HttpServer extends ProtocolServer {
   /// Create a new [HttpServer] from an optional [HttpConfig].
-  HttpServer(HttpConfig? _httpConfig)
+  HttpServer(HttpConfig? httpConfig)
       // TODO(JKRhb): Check if the scheme should be determined differently.
-      : scheme = _httpConfig?.secure ?? false ? 'https' : 'http',
-        port = _portFromConfig(_httpConfig);
+      : scheme = httpConfig?.secure ?? false ? 'https' : 'http',
+        port = _portFromConfig(httpConfig);
 
   @override
   final String scheme;
