@@ -62,7 +62,7 @@ class Action extends InteractionAffordance {
   T? _parseJsonValue<T>(
     Map<String, dynamic> json,
     String key,
-    final List<String> parsedFields,
+    List<String> parsedFields,
   ) {
     parsedFields.add(key);
     final dynamic value = json[key];
@@ -75,26 +75,26 @@ class Action extends InteractionAffordance {
 
   void _parseIdempotent(
     Map<String, dynamic> json,
-    final List<String> parsedFields,
+    List<String> parsedFields,
   ) {
     _idempotent =
         _parseJsonValue<bool>(json, 'idempotent', parsedFields) ?? _idempotent;
   }
 
-  void _parseSafe(Map<String, dynamic> json, final List<String> parsedFields) {
+  void _parseSafe(Map<String, dynamic> json, List<String> parsedFields) {
     _safe = _parseJsonValue<bool>(json, 'safe', parsedFields) ?? _safe;
   }
 
   void _parseSynchronous(
     Map<String, dynamic> json,
-    final List<String> parsedFields,
+    List<String> parsedFields,
   ) {
     _synchronous = _parseJsonValue<bool>(json, 'synchronous', parsedFields);
   }
 
   void _parseActionFields(
     Map<String, dynamic> json,
-    final List<String> parsedFields,
+    List<String> parsedFields,
   ) {
     _parseIdempotent(json, parsedFields);
     _parseSafe(json, parsedFields);
