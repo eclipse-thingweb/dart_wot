@@ -58,9 +58,9 @@ extension CoapFormExtension on Form {
   }
 
   int? _determineBlockSize(String fieldName) {
-    const _blockwiseVocabularyName = 'blockwise';
+    const blockwiseVocabularyName = 'blockwise';
     final curieString =
-        coapPrefixMapping.expandCurieString(_blockwiseVocabularyName);
+        coapPrefixMapping.expandCurieString(blockwiseVocabularyName);
     final dynamic formDefinition = additionalFields[curieString];
 
     if (formDefinition is! Map<String, dynamic>) {
