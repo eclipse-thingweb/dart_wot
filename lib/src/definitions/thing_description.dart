@@ -47,7 +47,10 @@ class ThingDescription {
     if (validate) {
       final validationResult = thingDescriptionSchema.validate(json);
       if (!validationResult.isValid) {
-        throw ThingDescriptionValidationException(json);
+        throw ThingDescriptionValidationException(
+          json,
+          validationResult.errors,
+        );
       }
     }
     _parseJson(json);
