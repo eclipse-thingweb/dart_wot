@@ -51,7 +51,11 @@ final Map<String, BasicCredentials> basicCredentialsMap = {
   'urn:test': basicCredentials
 };
 
-Future<BasicCredentials?> basicCredentialsCallback(Uri uri, Form? form) async {
+Future<BasicCredentials?> basicCredentialsCallback(
+  Uri uri,
+  Form? form,
+  BasicCredentials? invalidCredentials,
+) async {
   if (form == null) {
     return basicCredentials;
   }

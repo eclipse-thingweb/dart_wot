@@ -209,12 +209,22 @@ class HttpClient extends ProtocolClient {
     return _handleResponse(request, response, form);
   }
 
-  Future<BasicCredentials?> _getBasicCredentials(Uri uri, Form? form) async {
-    return _clientSecurityProvider?.basicCredentialsCallback?.call(uri, form);
+  Future<BasicCredentials?> _getBasicCredentials(
+    Uri uri,
+    Form? form, [
+    BasicCredentials? invalidCredentials,
+  ]) async {
+    return _clientSecurityProvider?.basicCredentialsCallback
+        ?.call(uri, form, invalidCredentials);
   }
 
-  Future<BearerCredentials?> _getBearerCredentials(Uri uri, Form? form) async {
-    return _clientSecurityProvider?.bearerCredentialsCallback?.call(uri, form);
+  Future<BearerCredentials?> _getBearerCredentials(
+    Uri uri,
+    Form? form, [
+    BearerCredentials? invalidCredentials,
+  ]) async {
+    return _clientSecurityProvider?.bearerCredentialsCallback
+        ?.call(uri, form, invalidCredentials);
   }
 
   static Map<String, String> _getHeadersFromForm(Form form) {

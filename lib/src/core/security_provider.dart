@@ -39,10 +39,14 @@ typedef ClientPskCallback = PskCredentials? Function(
 /// will lead to the throw of an exception in the respective binding). This
 /// behavior might change in future versions of `dart_wot`.
 ///
+/// If the authorization/authentication fails with the given credentials, the
+/// callback will be invoked again, containing the [invalidCredentials] as a set
+/// argument.
+///
 /// This callback signature is currently only used for [PskCredentials] due to
 /// implementation limititations, which do not allow for asynchronous callbacks.
 typedef AsyncClientSecurityCallback<T extends Credentials> = Future<T?>
-    Function(Uri uri, Form? form);
+    Function(Uri uri, Form? form, T? invalidCredentials);
 
 /// Class for providing callbacks for client [Credentials] at runtime.
 ///

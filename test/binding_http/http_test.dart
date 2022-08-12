@@ -116,12 +116,12 @@ void main() {
       };
 
       final clientSecurityProvider = ClientSecurityProvider(
-        basicCredentialsCallback: (uri, form) async {
+        basicCredentialsCallback: (uri, form, [invalidCredentials]) async {
           return basicCredentialsStore[uri.host];
         },
-        digestCredentialsCallback: (uri, form) async =>
+        digestCredentialsCallback: (uri, form, [invalidCredentials]) async =>
             digestCredentialsStore[uri.host],
-        bearerCredentialsCallback: (uri, form) async =>
+        bearerCredentialsCallback: (uri, form, [invalidCredentials]) async =>
             bearerCredentialsStore[uri.host],
       );
 
