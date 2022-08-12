@@ -15,11 +15,21 @@ final thingDescriptionSchema = JsonSchema.create(_rawThingDescriptionSchema);
 /// invalid.
 class ThingDescriptionValidationException extends ValidationException {
   /// Constructor.
-  ThingDescriptionValidationException(this.rawThingDescription)
-      : super('Validation of Thing Description failed.');
+  ThingDescriptionValidationException(
+    this.rawThingDescription,
+    this._validationErrors,
+  ) : super('Validation of Thing Description failed');
+
+  final List<ValidationError> _validationErrors;
 
   /// The raw Thing Description that is invalid.
   Map<String, dynamic> rawThingDescription;
+
+  @override
+  String toString() {
+    return 'ThingDescriptionValidationException: $message.\n\n'
+        'Errors:\n\n ${_validationErrors.join("\n")}';
+  }
 }
 
 final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
