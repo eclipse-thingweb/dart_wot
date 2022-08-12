@@ -18,39 +18,34 @@ final coapPrefixMapping =
 /// Defines the available CoAP request methods.
 enum CoapRequestMethod {
   /// Corresponds with the GET request method.
-  get(CoapCode.get, 'GET'),
+  get(CoapCode.get),
 
   /// Corresponds with the PUT request method.
-  put(CoapCode.put, 'PUT'),
+  put(CoapCode.put),
 
   /// Corresponds with the POST request method.
-  post(CoapCode.post, 'POST'),
+  post(CoapCode.post),
 
   /// Corresponds with the DELETE request method.
-  delete(CoapCode.delete, 'DELETE'),
+  delete(CoapCode.delete),
 
   /// Corresponds with the FETCH request method.
-  fetch(CoapCode.notSet),
+  fetch(CoapCode.fetch),
 
   /// Corresponds with the PATCH request method.
-  patch(CoapCode.notSet),
+  patch(CoapCode.patch),
 
   /// Corresponds with the iPATCH request method.
-  ipatch(CoapCode.notSet);
+  ipatch(CoapCode.ipatch);
 
   /// Constructor
-  const CoapRequestMethod(this.code, [this.stringValue]);
+  const CoapRequestMethod(this.code);
 
   /// The numeric code of this [CoapRequestMethod].
-  final int code;
-
-  /// The string value of this request method value (e.g., `GET` or `POST`).
-  final String? stringValue;
+  final CoapCode code;
 
   static final _registry = HashMap.fromEntries(
-    values
-        .where((element) => element.stringValue != null)
-        .map((e) => MapEntry(e.stringValue, e)),
+    values.map((e) => MapEntry(e.code.description, e)),
   );
 
   static CoapRequestMethod? _fromString(String stringValue) =>

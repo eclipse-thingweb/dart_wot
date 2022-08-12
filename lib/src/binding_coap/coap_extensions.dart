@@ -34,27 +34,21 @@ extension CoapFormExtension on Form {
     return null;
   }
 
-  int _determineContentFormat(String fieldName) {
-    final curieString = coapPrefixMapping.expandCurieString(fieldName);
-    final dynamic formDefinition = additionalFields[curieString];
-    if (formDefinition is int) {
-      return formDefinition;
-    } else if (formDefinition is List<int>) {
-      return formDefinition[0];
-    }
-
-    return CoapMediaType.parse(contentType) ?? CoapMediaType.textPlain;
+  CoapMediaType _determineContentFormat(String contentType, String? encoding) {
+    return CoapMediaType.parse(contentType, encoding) ??
+        CoapMediaType.applicationJson;
   }
 
   /// The Content-Format for CoAP request and response payloads.
-  int get format {
-    return _determineContentFormat('format');
+  CoapMediaType get format {
+    return _determineContentFormat(contentType, contentCoding);
   }
 
   /// The Content-Format for the Accept option CoAP request and response
   /// payloads.
-  int get accept {
-    return _determineContentFormat('accept');
+  CoapMediaType get accept {
+    // TODO: The algorithm for accept needs to be adjusted
+    return _determineContentFormat(contentType, contentCoding);
   }
 
   int? _determineBlockSize(String fieldName) {
@@ -137,14 +131,8 @@ extension ResponseExtension on CoapResponse {
     }
   }
 
-  String get _contentType {
-    // FIXME: Replace once new CoAP library version has been released.
-    if (contentFormat == CoapMediaType.undefined) {
-      return 'application/json';
-    }
-
-    return CoapMediaType.name(contentFormat);
-  }
+  String get _contentType =>
+      contentFormat?.contentType.toString() ?? 'application/json';
 
   /// Extract the [Content] of this [CoapResponse].
   Content get content {
