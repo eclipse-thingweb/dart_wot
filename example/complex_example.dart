@@ -101,7 +101,11 @@ final Map<String, BasicCredentials> basicCredentials = {
   'urn:test': BasicCredentials('username', 'password')
 };
 
-Future<BasicCredentials?> basicCredentialsCallback(Uri uri, Form? form) async {
+Future<BasicCredentials?> basicCredentialsCallback(
+  Uri uri,
+  Form? form, [
+  BasicCredentials? invalidCredentials,
+]) async {
   final id = form?.interactionAffordance.thingDescription.identifier;
 
   return basicCredentials[id];
