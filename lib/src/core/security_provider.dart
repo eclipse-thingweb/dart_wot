@@ -49,7 +49,7 @@ typedef AceSecurityCallback = Future<AceCredentials?> Function(
   AceCredentials? invalidAceCredentials,
 );
 
-/// Function signature for a synchronous callback for providing client
+/// Function signature for an asynchronous callback for providing client
 /// [Credentials] at runtime.
 ///
 /// Users can retrieve or generate credentials based on the endpoint's [uri].
