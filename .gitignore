@@ -20,3 +20,6 @@ doc/api/
 
 # Generated coverage
 coverage/
+
+# VS Code files
+.vscode
