@@ -7,7 +7,7 @@
 
 dart_wot is an implementation of the
 Web of Things [Scripting API](https://w3c.github.io/wot-scripting-api/) modelled
-after the  WoT reference implementation
+after the WoT reference implementation
 [node-wot](https://github.com/eclipse/thingweb.node-wot).
 At the moment, it supports interacting with Things using the Constrained Application
 Protocol (CoAP) and the Hypertext Transfer Protocol (HTTP).
@@ -16,7 +16,7 @@ Protocol (CoAP) and the Hypertext Transfer Protocol (HTTP).
 
 You can consume Thing Descriptions and interact with a Thing based on its
 exposed Properties, Actions, and Events.
-Discovery support is currently limited to the "direct" method (i. e. fecthing a
+Discovery support is currently limited to the "direct" method (i.e. fetching a
 TD using a single URL).
 Exposing Things is not yet supported but will be added in future versions.
 
@@ -92,11 +92,11 @@ more protocols and security schemes.
 Contributions are very welcome.
 You will soon be able to find guidelines for contributing to the package
 in a `CONTRIBUTING` file.
-Until then you can already file issues for pointing out bugs or requesting
+Until then, you can already file issues for pointing out bugs or requesting
 features.
 You can also open PRs; these have to adhere the defined coding style and
 linter rules.
-Contributions will licensed according to the project licenses (see below).
+Contributions will be licensed according to the project licenses (see below).
 
 ## License
 
@@ -109,7 +109,7 @@ See the `LICENSE` file for more information.
 
 This software includes material copied from
 Eclipse Thingweb node-wot (https://github.com/eclipse/thingweb.node-wot).
-Copyright (c) 2018 Contributors to the Eclipse Foundation
+Copyright © 2018 Contributors to the Eclipse Foundation
 
 ## Contribution
 
