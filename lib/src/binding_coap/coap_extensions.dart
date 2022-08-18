@@ -1,11 +1,17 @@
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:cbor/cbor.dart';
 import 'package:coap/coap.dart';
+import 'package:dcaf/dcaf.dart';
 
 import '../core/content.dart';
 import '../definitions/form.dart';
 import '../definitions/operation_type.dart';
+import '../definitions/security/ace_security_scheme.dart';
+import '../definitions/security/auto_security_scheme.dart';
 import '../definitions/security/psk_security_scheme.dart';
+import 'coap_binding_exception.dart';
 import 'coap_definitions.dart';
 
 const _validBlockwiseValues = [16, 32, 64, 128, 256, 512, 1024];
@@ -24,6 +30,10 @@ extension CoapFormExtension on Form {
   /// Determines if this [Form] supports the [PskSecurityScheme].
   bool get usesPskScheme =>
       securityDefinitions.whereType<PskSecurityScheme>().isNotEmpty;
+
+  /// Determines if this [Form] supports the [AutoSecurityScheme].
+  bool get usesAutoScheme =>
+      securityDefinitions.whereType<AutoSecurityScheme>().isNotEmpty;
 
   /// Get the [CoapSubprotocol] for this [Form], if one is set.
   CoapSubprotocol? get coapSubprotocol {
@@ -77,6 +87,10 @@ extension CoapFormExtension on Form {
 
   /// Indicates the Block1 size preferred by a server.
   int? get block1Size => _determineBlockSize('block1SZX');
+
+  /// Gets a list of all defined [AceSecurityScheme]s for this form.
+  List<AceSecurityScheme> get aceSecuritySchemes =>
+      securityDefinitions.whereType<AceSecurityScheme>().toList();
 }
 
 /// Extension for determining the corresponding [CoapRequestMethod] and
@@ -137,5 +151,68 @@ extension ResponseExtension on CoapResponse {
   /// Extract the [Content] of this [CoapResponse].
   Content get content {
     return Content(_contentType, _payloadStream);
+  }
+
+  /// Validates the payload and returns a serialized ACE creation hint if
+  /// successful.
+  AuthServerRequestCreationHint? get creationHint {
+    const unauthorizedAceCodes = [
+      // TODO: Should other response codes be included as well?
+      CoapCode.unauthorized,
+      CoapCode.methodNotAllowed,
+      CoapCode.forbidden,
+    ];
+
+    final responsePayload = payload;
+
+    if (responsePayload != null &&
+        contentFormat == CoapMediaType.applicationAceCbor &&
+        unauthorizedAceCodes.contains(contentFormat)) {
+      return AuthServerRequestCreationHint.fromSerialized(
+        responsePayload.toList(),
+      );
+    }
+    return null;
+  }
+}
+
+/// Extension for conveniently retrieving [PskCredentials] from an
+/// [AccessTokenResponse].
+extension PskExtension on AccessTokenResponse {
+  void _checkAceProfile() {
+    final aceProfile = this.aceProfile;
+    if (aceProfile != null && aceProfile != AceProfile.coapDtls) {
+      throw CoapBindingException(
+        'ACE-OAuth Profile $aceProfile is not supported.',
+      );
+    }
+  }
+
+  /// Obtains [PskCredentials] for DTLS from this [AccessTokenResponse].
+  ///
+  /// Throws a [CoapBindingException] if the deserialization should fail or the
+  /// wrong format has been provided.
+  PskCredentials get pskCredentials {
+    _checkAceProfile();
+    final identity = Uint8List.fromList(accessToken);
+    final cnf = this.cnf;
+    if (cnf is! PlainCoseKey) {
+      throw CoapBindingException(
+        'Proof of Possession Key for establishing a DTLS connection must be '
+        'symmetric',
+      );
+    }
+    final key = cnf.key.parameters[-1];
+    final Uint8List preSharedKey;
+    if (key is CborBytes) {
+      preSharedKey = Uint8List.fromList(key.bytes);
+    } else {
+      throw CoapBindingException(
+        'Proof of Possession Key for establishing a DTLS connection must be '
+        'bytes',
+      );
+    }
+
+    return PskCredentials(identity: identity, preSharedKey: preSharedKey);
   }
 }

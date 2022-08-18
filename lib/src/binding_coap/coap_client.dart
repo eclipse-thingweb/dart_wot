@@ -8,9 +8,11 @@ import 'dart:async';
 
 import 'package:coap/coap.dart' as coap;
 import 'package:coap/config/coap_config_default.dart';
+import 'package:dcaf/dcaf.dart';
 import 'package:typed_data/typed_buffers.dart';
 
 import '../core/content.dart';
+import '../core/credentials/ace_credentials.dart';
 import '../core/credentials/psk_credentials.dart';
 import '../core/discovery/core_link_format.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
@@ -165,12 +167,179 @@ class CoapClient extends ProtocolClient {
       block2Size: block2Size,
     );
 
-    final response = await coapClient.send(
-      request,
-      onMulticastResponse: multicastResponseHandler,
-    );
+    final creationHint = await _obtainAceCreationHintFromForm(form);
+    final aceCredentialsCallback =
+        _clientSecurityProvider?.aceCredentialsCallback;
+
+    final coap.CoapResponse response;
+
+    if (aceCredentialsCallback != null && creationHint != null) {
+      response = await _sendAceOauthRequest(
+        request,
+        creationHint,
+        aceCredentialsCallback,
+        uri,
+        form,
+      );
+    } else {
+      response = await coapClient.send(
+        request,
+        onMulticastResponse: multicastResponseHandler,
+      );
+    }
+
     coapClient.close();
     return response.content;
+  }
+
+  Future<AuthServerRequestCreationHint?> _obtainCreationHintFromResourceServer(
+    Form form,
+  ) async {
+    final requestMethod =
+        (CoapRequestMethod.fromForm(form) ?? CoapRequestMethod.get).code;
+
+    final creationHintUri = form.resolvedHref.replace(scheme: 'coap');
+
+    final request = await _createRequest(
+      requestMethod,
+      creationHintUri,
+      format: form.format,
+      accept: form.accept,
+    );
+
+    final coapClient = coap.CoapClient(
+      creationHintUri,
+      _InternalCoapConfig(_coapConfig ?? CoapConfig(), form),
+    );
+
+    final response = await coapClient.send(request);
+    coapClient.close();
+
+    return response.creationHint;
+  }
+
+  /// Obtains an ACE creation hint serialized as a [List] of [int] from a
+  /// [Form].
+  ///
+  /// Returns `null` if no `ACESecurityScheme` is defined.
+  Future<AuthServerRequestCreationHint?> _obtainAceCreationHintFromForm(
+    Form? form,
+  ) async {
+    if (form == null) {
+      return null;
+    }
+
+    final aceSecuritySchemes = form.aceSecuritySchemes;
+
+    if (aceSecuritySchemes.isEmpty) {
+      return null;
+    }
+
+    final aceSecurityScheme = aceSecuritySchemes.first;
+
+    AuthServerRequestCreationHint? creationHint;
+
+    if (aceSecurityScheme.cnonce ?? false) {
+      creationHint = await _obtainCreationHintFromResourceServer(form);
+    }
+
+    final textScopes = aceSecurityScheme.scopes?.join(' ');
+    // TODO: Do the scopes defined for a form need to be considered here as
+    //       well?
+    TextScope? scope;
+    if (textScopes != null) {
+      scope = TextScope(textScopes);
+    }
+
+    return AuthServerRequestCreationHint(
+      authorizationServer:
+          aceSecurityScheme.as ?? creationHint?.authorizationServer,
+      scope: scope ?? creationHint?.scope,
+      audience: aceSecurityScheme.audience ?? creationHint?.audience,
+      clientNonce: creationHint?.clientNonce,
+    );
+  }
+
+  Future<coap.CoapResponse> _sendAceOauthRequest(
+    coap.CoapRequest request,
+    AuthServerRequestCreationHint? creationHint,
+    AceSecurityCallback aceCredentialsCallback,
+    Uri uri,
+    Form? form, [
+    AceCredentials? invalidAceCredentials,
+  ]) async {
+    final aceCredentials = await aceCredentialsCallback(
+      uri,
+      form,
+      creationHint,
+      invalidAceCredentials,
+    );
+
+    if (aceCredentials == null) {
+      throw CoapBindingException('Missing ACE-OAuth Credentials');
+    }
+
+    final pskCredentials = aceCredentials.accessToken.pskCredentials;
+
+    final client = coap.CoapClient(
+      request.uri.replace(scheme: 'coaps'),
+      coap.CoapConfigTinydtls(),
+      pskCredentialsCallback: (identityHint) => pskCredentials,
+    );
+
+    final response = await client.send(request);
+    client.close();
+
+    return _handleResponse(
+      request,
+      response,
+      uri,
+      form,
+      aceCredentialsCallback,
+      invalidAceCredentials: aceCredentials,
+    );
+  }
+
+  Future<coap.CoapResponse> _handleResponse(
+    coap.CoapRequest request,
+    coap.CoapResponse response,
+    Uri uri,
+    Form? form,
+    AceSecurityCallback aceCredentialsCallback, {
+    AceCredentials? invalidAceCredentials,
+  }) async {
+    if (response.isSuccess) {
+      return response;
+    }
+
+    final errorString = '${response.code}. Payload: ${response.payloadString}';
+
+    if (response.code.isServerError) {
+      throw CoapBindingException(
+        'Server error: $errorString',
+      );
+    }
+
+    final aceCreationHint = response.creationHint;
+
+    if (aceCreationHint != null) {
+      if (invalidAceCredentials != null ||
+          form == null ||
+          form.usesAutoScheme) {
+        return _sendAceOauthRequest(
+          request,
+          aceCreationHint,
+          aceCredentialsCallback,
+          uri,
+          form,
+          invalidAceCredentials,
+        );
+      }
+    }
+
+    throw CoapBindingException(
+      'Client error: $errorString',
+    );
   }
 
   @override

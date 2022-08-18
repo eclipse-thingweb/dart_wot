@@ -6,7 +6,10 @@
 
 import 'dart:typed_data';
 
+import 'package:dcaf/dcaf.dart';
+
 import '../definitions/form.dart';
+import 'credentials/ace_credentials.dart';
 import 'credentials/apikey_credentials.dart';
 import 'credentials/basic_credentials.dart';
 import 'credentials/bearer_credentials.dart';
@@ -31,7 +34,22 @@ typedef ClientPskCallback = PskCredentials? Function(
   Uint8List? identityHint,
 );
 
-/// Function signature for a synchronous callback for providing client
+/// Function signature for an asynchronous callback for providing client
+/// [AceCredentials] at runtime, based on an optional [creationHint]
+/// given by the Resource Server. This creation hint has to be parsed by the
+/// library user.
+///
+/// If a request with an access token has failed before, leading to an
+/// "Unauthorized" response, the [invalidAceCredentials] from the previous
+/// request are returned as an additional parameter.
+typedef AceSecurityCallback = Future<AceCredentials?> Function(
+  Uri uri,
+  Form? form,
+  AuthServerRequestCreationHint? creationHint,
+  AceCredentials? invalidAceCredentials,
+);
+
+/// Function signature for an asynchronous callback for providing client
 /// [Credentials] at runtime.
 ///
 /// Users can retrieve or generate credentials based on the endpoint's [uri].
@@ -67,6 +85,7 @@ class ClientSecurityProvider {
     this.digestCredentialsCallback,
     this.apikeyCredentialsCallback,
     this.oauth2CredentialsCallback,
+    this.aceCredentialsCallback,
   });
 
   /// Asychronous callback for [ApiKeyCredentials].
@@ -91,6 +110,9 @@ class ClientSecurityProvider {
   /// Asychronous callback for [OAuth2Credentials].
   final AsyncClientSecurityCallback<OAuth2Credentials>?
       oauth2CredentialsCallback;
+
+  /// Asynchronous callback for [AceCredentials].
+  final AceSecurityCallback? aceCredentialsCallback;
 }
 
 /// Function signature for a synchronous callback retrieving server
