@@ -12,7 +12,6 @@ import 'package:http/http.dart';
 import '../core/content.dart';
 import '../core/credentials/basic_credentials.dart';
 import '../core/credentials/bearer_credentials.dart';
-import '../core/discovery/core_link_format.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../core/security_provider.dart';
 import '../definitions/form.dart';
@@ -328,9 +327,7 @@ class HttpClient extends ProtocolClient {
 
   @override
   Stream<Content> discoverWithCoreLinkFormat(Uri uri) async* {
-    final discoveryUri = createCoreLinkFormatDiscoveryUri(uri);
-
-    final request = Request(HttpRequestMethod.get.methodName, discoveryUri);
+    final request = Request(HttpRequestMethod.get.methodName, uri);
 
     final encodedLinks = await _sendDiscoveryRequest(
       request,

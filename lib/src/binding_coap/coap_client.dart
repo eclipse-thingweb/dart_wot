@@ -14,10 +14,8 @@ import 'package:typed_data/typed_buffers.dart';
 import '../core/content.dart';
 import '../core/credentials/ace_credentials.dart';
 import '../core/credentials/psk_credentials.dart';
-import '../core/discovery/core_link_format.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../core/security_provider.dart';
-import '../core/thing_discovery.dart';
 import '../definitions/form.dart';
 import '../definitions/operation_type.dart';
 import '../scripting_api/subscription.dart';
@@ -491,33 +489,16 @@ class CoapClient extends ProtocolClient {
     }
   }
 
-  Content _handleCoreLinkFormatContent(Content content) {
-    final actualContentFormat = content.type;
-    const expectedContentFormat = 'application/link-format';
-
-    if (actualContentFormat != expectedContentFormat) {
-      throw DiscoveryException(
-        'Got wrong format for '
-        'CoRE Link Format Discovery (expected $expectedContentFormat, got '
-        '$actualContentFormat).',
-      );
-    }
-
-    return content;
-  }
-
   @override
   Stream<Content> discoverWithCoreLinkFormat(Uri uri) async* {
-    final discoveryUri = createCoreLinkFormatDiscoveryUri(uri);
     coap.CoapMulticastResponseHandler? multicastResponseHandler;
     final streamController = StreamController<Content>();
 
+    // TODO: Replace once https://github.com/shamblett/coap/pull/129 is merged
     if (uri.isMulticastAddress) {
       multicastResponseHandler = coap.CoapMulticastResponseHandler(
         (data) {
-          final handledContent =
-              _handleCoreLinkFormatContent(data.resp.content);
-          streamController.add(handledContent);
+          streamController.add(data.resp.content);
         },
         onError: streamController.addError,
         onDone: () async {
@@ -527,7 +508,7 @@ class CoapClient extends ProtocolClient {
     }
 
     final content = await _sendRequest(
-      discoveryUri,
+      uri,
       coap.CoapCode.get,
       form: null,
       accept: coap.CoapMediaType.applicationLinkFormat,
@@ -537,7 +518,7 @@ class CoapClient extends ProtocolClient {
     if (uri.isMulticastAddress) {
       yield* streamController.stream;
     } else {
-      yield _handleCoreLinkFormatContent(content);
+      yield content;
     }
   }
 }

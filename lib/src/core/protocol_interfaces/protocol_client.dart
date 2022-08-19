@@ -26,19 +26,16 @@ abstract class ProtocolClient {
     bool disableMulticast = false,
   });
 
-  /// Discovers one or more Thing Descriptions from a [uri] using the CoRE Link
-  /// Format and Web Linking (see [RFC 6690]), returning a [Stream] of
-  /// [Content].
+  /// Discovers links using the CoRE Link Format (see [RFC 6690]) from a [uri],
+  /// encoded as a [Stream] of [Content].
   ///
-  /// The [uri] must point to either the resource lookup interface of a CoRE
-  /// Resource Directory (see [RFC 9176]) or to a CoRE Resource Discovery
-  /// resource like `/.well-known/core`.
+  /// If the [uri]'s path is empty, then `/.well-known/core` will be set as a
+  /// default value.
   ///
   /// Certain protocols (like CoAP) might also use multicast for this discovery
   /// method if the underlying binding implementation supports it and if it is
   /// activated in the config.
   ///
-  /// [RFC 9176]: https://datatracker.ietf.org/doc/html/rfc9176
   /// [RFC 6690]: https://datatracker.ietf.org/doc/html/rfc6690
   Stream<Content> discoverWithCoreLinkFormat(Uri uri);
 
