@@ -111,11 +111,17 @@ class CoapClient extends ProtocolClient {
       payload.addAll((await content.byteBuffer).asUint8List());
     }
 
-    return coap.CoapRequest(code)
+    final request = coap.CoapRequest(code)
       ..payload = payload
       ..uriPath = uri.path
       ..accept = accept
       ..contentFormat = format;
+
+    if (uri.query.isNotEmpty) {
+      request.uriQuery = uri.query;
+    }
+
+    return request;
   }
 
   Future<Content> _sendRequestFromForm(
