@@ -60,6 +60,9 @@ class ThingDiscovery extends Stream<ThingDescription>
       case scripting_api.DiscoveryMethod.coreLinkFormat:
         yield* _discoverWithCoreLinkFormat(thingFilter.url);
         break;
+      case scripting_api.DiscoveryMethod.coreResourceDirectory:
+        yield* _discoverfromCoreResourceDirectory(thingFilter.url);
+        break;
       default:
         throw UnimplementedError();
     }
@@ -130,6 +133,13 @@ class ThingDiscovery extends Stream<ThingDescription>
     // TODO: Remove additional quotes once fixed in CoAP library
     yield* _performCoreLinkFormatDiscovery('"wot.thing"', uri)
         .map(_discoverDirectly)
+        .flatten();
+  }
+
+  Stream<ThingDescription> _discoverfromCoreResourceDirectory(Uri uri) async* {
+    // TODO: Remove additional quotes once fixed in CoAP library
+    yield* _performCoreLinkFormatDiscovery('"core.rd-lookup-res"', uri)
+        .map(_discoverWithCoreLinkFormat)
         .flatten();
   }
 

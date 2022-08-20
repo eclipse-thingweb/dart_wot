@@ -29,6 +29,9 @@ abstract class ProtocolClient {
   /// Discovers links using the CoRE Link Format (see [RFC 6690]) from a [uri],
   /// encoded as a [Stream] of [Content].
   ///
+  /// This method will also be used for discovery from CoRE Resource
+  /// Directories ([RFC 9176]).
+  ///
   /// If the [uri]'s path is empty, then `/.well-known/core` will be set as a
   /// default value.
   ///
@@ -37,6 +40,7 @@ abstract class ProtocolClient {
   /// activated in the config.
   ///
   /// [RFC 6690]: https://datatracker.ietf.org/doc/html/rfc6690
+  /// [RFC 9176]: https://datatracker.ietf.org/doc/html/rfc9176
   Stream<Content> discoverWithCoreLinkFormat(Uri uri);
 
   /// Requests the client to perform a `readproperty` operation on a [form].
