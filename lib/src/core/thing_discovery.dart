@@ -31,12 +31,13 @@ class DiscoveryException implements Exception {
 class ThingDiscovery extends Stream<ThingDescription>
     implements scripting_api.ThingDiscovery {
   /// Creates a new [ThingDiscovery] object with a given [thingFilter].
-  ThingDiscovery(this.thingFilter, this._servient)
-      : _client = _servient.clientFor(thingFilter.url.scheme) {
+  ThingDiscovery(this.thingFilter, this._servient) {
     _stream = _start();
   }
 
   final Servient _servient;
+
+  final Map<String, ProtocolClient> _clients = {};
 
   bool _active = true;
 
@@ -47,8 +48,6 @@ class ThingDiscovery extends Stream<ThingDescription>
   final scripting_api.ThingFilter thingFilter;
 
   late final Stream<ThingDescription> _stream;
-
-  final ProtocolClient _client;
 
   Stream<ThingDescription> _start() async* {
     final discoveryMethod = thingFilter.method;
@@ -68,9 +67,23 @@ class ThingDiscovery extends Stream<ThingDescription>
     }
   }
 
+  ProtocolClient _clientForUriScheme(Uri uri) {
+    final uriScheme = uri.scheme;
+    var client = _clients[uriScheme];
+
+    if (client == null) {
+      client = _servient.clientFor(uriScheme);
+      _clients[uriScheme] = client;
+    }
+
+    return client;
+  }
+
   @override
   Future<void> stop() async {
-    await _client.stop();
+    final stopFutures = _clients.values.map((client) => client.stop());
+    await Future.wait(stopFutures);
+    _clients.clear();
     _active = false;
   }
 
@@ -89,7 +102,9 @@ class ThingDiscovery extends Stream<ThingDescription>
   }
 
   Stream<ThingDescription> _discoverDirectly(Uri uri) async* {
-    yield* _client
+    final client = _clientForUriScheme(uri);
+
+    yield* client
         .discoverDirectly(uri, disableMulticast: true)
         .asyncMap((content) => _decodeThingDescription(content, uri));
   }
@@ -149,8 +164,10 @@ class ThingDiscovery extends Stream<ThingDescription>
   ) async* {
     final Set<Uri> discoveredUris = {};
     final discoveryUri = uri.toLinkFormatDiscoveryUri(resourceType);
+    final client = _clientForUriScheme(uri);
+
     await for (final coreWebLink
-        in _client.discoverWithCoreLinkFormat(discoveryUri)) {
+        in client.discoverWithCoreLinkFormat(discoveryUri)) {
       final Iterable<Uri> parsedUris;
 
       try {
