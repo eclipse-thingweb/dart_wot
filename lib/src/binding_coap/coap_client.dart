@@ -193,6 +193,7 @@ class CoapClient extends ProtocolClient {
     }
 
     coapClient.close();
+    response.checkResponseCode();
     return response.content;
   }
 

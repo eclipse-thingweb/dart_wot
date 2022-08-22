@@ -153,6 +153,18 @@ extension ResponseExtension on CoapResponse {
     return Content(_contentType, _payloadStream);
   }
 
+  /// Checks the [code] of this [CoapResponse] and throws an [Exception] if it
+  /// should indicate an error.
+  void checkResponseCode() {
+    if (code.isServerError) {
+      throw CoapServerErrorException(this);
+    }
+
+    if (code.isErrorResponse) {
+      throw CoapClientErrorException(this);
+    }
+  }
+
   /// Validates the payload and returns a serialized ACE creation hint if
   /// successful.
   AuthServerRequestCreationHint? get creationHint {
