@@ -31,12 +31,13 @@ class DiscoveryException implements Exception {
 class ThingDiscovery extends Stream<ThingDescription>
     implements scripting_api.ThingDiscovery {
   /// Creates a new [ThingDiscovery] object with a given [thingFilter].
-  ThingDiscovery(this.thingFilter, this._servient)
-      : _client = _servient.clientFor(thingFilter.url.scheme) {
+  ThingDiscovery(this.thingFilter, this._servient) {
     _stream = _start();
   }
 
   final Servient _servient;
+
+  final Map<String, ProtocolClient> _clients = {};
 
   bool _active = true;
 
@@ -48,8 +49,6 @@ class ThingDiscovery extends Stream<ThingDescription>
 
   late final Stream<ThingDescription> _stream;
 
-  final ProtocolClient _client;
-
   Stream<ThingDescription> _start() async* {
     final discoveryMethod = thingFilter.method;
 
@@ -60,14 +59,31 @@ class ThingDiscovery extends Stream<ThingDescription>
       case scripting_api.DiscoveryMethod.coreLinkFormat:
         yield* _discoverWithCoreLinkFormat(thingFilter.url);
         break;
+      case scripting_api.DiscoveryMethod.coreResourceDirectory:
+        yield* _discoverfromCoreResourceDirectory(thingFilter.url);
+        break;
       default:
         throw UnimplementedError();
     }
   }
 
+  ProtocolClient _clientForUriScheme(Uri uri) {
+    final uriScheme = uri.scheme;
+    var client = _clients[uriScheme];
+
+    if (client == null) {
+      client = _servient.clientFor(uriScheme);
+      _clients[uriScheme] = client;
+    }
+
+    return client;
+  }
+
   @override
   Future<void> stop() async {
-    await _client.stop();
+    final stopFutures = _clients.values.map((client) => client.stop());
+    await Future.wait(stopFutures);
+    _clients.clear();
     _active = false;
   }
 
@@ -86,42 +102,91 @@ class ThingDiscovery extends Stream<ThingDescription>
   }
 
   Stream<ThingDescription> _discoverDirectly(Uri uri) async* {
-    yield* _client
+    final client = _clientForUriScheme(uri);
+
+    yield* client
         .discoverDirectly(uri, disableMulticast: true)
         .asyncMap((content) => _decodeThingDescription(content, uri));
   }
 
+  Future<List<CoapWebLink>?> _getCoreWebLinks(Content content) async {
+    final value = await _servient.contentSerdes.contentToValue(content, null);
+    if (value is CoapWebLink) {
+      return [value];
+    } else if (value is List<CoapWebLink>) {
+      return value;
+    }
+
+    return null;
+  }
+
+  Future<Iterable<Uri>> _filterCoreWebLinks(
+    String resourceType,
+    Content coreWebLink,
+    Uri baseUri,
+  ) async {
+    final webLinks = await _getCoreWebLinks(coreWebLink);
+
+    if (webLinks == null) {
+      throw DiscoveryException(
+        'Discovery from $baseUri returned no valid CoRE Link-Format Links.',
+      );
+    }
+
+    return webLinks
+        .where(
+          (element) =>
+              element.attributes.getResourceTypes()?.contains(resourceType) ??
+              false,
+        )
+        .map((weblink) => Uri.tryParse(weblink.uri))
+        .whereType<Uri>()
+        .map((uri) => uri.toAbsoluteUri(baseUri));
+  }
+
   Stream<ThingDescription> _discoverWithCoreLinkFormat(Uri uri) async* {
+    // TODO: Remove additional quotes once fixed in CoAP library
+    yield* _performCoreLinkFormatDiscovery('"wot.thing"', uri)
+        .map(_discoverDirectly)
+        .flatten();
+  }
+
+  Stream<ThingDescription> _discoverfromCoreResourceDirectory(Uri uri) async* {
+    // TODO: Remove additional quotes once fixed in CoAP library
+    yield* _performCoreLinkFormatDiscovery('"core.rd-lookup-res"', uri)
+        .map(_discoverWithCoreLinkFormat)
+        .flatten();
+  }
+
+  Stream<Uri> _performCoreLinkFormatDiscovery(
+    String resourceType,
+    Uri uri,
+  ) async* {
     final Set<Uri> discoveredUris = {};
-    await for (final coreWebLink in _client.discoverWithCoreLinkFormat(uri)) {
-      final value =
-          await _servient.contentSerdes.contentToValue(coreWebLink, null);
+    final discoveryUri = uri.toLinkFormatDiscoveryUri(resourceType);
+    final client = _clientForUriScheme(uri);
 
-      if (value is! CoapWebLink ||
-          !(value.attributes.getContentTypes()?.contains('wot.thing') ??
-              false)) {
+    await for (final coreWebLink
+        in client.discoverWithCoreLinkFormat(discoveryUri)) {
+      final Iterable<Uri> parsedUris;
+
+      try {
+        parsedUris =
+            await _filterCoreWebLinks(resourceType, coreWebLink, discoveryUri);
+      } on Exception catch (exception) {
+        yield* Stream.error(exception);
         continue;
       }
 
-      Uri? parsedUri = Uri.tryParse(value.uri);
+      for (final parsedUri in parsedUris) {
+        final uriAdded = discoveredUris.add(parsedUri);
 
-      if (parsedUri == null) {
-        // TODO: Should an error be passed on here instead?
-        continue;
-      }
+        if (!uriAdded) {
+          continue;
+        }
 
-      if (!parsedUri.isAbsolute) {
-        parsedUri = parsedUri.replace(
-          scheme: uri.scheme,
-          host: uri.host,
-          port: uri.port,
-        );
+        yield parsedUri;
       }
-      if (discoveredUris.contains(parsedUri)) {
-        continue;
-      }
-      discoveredUris.add(parsedUri);
-      yield* _discoverDirectly(parsedUri);
     }
   }
 
@@ -145,5 +210,61 @@ class ThingDiscovery extends Stream<ThingDescription>
       onDone: cleanUpAndDone,
       cancelOnError: cancelOnError,
     );
+  }
+}
+
+extension _UriExtension on Uri {
+  /// Returns the [path] if it is not empty, otherwise `null`.
+  String? get _pathOrNull {
+    if (path.isNotEmpty) {
+      return path;
+    }
+
+    return null;
+  }
+
+  /// Converts this [Uri] to one usable for CoRE Resource Discovery.
+  ///
+  /// If no path should be given (i.e., it is empty) `/.well-known/core` will be
+  /// used as a default.
+  ///
+  /// The specified [resourceType] will be added to the [queryParameters] using
+  /// the parameter name `rt`. If this name should already be in use, it will
+  /// not be overridden.
+  Uri toLinkFormatDiscoveryUri(String resourceType) {
+    final Map<String, dynamic> newQueryParameters = {'rt': resourceType};
+    if (queryParameters.isNotEmpty) {
+      newQueryParameters.addAll(queryParameters);
+    }
+
+    return replace(
+      path: _pathOrNull ?? '/.well-known/core',
+      queryParameters: newQueryParameters,
+    );
+  }
+
+  /// Converts this [Uri] into an absolute one using a [baseUri].
+  ///
+  /// If this [Uri] should already be an absolute one, it is returned directly.
+  Uri toAbsoluteUri(Uri baseUri) {
+    if (isAbsolute) {
+      return this;
+    }
+
+    return replace(
+      scheme: baseUri.scheme,
+      host: baseUri.host,
+      port: baseUri.port,
+    );
+  }
+}
+
+/// Extension to simplify the handling of nested [Stream]s.
+extension _FlatStreamExtension<T> on Stream<Stream<T>> {
+  /// Flattens a nested [Stream] of [Stream]s into a single [Stream].
+  Stream<T> flatten() async* {
+    await for (final stream in this) {
+      yield* stream;
+    }
   }
 }

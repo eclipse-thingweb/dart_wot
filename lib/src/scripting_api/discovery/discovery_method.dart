@@ -27,4 +27,12 @@ enum DiscoveryMethod {
   ///
   /// [RFC 6690]: https://datatracker.ietf.org/doc/html/rfc6690
   coreLinkFormat,
+
+  /// Discovery from a CoRE Resource Directory ([RFC 9176]).
+  ///
+  /// Note: This discovery method is not officially supported by the Scripting
+  /// API specification (yet).
+  ///
+  /// [RFC 9176]: https://datatracker.ietf.org/doc/html/rfc9176
+  coreResourceDirectory,
 }
