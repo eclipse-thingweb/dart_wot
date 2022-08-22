@@ -193,6 +193,7 @@ class CoapClient extends ProtocolClient {
     }
 
     coapClient.close();
+    response.checkResponseCode();
     return response.content;
   }
 
@@ -316,12 +317,8 @@ class CoapClient extends ProtocolClient {
       return response;
     }
 
-    final errorString = '${response.code}. Payload: ${response.payloadString}';
-
     if (response.code.isServerError) {
-      throw CoapBindingException(
-        'Server error: $errorString',
-      );
+      throw CoapServerErrorException(response);
     }
 
     final aceCreationHint = response.creationHint;
@@ -341,9 +338,7 @@ class CoapClient extends ProtocolClient {
       }
     }
 
-    throw CoapBindingException(
-      'Client error: $errorString',
-    );
+    throw CoapClientErrorException(response);
   }
 
   @override
