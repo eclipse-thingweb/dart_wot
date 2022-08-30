@@ -17,7 +17,15 @@ enum DiscoveryMethod {
   /// Direct fetching of a Thing's Thing Description from the ThingFilter's url.
   direct,
 
-  /// Discovery from a Directory specified by the ThingFilter's url.
+  /// Discovery from a Thing Description Direcotry (TDD) specified by the
+  /// ThingFilter's url.
+  ///
+  /// The URL should point to the `/things` endpoint of a Thing Description
+  /// Directory.
+  ///
+  /// Note: This discovery method is not properly specified in the Scripting
+  /// API specification yet. Therefore, its implementation will probably change
+  /// in future versions.
   directory,
 
   /// Discovery using the core link format ([RFC 6690]).

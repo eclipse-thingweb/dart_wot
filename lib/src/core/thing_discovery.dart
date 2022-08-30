@@ -71,6 +71,8 @@ class ThingDiscovery extends Stream<ThingDescription>
     switch (_method) {
       case scripting_api.DiscoveryMethod.direct:
         yield* _discoverDirectly(_url);
+      case scripting_api.DiscoveryMethod.directory:
+        yield* _discoverFromDirectory(_url);
       case scripting_api.DiscoveryMethod.coreLinkFormat:
         yield* _discoverWithCoreLinkFormat(_url);
       case scripting_api.DiscoveryMethod.coreResourceDirectory:
@@ -115,12 +117,42 @@ class ThingDiscovery extends Stream<ThingDescription>
     return ThingDescription.fromJson(value);
   }
 
+  Future<List<Map<String, dynamic>>> _convertToArray(
+    Content content,
+    Uri uri,
+  ) async {
+    final value = await _servient.contentSerdes.contentToValue(content, null);
+    // TODO: Refactor
+    if (value is! List<Map<String, dynamic>>) {
+      throw DiscoveryException(
+        'Could not parse Thing Description obtained from $uri',
+      );
+    }
+
+    return value;
+  }
+
   Stream<ThingDescription> _discoverDirectly(Uri uri) async* {
     final client = _clientForUriScheme(uri);
 
     yield* client
         .discoverDirectly(uri, disableMulticast: true)
         .asyncMap(_decodeThingDescription);
+  }
+
+  Stream<ThingDescription> _discoverFromDirectory(Uri uri) async* {
+    final client = _clientForUriScheme(uri);
+
+    final discoveryUri = uri.replace(path: 'things');
+
+    // TODO: Can this be done more elegantly?
+    yield* client
+        .discoverDirectly(discoveryUri, disableMulticast: true)
+        .asyncMap((event) => _convertToArray(event, uri))
+        .map(
+          (event) => Stream.fromIterable(event.map(ThingDescription.fromJson)),
+        )
+        .flatten();
   }
 
   Future<List<CoapWebLink>?> _getCoreWebLinks(Content content) async {
