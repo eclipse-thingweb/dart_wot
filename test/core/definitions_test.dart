@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'package:dart_wot/dart_wot.dart';
 import 'package:dart_wot/src/definitions/additional_expected_response.dart';
 import 'package:dart_wot/src/definitions/context_entry.dart';
+import 'package:dart_wot/src/definitions/data_schema.dart';
 import 'package:dart_wot/src/definitions/expected_response.dart';
 import 'package:dart_wot/src/definitions/interaction_affordances/interaction_affordance.dart';
 import 'package:dart_wot/src/definitions/interaction_affordances/property.dart';
@@ -281,7 +282,16 @@ void main() {
                 'security': 'auto_sc',
               }
             ],
-          }
+          },
+          'propertyWithOneOf': {
+            'oneOf': [
+              {'type': 'string'},
+              {'type': 'integer'}
+            ],
+            'forms': [
+              {'href': 'https://example.org'}
+            ]
+          },
         }
       };
 
@@ -321,6 +331,15 @@ void main() {
       final testSchema = objectSchemeProperty?.properties?['test'];
       expect(testSchema, isA<DataSchema>());
       expect(testSchema?.type, 'string');
+      final propertyWithOneOf =
+          thingDescription.properties['propertyWithOneOf'];
+      final stringSchema = propertyWithOneOf?.oneOf?[0];
+      final integerSchema = propertyWithOneOf?.oneOf?[1];
+
+      expect(stringSchema, isA<DataSchema>());
+      expect(stringSchema?.type, 'string');
+      expect(integerSchema, isA<DataSchema>());
+      expect(integerSchema?.type, 'integer');
     });
   });
 

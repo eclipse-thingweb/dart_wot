@@ -58,6 +58,51 @@ class Property extends InteractionAffordance implements DataSchema {
   @override
   bool? writeOnly = false;
 
+  @override
+  String? contentEncoding;
+
+  @override
+  String? contentMediaType;
+
+  @override
+  num? exclusiveMaximum;
+
+  @override
+  num? exclusiveMinimum;
+
+  @override
+  List<DataSchema>? items;
+
+  @override
+  int? maxItems;
+
+  @override
+  int? maxLength;
+
+  @override
+  num? maximum;
+
+  @override
+  int? minItems;
+
+  @override
+  int? minLength;
+
+  @override
+  num? minimum;
+
+  @override
+  num? multipleOf;
+
+  @override
+  String? pattern;
+
+  @override
+  Map<String, DataSchema>? properties;
+
+  @override
+  List<String>? required;
+
   /// A hint that indicates whether Servients hosting the Thing and
   /// Intermediaries should provide a Protocol Binding that supports the
   /// `observeproperty` and `unobserveproperty` operations for this Property.
