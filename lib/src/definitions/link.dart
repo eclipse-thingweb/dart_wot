@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'validation/validation_exception.dart';
+import 'extensions/json_parser.dart';
 
 /// Represents an element of the `links` array in a Thing Description.
 ///
@@ -30,45 +30,21 @@ class Link {
 
   /// Creates a new [Link] from a [json] object.
   Link.fromJson(Map<String, dynamic> json) {
-    // TODO(JKRhb): Check if this can be refactored
-    if (json['href'] is String) {
-      _parsedJsonFields.add('href');
-      final hrefString = json['href'] as String;
-      href = Uri.parse(hrefString);
-    } else {
-      // [href] *must* be initialized.
-      throw ValidationException("'href' field must exist as a string.");
-    }
+    final Set<String> parsedFields = {};
 
-    if (json['type'] is String) {
-      _parsedJsonFields.add('type');
-      type = json['type'] as String;
-    }
+    href = Uri.parse(json.parseRequiredField<String>('href', parsedFields));
+    type = json.parseField<String>('@type', parsedFields);
+    rel = json.parseField<String>('rel', parsedFields);
+    anchor =
+        Uri.tryParse(json.parseField<String>('anchor', parsedFields) ?? '');
+    sizes = json.parseField<String>('sizes', parsedFields);
+    hreflang = json.parseArrayField<String>('hreflang', parsedFields);
 
-    if (json['rel'] is String) {
-      _parsedJsonFields.add('rel');
-      rel = json['rel'] as String;
-    }
-
-    if (json['anchor'] is String) {
-      _parsedJsonFields.add('anchor');
-      anchor = Uri.parse(json['anchor'] as String);
-    }
-
-    if (json['sizes'] is String) {
-      _parsedJsonFields.add('sizes');
-      sizes = json['sizes'] as String;
-    }
-
-    final dynamic hreflang = json['hreflang'];
-    _parsedJsonFields.add('hreflang');
-    if (hreflang is String) {
-      this.hreflang = [hreflang];
-    } else if (hreflang is List<dynamic>) {
-      this.hreflang = hreflang.whereType<String>().toList();
-    }
-
-    _addAdditionalFields(json);
+    additionalFields.addAll(
+      Map.fromEntries(
+        json.entries.where((element) => !parsedFields.contains(element.key)),
+      ),
+    );
   }
 
   /// Target IRI of a link or submission target of a form.
@@ -98,16 +74,6 @@ class Link {
   /// [BCP47 link]: https://tools.ietf.org/search/bcp47
   List<String>? hreflang;
 
-  final List<String> _parsedJsonFields = [];
-
   /// Additional fields collected during the parsing of a JSON object.
   final Map<String, dynamic> additionalFields = <String, dynamic>{};
-
-  void _addAdditionalFields(Map<String, dynamic> formJson) {
-    for (final entry in formJson.entries) {
-      if (!_parsedJsonFields.contains(entry.key)) {
-        additionalFields[entry.key] = entry.value;
-      }
-    }
-  }
 }

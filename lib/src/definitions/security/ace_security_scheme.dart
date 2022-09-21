@@ -4,12 +4,11 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'helper_functions.dart';
+import '../extensions/json_parser.dart';
+
 import 'security_scheme.dart';
 
 /// Experimental ACE Security Scheme.
-// TODO(JKRhb): Check whether an audience field is needed or if this implied by
-// the base field/form href.
 class AceSecurityScheme extends SecurityScheme {
   /// Constructor.
   AceSecurityScheme({
@@ -26,36 +25,14 @@ class AceSecurityScheme extends SecurityScheme {
 
   /// Creates an [AceSecurityScheme] from a [json] object.
   AceSecurityScheme.fromJson(Map<String, dynamic> json) {
-    _parsedJsonFields.addAll(parseSecurityJson(this, json));
+    final Set<String> parsedFields = {};
 
-    final dynamic jsonAs = _getJsonValue(json, 'ace:as');
-    if (jsonAs is String) {
-      as = jsonAs;
-      _parsedJsonFields.add('ace:as');
-    }
+    as = json.parseField<String>('ace:as', parsedFields);
+    cnonce = json.parseField<bool>('ace:cnonce', parsedFields);
+    audience = json.parseField<String>('ace:audience', parsedFields);
+    scopes = json.parseArrayField<String>('ace:scopes', parsedFields);
 
-    final dynamic jsonCnonce = _getJsonValue(json, 'ace:cnonce');
-    if (jsonCnonce is bool) {
-      cnonce = jsonCnonce;
-      _parsedJsonFields.add('ace:cnonce');
-    }
-
-    final dynamic jsonAudience = _getJsonValue(json, 'ace:audience');
-    if (jsonAudience is String) {
-      audience = jsonAudience;
-      _parsedJsonFields.add('ace:audience');
-    }
-
-    final dynamic jsonScopes = _getJsonValue(json, 'ace:scopes');
-    if (jsonScopes is String) {
-      scopes = [jsonScopes];
-      _parsedJsonFields.add('ace:scopes');
-    } else if (jsonScopes is List<dynamic>) {
-      scopes = jsonScopes.whereType<String>().toList();
-      _parsedJsonFields.add('ace:scopes');
-    }
-
-    parseAdditionalFields(additionalFields, json, _parsedJsonFields);
+    parseSecurityJson(json, parsedFields);
   }
 
   @override
@@ -77,11 +54,4 @@ class AceSecurityScheme extends SecurityScheme {
 
   /// Indicates whether a [cnonce] is required by the Resource Server.
   bool? cnonce;
-
-  final List<String> _parsedJsonFields = [];
-
-  dynamic _getJsonValue(Map<String, dynamic> json, String key) {
-    _parsedJsonFields.add(key);
-    return json[key];
-  }
 }

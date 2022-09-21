@@ -4,57 +4,39 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'helper_functions.dart';
+import '../extensions/json_parser.dart';
 import 'security_scheme.dart';
+
+const _defaultInValue = 'header';
 
 /// Basic Authentication security configuration identified by the Vocabulary
 /// Term `basic`.
 class BasicSecurityScheme extends SecurityScheme {
   /// Constructor.
   BasicSecurityScheme({
-    String? description,
-    String? proxy,
+    super.description,
+    super.proxy,
     this.name,
     String? in_,
-    Map<String, String>? descriptions,
-  }) : in_ = in_ ?? 'header' {
-    this.description = description;
-    this.proxy = proxy;
-    this.descriptions.addAll(descriptions ?? {});
-  }
+    super.descriptions,
+  }) : in_ = in_ ?? _defaultInValue;
 
   /// Creates a [BasicSecurityScheme] from a [json] object.
   BasicSecurityScheme.fromJson(Map<String, dynamic> json) {
-    _parsedJsonFields.addAll(parseSecurityJson(this, json));
+    final Set<String> parsedFields = {};
 
-    final dynamic jsonIn = _getJsonValue(json, 'in');
-    if (jsonIn is String) {
-      in_ = jsonIn;
-      _parsedJsonFields.add('in');
-    }
+    name = json.parseField<String>('name', parsedFields);
+    in_ = json.parseField<String>('in', parsedFields) ?? _defaultInValue;
 
-    final dynamic jsonName = _getJsonValue(json, 'name');
-    if (jsonName is String) {
-      name = jsonName;
-      _parsedJsonFields.add('name');
-    }
-
-    parseAdditionalFields(additionalFields, json, _parsedJsonFields);
+    parseSecurityJson(json, parsedFields);
   }
 
   @override
   String get scheme => 'basic';
 
   /// Name for query, header, cookie, or uri parameters.
-  String? name;
+  late final String? name;
 
   /// Specifies the location of security authentication information.
   late String in_ = 'header';
-
-  final List<String> _parsedJsonFields = [];
-
-  dynamic _getJsonValue(Map<String, dynamic> json, String key) {
-    _parsedJsonFields.add(key);
-    return json[key];
-  }
 }

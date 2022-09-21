@@ -4,89 +4,59 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'helper_functions.dart';
+import '../extensions/json_parser.dart';
 import 'security_scheme.dart';
+
+const _defaultInValue = 'header';
+const _defaultAlgValue = 'ES256';
+const _defaultFormatValue = 'jwt';
 
 /// Bearer Token security configuration identified by the Vocabulary Term
 /// `bearer`.
 class BearerSecurityScheme extends SecurityScheme {
   /// Constructor.
   BearerSecurityScheme({
-    String? description,
-    String? proxy,
     this.name,
     String? alg,
     String? format,
     this.authorization,
     String? in_,
-    Map<String, String>? descriptions,
-  })  : in_ = in_ ?? 'header',
-        alg = alg ?? 'ES256',
-        format = format ?? 'jwt' {
-    this.description = description;
-    this.proxy = proxy;
-    this.descriptions.addAll(descriptions ?? {});
-  }
+    super.proxy,
+    super.description,
+    super.descriptions,
+  })  : in_ = in_ ?? _defaultInValue,
+        alg = alg ?? _defaultAlgValue,
+        format = format ?? _defaultFormatValue;
 
   /// Creates a [BearerSecurityScheme] from a [json] object.
   BearerSecurityScheme.fromJson(Map<String, dynamic> json) {
-    _parsedJsonFields.addAll(parseSecurityJson(this, json));
+    final Set<String> parsedFields = {};
 
-    final dynamic jsonIn = _getJsonValue(json, 'in');
-    if (jsonIn is String) {
-      in_ = jsonIn;
-      _parsedJsonFields.add('in');
-    }
+    name = json.parseField<String>('name', parsedFields);
+    in_ = json.parseField<String>('in', parsedFields) ?? _defaultInValue;
+    format =
+        json.parseField<String>('format', parsedFields) ?? _defaultFormatValue;
+    alg = json.parseField<String>('alg', parsedFields) ?? _defaultAlgValue;
+    authorization = json.parseField<String>('authorization', parsedFields);
 
-    final dynamic jsonName = _getJsonValue(json, 'name');
-    if (jsonName is String) {
-      name = jsonName;
-      _parsedJsonFields.add('name');
-    }
-
-    final dynamic jsonFormat = _getJsonValue(json, 'format');
-    if (jsonFormat is String) {
-      format = jsonFormat;
-      _parsedJsonFields.add('format');
-    }
-
-    final dynamic jsonAlg = _getJsonValue(json, 'alg');
-    if (jsonAlg is String) {
-      alg = jsonAlg;
-      _parsedJsonFields.add('alg');
-    }
-
-    final dynamic jsonAuthorization = _getJsonValue(json, 'authorization');
-    if (jsonAuthorization is String) {
-      authorization = jsonAuthorization;
-      _parsedJsonFields.add('authorization');
-    }
-
-    parseAdditionalFields(additionalFields, json, _parsedJsonFields);
+    parseSecurityJson(json, parsedFields);
   }
 
   @override
   String get scheme => 'bearer';
 
   /// URI of the authorization server.
-  String? authorization;
+  late final String? authorization;
 
   /// Name for query, header, cookie, or uri parameters.
-  String? name;
+  late final String? name;
 
   /// Encoding, encryption, or digest algorithm.
-  String alg = 'ES256';
+  late final String alg;
 
   /// Specifies format of security authentication information.
-  String? format = 'jwt';
+  late final String format;
 
   /// Specifies the location of security authentication information.
-  String in_ = 'header';
-
-  final List<String> _parsedJsonFields = [];
-
-  dynamic _getJsonValue(Map<String, dynamic> json, String key) {
-    _parsedJsonFields.add(key);
-    return json[key];
-  }
+  late final String in_;
 }

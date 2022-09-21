@@ -4,7 +4,6 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'helper_functions.dart';
 import 'security_scheme.dart';
 
 /// A security configuration corresponding to identified by the Vocabulary Term
@@ -12,12 +11,9 @@ import 'security_scheme.dart';
 class NoSecurityScheme extends SecurityScheme {
   /// Creates a [NoSecurityScheme] from a [json] object.
   NoSecurityScheme.fromJson(Map<String, dynamic> json) {
-    _parsedJsonFields.addAll(parseSecurityJson(this, json));
-    parseAdditionalFields(additionalFields, json, _parsedJsonFields);
+    parseSecurityJson(json, {});
   }
 
   @override
   String get scheme => 'nosec';
-
-  final List<String> _parsedJsonFields = [];
 }

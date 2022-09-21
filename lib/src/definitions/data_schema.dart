@@ -4,30 +4,21 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'extensions/json_parser.dart';
+
 /// Parses a [json] object and adds its contents to a [dataSchema].
 void parseDataSchemaJson(DataSchema dataSchema, Map<String, dynamic> json) {
-  // TODO(JKRhb): Parse more DataSchema values
-  final Object? atType = json['@type'];
-  if (atType is String) {
-    dataSchema.atType = [atType];
-  } else if (atType is List<String>) {
-    dataSchema.atType = atType;
-  }
-
-  final Object? type = json['type'];
-  if (type is String) {
-    dataSchema.type = type;
-  }
-
-  final Object? readOnly = json['readOnly'];
-  if (readOnly is bool) {
-    dataSchema.readOnly = readOnly;
-  }
-
-  final Object? writeOnly = json['writeOnly'];
-  if (writeOnly is bool) {
-    dataSchema.writeOnly = writeOnly;
-  }
+  dataSchema
+    ..atType = json.parseArrayField<String>('@type')
+    ..title = json.parseField<String>('title')
+    ..titles = json.parseMapField<String>('titles')
+    ..description = json.parseField<String>('description')
+    ..constant = json.parseField<Object>('constant')
+    ..enumeration = json.parseField<List<Object>>('enum')
+    ..readOnly = json.parseField<bool>('readOnly') ?? dataSchema.readOnly
+    ..writeOnly = json.parseField<bool>('writeOnly') ?? dataSchema.writeOnly
+    ..format = json.parseField<String>('format')
+    ..type = json.parseField<String>('type');
 }
 
 /// Metadata that describes the data format used. It can be used for validation.
