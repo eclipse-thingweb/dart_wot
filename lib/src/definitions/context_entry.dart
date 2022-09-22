@@ -35,8 +35,8 @@ class ContextEntry {
     if (json is String) {
       if (firstEntry && _validTdContextValues.contains(json)) {
         prefixMapping.defaultPrefixValue = json;
-        return ContextEntry(json, null);
       }
+      return ContextEntry(json, null);
     }
 
     if (json is Map<String, dynamic>) {
