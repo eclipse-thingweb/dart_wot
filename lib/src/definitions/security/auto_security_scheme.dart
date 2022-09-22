@@ -4,7 +4,6 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'helper_functions.dart';
 import 'security_scheme.dart';
 
 /// An automatic security configuration identified by the
@@ -12,12 +11,9 @@ import 'security_scheme.dart';
 class AutoSecurityScheme extends SecurityScheme {
   /// Creates an [AutoSecurityScheme] from a [json] object.
   AutoSecurityScheme.fromJson(Map<String, dynamic> json) {
-    _parsedJsonFields.addAll(parseSecurityJson(this, json));
-    parseAdditionalFields(additionalFields, json, _parsedJsonFields);
+    parseSecurityJson(json, {});
   }
 
   @override
   String get scheme => 'auto';
-
-  final List<String> _parsedJsonFields = [];
 }

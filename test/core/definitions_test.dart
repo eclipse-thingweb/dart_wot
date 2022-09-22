@@ -9,11 +9,20 @@ import 'dart:convert';
 import 'package:dart_wot/dart_wot.dart';
 import 'package:dart_wot/src/definitions/additional_expected_response.dart';
 import 'package:dart_wot/src/definitions/context_entry.dart';
+import 'package:dart_wot/src/definitions/data_schema.dart';
 import 'package:dart_wot/src/definitions/expected_response.dart';
+import 'package:dart_wot/src/definitions/interaction_affordances/interaction_affordance.dart';
 import 'package:dart_wot/src/definitions/interaction_affordances/property.dart';
 import 'package:dart_wot/src/definitions/operation_type.dart';
+import 'package:dart_wot/src/definitions/security/auto_security_scheme.dart';
+import 'package:dart_wot/src/definitions/security/no_security_scheme.dart';
 import 'package:dart_wot/src/definitions/validation/thing_description_schema.dart';
+import 'package:dart_wot/src/definitions/validation/validation_exception.dart';
 import 'package:test/test.dart';
+
+class _InvalidInteractionAffordance extends InteractionAffordance {
+  _InvalidInteractionAffordance(super.forms, super.thingDescription);
+}
 
 void main() {
   group('Definitions', () {
@@ -182,6 +191,14 @@ void main() {
 
       expect(additionalResponse2.contentType, 'text/plain');
       expect(additionalResponse2.schema, null);
+
+      expect(
+        () => Form(
+          Uri.parse('http://example.org'),
+          _InvalidInteractionAffordance([], thingDescription),
+        ),
+        throwsStateError,
+      );
     });
 
     test('should correctly parse actions', () {
@@ -228,13 +245,24 @@ void main() {
         'title': 'MyLampThing',
         'security': 'nosec_sc',
         'securityDefinitions': {
-          'nosec_sc': {'scheme': 'nosec'}
+          'nosec_sc': {'scheme': 'nosec'},
+          'auto_sc': {'scheme': 'auto'},
         },
         'properties': {
           'property': {
+            'title': 'Test',
+            'titles': {'de': 'German Test', 'en': 'English Test'},
+            'description': 'This is a Test',
+            'descriptions': {
+              'es': 'Esto es una prueba',
+              'en': 'This is a Test'
+            },
             'writeOnly': true,
             'readOnly': true,
             'observable': true,
+            'enum': ['On', 'Off', 3],
+            'constant': 'On',
+            'type': 'string',
             'forms': [
               {'href': 'https://example.org'}
             ]
@@ -243,22 +271,75 @@ void main() {
             'forms': [
               {'href': 'https://example.org'}
             ]
-          }
+          },
+          'objectSchemeProperty': {
+            'properties': {
+              'test': {'type': 'string'}
+            },
+            'forms': [
+              {
+                'href': 'https://example.org',
+                'security': 'auto_sc',
+              }
+            ],
+          },
+          'propertyWithOneOf': {
+            'oneOf': [
+              {'type': 'string'},
+              {'type': 'integer'}
+            ],
+            'forms': [
+              {'href': 'https://example.org'}
+            ]
+          },
         }
       };
 
       final thingDescription = ThingDescription.fromJson(validThingDescription);
 
+      expect(thingDescription.security[0], 'nosec_sc');
+      final noSecurityScheme = thingDescription.securityDefinitions['nosec_sc'];
+      expect(noSecurityScheme, isA<NoSecurityScheme>());
+      expect(noSecurityScheme?.scheme, 'nosec');
+
       final property = thingDescription.properties['property'];
+      expect(property?.title, 'Test');
+      expect(property?.description, 'This is a Test');
+      expect(property?.descriptions?['es'], 'Esto es una prueba');
+      expect(property?.descriptions?['en'], 'This is a Test');
       expect(property?.writeOnly, true);
       expect(property?.readOnly, true);
       expect(property?.observable, true);
+      expect(property?.enumeration, ['On', 'Off', 3]);
+      expect(property?.constant, 'On');
 
       final propertyWithDefaults =
           thingDescription.properties['propertyWithDefaults'];
       expect(propertyWithDefaults?.writeOnly, false);
       expect(propertyWithDefaults?.readOnly, false);
       expect(propertyWithDefaults?.observable, false);
+
+      final objectSchemeProperty =
+          thingDescription.properties['objectSchemeProperty'];
+
+      expect(objectSchemeProperty?.forms[0].security, ['auto_sc']);
+      final autoSecurityScheme =
+          objectSchemeProperty?.forms[0].securityDefinitions[0];
+      expect(autoSecurityScheme, isA<AutoSecurityScheme>());
+      expect(autoSecurityScheme?.scheme, 'auto');
+
+      final testSchema = objectSchemeProperty?.properties?['test'];
+      expect(testSchema, isA<DataSchema>());
+      expect(testSchema?.type, 'string');
+      final propertyWithOneOf =
+          thingDescription.properties['propertyWithOneOf'];
+      final stringSchema = propertyWithOneOf?.oneOf?[0];
+      final integerSchema = propertyWithOneOf?.oneOf?[1];
+
+      expect(stringSchema, isA<DataSchema>());
+      expect(stringSchema?.type, 'string');
+      expect(integerSchema, isA<DataSchema>());
+      expect(integerSchema?.type, 'integer');
     });
   });
 
@@ -325,6 +406,72 @@ void main() {
     expect(
       thingDescription.securityDefinitions['ace_sc']?.scheme,
       'ace:ACESecurityScheme',
+    );
+  });
+
+  test('Should only parse allowed Operation Types', () {
+    expect(
+      OperationType.fromString('invokeaction'),
+      OperationType.invokeaction,
+    );
+
+    expect(
+      () => OperationType.fromString('test'),
+      throwsA(isA<ValidationException>()),
+    );
+  });
+
+  test('Should correctly parse ExpectedResponse', () {
+    final firstResponse = ExpectedResponse(
+      'application/json',
+      additionalFields: {'test': 'test'},
+    );
+
+    expect(firstResponse.additionalFields['test'], 'test');
+
+    final expectedResponseJson = {
+      'response': {
+        'contentType': 'application/json',
+        'test': 'test',
+      },
+    };
+
+    final secondResponse = ExpectedResponse.fromJson(expectedResponseJson);
+
+    expect(secondResponse, isA<ExpectedResponse>());
+    expect(secondResponse?.additionalFields['test'], 'test');
+  });
+
+  test('Should reject invalid @context entries', () {
+    final invalidThingDescription1 = {
+      '@context': 5,
+      'title': 'Test',
+      'security': 'nosec_sc',
+      'securityDefinitions': {
+        'nosec_sc': {'scheme': 'nosec'}
+      },
+    };
+
+    expect(
+      () => ThingDescription.fromJson(
+        invalidThingDescription1,
+        validate: false,
+      ),
+      throwsA(isA<ValidationException>()),
+    );
+
+    final invalidThingDescription2 = {
+      '@context': ['https://www.w3.org/2022/wot/td/v1.1', 5],
+      'title': 'Test',
+      'security': 'nosec_sc',
+      'securityDefinitions': {
+        'nosec_sc': {'scheme': 'nosec'}
+      },
+    };
+
+    expect(
+      () => ThingDescription.fromJson(invalidThingDescription2),
+      throwsA(isA<ValidationException>()),
     );
   });
 }

@@ -10,6 +10,7 @@ import 'package:uri/uri.dart';
 
 import 'additional_expected_response.dart';
 import 'expected_response.dart';
+import 'extensions/json_parser.dart';
 import 'interaction_affordances/action.dart';
 import 'interaction_affordances/event.dart';
 import 'interaction_affordances/interaction_affordance.dart';
@@ -49,78 +50,28 @@ class Form {
     Map<String, dynamic> json,
     InteractionAffordance interactionAffordance,
   ) {
-    final List<String> parsedJsonFields = [];
-    final href = _parseHref(json, parsedJsonFields);
+    final Set<String> parsedFields = {};
+    final href =
+        Uri.parse(json.parseRequiredField<String>('href', parsedFields));
 
-    String? subprotocol;
-    if (json['subprotocol'] is String) {
-      parsedJsonFields.add('subprotocol');
-      subprotocol = json['subprotocol'] as String;
-    }
+    final subprotocol = json.parseField<String>('subprotocol', parsedFields);
 
-    List<String>? op;
-    if (json['op'] != null) {
-      final dynamic jsonOp = _getJsonValue(json, 'op', parsedJsonFields);
-      if (jsonOp is String) {
-        op = [jsonOp];
-      } else if (jsonOp is List<dynamic>) {
-        op = jsonOp.whereType<String>().toList(growable: false);
-      }
-    }
+    final List<String>? op = json.parseArrayField<String>('op', parsedFields);
 
-    String contentType = 'application/json';
-    if (json['contentType'] != null) {
-      final dynamic jsonContentType =
-          _getJsonValue(json, 'contentType', parsedJsonFields);
-      if (jsonContentType is String) {
-        contentType = jsonContentType;
-      }
-    }
+    final contentType = json.parseField<String>('contentType', parsedFields) ??
+        'application/json';
 
-    String? contentCoding;
-    if (json['contentCoding'] != null) {
-      final dynamic jsonContentCoding =
-          _getJsonValue(json, 'contentCoding', parsedJsonFields);
-      if (jsonContentCoding is String) {
-        contentCoding = jsonContentCoding;
-      }
-    }
+    final contentCoding =
+        json.parseField<String>('contentCoding', parsedFields);
 
-    List<String>? security;
-    if (json['security'] != null) {
-      final dynamic jsonSecurity =
-          _getJsonValue(json, 'security', parsedJsonFields);
-      if (jsonSecurity is String) {
-        security = [jsonSecurity];
-      } else if (jsonSecurity is List<dynamic>) {
-        security = jsonSecurity.whereType<String>().toList(growable: false);
-      }
-    }
-
-    List<String>? scopes;
-    if (json['scopes'] != null) {
-      final dynamic jsonScopes =
-          _getJsonValue(json, 'scopes', parsedJsonFields);
-      if (jsonScopes is String) {
-        scopes = [jsonScopes];
-      } else if (jsonScopes is List<dynamic>) {
-        scopes = jsonScopes.whereType<String>().toList(growable: false);
-      }
-    }
-
-    ExpectedResponse? response;
-    if (json['response'] != null) {
-      final dynamic jsonResponse =
-          _getJsonValue(json, 'response', parsedJsonFields);
-      if (jsonResponse is Map<String, dynamic>) {
-        response = ExpectedResponse.fromJson(jsonResponse);
-      }
-    }
+    final security = json.parseArrayField<String>('security', parsedFields);
+    final scopes = json.parseArrayField<String>('scopes', parsedFields);
+    final response = ExpectedResponse.fromJson(json, parsedFields);
 
     List<AdditionalExpectedResponse>? additionalResponses;
     if (json['additionalResponses'] != null) {
       final dynamic jsonResponse =
-          _getJsonValue(json, 'additionalResponses', parsedJsonFields);
+          _getJsonValue(json, 'additionalResponses', parsedFields);
       if (jsonResponse is Map<String, dynamic>) {
         additionalResponses = [
           AdditionalExpectedResponse.fromJson(jsonResponse, contentType)
@@ -138,7 +89,7 @@ class Form {
 
     final additionalFields = _parseAdditionalFields(
       json,
-      parsedJsonFields,
+      parsedFields,
       interactionAffordance.thingDescription.prefixMapping,
     );
 
@@ -252,19 +203,6 @@ class Form {
     }
   }
 
-  static Uri _parseHref(
-    Map<String, dynamic> json,
-    List<String> parsedJsonFields,
-  ) {
-    final dynamic href = json['href'];
-    parsedJsonFields.add('href');
-    if (href is String) {
-      return Uri.parse(href);
-    } else {
-      throw ValidationException("'href' field must be a string.");
-    }
-  }
-
   static List<OperationType> _setOpValue(
     InteractionAffordance interactionAffordance,
     List<String>? opStrings,
@@ -290,14 +228,14 @@ class Form {
 
     throw StateError(
       'Encountered unknown InteractionAffordance '
-      '${interactionAffordance.runtimeType} encountered',
+      '${interactionAffordance.runtimeType}.',
     );
   }
 
   static dynamic _getJsonValue(
     Map<String, dynamic> formJson,
     String key,
-    List<String> parsedJsonFields,
+    Set<String> parsedJsonFields,
   ) {
     parsedJsonFields.add(key);
     return formJson[key];
@@ -332,12 +270,12 @@ class Form {
 
   static Map<String, dynamic> _parseAdditionalFields(
     Map<String, dynamic> formJson,
-    List<String> parsedJsonFields,
+    Set<String> parsedFields,
     PrefixMapping prefixMapping,
   ) {
     final additionalFields = <String, dynamic>{};
     for (final entry in formJson.entries) {
-      if (!parsedJsonFields.contains(entry.key)) {
+      if (!parsedFields.contains(entry.key)) {
         final String key = _expandCurieKey(entry.key, prefixMapping);
         final dynamic value = _expandCurieValue(entry.value, prefixMapping);
 

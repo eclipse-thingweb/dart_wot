@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'helper_functions.dart';
+import '../extensions/json_parser.dart';
 import 'security_scheme.dart';
 
 /// Pre-shared key authentication security configuration identified by the
@@ -24,15 +24,11 @@ class PskSecurityScheme extends SecurityScheme {
 
   /// Creates a [PskSecurityScheme] from a [json] object.
   PskSecurityScheme.fromJson(Map<String, dynamic> json) {
-    _parsedJsonFields.addAll(parseSecurityJson(this, json));
+    final Set<String> parsedFields = {};
 
-    final dynamic jsonIdentity = _getJsonValue(json, 'identity');
-    if (jsonIdentity is String) {
-      identity = jsonIdentity;
-      _parsedJsonFields.add('identity');
-    }
+    identity = json.parseField<String>('identity');
 
-    parseAdditionalFields(additionalFields, json, _parsedJsonFields);
+    parseSecurityJson(json, parsedFields);
   }
 
   @override
@@ -40,11 +36,4 @@ class PskSecurityScheme extends SecurityScheme {
 
   /// Name for query, header, cookie, or uri parameters.
   String? identity;
-
-  final List<String> _parsedJsonFields = [];
-
-  dynamic _getJsonValue(Map<String, dynamic> json, String key) {
-    _parsedJsonFields.add(key);
-    return json[key];
-  }
 }

@@ -6,6 +6,7 @@
 
 import 'package:curie/curie.dart';
 
+import '../extensions/json_parser.dart';
 import '../form.dart';
 import '../thing_description.dart';
 
@@ -49,24 +50,6 @@ abstract class InteractionAffordance {
     }
   }
 
-  Map<String, String>? _parseMultilangString(
-    Map<String, dynamic> json,
-    String jsonKey,
-  ) {
-    Map<String, String>? field;
-    final dynamic jsonEntries = json[jsonKey];
-    if (jsonEntries is Map<String, dynamic>) {
-      field = {};
-      for (final entry in jsonEntries.entries) {
-        final dynamic value = entry.value;
-        if (value is String) {
-          field[entry.key] = value;
-        }
-      }
-    }
-    return field;
-  }
-
   /// Parses the [InteractionAffordance] contained in a [json] object.
   void parseAffordanceFields(
     Map<String, dynamic> json,
@@ -74,25 +57,10 @@ abstract class InteractionAffordance {
   ) {
     _parseForms(json, prefixMapping);
 
-    final dynamic title = json['title'];
-    if (title is String) {
-      this.title = title;
-    }
-
-    titles = _parseMultilangString(json, 'titles');
-
-    final dynamic description = json['description'];
-    if (description is String) {
-      this.description = description;
-    }
-
-    descriptions = _parseMultilangString(json, 'descriptions');
-
-    if (json['uriVariables'] != null) {
-      final dynamic jsonUriVariables = json['uriVariables'];
-      if (jsonUriVariables is Map<String, dynamic>) {
-        uriVariables = jsonUriVariables;
-      }
-    }
+    title = json.parseField('title');
+    titles = json.parseMapField<String>('titles');
+    description = json.parseField('description');
+    descriptions = json.parseMapField<String>('descriptions');
+    uriVariables = json.parseMapField<dynamic>('uriVariables');
   }
 }

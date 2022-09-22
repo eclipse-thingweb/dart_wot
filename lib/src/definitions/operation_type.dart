@@ -43,19 +43,19 @@ enum OperationType {
   /// Corresponds with the `unsubscribeevent` operation type.
   unsubscribeevent;
 
-  /// Constructor
-  const OperationType();
+  static final Map<String, OperationType> _registry =
+      Map.fromEntries(OperationType.values.map((e) => MapEntry(e.name, e)));
 
   /// Creates an [OperationType] from a [stringValue].
   static OperationType fromString(String stringValue) {
-    for (final value in OperationType.values) {
-      if (stringValue == value.name) {
-        return value;
-      }
+    final operationType = OperationType._registry[stringValue];
+
+    if (operationType == null) {
+      throw ValidationException(
+        'Encountered unknown OperationType $stringValue.',
+      );
     }
 
-    throw ValidationException(
-      'Encountered unknown OperationType $stringValue.',
-    );
+    return operationType;
   }
 }

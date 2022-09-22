@@ -20,6 +20,7 @@ void main() {
       final servient = Servient();
       final wot = await servient.start();
       final Map<String, dynamic> exposedThingInit = <String, dynamic>{
+        '@context': 'https://www.w3.org/2022/wot/td/v1.1',
         'title': 'Test Thing'
       };
       final dynamic exposedThing = await wot.produce(exposedThingInit);
@@ -46,7 +47,7 @@ void main() {
             "href": "https://example.org",
             "rel": "test",
             "anchor": "https://example.org",
-            "type": "test",
+            "@type": "test",
             "sizes": "42",
             "test": "test",
             "hreflang": "de"

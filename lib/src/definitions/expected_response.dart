@@ -4,36 +4,42 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'validation/validation_exception.dart';
+import 'extensions/json_parser.dart';
 
 /// Communication metadata describing the expected response message for the
 /// primary response.
 class ExpectedResponse {
   /// Constructs a new [ExpectedResponse] object from a [contentType].
-  ExpectedResponse(this.contentType);
+  ExpectedResponse(this.contentType, {Map<String, dynamic>? additionalFields})
+      : additionalFields = Map.fromEntries(
+          additionalFields?.entries
+                  .where((element) => element.key != 'contentType') ??
+              [],
+        );
 
   /// Creates an [ExpectedResponse] from a [json] object.
-  ExpectedResponse.fromJson(Map<String, dynamic> json)
-      : contentType = _parseContentType(json['contentType']) {
-    for (final entry in json.entries) {
-      if (entry.key == 'response') {
-        continue;
-      }
+  static ExpectedResponse? fromJson(
+    Map<String, dynamic> json, [
+    Set<String>? parsedFields,
+  ]) {
+    final responseJson = json['response'];
+    parsedFields?.add('response');
 
-      additionalFields[entry.key] = entry.value;
+    if (responseJson is! Map<String, dynamic>) {
+      return null;
     }
+
+    return ExpectedResponse(
+      responseJson.parseRequiredField<String>('contentType'),
+      additionalFields: Map.fromEntries(
+        responseJson.entries.where((element) => element.key != 'contentType'),
+      ),
+    );
   }
 
   /// The [contentType] of this [ExpectedResponse] object.
   String contentType;
 
   /// Any other additional field will be included in this [Map].
-  final Map<String, dynamic> additionalFields = <String, dynamic>{};
-
-  static String _parseContentType(dynamic contentType) {
-    if (contentType is! String) {
-      throw ValidationException('contentType of response map is not a String!');
-    }
-    return contentType;
-  }
+  final Map<String, dynamic> additionalFields;
 }

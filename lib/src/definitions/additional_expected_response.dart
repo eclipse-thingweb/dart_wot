@@ -7,6 +7,8 @@
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
+import 'extensions/json_parser.dart';
+
 /// Communication metadata describing the expected response message for the
 /// primary response.
 @immutable
@@ -14,59 +16,53 @@ class AdditionalExpectedResponse {
   /// Constructs a new [AdditionalExpectedResponse] object from a [contentType].
   AdditionalExpectedResponse(
     this.contentType, {
-    String? schema,
+    this.schema,
     bool? success,
-  })  : _success = success,
-        _schema = schema;
+    Map<String, dynamic>? additionalFields,
+  })  : additionalFields = additionalFields ?? {},
+        success = success ?? false;
 
   /// Creates an [AdditionalExpectedResponse] from a [json] object.
-  AdditionalExpectedResponse.fromJson(
+  factory AdditionalExpectedResponse.fromJson(
     Map<String, dynamic> json,
     String formContentType,
-  )   : contentType = _parseJson(json, 'contentType') ?? formContentType,
-        _success = _parseJson(json, 'success'),
-        _schema = _parseJson(json, 'schema') {
-    const parsedFields = ['contentType', 'schema', 'success'];
+  ) {
+    final Set<String> parsedFields = {};
 
-    for (final entry in json.entries) {
-      final key = entry.key;
-      if (parsedFields.contains(key)) {
-        continue;
-      }
+    final contentType =
+        json.parseField<String>('contentType', parsedFields) ?? formContentType;
+    final success = json.parseField<bool>('success', parsedFields);
+    final schema = json.parseField<String>('schema', parsedFields);
 
-      additionalFields[key] = entry.value;
-    }
-  }
+    final additionalFields = Map.fromEntries(
+      json.entries.where((entry) => !parsedFields.contains(entry.key)),
+    );
 
-  static T? _parseJson<T>(Map<String, dynamic> json, String key) {
-    final dynamic value = json[key];
-
-    if (value is T) {
-      return value;
-    }
-
-    return null;
+    return AdditionalExpectedResponse(
+      contentType,
+      schema: schema,
+      success: success,
+      additionalFields: additionalFields,
+    );
   }
 
   /// The [contentType] of this [AdditionalExpectedResponse] object.
   final String contentType;
 
-  final bool? _success;
-
   /// Signals if an additional response should not be considered an error.
-  bool get success => _success ?? false;
-
-  final String? _schema;
+  ///
+  /// Defaults to `false` if not explicitly set.
+  final bool success;
 
   /// Used to define the output data schema for an additional response if it
   /// differs from the default output data schema.
   ///
   /// Rather than a `DataSchema` object, the name of a previous definition given
   /// in a `schemaDefinitions` map must be used.
-  String? get schema => _schema;
+  final String? schema;
 
   /// Any other additional field will be included in this [Map].
-  final Map<String, dynamic> additionalFields = <String, dynamic>{};
+  final Map<String, dynamic> additionalFields;
 
   @override
   bool operator ==(Object other) {

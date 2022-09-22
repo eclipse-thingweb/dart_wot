@@ -9,29 +9,14 @@ import 'dart:convert';
 import 'package:curie/curie.dart';
 
 import 'context_entry.dart';
+import 'extensions/json_parser.dart';
 import 'interaction_affordances/action.dart';
 import 'interaction_affordances/event.dart';
 import 'interaction_affordances/property.dart';
 import 'link.dart';
-import 'security/ace_security_scheme.dart';
-import 'security/apikey_security_scheme.dart';
-import 'security/auto_security_scheme.dart';
-import 'security/basic_security_scheme.dart';
-import 'security/bearer_security_scheme.dart';
-import 'security/digest_security_scheme.dart';
-import 'security/no_security_scheme.dart';
-import 'security/oauth2_security_scheme.dart';
-import 'security/psk_security_scheme.dart';
 import 'security/security_scheme.dart';
 import 'thing_model.dart';
 import 'validation/thing_description_schema.dart';
-import 'validation/validation_exception.dart';
-
-const _validContextValues = [
-  'https://www.w3.org/2019/wot/td/v1',
-  'https://www.w3.org/2022/wot/td/v1.1',
-  'http://www.w3.org/ns/td'
-];
 
 /// Represents a WoT Thing Description
 class ThingDescription {
@@ -140,36 +125,27 @@ class ThingDescription {
   }
 
   void _parseJson(Map<String, dynamic> json) {
-    _parseTitle(json['title']);
-    _parseContext(json['@context']);
-    final dynamic id = json['id'];
-    if (id is String) {
-      this.id = id;
-    }
-    final dynamic base = json['base'];
-    if (base is String) {
-      this.base = Uri.parse(base);
-    }
-    final dynamic description = json['description'];
-    if (description is String) {
-      this.description = description;
-    }
-    _parseMultilangString(titles, json, 'titles');
-    _parseMultilangString(descriptions, json, 'descriptions');
-    final dynamic security = json['security'];
-    if (security is List<dynamic>) {
-      this.security.addAll(security.whereType<String>());
-    } else if (security is String) {
-      this.security.add(security);
-    }
+    // TODO: Move to constructor?
+    final Set<String> parsedFields = {};
+
+    context.addAll(ContextEntry.parseContext(json['@context'], prefixMapping));
+    title = json.parseRequiredField<String>('title', parsedFields);
+    titles.addAll(json.parseMapField<String>('titles', parsedFields) ?? {});
+    description = json.parseField<String>('description', parsedFields);
+    descriptions
+        .addAll(json.parseMapField<String>('descriptions', parsedFields) ?? {});
+    id = json.parseField<String>('id', parsedFields);
+    base = Uri.tryParse(json.parseField<String>('base', parsedFields) ?? '');
+    security
+        .addAll(json.parseArrayField<String>('security', parsedFields) ?? []);
+
     final dynamic securityDefinitions = json['securityDefinitions'];
     if (securityDefinitions is Map<String, dynamic>) {
       _parseSecurityDefinitions(securityDefinitions);
     }
-    final dynamic jsonUriVariables = json['uriVariables'];
-    if (jsonUriVariables is Map<String, dynamic>) {
-      uriVariables = jsonUriVariables;
-    }
+
+    uriVariables = json.parseMapField<dynamic>('uriVariables');
+
     final dynamic properties = json['properties'];
     if (properties is Map<String, dynamic>) {
       _parseProperties(properties);
@@ -185,72 +161,6 @@ class ThingDescription {
     final dynamic links = json['links'];
     if (links is List<dynamic>) {
       _parseLinks(links);
-    }
-  }
-
-  // TODO(JKRhb): Refactor
-  void _parseMultilangString(
-    Map<String, String> field,
-    Map<String, dynamic> json,
-    String jsonKey,
-  ) {
-    final dynamic jsonEntries = json[jsonKey];
-    if (jsonEntries is Map<String, dynamic>) {
-      for (final entry in jsonEntries.entries) {
-        final dynamic value = entry.value;
-        if (value is String) {
-          field[entry.key] = value;
-        }
-      }
-    }
-  }
-
-  void _parseTitle(dynamic titleJson) {
-    if (titleJson is String) {
-      title = titleJson;
-    } else {
-      throw ValidationException(
-        'Thing Description type is not a '
-        'String but ${title.runtimeType}',
-      );
-    }
-  }
-
-  void _parseContext(dynamic contextJson) {
-    if (contextJson is String || contextJson is Map<String, dynamic>) {
-      _parseContextListEntry(contextJson);
-    } else if (contextJson is List<dynamic>) {
-      var firstEntry = true;
-      for (final contextEntry in contextJson) {
-        _parseContextListEntry(contextEntry, firstEntry: firstEntry);
-        if (contextEntry is String &&
-            _validContextValues.contains(contextEntry)) {
-          firstEntry = false;
-        }
-      }
-    }
-  }
-
-  void _parseContextListEntry(
-    dynamic contextJsonListEntry, {
-    bool firstEntry = false,
-  }) {
-    if (contextJsonListEntry is String) {
-      context.add(ContextEntry(contextJsonListEntry, null));
-      if (firstEntry && _validContextValues.contains(contextJsonListEntry)) {
-        prefixMapping.defaultPrefixValue = contextJsonListEntry;
-      }
-    } else if (contextJsonListEntry is Map<String, dynamic>) {
-      for (final mapEntry in contextJsonListEntry.entries) {
-        final dynamic value = mapEntry.value;
-        final key = mapEntry.key;
-        if (value is String) {
-          context.add(ContextEntry(value, key));
-          if (!key.startsWith('@') && Uri.tryParse(value) != null) {
-            prefixMapping.addPrefix(key, value);
-          }
-        }
-      }
     }
   }
 
@@ -294,57 +204,10 @@ class ThingDescription {
     for (final securityDefinition in json.entries) {
       final dynamic value = securityDefinition.value;
       if (value is Map<String, dynamic>) {
-        SecurityScheme securityScheme;
-        switch (value['scheme']) {
-          case 'auto':
-            {
-              securityScheme = AutoSecurityScheme.fromJson(value);
-              break;
-            }
-          case 'basic':
-            {
-              securityScheme = BasicSecurityScheme.fromJson(value);
-              break;
-            }
-          case 'bearer':
-            {
-              securityScheme = BearerSecurityScheme.fromJson(value);
-              break;
-            }
-          case 'nosec':
-            {
-              securityScheme = NoSecurityScheme.fromJson(value);
-              break;
-            }
-          case 'psk':
-            {
-              securityScheme = PskSecurityScheme.fromJson(value);
-              break;
-            }
-          case 'digest':
-            {
-              securityScheme = DigestSecurityScheme.fromJson(value);
-              break;
-            }
-          case 'apikey':
-            {
-              securityScheme = ApiKeySecurityScheme.fromJson(value);
-              break;
-            }
-          case 'oauth2':
-            {
-              securityScheme = OAuth2SecurityScheme.fromJson(value);
-              break;
-            }
-          case 'ace:ACESecurityScheme':
-            {
-              securityScheme = AceSecurityScheme.fromJson(value);
-              break;
-            }
-          default:
-            continue;
+        final securityScheme = SecurityScheme.fromJson(value);
+        if (securityScheme != null) {
+          securityDefinitions[securityDefinition.key] = securityScheme;
         }
-        securityDefinitions[securityDefinition.key] = securityScheme;
       }
     }
   }
