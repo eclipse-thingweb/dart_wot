@@ -1,3 +1,27 @@
+# 0.21.0
+
+## Fixes
+
+- fix(coap_client): correctly set URI path for discovery
+- fix(coap_client): set accept to application/link-format for CoRE Link Format discovery
+- fix(binding-coap): improve reponse error handling
+
+## New or Updated Features
+
+- feat: adjust CoAP binding to new library API
+- feat: add Codec for CoRE Link Format
+- feat: add missing contentCoding field to form
+- feat(binding-coap): add ACE-OAuth support
+- feat: add first version of MQTT binding
+- feat: improve ThingDescriptionValidationException
+- feat!: allow passing invalid credentials to security callbacks
+- feat: add support for CoRE RD discovery
+- feat: add missing data schema fields
+
+## Miscellaneous
+
+Various refactorings, updated README file.
+
 # 0.20.1
 
 - Refactored Direct CoAP Discovery internally and updated example
