@@ -1,3 +1,7 @@
+# 0.21.1
+
+- fix: correctly parse String @context entries
+
 # 0.21.0
 
 ## Fixes
