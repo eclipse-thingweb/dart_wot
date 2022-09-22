@@ -1,7 +1,7 @@
 # 0.20.1
 
 - Refactored Direct CoAP Discovery internally and updated example
-- Fixed a bug that occured when an affordance output contains zero bytes
+- Fixed a bug that occurred when an affordance output contains zero bytes
 - Fixed a bug that prevented the correct setting of a CoAP Discovery URL
 - Set the correct Content-Format for CoAP Discovery with CoRE Link Format
 
