@@ -1,3 +1,8 @@
+import 'package:curie/curie.dart';
+
+import '../data_schema.dart';
+import '../form.dart';
+import '../interaction_affordances/interaction_affordance.dart';
 import '../validation/validation_exception.dart';
 
 /// Extension for parsing fields of JSON objects.
@@ -86,5 +91,91 @@ extension ParseField on Map<String, dynamic> {
     }
 
     return null;
+  }
+
+  /// Parses a field with a given [name] as a [DataSchema].
+  ///
+  /// Returns `null` if the field should not be present or if it is not a JSON
+  /// object.
+  ///
+  /// If a [Set] of [parsedFields] is passed to this function, the field [name]
+  /// will added. This can be used for filtering when parsing additional fields.
+  DataSchema? parseDataSchemaField(String name, [Set<String>? parsedFields]) {
+    final fieldValue = parseField(name, parsedFields);
+
+    if (fieldValue is Map<String, dynamic>) {
+      return DataSchema.fromJson(fieldValue);
+    }
+
+    return null;
+  }
+
+  /// Parses a field with a given [name] as a [List] of [DataSchema]s.
+  ///
+  /// Returns `null` if the field should not be present or if it is not an array
+  /// of JSON objects.
+  ///
+  /// If a [Set] of [parsedFields] is passed to this function, the field [name]
+  /// will added. This can be used for filtering when parsing additional fields.
+  List<DataSchema>? parseDataSchemaArrayField(
+    String name, [
+    Set<String>? parsedFields,
+  ]) {
+    final fieldValue = parseField(name, parsedFields);
+
+    if (fieldValue is List<Map<String, dynamic>>) {
+      return fieldValue.map(DataSchema.fromJson).toList();
+    }
+
+    return null;
+  }
+
+  /// Parses a field with a given [name] as a [Map] of [DataSchema]s.
+  ///
+  /// Returns `null` if the field should not be present or if it is not a
+  /// JSON object contaning other objects.
+  ///
+  /// If a [Set] of [parsedFields] is passed to this function, the field [name]
+  /// will added. This can be used for filtering when parsing additional fields.
+  Map<String, DataSchema>? parseDataSchemaMapField(
+    String name, [
+    Set<String>? parsedFields,
+  ]) {
+    final fieldValue = parseField(name, parsedFields);
+
+    if (fieldValue is Map<String, Map<String, dynamic>>) {
+      return Map.fromEntries(
+        fieldValue.entries.map(
+          (entry) => MapEntry(entry.key, DataSchema.fromJson(entry.value)),
+        ),
+      );
+    }
+
+    return null;
+  }
+
+  /// Parses [Form]s contained in this JSON object.
+  ///
+  /// Initializes the [Form] with information from the [interactionAffordance]
+  /// and expands compact URIs using the given [prefixMapping].
+  ///
+  /// Adds the key `forms` to the set of [parsedFields], if defined.
+  List<Form> parseForms(
+    InteractionAffordance interactionAffordance,
+    PrefixMapping prefixMapping, [
+    Set<String>? parsedFields,
+  ]) {
+    final fieldValue = parseField('forms', parsedFields);
+
+    if (fieldValue is! List) {
+      throw ValidationException(
+        'Missing "forms" member in Intraction Affordance',
+      );
+    }
+
+    return fieldValue
+        .whereType<Map<String, dynamic>>()
+        .map((e) => Form.fromJson(e, interactionAffordance))
+        .toList();
   }
 }

@@ -6,11 +6,14 @@
 
 import 'dart:convert';
 
+import 'package:curie/curie.dart';
 import 'package:dart_wot/dart_wot.dart';
 import 'package:dart_wot/src/definitions/additional_expected_response.dart';
 import 'package:dart_wot/src/definitions/context_entry.dart';
 import 'package:dart_wot/src/definitions/data_schema.dart';
 import 'package:dart_wot/src/definitions/expected_response.dart';
+import 'package:dart_wot/src/definitions/extensions/json_parser.dart';
+import 'package:dart_wot/src/definitions/interaction_affordances/action.dart';
 import 'package:dart_wot/src/definitions/interaction_affordances/interaction_affordance.dart';
 import 'package:dart_wot/src/definitions/interaction_affordances/property.dart';
 import 'package:dart_wot/src/definitions/operation_type.dart';
@@ -198,6 +201,11 @@ void main() {
           _InvalidInteractionAffordance([], thingDescription),
         ),
         throwsStateError,
+      );
+      expect(
+        () => <String, dynamic>{}
+            .parseForms(Action(ThingDescription(null)), PrefixMapping()),
+        throwsA(isA<ValidationException>()),
       );
     });
 
