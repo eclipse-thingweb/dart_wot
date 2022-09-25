@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import 'package:curie/curie.dart';
+import 'package:meta/meta.dart';
 
 import '../data_schema.dart';
 import '../extensions/json_parser.dart';
@@ -12,96 +13,133 @@ import '../thing_description.dart';
 import 'interaction_affordance.dart';
 
 /// Class representing a [Property] Affordance in a Thing Description.
+@immutable
 class Property extends InteractionAffordance implements DataSchema {
   /// Default constructor that creates a [Property] from a [List] of [forms].
-  Property(super.forms, super.thingDescription, {this.observable = false});
+  Property(
+    super.thingDescription, {
+    super.forms,
+    super.uriVariables,
+    this.dataSchema,
+    this.observable = false,
+  });
 
   /// Creates a new [Property] from a [json] object.
-  Property.fromJson(
+  factory Property.fromJson(
     Map<String, dynamic> json,
     ThingDescription thingDescription,
     PrefixMapping prefixMapping,
-  )   : observable = json.parseField<bool>('observable') ?? false,
-        super([], thingDescription) {
-    parseAffordanceFields(json, prefixMapping);
-    parseDataSchemaJson(this, json);
-    rawJson = json;
+  ) {
+    final Set<String> parsedFields = {};
+    final observable = json.parseField<bool>('observable') ?? false;
+    final dataSchema =
+        DataSchema.fromJson(json, {'observable', 'uriVariables'});
+    final uriVariables = json.parseMapField<dynamic>('uriVariables');
+
+    final property = Property(
+      thingDescription,
+      observable: observable,
+      dataSchema: dataSchema,
+      uriVariables: uriVariables,
+    );
+
+    property.forms.addAll(json.parseForms(property, prefixMapping));
+    property.additionalFields.addEntries(
+      json.entries.where((element) => !parsedFields.contains(element.key)),
+    );
+
+    return property;
   }
 
-  @override
-  List<String>? atType;
+  /// The internal [DataSchema] this property is based on.
+  final DataSchema? dataSchema;
 
   @override
-  Object? constant;
+  String? get title => dataSchema?.title;
 
   @override
-  Object? defaultValue;
+  Map<String, String>? get titles => dataSchema?.titles;
 
   @override
-  List<Object>? enumeration;
+  String? get description => dataSchema?.description;
 
   @override
-  String? format;
+  Map<String, String>? get descriptions => dataSchema?.descriptions;
 
   @override
-  List<DataSchema>? oneOf;
+  List<String>? get atType => dataSchema?.atType;
 
   @override
-  bool? readOnly = false;
+  Object? get constant => dataSchema?.constant;
 
   @override
-  String? type;
+  Object? get defaultValue => dataSchema?.defaultValue;
 
   @override
-  String? unit;
+  List<Object>? get enumeration => dataSchema?.enumeration;
 
   @override
-  bool? writeOnly = false;
+  String? get format => dataSchema?.format;
 
   @override
-  String? contentEncoding;
+  List<DataSchema>? get oneOf => dataSchema?.oneOf;
 
   @override
-  String? contentMediaType;
+  bool get readOnly => dataSchema?.readOnly ?? false;
 
   @override
-  num? exclusiveMaximum;
+  String? get type => dataSchema?.type;
 
   @override
-  num? exclusiveMinimum;
+  String? get unit => dataSchema?.unit;
 
   @override
-  List<DataSchema>? items;
+  bool get writeOnly => dataSchema?.writeOnly ?? false;
 
   @override
-  int? maxItems;
+  String? get contentEncoding => dataSchema?.contentEncoding;
 
   @override
-  int? maxLength;
+  String? get contentMediaType => dataSchema?.contentMediaType;
 
   @override
-  num? maximum;
+  num? get exclusiveMaximum => dataSchema?.exclusiveMaximum;
 
   @override
-  int? minItems;
+  num? get exclusiveMinimum => dataSchema?.exclusiveMinimum;
 
   @override
-  int? minLength;
+  List<DataSchema>? get items => dataSchema?.items;
 
   @override
-  num? minimum;
+  int? get maxItems => dataSchema?.maxItems;
 
   @override
-  num? multipleOf;
+  int? get maxLength => dataSchema?.maxLength;
 
   @override
-  String? pattern;
+  num? get maximum => dataSchema?.maximum;
 
   @override
-  Map<String, DataSchema>? properties;
+  int? get minItems => dataSchema?.minItems;
 
   @override
-  List<String>? required;
+  int? get minLength => dataSchema?.minItems;
+
+  @override
+  num? get minimum => dataSchema?.minimum;
+
+  @override
+  num? get multipleOf => dataSchema?.multipleOf;
+
+  @override
+  String? get pattern => dataSchema?.pattern;
+
+  @override
+  Map<String, DataSchema>? get properties => dataSchema?.properties;
+
+  @override
+  List<String>? get required => dataSchema?.required;
 
   /// A hint that indicates whether Servients hosting the Thing and
   /// Intermediaries should provide a Protocol Binding that supports the
@@ -109,5 +147,9 @@ class Property extends InteractionAffordance implements DataSchema {
   final bool observable;
 
   @override
-  Map<String, dynamic>? rawJson;
+  Map<String, dynamic>? get rawJson => dataSchema?.rawJson;
+
+  @override
+  Map<String, dynamic> get additionalFields =>
+      dataSchema?.additionalFields ?? {};
 }

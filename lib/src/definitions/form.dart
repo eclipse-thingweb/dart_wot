@@ -215,10 +215,10 @@ class Form {
       return [OperationType.invokeaction];
     } else if (interactionAffordance is Property) {
       final List<OperationType> op = [];
-      if (!(interactionAffordance.readOnly ?? false)) {
+      if (!interactionAffordance.readOnly) {
         op.add(OperationType.readproperty);
       }
-      if (!(interactionAffordance.writeOnly ?? false)) {
+      if (!interactionAffordance.writeOnly) {
         op.add(OperationType.writeproperty);
       }
       return op;

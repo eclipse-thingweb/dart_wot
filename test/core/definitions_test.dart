@@ -24,7 +24,7 @@ import 'package:dart_wot/src/definitions/validation/validation_exception.dart';
 import 'package:test/test.dart';
 
 class _InvalidInteractionAffordance extends InteractionAffordance {
-  _InvalidInteractionAffordance(super.forms, super.thingDescription);
+  _InvalidInteractionAffordance(super.thingDescription);
 }
 
 void main() {
@@ -65,7 +65,7 @@ void main() {
 
     test('Form', () {
       final thingDescription = ThingDescription(null);
-      final interactionAffordance = Property([], thingDescription);
+      final interactionAffordance = Property(thingDescription);
 
       final uri = Uri.parse('https://example.org');
       final form = Form(uri, interactionAffordance);
@@ -198,7 +198,7 @@ void main() {
       expect(
         () => Form(
           Uri.parse('http://example.org'),
-          _InvalidInteractionAffordance([], thingDescription),
+          _InvalidInteractionAffordance(thingDescription),
         ),
         throwsStateError,
       );
@@ -258,6 +258,7 @@ void main() {
         },
         'properties': {
           'property': {
+            '@type': 'test',
             'title': 'Test',
             'titles': {'de': 'German Test', 'en': 'English Test'},
             'description': 'This is a Test',
@@ -270,10 +271,28 @@ void main() {
             'observable': true,
             'enum': ['On', 'Off', 3],
             'constant': 'On',
+            'default': 'On',
+            'unit': 'C',
+            'contentEncoding': 'test',
+            'contentMediaType': 'test',
             'type': 'string',
             'forms': [
               {'href': 'https://example.org'}
-            ]
+            ],
+            'format': 'test',
+            'pattern': 'test',
+            'items': [
+              {'type': 'integer'}
+            ],
+            'minLength': 2,
+            'maxLength': 5,
+            'minItems': 2,
+            'maxItems': 5,
+            'exclusiveMinimum': 3,
+            'exclusiveMaximum': 3,
+            'multipleOf': 1,
+            'minimum': 3,
+            'maximum': 3,
           },
           'propertyWithDefaults': {
             'forms': [
@@ -281,9 +300,11 @@ void main() {
             ]
           },
           'objectSchemeProperty': {
+            'type': 'object',
             'properties': {
               'test': {'type': 'string'}
             },
+            'required': ['test'],
             'forms': [
               {
                 'href': 'https://example.org',
@@ -311,6 +332,7 @@ void main() {
       expect(noSecurityScheme?.scheme, 'nosec');
 
       final property = thingDescription.properties['property'];
+      expect(property?.atType, ['test']);
       expect(property?.title, 'Test');
       expect(property?.description, 'This is a Test');
       expect(property?.descriptions?['es'], 'Esto es una prueba');
@@ -320,6 +342,22 @@ void main() {
       expect(property?.observable, true);
       expect(property?.enumeration, ['On', 'Off', 3]);
       expect(property?.constant, 'On');
+      expect(property?.defaultValue, 'On');
+      expect(property?.format, 'test');
+      expect(property?.pattern, 'test');
+      expect(property?.contentEncoding, 'test');
+      expect(property?.contentMediaType, 'test');
+      expect(property?.unit, 'C');
+      expect(property?.items?[0].type, 'integer');
+      expect(property?.minLength, 2);
+      expect(property?.maxLength, 5);
+      expect(property?.minItems, 2);
+      expect(property?.maxItems, 5);
+      expect(property?.exclusiveMinimum, 3);
+      expect(property?.exclusiveMaximum, 3);
+      expect(property?.minimum, 3);
+      expect(property?.maximum, 3);
+      expect(property?.multipleOf, 1);
 
       final propertyWithDefaults =
           thingDescription.properties['propertyWithDefaults'];
@@ -329,6 +367,8 @@ void main() {
 
       final objectSchemeProperty =
           thingDescription.properties['objectSchemeProperty'];
+      expect(objectSchemeProperty?.required, ['test']);
+      expect(objectSchemeProperty?.type, 'object');
 
       expect(objectSchemeProperty?.forms[0].security, ['auto_sc']);
       final autoSecurityScheme =
