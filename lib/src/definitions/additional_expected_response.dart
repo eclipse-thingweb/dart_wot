@@ -62,7 +62,7 @@ class AdditionalExpectedResponse {
   final String? schema;
 
   /// Any other additional field will be included in this [Map].
-  final Map<String, dynamic> additionalFields;
+  final Map<String, dynamic>? additionalFields;
 
   @override
   bool operator ==(Object other) {

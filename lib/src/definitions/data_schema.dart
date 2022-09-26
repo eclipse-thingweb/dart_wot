@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import 'extensions/json_parser.dart';
 
 /// Metadata that describes the data format used. It can be used for validation.
@@ -44,51 +46,90 @@ class DataSchema {
     this.contentEncoding,
     this.contentMediaType,
     this.rawJson,
-    Map<String, dynamic>? additionalFields,
-  }) {
-    this.additionalFields.addAll(additionalFields ?? {});
-  }
+    this.additionalFields,
+  });
 
   // TODO: Consider creating separate classes for each data type.
   //       Also see https://github.com/w3c/wot-thing-description/issues/1390
 
   /// Creates a new [DataSchema] from a [json] object.
   factory DataSchema.fromJson(
-    Map<String, dynamic> json, [
+    Map<String, dynamic> json,
+    PrefixMapping prefixMapping, [
     Set<String>? parsedFields,
   ]) {
+    parsedFields = parsedFields ?? {};
+    final atType = json.parseArrayField<String>('@type', parsedFields);
+    final title = json.parseField<String>('title', parsedFields);
+    final titles = json.parseMapField<String>('titles', parsedFields);
+    final description = json.parseField<String>('description', parsedFields);
+    final descriptions =
+        json.parseMapField<String>('descriptions', parsedFields);
+    final constant = json.parseField<Object>('constant', parsedFields);
+    final defaultValue = json.parseField<Object>('default', parsedFields);
+    final enumeration = json.parseField<List<Object>>('enum', parsedFields);
+    final readOnly = json.parseField<bool>('readOnly', parsedFields);
+    final writeOnly = json.parseField<bool>('writeOnly', parsedFields);
+    final format = json.parseField<String>('format', parsedFields);
+    final unit = json.parseField<String>('unit', parsedFields);
+    final type = json.parseField<String>('type', parsedFields);
+    final minimum = json.parseField<num>('minimum', parsedFields);
+    final exclusiveMinimum =
+        json.parseField<num>('exclusiveMinimum', parsedFields);
+    final maximum = json.parseField<num>('minimum', parsedFields);
+    final exclusiveMaximum =
+        json.parseField<num>('exclusiveMaximum', parsedFields);
+    final multipleOf = json.parseField<num>('multipleOf', parsedFields);
+    final items = json.parseDataSchemaArrayField('items', prefixMapping);
+    final minItems = json.parseField<int>('minItems', parsedFields);
+    final maxItems = json.parseField<int>('maxItems', parsedFields);
+    final required = json.parseField<List<String>>('required', parsedFields);
+    final minLength = json.parseField<int>('minLength', parsedFields);
+    final maxLength = json.parseField<int>('maxLength', parsedFields);
+    final pattern = json.parseField<String>('pattern', parsedFields);
+    final contentEncoding =
+        json.parseField<String>('contentEncoding', parsedFields);
+    final contentMediaType =
+        json.parseField<String>('contentMediaType', parsedFields);
+    final oneOf =
+        json.parseDataSchemaArrayField('oneOf', prefixMapping, parsedFields);
+    final properties =
+        json.parseDataSchemaMapField('properties', prefixMapping, parsedFields);
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
+
     return DataSchema(
-      atType: json.parseArrayField<String>('@type', parsedFields),
-      title: json.parseField<String>('title', parsedFields),
-      titles: json.parseMapField<String>('titles', parsedFields),
-      description: json.parseField<String>('description', parsedFields),
-      descriptions: json.parseMapField<String>('descriptions', parsedFields),
-      constant: json.parseField<Object>('constant', parsedFields),
-      defaultValue: json.parseField<Object>('default', parsedFields),
-      enumeration: json.parseField<List<Object>>('enum', parsedFields),
-      readOnly: json.parseField<bool>('readOnly', parsedFields),
-      writeOnly: json.parseField<bool>('writeOnly', parsedFields),
-      format: json.parseField<String>('format', parsedFields),
-      unit: json.parseField<String>('unit', parsedFields),
-      type: json.parseField<String>('type', parsedFields),
-      minimum: json.parseField<num>('minimum', parsedFields),
-      exclusiveMinimum: json.parseField<num>('exclusiveMinimum', parsedFields),
-      maximum: json.parseField<num>('minimum', parsedFields),
-      exclusiveMaximum: json.parseField<num>('exclusiveMaximum', parsedFields),
-      multipleOf: json.parseField<num>('multipleOf', parsedFields),
-      items: json.parseDataSchemaArrayField('items'),
-      minItems: json.parseField<int>('minItems', parsedFields),
-      maxItems: json.parseField<int>('maxItems', parsedFields),
-      required: json.parseField<List<String>>('required', parsedFields),
-      minLength: json.parseField<int>('minLength', parsedFields),
-      maxLength: json.parseField<int>('maxLength', parsedFields),
-      pattern: json.parseField<String>('pattern', parsedFields),
-      contentEncoding: json.parseField<String>('contentEncoding', parsedFields),
-      contentMediaType:
-          json.parseField<String>('contentMediaType', parsedFields),
-      oneOf: json.parseDataSchemaArrayField('oneOf', parsedFields),
-      properties: json.parseDataSchemaMapField('properties', parsedFields),
+      atType: atType,
+      title: title,
+      titles: titles,
+      description: description,
+      descriptions: descriptions,
+      constant: constant,
+      defaultValue: defaultValue,
+      enumeration: enumeration,
+      readOnly: readOnly,
+      writeOnly: writeOnly,
+      format: format,
+      unit: unit,
+      type: type,
+      minimum: minimum,
+      exclusiveMinimum: exclusiveMinimum,
+      maximum: maximum,
+      exclusiveMaximum: exclusiveMaximum,
+      multipleOf: multipleOf,
+      items: items,
+      minItems: minItems,
+      maxItems: maxItems,
+      required: required,
+      minLength: minLength,
+      maxLength: maxLength,
+      pattern: pattern,
+      contentEncoding: contentEncoding,
+      contentMediaType: contentMediaType,
+      oneOf: oneOf,
+      properties: properties,
       rawJson: json,
+      additionalFields: additionalFields,
     );
   }
 
@@ -225,7 +266,7 @@ class DataSchema {
   final String? contentMediaType;
 
   /// Additional fields that could not be deserialized as class members.
-  final Map<String, dynamic> additionalFields = {};
+  final Map<String, dynamic>? additionalFields;
 
   /// The original JSON object that was parsed when creating this [DataSchema].
   final Map<String, dynamic>? rawJson;

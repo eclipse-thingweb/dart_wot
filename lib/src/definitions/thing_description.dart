@@ -8,8 +8,11 @@ import 'dart:convert';
 
 import 'package:curie/curie.dart';
 
+import 'additional_expected_response.dart';
 import 'context_entry.dart';
+import 'data_schema.dart';
 import 'extensions/json_parser.dart';
+import 'form.dart';
 import 'interaction_affordances/action.dart';
 import 'interaction_affordances/event.dart';
 import 'interaction_affordances/property.dart';
@@ -17,6 +20,7 @@ import 'link.dart';
 import 'security/security_scheme.dart';
 import 'thing_model.dart';
 import 'validation/thing_description_schema.dart';
+import 'version_info.dart';
 
 /// Represents a WoT Thing Description
 class ThingDescription {
@@ -54,23 +58,49 @@ class ThingDescription {
   /// created from one.
   ThingModel? rawThingModel;
 
-  /// The [title] of this [ThingDescription].
-  late String title;
-
-  /// The [description] of this [ThingDescription].
-  String? description;
-
-  /// A [Map] of multi-language [titles].
-  final Map<String, String> titles = {};
-
-  /// A [Map] of multi-language [descriptions].
-  final Map<String, String> descriptions = {};
+  /// Contains the values of the @context for CURIE expansion.
+  final prefixMapping = PrefixMapping();
 
   /// The JSON-LD `@context`, represented by a  [List] of [ContextEntry]s.
   final List<ContextEntry> context = [];
 
-  /// Contains the values of the @context for CURIE expansion.
-  final prefixMapping = PrefixMapping();
+  /// JSON-LD keyword to label the object with semantic tags (or types).
+  List<String>? atType = [];
+
+  /// The [id] of this [ThingDescription]. Might be `null`.
+  String? id;
+
+  /// The [title] of this [ThingDescription].
+  late String title;
+
+  /// A [Map] of multi-language [titles].
+  final Map<String, String> titles = {};
+
+  /// The [description] of this [ThingDescription].
+  String? description;
+
+  /// A [Map] of multi-language [descriptions].
+  final Map<String, String> descriptions = {};
+
+  /// Provides version information.
+  VersionInfo? version;
+
+  /// Provides information when the TD instance was created.
+  DateTime? created;
+
+  /// Provides information when the TD instance was last modified.
+  DateTime? modified;
+
+  /// Provides information about the TD maintainer as URI scheme (e.g., `mailto`
+  /// [RFC 6068], `tel` [RFC 3966], `https` [RFC 9112]).
+  ///
+  /// [RFC 6068]:https://datatracker.ietf.org/doc/html/rfc6068
+  /// [RFC 3966]: https://datatracker.ietf.org/doc/html/rfc3966
+  /// [RFC 9112]: https://datatracker.ietf.org/doc/html/rfc9112
+  Uri? support;
+
+  /// The [base] address of this [ThingDescription]. Might be `null`.
+  Uri? base;
 
   /// A [Map] of [Property] Affordances.
   final Map<String, Property> properties = {};
@@ -84,11 +114,13 @@ class ThingDescription {
   /// A [List] of [Link]s.
   final List<Link> links = [];
 
-  /// The [base] address of this [ThingDescription]. Might be `null`.
-  Uri? base;
-
-  /// The [id] of this [ThingDescription]. Might be `null`.
-  String? id;
+  /// Set of form hypermedia controls that describe how an operation can be
+  /// performed.
+  ///
+  /// [Form]s are serializations of Protocol Bindings.
+  /// Thing-level forms are used to describe endpoints for a group of
+  /// interaction affordances.
+  final List<Form> forms = [];
 
   /// A [List] of the [securityDefinitions] that are used as the default.
   ///
@@ -98,10 +130,23 @@ class ThingDescription {
   /// A map of [SecurityScheme]s that can be used for secure communication.
   final Map<String, SecurityScheme> securityDefinitions = {};
 
+  /// Indicates the WoT Profile mechanisms followed by this Thing Description
+  /// and the corresponding Thing implementation.
+  final List<Uri> profile = [];
+
+  /// Set of named data schemas.
+  ///
+  /// To be used in a schema name-value pair inside an
+  /// [AdditionalExpectedResponse] object.
+  final Map<String, DataSchema> schemaDefinitions = {};
+
   /// URI template variables as defined in [RFC 6570].
   ///
   /// [RFC 6570]: http://tools.ietf.org/html/rfc6570
   Map<String, Object?>? uriVariables;
+
+  /// Additional fields collected during the parsing of a JSON object.
+  final Map<String, dynamic> additionalFields = {};
 
   /// Determines the id of this [ThingDescription].
   ///
@@ -125,7 +170,6 @@ class ThingDescription {
   }
 
   void _parseJson(Map<String, dynamic> json) {
-    // TODO: Move to constructor?
     final Set<String> parsedFields = {};
 
     context.addAll(ContextEntry.parseContext(json['@context'], prefixMapping));
@@ -134,21 +178,38 @@ class ThingDescription {
     description = json.parseField<String>('description', parsedFields);
     descriptions
         .addAll(json.parseMapField<String>('descriptions', parsedFields) ?? {});
-    id = json.parseField<String>('id', parsedFields);
+    version = json.parseVersionInfo(prefixMapping, parsedFields);
+    created = json.parseDateTime('created', parsedFields);
+    modified = json.parseDateTime('modified', parsedFields);
+    support = json.parseUriField('support', parsedFields);
     base = json.parseUriField('base', parsedFields);
+    id = json.parseField<String>('id', parsedFields);
+
     security
         .addAll(json.parseArrayField<String>('security', parsedFields) ?? []);
 
     securityDefinitions.addAll(
       json.parseSecurityDefinitions(prefixMapping, parsedFields) ?? {},
     );
-
-    uriVariables = json.parseMapField<dynamic>('uriVariables');
+    forms.addAll(json.parseForms(this, prefixMapping, parsedFields) ?? []);
 
     properties.addAll(json.parseProperties(this, prefixMapping) ?? {});
     actions.addAll(json.parseActions(this, prefixMapping) ?? {});
     events.addAll(json.parseEvents(this, prefixMapping) ?? {});
 
     links.addAll(json.parseLinks(prefixMapping) ?? []);
+
+    profile.addAll(json.parseUriArrayField('profile', parsedFields) ?? []);
+    schemaDefinitions.addAll(
+      json.parseDataSchemaMapField(
+            'schemaDefinitions',
+            prefixMapping,
+            parsedFields,
+          ) ??
+          {},
+    );
+    uriVariables = json.parseMapField<dynamic>('uriVariables', parsedFields);
+    additionalFields
+        .addAll(json.parseAdditionalFields(prefixMapping, parsedFields));
   }
 }

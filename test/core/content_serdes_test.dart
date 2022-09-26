@@ -4,6 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
 import 'package:dart_wot/src/core/codecs/json_codec.dart';
 import 'package:dart_wot/src/core/content.dart';
 import 'package:dart_wot/src/core/content_serdes.dart';
@@ -25,8 +26,10 @@ void main() {
     final contentSerdes = ContentSerdes();
 
     final testContent1 = _getTestContent('42');
-    final successfulSchema =
-        DataSchema.fromJson(<String, dynamic>{'type': 'number'});
+    final successfulSchema = DataSchema.fromJson(
+      <String, dynamic>{'type': 'number'},
+      PrefixMapping(),
+    );
 
     expect(
       await contentSerdes.contentToValue(testContent1, successfulSchema),
@@ -34,8 +37,10 @@ void main() {
     );
 
     final testContent2 = _getTestContent('42');
-    final failingSchema =
-        DataSchema.fromJson(<String, dynamic>{'type': 'string'});
+    final failingSchema = DataSchema.fromJson(
+      <String, dynamic>{'type': 'string'},
+      PrefixMapping(),
+    );
 
     expect(
       contentSerdes.contentToValue(testContent2, failingSchema),

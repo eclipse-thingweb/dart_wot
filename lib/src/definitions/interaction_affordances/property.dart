@@ -31,10 +31,11 @@ class Property extends InteractionAffordance implements DataSchema {
     PrefixMapping prefixMapping,
   ) {
     final Set<String> parsedFields = {};
-    final observable = json.parseField<bool>('observable') ?? false;
-    final dataSchema =
-        DataSchema.fromJson(json, {'observable', 'uriVariables'});
-    final uriVariables = json.parseMapField<dynamic>('uriVariables');
+    final observable =
+        json.parseField<bool>('observable', parsedFields) ?? false;
+    final uriVariables =
+        json.parseMapField<dynamic>('uriVariables', parsedFields);
+    final dataSchema = DataSchema.fromJson(json, prefixMapping, parsedFields);
 
     final property = Property(
       thingDescription,
@@ -43,7 +44,13 @@ class Property extends InteractionAffordance implements DataSchema {
       uriVariables: uriVariables,
     );
 
-    property.forms.addAll(json.parseForms(property, prefixMapping));
+    property.forms.addAll(
+      json.parseAffordanceForms(
+        property,
+        prefixMapping,
+        parsedFields,
+      ),
+    );
     property.additionalFields.addAll(
       json.parseAdditionalFields(prefixMapping, parsedFields),
     );

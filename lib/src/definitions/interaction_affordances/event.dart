@@ -46,10 +46,10 @@ class Event extends InteractionAffordance {
         json.parseMapField<dynamic>('uriVariables', parsedFields);
 
     final subscription =
-        json.parseDataSchemaField('subscription', parsedFields);
-    final data = json.parseDataSchemaField('data', parsedFields);
+        json.parseDataSchemaField('subscription', prefixMapping, parsedFields);
+    final data = json.parseDataSchemaField('data', prefixMapping, parsedFields);
     final cancellation =
-        json.parseDataSchemaField('cancellation', parsedFields);
+        json.parseDataSchemaField('cancellation', prefixMapping, parsedFields);
 
     final event = Event(
       thingDescription,
@@ -63,7 +63,7 @@ class Event extends InteractionAffordance {
       cancellation: cancellation,
     );
 
-    event.forms.addAll(json.parseForms(event, prefixMapping));
+    event.forms.addAll(json.parseAffordanceForms(event, prefixMapping));
     event.additionalFields.addAll(
       json.parseAdditionalFields(prefixMapping, parsedFields),
     );

@@ -12,6 +12,7 @@ import '../link.dart';
 import '../security/security_scheme.dart';
 import '../thing_description.dart';
 import '../validation/validation_exception.dart';
+import '../version_info.dart';
 
 /// Extension for parsing fields of JSON objects.
 extension ParseField on Map<String, dynamic> {
@@ -52,6 +53,32 @@ extension ParseField on Map<String, dynamic> {
     }
 
     return Uri.tryParse(fieldValue);
+  }
+
+  /// Parses a single field with a given [name] as a [List] of [Uri]s.
+  ///
+  /// Ensures that the field value is either a valid [Uri] or a [List] of [Uri]s
+  /// and returns `null` if the value cannot be parsed as such.
+  ///
+  /// If a [Set] of [parsedFields] is passed to this function, the field [name]
+  /// will added. This can be used for filtering when parsing additional fields.
+  List<Uri>? parseUriArrayField(String name, [Set<String>? parsedFields]) {
+    final fieldValue = parseArrayField<String>(name, parsedFields);
+
+    if (fieldValue == null) {
+      return null;
+    }
+
+    final List<Uri> result = [];
+
+    for (final value in fieldValue) {
+      final uri = Uri.tryParse(value);
+      if (uri != null) {
+        result.add(uri);
+      }
+    }
+
+    return result;
   }
 
   /// Parses a single field with a given [name] and throws a
@@ -136,11 +163,15 @@ extension ParseField on Map<String, dynamic> {
   ///
   /// If a [Set] of [parsedFields] is passed to this function, the field [name]
   /// will added. This can be used for filtering when parsing additional fields.
-  DataSchema? parseDataSchemaField(String name, [Set<String>? parsedFields]) {
+  DataSchema? parseDataSchemaField(
+    String name,
+    PrefixMapping prefixMapping, [
+    Set<String>? parsedFields,
+  ]) {
     final fieldValue = parseField(name, parsedFields);
 
     if (fieldValue is Map<String, dynamic>) {
-      return DataSchema.fromJson(fieldValue);
+      return DataSchema.fromJson(fieldValue, prefixMapping);
     }
 
     return null;
@@ -154,13 +185,16 @@ extension ParseField on Map<String, dynamic> {
   /// If a [Set] of [parsedFields] is passed to this function, the field [name]
   /// will added. This can be used for filtering when parsing additional fields.
   List<DataSchema>? parseDataSchemaArrayField(
-    String name, [
+    String name,
+    PrefixMapping prefixMapping, [
     Set<String>? parsedFields,
   ]) {
     final fieldValue = parseField(name, parsedFields);
 
     if (fieldValue is List<Map<String, dynamic>>) {
-      return fieldValue.map(DataSchema.fromJson).toList();
+      return fieldValue
+          .map((e) => DataSchema.fromJson(e, prefixMapping))
+          .toList();
     }
 
     return null;
@@ -174,7 +208,8 @@ extension ParseField on Map<String, dynamic> {
   /// If a [Set] of [parsedFields] is passed to this function, the field [name]
   /// will added. This can be used for filtering when parsing additional fields.
   Map<String, DataSchema>? parseDataSchemaMapField(
-    String name, [
+    String name,
+    PrefixMapping prefixMapping, [
     Set<String>? parsedFields,
   ]) {
     final fieldValue = parseField(name, parsedFields);
@@ -182,7 +217,10 @@ extension ParseField on Map<String, dynamic> {
     if (fieldValue is Map<String, Map<String, dynamic>>) {
       return Map.fromEntries(
         fieldValue.entries.map(
-          (entry) => MapEntry(entry.key, DataSchema.fromJson(entry.value)),
+          (entry) => MapEntry(
+            entry.key,
+            DataSchema.fromJson(entry.value, prefixMapping),
+          ),
         ),
       );
     }
@@ -192,27 +230,61 @@ extension ParseField on Map<String, dynamic> {
 
   /// Parses [Form]s contained in this JSON object.
   ///
-  /// Initializes the [Form] with information from the [interactionAffordance]
+  /// Initializes the [Form] with information from the [thingDescription]
   /// and expands compact URIs using the given [prefixMapping].
   ///
   /// Adds the key `forms` to the set of [parsedFields], if defined.
-  List<Form> parseForms(
-    InteractionAffordance interactionAffordance,
+  List<Form>? parseForms(
+    ThingDescription thingDescription,
     PrefixMapping prefixMapping, [
     Set<String>? parsedFields,
+    InteractionAffordance? interactionAffordance,
   ]) {
     final fieldValue = parseField('forms', parsedFields);
 
     if (fieldValue is! List) {
-      throw ValidationException(
-        'Missing "forms" member in Intraction Affordance',
-      );
+      return null;
     }
 
     return fieldValue
         .whereType<Map<String, dynamic>>()
-        .map((e) => Form.fromJson(e, interactionAffordance, prefixMapping))
+        .map(
+          (e) => Form.fromJson(
+            e,
+            prefixMapping,
+            thingDescription,
+            interactionAffordance,
+          ),
+        )
         .toList();
+  }
+
+  /// Parses [Form]s contained in this JSON object for an
+  /// [interactionAffordance].
+  ///
+  /// Initializes the [Form] with information from the [interactionAffordance]
+  /// and expands compact URIs using the given [prefixMapping].
+  ///
+  /// Adds the key `forms` to the set of [parsedFields], if defined.
+  List<Form> parseAffordanceForms(
+    InteractionAffordance interactionAffordance,
+    PrefixMapping prefixMapping, [
+    Set<String>? parsedFields,
+  ]) {
+    final forms = parseForms(
+      interactionAffordance.thingDescription,
+      prefixMapping,
+      parsedFields,
+      interactionAffordance,
+    );
+
+    if (forms != null) {
+      return forms;
+    }
+
+    throw ValidationException(
+      'Missing "forms" member in Intraction Affordance',
+    );
   }
 
   /// Parses [Link]s contained in this JSON object.
@@ -363,7 +435,8 @@ extension ParseField on Map<String, dynamic> {
 
   /// Parses [ExpectedResponse]s contained in this JSON object.
   ///
-  /// Adds the key `events` to the set of [parsedFields], if defined.
+  /// Adds the key `additionalResponses` to the set of [parsedFields], if
+  /// defined.
   List<AdditionalExpectedResponse>? parseAdditionalExpectedResponse(
     PrefixMapping prefixMapping,
     String formContentType, [
@@ -387,6 +460,42 @@ extension ParseField on Map<String, dynamic> {
           ),
         )
         .toList();
+  }
+
+  /// Parses [VersionInfo]s contained in this JSON object.
+  ///
+  /// Adds the key `version` to the set of [parsedFields], if defined.
+  VersionInfo? parseVersionInfo(
+    PrefixMapping prefixMapping, [
+    Set<String>? parsedFields,
+  ]) {
+    final fieldValue = parseMapField<dynamic>('version', parsedFields);
+
+    if (fieldValue == null) {
+      return null;
+    }
+
+    return VersionInfo.fromJson(fieldValue, prefixMapping);
+  }
+
+  /// Parses a single field with a given [name] as a [DateTime] object.
+  ///
+  /// Ensures that the field value is a valid [DateTime] and returns `null` if
+  /// the value cannot be parsed as such.
+  ///
+  /// If a [Set] of [parsedFields] is passed to this function, the field [name]
+  /// will added. This can be used for filtering when parsing additional fields.
+  DateTime? parseDateTime(
+    String name, [
+    Set<String>? parsedFields,
+  ]) {
+    final fieldValue = parseField<String>(name, parsedFields);
+
+    if (fieldValue == null) {
+      return null;
+    }
+
+    return DateTime.tryParse(fieldValue);
   }
 
   /// Parses and filters the remaining fields in this JSON object.

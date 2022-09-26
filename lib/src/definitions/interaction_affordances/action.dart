@@ -51,8 +51,10 @@ class Action extends InteractionAffordance {
     final idempotent =
         json.parseField<bool>('idempotent', parsedFields) ?? false;
     final synchronous = json.parseField<bool>('synchronous', parsedFields);
-    final input = json.parseDataSchemaField('input', parsedFields);
-    final output = json.parseDataSchemaField('output', parsedFields);
+    final input =
+        json.parseDataSchemaField('input', prefixMapping, parsedFields);
+    final output =
+        json.parseDataSchemaField('output', prefixMapping, parsedFields);
 
     final action = Action(
       thingDescription,
@@ -68,7 +70,8 @@ class Action extends InteractionAffordance {
       output: output,
     );
 
-    action.forms.addAll(json.parseForms(action, prefixMapping, parsedFields));
+    action.forms
+        .addAll(json.parseAffordanceForms(action, prefixMapping, parsedFields));
     action.additionalFields
         .addAll(json.parseAdditionalFields(prefixMapping, parsedFields));
 

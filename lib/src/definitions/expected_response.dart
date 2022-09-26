@@ -38,5 +38,5 @@ class ExpectedResponse {
   String contentType;
 
   /// Any other additional field will be included in this [Map].
-  final Map<String, dynamic> additionalFields;
+  final Map<String, dynamic>? additionalFields;
 }

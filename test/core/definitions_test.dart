@@ -49,7 +49,16 @@ void main() {
         'security': 'nosec_sc',
         'securityDefinitions': {
           'nosec_sc': {'scheme': 'nosec'}
-        }
+        },
+        'profile': ['https://example.org/test-profile'],
+        'version': {'instance': 'test'},
+        'created': '1970-01-01',
+        'forms': [
+          {
+            'href': 'coaps://example.org',
+            'op': 'readallproperties',
+          }
+        ],
       };
 
       final thingDescription = ThingDescription.fromJson(validThingDescription);
@@ -61,6 +70,27 @@ void main() {
       );
       expect(thingDescription.security, ['nosec_sc']);
       expect(thingDescription.securityDefinitions['nosec_sc']?.scheme, 'nosec');
+      expect(
+        thingDescription.profile,
+        [Uri.tryParse('https://example.org/test-profile')],
+      );
+      expect(
+        thingDescription.version?.instance,
+        'test',
+      );
+      expect(
+        thingDescription.created,
+        DateTime.tryParse('1970-01-01'),
+      );
+      final form = thingDescription.forms[0];
+      expect(
+        form.href,
+        Uri.tryParse('coaps://example.org'),
+      );
+      expect(
+        form.op,
+        [OperationType.readallproperties],
+      );
     });
 
     test('Form', () {
@@ -68,13 +98,18 @@ void main() {
       final interactionAffordance = Property(thingDescription);
 
       final uri = Uri.parse('https://example.org');
-      final form = Form(uri, interactionAffordance);
+      final form = Form(
+        uri,
+        interactionAffordance.thingDescription,
+        interactionAffordance: interactionAffordance,
+      );
 
       expect(form.href, uri);
 
       final form2 = Form(
         uri,
-        interactionAffordance,
+        interactionAffordance.thingDescription,
+        interactionAffordance: interactionAffordance,
         subprotocol: 'test',
         scopes: ['test'],
         response: ExpectedResponse('application/json'),
@@ -109,8 +144,8 @@ void main() {
 
       final form3 = Form.fromJson(
         form3Json as Map<String, dynamic>,
-        interactionAffordance,
         PrefixMapping(),
+        interactionAffordance.thingDescription,
       );
 
       expect(form3.href, uri);
@@ -142,8 +177,8 @@ void main() {
 
       final form4 = Form.fromJson(
         form4Json as Map<String, dynamic>,
-        interactionAffordance,
         PrefixMapping(),
+        interactionAffordance.thingDescription,
       );
 
       expect(form4.op, [OperationType.writeproperty]);
@@ -158,8 +193,8 @@ void main() {
       expect(
         () => Form.fromJson(
           form5Json as Map<String, dynamic>,
-          interactionAffordance,
           PrefixMapping(),
+          interactionAffordance.thingDescription,
         ),
         throwsException,
       );
@@ -183,8 +218,8 @@ void main() {
 
       final form6 = Form.fromJson(
         form6Json as Map<String, dynamic>,
-        interactionAffordance,
         PrefixMapping(),
+        interactionAffordance.thingDescription,
       );
 
       final additionalResponses = form6.additionalResponses;
@@ -202,13 +237,17 @@ void main() {
       expect(
         () => Form(
           Uri.parse('http://example.org'),
-          _InvalidInteractionAffordance(thingDescription),
+          thingDescription,
+          interactionAffordance:
+              _InvalidInteractionAffordance(thingDescription),
         ),
         throwsStateError,
       );
       expect(
-        () => <String, dynamic>{}
-            .parseForms(Action(ThingDescription(null)), PrefixMapping()),
+        () => <String, dynamic>{}.parseAffordanceForms(
+          Action(ThingDescription(null)),
+          PrefixMapping(),
+        ),
         throwsA(isA<ValidationException>()),
       );
     });
@@ -479,7 +518,7 @@ void main() {
       additionalFields: {'test': 'test'},
     );
 
-    expect(firstResponse.additionalFields['test'], 'test');
+    expect(firstResponse.additionalFields?['test'], 'test');
 
     final expectedResponseJson = {
       'contentType': 'application/json',
@@ -490,7 +529,7 @@ void main() {
         ExpectedResponse.fromJson(expectedResponseJson, PrefixMapping());
 
     expect(secondResponse, isA<ExpectedResponse>());
-    expect(secondResponse.additionalFields['test'], 'test');
+    expect(secondResponse.additionalFields?['test'], 'test');
   });
 
   test('Should reject invalid @context entries', () {

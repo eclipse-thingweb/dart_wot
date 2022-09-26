@@ -8,6 +8,7 @@ import 'package:curie/curie.dart';
 import 'package:json_schema3/json_schema3.dart';
 import 'package:uri/uri.dart';
 
+import '../../dart_wot.dart';
 import 'additional_expected_response.dart';
 import 'expected_response.dart';
 import 'extensions/json_parser.dart';
@@ -26,7 +27,8 @@ class Form {
   /// An [href] has to be provided. A [contentType] is optional.
   Form(
     this.href,
-    this.interactionAffordance, {
+    this.thingDescription, {
+    this.interactionAffordance,
     this.contentType = 'application/json',
     this.contentCoding,
     this.subprotocol,
@@ -36,9 +38,9 @@ class Form {
     this.response,
     this.additionalResponses,
     Map<String, dynamic>? additionalFields,
-  })  : resolvedHref = _expandHref(href, interactionAffordance),
+  })  : resolvedHref = _expandHref(href, thingDescription),
         securityDefinitions =
-            _filterSecurityDefinitions(interactionAffordance, security),
+            _filterSecurityDefinitions(thingDescription, security),
         op = _setOpValue(interactionAffordance, op) {
     if (additionalFields != null) {
       this.additionalFields.addAll(additionalFields);
@@ -48,9 +50,10 @@ class Form {
   /// Creates a new [Form] from a [json] object.
   factory Form.fromJson(
     Map<String, dynamic> json,
-    InteractionAffordance interactionAffordance,
     PrefixMapping prefixMapping,
-  ) {
+    ThingDescription thingDescription, [
+    InteractionAffordance? interactionAffordance,
+  ]) {
     final Set<String> parsedFields = {};
     final href = json.parseRequiredUriField('href', parsedFields);
 
@@ -79,7 +82,8 @@ class Form {
 
     return Form(
       href,
-      interactionAffordance,
+      thingDescription,
+      interactionAffordance: interactionAffordance,
       contentType: contentType,
       contentCoding: contentCoding,
       subprotocol: subprotocol,
@@ -104,8 +108,13 @@ class Form {
   /// The [SecurityScheme]s used by this [Form].
   final List<SecurityScheme> securityDefinitions;
 
+  /// Reference to the [ThingDescription] containing this [Form].
+  final ThingDescription thingDescription;
+
   /// Reference to the [InteractionAffordance] containing this [Form].
-  final InteractionAffordance interactionAffordance;
+  ///
+  /// Might be `null` if the [Form] is defined at the [ThingDescription] level.
+  final InteractionAffordance? interactionAffordance;
 
   /// The subprotocol that is used with this [Form].
   String? subprotocol;
@@ -144,16 +153,14 @@ class Form {
   List<AdditionalExpectedResponse>? additionalResponses;
 
   /// Additional fields collected during the parsing of a JSON object.
-  final Map<String, dynamic> additionalFields = <String, dynamic>{};
+  final Map<String, dynamic> additionalFields = {};
 
   static List<SecurityScheme> _filterSecurityDefinitions(
-    InteractionAffordance interactionAffordance,
+    ThingDescription thingDescription,
     List<String>? security,
   ) {
-    final thingDescription = interactionAffordance.thingDescription;
     final securityKeys = security ?? thingDescription.security;
-    final securityDefinitions =
-        interactionAffordance.thingDescription.securityDefinitions;
+    final securityDefinitions = thingDescription.securityDefinitions;
 
     return securityKeys.map((securityKey) {
       final securityDefinition = securityDefinitions[securityKey];
@@ -172,9 +179,9 @@ class Form {
 
   static Uri _expandHref(
     Uri href,
-    InteractionAffordance interactionAffordance,
+    ThingDescription thingDescription,
   ) {
-    final base = interactionAffordance.thingDescription.base;
+    final base = thingDescription.base;
     if (href.isAbsolute) {
       return href;
     } else if (base != null) {
@@ -188,11 +195,15 @@ class Form {
   }
 
   static List<OperationType> _setOpValue(
-    InteractionAffordance interactionAffordance,
+    InteractionAffordance? interactionAffordance,
     List<String>? opStrings,
   ) {
     if (opStrings != null) {
       return opStrings.map(OperationType.fromString).toList();
+    }
+
+    if (interactionAffordance == null) {
+      return [];
     }
 
     if (interactionAffordance is Action) {
@@ -221,7 +232,8 @@ class Form {
     // TODO(JKRhb): Make deep copies of security, scopes, and response.
     final copiedForm = Form(
       newHref,
-      interactionAffordance,
+      thingDescription,
+      interactionAffordance: interactionAffordance,
       op: op.map((opValue) => opValue.name).toList(),
       contentType: contentType,
       subprotocol: subprotocol,
@@ -291,13 +303,12 @@ class Form {
   /// updated [resolvedHref].
   Form resolveUriVariables(Map<String, Object>? uriVariables) {
     final hrefUriVariables = _filterUriVariables(resolvedHref);
-    final thingDescription = interactionAffordance.thingDescription;
 
     // Use global URI variables by default and override them with
     // affordance-level variables, if any
     final Map<String, Object?> affordanceUriVariables = {}
       ..addAll(thingDescription.uriVariables ?? {})
-      ..addAll(interactionAffordance.uriVariables ?? {});
+      ..addAll(interactionAffordance?.uriVariables ?? {});
 
     if (hrefUriVariables.isEmpty) {
       // The href uses no uriVariables, therefore we can abort all further

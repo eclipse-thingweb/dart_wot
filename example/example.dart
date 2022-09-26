@@ -17,7 +17,7 @@ Future<BasicCredentials?> basicCredentialsCallback(
   Form? form, [
   BasicCredentials? invalidCredentials,
 ]) async {
-  final id = form?.interactionAffordance.thingDescription.identifier;
+  final id = form?.thingDescription.identifier;
 
   return basicCredentials[id];
 }
