@@ -1,3 +1,9 @@
+# 0.22.0
+
+Applied an extensive rework to the DataSchema class, added missing TD fields,
+and improved the support for additional fields and `@context` extensions via
+JSON-LD.
+
 # 0.21.1
 
 - fix: correctly parse String @context entries
