@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import '../extensions/json_parser.dart';
 import 'ace_security_scheme.dart';
 import 'apikey_security_scheme.dart';
@@ -52,6 +54,7 @@ abstract class SecurityScheme {
   void parseSecurityJson(
     Map<String, dynamic> json,
     Set<String> parsedFields,
+    PrefixMapping prefixMapping,
   ) {
     parsedFields.add('scheme');
 
@@ -61,32 +64,34 @@ abstract class SecurityScheme {
         .addAll(json.parseMapField<String>('descriptions', parsedFields) ?? {});
     jsonLdType = json.parseArrayField<String>('@type');
 
-    additionalFields.addEntries(
-      json.entries.where((jsonEntry) => !parsedFields.contains(jsonEntry.key)),
-    );
+    additionalFields
+        .addAll(json.parseAdditionalFields(prefixMapping, parsedFields));
   }
 
   /// Creates a [SecurityScheme] from a [json] object.
-  static SecurityScheme? fromJson(Map<String, dynamic> json) {
+  static SecurityScheme? fromJson(
+    Map<String, dynamic> json,
+    PrefixMapping prefixMapping,
+  ) {
     switch (json['scheme']) {
       case 'auto':
-        return AutoSecurityScheme.fromJson(json);
+        return AutoSecurityScheme.fromJson(json, prefixMapping);
       case 'basic':
-        return BasicSecurityScheme.fromJson(json);
+        return BasicSecurityScheme.fromJson(json, prefixMapping);
       case 'bearer':
-        return BearerSecurityScheme.fromJson(json);
+        return BearerSecurityScheme.fromJson(json, prefixMapping);
       case 'nosec':
-        return NoSecurityScheme.fromJson(json);
+        return NoSecurityScheme.fromJson(json, prefixMapping);
       case 'psk':
-        return PskSecurityScheme.fromJson(json);
+        return PskSecurityScheme.fromJson(json, prefixMapping);
       case 'digest':
-        return DigestSecurityScheme.fromJson(json);
+        return DigestSecurityScheme.fromJson(json, prefixMapping);
       case 'apikey':
-        return ApiKeySecurityScheme.fromJson(json);
+        return ApiKeySecurityScheme.fromJson(json, prefixMapping);
       case 'oauth2':
-        return OAuth2SecurityScheme.fromJson(json);
+        return OAuth2SecurityScheme.fromJson(json, prefixMapping);
       case 'ace:ACESecurityScheme':
-        return AceSecurityScheme.fromJson(json);
+        return AceSecurityScheme.fromJson(json, prefixMapping);
     }
 
     return null;

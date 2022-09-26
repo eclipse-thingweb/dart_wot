@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import 'extensions/json_parser.dart';
 
 /// Represents an element of the `links` array in a Thing Description.
@@ -29,7 +31,7 @@ class Link {
   }
 
   /// Creates a new [Link] from a [json] object.
-  Link.fromJson(Map<String, dynamic> json) {
+  Link.fromJson(Map<String, dynamic> json, PrefixMapping prefixMapping) {
     final Set<String> parsedFields = {};
 
     href = json.parseRequiredUriField('href', parsedFields);
@@ -40,11 +42,8 @@ class Link {
     sizes = json.parseField<String>('sizes', parsedFields);
     hreflang = json.parseArrayField<String>('hreflang', parsedFields);
 
-    additionalFields.addAll(
-      Map.fromEntries(
-        json.entries.where((element) => !parsedFields.contains(element.key)),
-      ),
-    );
+    additionalFields
+        .addAll(json.parseAdditionalFields(prefixMapping, parsedFields));
   }
 
   /// Target IRI of a link or submission target of a form.

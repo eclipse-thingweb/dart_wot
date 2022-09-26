@@ -44,8 +44,8 @@ class Property extends InteractionAffordance implements DataSchema {
     );
 
     property.forms.addAll(json.parseForms(property, prefixMapping));
-    property.additionalFields.addEntries(
-      json.entries.where((element) => !parsedFields.contains(element.key)),
+    property.additionalFields.addAll(
+      json.parseAdditionalFields(prefixMapping, parsedFields),
     );
 
     return property;

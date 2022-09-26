@@ -1,6 +1,8 @@
 import 'package:curie/curie.dart';
 
+import '../additional_expected_response.dart';
 import '../data_schema.dart';
+import '../expected_response.dart';
 import '../form.dart';
 import '../interaction_affordances/action.dart';
 import '../interaction_affordances/event.dart';
@@ -209,7 +211,7 @@ extension ParseField on Map<String, dynamic> {
 
     return fieldValue
         .whereType<Map<String, dynamic>>()
-        .map((e) => Form.fromJson(e, interactionAffordance))
+        .map((e) => Form.fromJson(e, interactionAffordance, prefixMapping))
         .toList();
   }
 
@@ -228,7 +230,7 @@ extension ParseField on Map<String, dynamic> {
 
     return fieldValue
         .whereType<Map<String, dynamic>>()
-        .map(Link.fromJson)
+        .map((e) => Link.fromJson(e, prefixMapping))
         .toList();
   }
 
@@ -252,7 +254,7 @@ extension ParseField on Map<String, dynamic> {
     for (final securityDefinition in fieldValue.entries) {
       final dynamic value = securityDefinition.value;
       if (value is Map<String, dynamic>) {
-        final securityScheme = SecurityScheme.fromJson(value);
+        final securityScheme = SecurityScheme.fromJson(value, prefixMapping);
         if (securityScheme != null) {
           result[securityDefinition.key] = securityScheme;
         }
@@ -341,5 +343,93 @@ extension ParseField on Map<String, dynamic> {
     }
 
     return result;
+  }
+
+  /// Parses [ExpectedResponse]s contained in this JSON object.
+  ///
+  /// Adds the key `events` to the set of [parsedFields], if defined.
+  ExpectedResponse? parseExpectedResponse(
+    PrefixMapping prefixMapping, [
+    Set<String>? parsedFields,
+  ]) {
+    final fieldValue = parseMapField<dynamic>('response', parsedFields);
+
+    if (fieldValue == null) {
+      return null;
+    }
+
+    return ExpectedResponse.fromJson(fieldValue, prefixMapping);
+  }
+
+  /// Parses [ExpectedResponse]s contained in this JSON object.
+  ///
+  /// Adds the key `events` to the set of [parsedFields], if defined.
+  List<AdditionalExpectedResponse>? parseAdditionalExpectedResponse(
+    PrefixMapping prefixMapping,
+    String formContentType, [
+    Set<String>? parsedFields,
+  ]) {
+    final fieldValue = parseArrayField<Map<String, dynamic>>(
+      'additionalResponses',
+      parsedFields,
+    );
+
+    if (fieldValue == null) {
+      return null;
+    }
+
+    return fieldValue
+        .map(
+          (e) => AdditionalExpectedResponse.fromJson(
+            e,
+            formContentType,
+            prefixMapping,
+          ),
+        )
+        .toList();
+  }
+
+  /// Parses and filters the remaining fields in this JSON object.
+  ///
+  /// The additional fields are determined by the [Set] of [parsedFields].
+  Map<String, dynamic> parseAdditionalFields(
+    PrefixMapping prefixMapping,
+    Set<String> parsedFields,
+  ) {
+    return Map.fromEntries(
+      entries.where((element) => !parsedFields.contains(element.key)),
+    ).map(
+      (key, value) => MapEntry(
+        _expandCurieKey(key, prefixMapping),
+        _expandCurieValue(value, prefixMapping),
+      ),
+    );
+  }
+
+  static String _expandCurieKey(String key, PrefixMapping prefixMapping) {
+    if (key.contains(':')) {
+      final prefix = key.split(':')[0];
+      if (prefixMapping.getPrefixValue(prefix) != null) {
+        return prefixMapping.expandCurieString(key);
+      }
+    }
+    return key;
+  }
+
+  static dynamic _expandCurieValue(dynamic value, PrefixMapping prefixMapping) {
+    if (value is String && value.contains(':')) {
+      final prefix = value.split(':')[0];
+      if (prefixMapping.getPrefixValue(prefix) != null) {
+        return prefixMapping.expandCurieString(value);
+      }
+    } else if (value is Map<String, dynamic>) {
+      return value.map<String, dynamic>((key, dynamic oldValue) {
+        final newKey = _expandCurieKey(key, prefixMapping);
+        final dynamic newValue = _expandCurieValue(oldValue, prefixMapping);
+        return MapEntry<String, dynamic>(newKey, newValue);
+      });
+    }
+
+    return value;
   }
 }

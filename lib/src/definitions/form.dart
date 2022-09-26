@@ -49,6 +49,7 @@ class Form {
   factory Form.fromJson(
     Map<String, dynamic> json,
     InteractionAffordance interactionAffordance,
+    PrefixMapping prefixMapping,
   ) {
     final Set<String> parsedFields = {};
     final href = json.parseRequiredUriField('href', parsedFields);
@@ -65,32 +66,16 @@ class Form {
 
     final security = json.parseArrayField<String>('security', parsedFields);
     final scopes = json.parseArrayField<String>('scopes', parsedFields);
-    final response = ExpectedResponse.fromJson(json, parsedFields);
+    final response = json.parseExpectedResponse(prefixMapping, parsedFields);
 
-    List<AdditionalExpectedResponse>? additionalResponses;
-    if (json['additionalResponses'] != null) {
-      final dynamic jsonResponse =
-          _getJsonValue(json, 'additionalResponses', parsedFields);
-      if (jsonResponse is Map<String, dynamic>) {
-        additionalResponses = [
-          AdditionalExpectedResponse.fromJson(jsonResponse, contentType)
-        ];
-      } else if (jsonResponse is List<dynamic>) {
-        additionalResponses = [];
-        for (final entry in jsonResponse) {
-          if (entry is Map<String, dynamic>) {
-            additionalResponses
-                .add(AdditionalExpectedResponse.fromJson(entry, contentType));
-          }
-        }
-      }
-    }
-
-    final additionalFields = _parseAdditionalFields(
-      json,
+    final additionalResponses = json.parseAdditionalExpectedResponse(
+      prefixMapping,
+      contentType,
       parsedFields,
-      interactionAffordance.thingDescription.prefixMapping,
     );
+
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
 
     return Form(
       href,
@@ -229,59 +214,6 @@ class Form {
       'Encountered unknown InteractionAffordance '
       '${interactionAffordance.runtimeType}.',
     );
-  }
-
-  static dynamic _getJsonValue(
-    Map<String, dynamic> formJson,
-    String key,
-    Set<String> parsedJsonFields,
-  ) {
-    parsedJsonFields.add(key);
-    return formJson[key];
-  }
-
-  static String _expandCurieKey(String key, PrefixMapping prefixMapping) {
-    if (key.contains(':')) {
-      final prefix = key.split(':')[0];
-      if (prefixMapping.getPrefixValue(prefix) != null) {
-        return prefixMapping.expandCurieString(key);
-      }
-    }
-    return key;
-  }
-
-  static dynamic _expandCurieValue(dynamic value, PrefixMapping prefixMapping) {
-    if (value is String && value.contains(':')) {
-      final prefix = value.split(':')[0];
-      if (prefixMapping.getPrefixValue(prefix) != null) {
-        return prefixMapping.expandCurieString(value);
-      }
-    } else if (value is Map<String, dynamic>) {
-      return value.map<String, dynamic>((key, dynamic oldValue) {
-        final newKey = _expandCurieKey(key, prefixMapping);
-        final dynamic newValue = _expandCurieValue(oldValue, prefixMapping);
-        return MapEntry<String, dynamic>(newKey, newValue);
-      });
-    }
-
-    return value;
-  }
-
-  static Map<String, dynamic> _parseAdditionalFields(
-    Map<String, dynamic> formJson,
-    Set<String> parsedFields,
-    PrefixMapping prefixMapping,
-  ) {
-    final additionalFields = <String, dynamic>{};
-    for (final entry in formJson.entries) {
-      if (!parsedFields.contains(entry.key)) {
-        final String key = _expandCurieKey(entry.key, prefixMapping);
-        final dynamic value = _expandCurieValue(entry.value, prefixMapping);
-
-        additionalFields[key] = value;
-      }
-    }
-    return additionalFields;
   }
 
   /// Creates a deep copy of this [Form].

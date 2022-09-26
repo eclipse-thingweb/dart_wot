@@ -110,6 +110,7 @@ void main() {
       final form3 = Form.fromJson(
         form3Json as Map<String, dynamic>,
         interactionAffordance,
+        PrefixMapping(),
       );
 
       expect(form3.href, uri);
@@ -142,6 +143,7 @@ void main() {
       final form4 = Form.fromJson(
         form4Json as Map<String, dynamic>,
         interactionAffordance,
+        PrefixMapping(),
       );
 
       expect(form4.op, [OperationType.writeproperty]);
@@ -157,6 +159,7 @@ void main() {
         () => Form.fromJson(
           form5Json as Map<String, dynamic>,
           interactionAffordance,
+          PrefixMapping(),
         ),
         throwsException,
       );
@@ -181,6 +184,7 @@ void main() {
       final form6 = Form.fromJson(
         form6Json as Map<String, dynamic>,
         interactionAffordance,
+        PrefixMapping(),
       );
 
       final additionalResponses = form6.additionalResponses;
@@ -478,16 +482,15 @@ void main() {
     expect(firstResponse.additionalFields['test'], 'test');
 
     final expectedResponseJson = {
-      'response': {
-        'contentType': 'application/json',
-        'test': 'test',
-      },
+      'contentType': 'application/json',
+      'test': 'test',
     };
 
-    final secondResponse = ExpectedResponse.fromJson(expectedResponseJson);
+    final secondResponse =
+        ExpectedResponse.fromJson(expectedResponseJson, PrefixMapping());
 
     expect(secondResponse, isA<ExpectedResponse>());
-    expect(secondResponse?.additionalFields['test'], 'test');
+    expect(secondResponse.additionalFields['test'], 'test');
   });
 
   test('Should reject invalid @context entries', () {

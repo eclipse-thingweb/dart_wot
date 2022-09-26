@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import '../extensions/json_parser.dart';
 import 'security_scheme.dart';
 
@@ -26,7 +28,10 @@ class OAuth2SecurityScheme extends SecurityScheme {
   }
 
   /// Creates a [OAuth2SecurityScheme] from a [json] object.
-  OAuth2SecurityScheme.fromJson(Map<String, dynamic> json) {
+  OAuth2SecurityScheme.fromJson(
+    Map<String, dynamic> json,
+    PrefixMapping prefixMapping,
+  ) {
     final Set<String> parsedFields = {};
 
     authorization = json.parseField<String>('authorization', parsedFields);
@@ -35,7 +40,7 @@ class OAuth2SecurityScheme extends SecurityScheme {
     scopes = json.parseArrayField<String>('scopes', parsedFields);
     flow = json.parseRequiredField<String>('flow', parsedFields);
 
-    parseSecurityJson(json, parsedFields);
+    parseSecurityJson(json, parsedFields, prefixMapping);
   }
   @override
   String get scheme => 'oauth2';

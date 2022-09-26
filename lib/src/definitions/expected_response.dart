@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import 'extensions/json_parser.dart';
 
 /// Communication metadata describing the expected response message for the
@@ -18,23 +20,18 @@ class ExpectedResponse {
         );
 
   /// Creates an [ExpectedResponse] from a [json] object.
-  static ExpectedResponse? fromJson(
-    Map<String, dynamic> json, [
-    Set<String>? parsedFields,
-  ]) {
-    final responseJson = json['response'];
-    parsedFields?.add('response');
+  factory ExpectedResponse.fromJson(
+    Map<String, dynamic> json,
+    PrefixMapping prefixMapping,
+  ) {
+    final Set<String> parsedFields = {};
 
-    if (responseJson is! Map<String, dynamic>) {
-      return null;
-    }
+    final contentType =
+        json.parseRequiredField<String>('contentType', parsedFields);
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
 
-    return ExpectedResponse(
-      responseJson.parseRequiredField<String>('contentType'),
-      additionalFields: Map.fromEntries(
-        responseJson.entries.where((element) => element.key != 'contentType'),
-      ),
-    );
+    return ExpectedResponse(contentType, additionalFields: additionalFields);
   }
 
   /// The [contentType] of this [ExpectedResponse] object.

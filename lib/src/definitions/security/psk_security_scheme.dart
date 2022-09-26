@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import '../extensions/json_parser.dart';
 import 'security_scheme.dart';
 
@@ -23,12 +25,15 @@ class PskSecurityScheme extends SecurityScheme {
   }
 
   /// Creates a [PskSecurityScheme] from a [json] object.
-  PskSecurityScheme.fromJson(Map<String, dynamic> json) {
+  PskSecurityScheme.fromJson(
+    Map<String, dynamic> json,
+    PrefixMapping prefixMapping,
+  ) {
     final Set<String> parsedFields = {};
 
     identity = json.parseField<String>('identity');
 
-    parseSecurityJson(json, parsedFields);
+    parseSecurityJson(json, parsedFields, prefixMapping);
   }
 
   @override

@@ -64,8 +64,8 @@ class Event extends InteractionAffordance {
     );
 
     event.forms.addAll(json.parseForms(event, prefixMapping));
-    event.additionalFields.addEntries(
-      json.entries.where((entry) => !parsedFields.contains(entry.key)),
+    event.additionalFields.addAll(
+      json.parseAdditionalFields(prefixMapping, parsedFields),
     );
 
     return event;

@@ -69,9 +69,8 @@ class Action extends InteractionAffordance {
     );
 
     action.forms.addAll(json.parseForms(action, prefixMapping, parsedFields));
-    action.additionalFields.addEntries(
-      json.entries.where((entry) => !parsedFields.contains(entry.key)),
-    );
+    action.additionalFields
+        .addAll(json.parseAdditionalFields(prefixMapping, parsedFields));
 
     return action;
   }

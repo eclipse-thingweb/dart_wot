@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import '../extensions/json_parser.dart';
 import 'security_scheme.dart';
 
@@ -26,14 +28,17 @@ class DigestSecurityScheme extends SecurityScheme {
         qop = qop ?? _defaultQoPValue;
 
   /// Creates a [DigestSecurityScheme] from a [json] object.
-  DigestSecurityScheme.fromJson(Map<String, dynamic> json) {
+  DigestSecurityScheme.fromJson(
+    Map<String, dynamic> json,
+    PrefixMapping prefixMapping,
+  ) {
     final Set<String> parsedFields = {};
 
     name = json.parseField<String>('name', parsedFields);
     in_ = json.parseField<String>('in', parsedFields) ?? _defaultInValue;
     qop = json.parseField<String>('qop', parsedFields) ?? _defaultInValue;
 
-    parseSecurityJson(json, parsedFields);
+    parseSecurityJson(json, parsedFields, prefixMapping);
   }
 
   @override
