@@ -6,11 +6,14 @@
 
 import 'dart:convert';
 
+import 'package:curie/curie.dart';
 import 'package:dart_wot/dart_wot.dart';
 import 'package:dart_wot/src/definitions/additional_expected_response.dart';
 import 'package:dart_wot/src/definitions/context_entry.dart';
 import 'package:dart_wot/src/definitions/data_schema.dart';
 import 'package:dart_wot/src/definitions/expected_response.dart';
+import 'package:dart_wot/src/definitions/extensions/json_parser.dart';
+import 'package:dart_wot/src/definitions/interaction_affordances/action.dart';
 import 'package:dart_wot/src/definitions/interaction_affordances/interaction_affordance.dart';
 import 'package:dart_wot/src/definitions/interaction_affordances/property.dart';
 import 'package:dart_wot/src/definitions/operation_type.dart';
@@ -21,7 +24,7 @@ import 'package:dart_wot/src/definitions/validation/validation_exception.dart';
 import 'package:test/test.dart';
 
 class _InvalidInteractionAffordance extends InteractionAffordance {
-  _InvalidInteractionAffordance(super.forms, super.thingDescription);
+  _InvalidInteractionAffordance(super.thingDescription);
 }
 
 void main() {
@@ -46,7 +49,16 @@ void main() {
         'security': 'nosec_sc',
         'securityDefinitions': {
           'nosec_sc': {'scheme': 'nosec'}
-        }
+        },
+        'profile': ['https://example.org/test-profile'],
+        'version': {'instance': 'test'},
+        'created': '1970-01-01',
+        'forms': [
+          {
+            'href': 'coaps://example.org',
+            'op': 'readallproperties',
+          }
+        ],
       };
 
       final thingDescription = ThingDescription.fromJson(validThingDescription);
@@ -58,20 +70,46 @@ void main() {
       );
       expect(thingDescription.security, ['nosec_sc']);
       expect(thingDescription.securityDefinitions['nosec_sc']?.scheme, 'nosec');
+      expect(
+        thingDescription.profile,
+        [Uri.tryParse('https://example.org/test-profile')],
+      );
+      expect(
+        thingDescription.version?.instance,
+        'test',
+      );
+      expect(
+        thingDescription.created,
+        DateTime.tryParse('1970-01-01'),
+      );
+      final form = thingDescription.forms[0];
+      expect(
+        form.href,
+        Uri.tryParse('coaps://example.org'),
+      );
+      expect(
+        form.op,
+        [OperationType.readallproperties],
+      );
     });
 
     test('Form', () {
       final thingDescription = ThingDescription(null);
-      final interactionAffordance = Property([], thingDescription);
+      final interactionAffordance = Property(thingDescription);
 
       final uri = Uri.parse('https://example.org');
-      final form = Form(uri, interactionAffordance);
+      final form = Form(
+        uri,
+        interactionAffordance.thingDescription,
+        interactionAffordance: interactionAffordance,
+      );
 
       expect(form.href, uri);
 
       final form2 = Form(
         uri,
-        interactionAffordance,
+        interactionAffordance.thingDescription,
+        interactionAffordance: interactionAffordance,
         subprotocol: 'test',
         scopes: ['test'],
         response: ExpectedResponse('application/json'),
@@ -106,7 +144,8 @@ void main() {
 
       final form3 = Form.fromJson(
         form3Json as Map<String, dynamic>,
-        interactionAffordance,
+        PrefixMapping(),
+        interactionAffordance.thingDescription,
       );
 
       expect(form3.href, uri);
@@ -138,7 +177,8 @@ void main() {
 
       final form4 = Form.fromJson(
         form4Json as Map<String, dynamic>,
-        interactionAffordance,
+        PrefixMapping(),
+        interactionAffordance.thingDescription,
       );
 
       expect(form4.op, [OperationType.writeproperty]);
@@ -153,7 +193,8 @@ void main() {
       expect(
         () => Form.fromJson(
           form5Json as Map<String, dynamic>,
-          interactionAffordance,
+          PrefixMapping(),
+          interactionAffordance.thingDescription,
         ),
         throwsException,
       );
@@ -177,7 +218,8 @@ void main() {
 
       final form6 = Form.fromJson(
         form6Json as Map<String, dynamic>,
-        interactionAffordance,
+        PrefixMapping(),
+        interactionAffordance.thingDescription,
       );
 
       final additionalResponses = form6.additionalResponses;
@@ -195,9 +237,19 @@ void main() {
       expect(
         () => Form(
           Uri.parse('http://example.org'),
-          _InvalidInteractionAffordance([], thingDescription),
+          thingDescription,
+          interactionAffordance:
+              _InvalidInteractionAffordance(thingDescription),
         ),
         throwsStateError,
+      );
+      expect(
+        () => <String, dynamic>{}.parseAffordanceForms(
+          Action(ThingDescription(null)),
+          PrefixMapping(),
+          {},
+        ),
+        throwsA(isA<ValidationException>()),
       );
     });
 
@@ -250,6 +302,7 @@ void main() {
         },
         'properties': {
           'property': {
+            '@type': 'test',
             'title': 'Test',
             'titles': {'de': 'German Test', 'en': 'English Test'},
             'description': 'This is a Test',
@@ -262,10 +315,28 @@ void main() {
             'observable': true,
             'enum': ['On', 'Off', 3],
             'constant': 'On',
+            'default': 'On',
+            'unit': 'C',
+            'contentEncoding': 'test',
+            'contentMediaType': 'test',
             'type': 'string',
             'forms': [
               {'href': 'https://example.org'}
-            ]
+            ],
+            'format': 'test',
+            'pattern': 'test',
+            'items': [
+              {'type': 'integer'}
+            ],
+            'minLength': 2,
+            'maxLength': 5,
+            'minItems': 2,
+            'maxItems': 5,
+            'exclusiveMinimum': 3,
+            'exclusiveMaximum': 3,
+            'multipleOf': 1,
+            'minimum': 3,
+            'maximum': 3,
           },
           'propertyWithDefaults': {
             'forms': [
@@ -273,9 +344,11 @@ void main() {
             ]
           },
           'objectSchemeProperty': {
+            'type': 'object',
             'properties': {
               'test': {'type': 'string'}
             },
+            'required': ['test'],
             'forms': [
               {
                 'href': 'https://example.org',
@@ -303,6 +376,7 @@ void main() {
       expect(noSecurityScheme?.scheme, 'nosec');
 
       final property = thingDescription.properties['property'];
+      expect(property?.atType, ['test']);
       expect(property?.title, 'Test');
       expect(property?.description, 'This is a Test');
       expect(property?.descriptions?['es'], 'Esto es una prueba');
@@ -312,6 +386,22 @@ void main() {
       expect(property?.observable, true);
       expect(property?.enumeration, ['On', 'Off', 3]);
       expect(property?.constant, 'On');
+      expect(property?.defaultValue, 'On');
+      expect(property?.format, 'test');
+      expect(property?.pattern, 'test');
+      expect(property?.contentEncoding, 'test');
+      expect(property?.contentMediaType, 'test');
+      expect(property?.unit, 'C');
+      expect(property?.items?[0].type, 'integer');
+      expect(property?.minLength, 2);
+      expect(property?.maxLength, 5);
+      expect(property?.minItems, 2);
+      expect(property?.maxItems, 5);
+      expect(property?.exclusiveMinimum, 3);
+      expect(property?.exclusiveMaximum, 3);
+      expect(property?.minimum, 3);
+      expect(property?.maximum, 3);
+      expect(property?.multipleOf, 1);
 
       final propertyWithDefaults =
           thingDescription.properties['propertyWithDefaults'];
@@ -321,6 +411,8 @@ void main() {
 
       final objectSchemeProperty =
           thingDescription.properties['objectSchemeProperty'];
+      expect(objectSchemeProperty?.required, ['test']);
+      expect(objectSchemeProperty?.type, 'object');
 
       expect(objectSchemeProperty?.forms[0].security, ['auto_sc']);
       final autoSecurityScheme =
@@ -427,19 +519,18 @@ void main() {
       additionalFields: {'test': 'test'},
     );
 
-    expect(firstResponse.additionalFields['test'], 'test');
+    expect(firstResponse.additionalFields?['test'], 'test');
 
     final expectedResponseJson = {
-      'response': {
-        'contentType': 'application/json',
-        'test': 'test',
-      },
+      'contentType': 'application/json',
+      'test': 'test',
     };
 
-    final secondResponse = ExpectedResponse.fromJson(expectedResponseJson);
+    final secondResponse =
+        ExpectedResponse.fromJson(expectedResponseJson, PrefixMapping());
 
     expect(secondResponse, isA<ExpectedResponse>());
-    expect(secondResponse?.additionalFields['test'], 'test');
+    expect(secondResponse.additionalFields?['test'], 'test');
   });
 
   test('Should reject invalid @context entries', () {

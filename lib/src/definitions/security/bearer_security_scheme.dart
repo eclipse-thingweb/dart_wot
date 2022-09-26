@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import '../extensions/json_parser.dart';
 import 'security_scheme.dart';
 
@@ -26,10 +28,14 @@ class BearerSecurityScheme extends SecurityScheme {
     super.descriptions,
   })  : in_ = in_ ?? _defaultInValue,
         alg = alg ?? _defaultAlgValue,
-        format = format ?? _defaultFormatValue;
+        format = format ?? _defaultFormatValue,
+        super('bearer');
 
   /// Creates a [BearerSecurityScheme] from a [json] object.
-  BearerSecurityScheme.fromJson(Map<String, dynamic> json) {
+  BearerSecurityScheme.fromJson(
+    Map<String, dynamic> json,
+    PrefixMapping prefixMapping,
+  ) : super('bearer') {
     final Set<String> parsedFields = {};
 
     name = json.parseField<String>('name', parsedFields);
@@ -39,11 +45,8 @@ class BearerSecurityScheme extends SecurityScheme {
     alg = json.parseField<String>('alg', parsedFields) ?? _defaultAlgValue;
     authorization = json.parseField<String>('authorization', parsedFields);
 
-    parseSecurityJson(json, parsedFields);
+    parseSecurityJson(json, parsedFields, prefixMapping);
   }
-
-  @override
-  String get scheme => 'bearer';
 
   /// URI of the authorization server.
   late final String? authorization;

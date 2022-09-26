@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import 'package:collection/collection.dart';
+import 'package:curie/curie.dart';
 import 'package:meta/meta.dart';
 
 import 'extensions/json_parser.dart';
@@ -26,6 +27,7 @@ class AdditionalExpectedResponse {
   factory AdditionalExpectedResponse.fromJson(
     Map<String, dynamic> json,
     String formContentType,
+    PrefixMapping prefixMapping,
   ) {
     final Set<String> parsedFields = {};
 
@@ -33,10 +35,8 @@ class AdditionalExpectedResponse {
         json.parseField<String>('contentType', parsedFields) ?? formContentType;
     final success = json.parseField<bool>('success', parsedFields);
     final schema = json.parseField<String>('schema', parsedFields);
-
-    final additionalFields = Map.fromEntries(
-      json.entries.where((entry) => !parsedFields.contains(entry.key)),
-    );
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
 
     return AdditionalExpectedResponse(
       contentType,
@@ -62,7 +62,7 @@ class AdditionalExpectedResponse {
   final String? schema;
 
   /// Any other additional field will be included in this [Map].
-  final Map<String, dynamic> additionalFields;
+  final Map<String, dynamic>? additionalFields;
 
   @override
   bool operator ==(Object other) {

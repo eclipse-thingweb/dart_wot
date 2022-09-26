@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:curie/curie.dart';
+
 import '../extensions/json_parser.dart';
 
 import 'security_scheme.dart';
@@ -18,13 +20,16 @@ class AceSecurityScheme extends SecurityScheme {
     this.scopes,
     this.cnonce,
     Map<String, String>? descriptions,
-  }) {
+  }) : super('ace:ACESecurityScheme') {
     this.description = description;
     this.descriptions.addAll(descriptions ?? {});
   }
 
   /// Creates an [AceSecurityScheme] from a [json] object.
-  AceSecurityScheme.fromJson(Map<String, dynamic> json) {
+  AceSecurityScheme.fromJson(
+    Map<String, dynamic> json,
+    PrefixMapping prefixMapping,
+  ) : super('ace:ACESecurityScheme') {
     final Set<String> parsedFields = {};
 
     as = json.parseField<String>('ace:as', parsedFields);
@@ -32,11 +37,8 @@ class AceSecurityScheme extends SecurityScheme {
     audience = json.parseField<String>('ace:audience', parsedFields);
     scopes = json.parseArrayField<String>('ace:scopes', parsedFields);
 
-    parseSecurityJson(json, parsedFields);
+    parseSecurityJson(json, parsedFields, prefixMapping);
   }
-
-  @override
-  String get scheme => 'ace:ACESecurityScheme';
 
   /// URI of the authorization server.
   String? as;

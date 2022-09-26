@@ -60,7 +60,7 @@ Future<BasicCredentials?> basicCredentialsCallback(
     return basicCredentials;
   }
 
-  final id = form.interactionAffordance.thingDescription.identifier;
+  final id = form.thingDescription.identifier;
 
   return basicCredentialsMap[id];
 }

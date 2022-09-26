@@ -145,7 +145,7 @@ extension MqttFormExtension on Form {
       throw ValidationException(
         'Encountered unknown QoS value $qosValue. '
         'in form with href $href of Thing Description with Identifier '
-        '${interactionAffordance.thingDescription.identifier}.',
+        '${thingDescription.identifier}.',
       );
     }
 
