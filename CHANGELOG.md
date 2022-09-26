@@ -1,3 +1,7 @@
+# 0.22.1
+
+fix(definitions): added missing `writeallproperties` operation
+
 # 0.22.0
 
 Applied an extensive rework to the DataSchema class, added missing TD fields,
