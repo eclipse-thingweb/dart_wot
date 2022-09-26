@@ -3,6 +3,7 @@ import 'package:curie/curie.dart';
 import '../data_schema.dart';
 import '../form.dart';
 import '../interaction_affordances/interaction_affordance.dart';
+import '../link.dart';
 import '../validation/validation_exception.dart';
 
 /// Extension for parsing fields of JSON objects.
@@ -176,6 +177,25 @@ extension ParseField on Map<String, dynamic> {
     return fieldValue
         .whereType<Map<String, dynamic>>()
         .map((e) => Form.fromJson(e, interactionAffordance))
+        .toList();
+  }
+
+  /// Parses [Link]s contained in this JSON object.
+  ///
+  /// Adds the key `links` to the set of [parsedFields], if defined.
+  List<Link>? parseLinks(
+    PrefixMapping prefixMapping, [
+    Set<String>? parsedFields,
+  ]) {
+    final fieldValue = parseField('links', parsedFields);
+
+    if (fieldValue is! List) {
+      return null;
+    }
+
+    return fieldValue
+        .whereType<Map<String, dynamic>>()
+        .map(Link.fromJson)
         .toList();
   }
 }

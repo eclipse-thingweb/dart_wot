@@ -158,18 +158,8 @@ class ThingDescription {
     if (events is Map<String, dynamic>) {
       _parseEvents(events);
     }
-    final dynamic links = json['links'];
-    if (links is List<dynamic>) {
-      _parseLinks(links);
-    }
-  }
 
-  void _parseLinks(List<dynamic> json) {
-    for (final link in json) {
-      if (link is Map<String, dynamic>) {
-        links.add(Link.fromJson(link));
-      }
-    }
+    links.addAll(json.parseLinks(prefixMapping) ?? []);
   }
 
   void _parseProperties(Map<String, dynamic> json) {
