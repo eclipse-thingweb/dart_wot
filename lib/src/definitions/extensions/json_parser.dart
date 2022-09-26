@@ -35,6 +35,23 @@ extension ParseField on Map<String, dynamic> {
     return null;
   }
 
+  /// Parses a single field with a given [name] as a [Uri].
+  ///
+  /// Ensures that the field value is a valid [Uri] and returns `null` if the
+  /// value cannot be parsed as such.
+  ///
+  /// If a [Set] of [parsedFields] is passed to this function, the field [name]
+  /// will added. This can be used for filtering when parsing additional fields.
+  Uri? parseUriField(String name, [Set<String>? parsedFields]) {
+    final fieldValue = parseField<String>(name, parsedFields);
+
+    if (fieldValue == null) {
+      return null;
+    }
+
+    return Uri.tryParse(fieldValue);
+  }
+
   /// Parses a single field with a given [name] and throws a
   /// [ValidationException] if the field is not present or does not have the
   /// type [T].
@@ -52,6 +69,17 @@ extension ParseField on Map<String, dynamic> {
     }
 
     return fieldValue;
+  }
+
+  /// Parses a single field with a given [name] as a [Uri] and throws a
+  /// [ValidationException] if the field is not present or cannot be parsed.
+  ///
+  /// If a [Set] of [parsedFields] is passed to this function, the field [name]
+  /// will added. This can be used for filtering when parsing additional fields.
+  Uri parseRequiredUriField(String name, [Set<String>? parsedFields]) {
+    final fieldValue = parseRequiredField<String>(name, parsedFields);
+
+    return Uri.parse(fieldValue);
   }
 
   /// Parses a map field with a given [name].

@@ -135,7 +135,7 @@ class ThingDescription {
     descriptions
         .addAll(json.parseMapField<String>('descriptions', parsedFields) ?? {});
     id = json.parseField<String>('id', parsedFields);
-    base = Uri.tryParse(json.parseField<String>('base', parsedFields) ?? '');
+    base = json.parseUriField('base', parsedFields);
     security
         .addAll(json.parseArrayField<String>('security', parsedFields) ?? []);
 

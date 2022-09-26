@@ -32,7 +32,7 @@ class Link {
   Link.fromJson(Map<String, dynamic> json) {
     final Set<String> parsedFields = {};
 
-    href = Uri.parse(json.parseRequiredField<String>('href', parsedFields));
+    href = json.parseRequiredUriField('href', parsedFields);
     type = json.parseField<String>('@type', parsedFields);
     rel = json.parseField<String>('rel', parsedFields);
     anchor =

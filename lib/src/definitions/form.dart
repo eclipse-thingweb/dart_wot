@@ -51,8 +51,7 @@ class Form {
     InteractionAffordance interactionAffordance,
   ) {
     final Set<String> parsedFields = {};
-    final href =
-        Uri.parse(json.parseRequiredField<String>('href', parsedFields));
+    final href = json.parseRequiredUriField('href', parsedFields);
 
     final subprotocol = json.parseField<String>('subprotocol', parsedFields);
 
