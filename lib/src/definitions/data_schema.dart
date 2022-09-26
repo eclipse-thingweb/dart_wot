@@ -80,7 +80,8 @@ class DataSchema {
     final exclusiveMaximum =
         json.parseField<num>('exclusiveMaximum', parsedFields);
     final multipleOf = json.parseField<num>('multipleOf', parsedFields);
-    final items = json.parseDataSchemaArrayField('items', prefixMapping);
+    final items =
+        json.parseDataSchemaArrayField('items', prefixMapping, parsedFields);
     final minItems = json.parseField<int>('minItems', parsedFields);
     final maxItems = json.parseField<int>('maxItems', parsedFields);
     final required = json.parseField<List<String>>('required', parsedFields);

@@ -193,11 +193,12 @@ class ThingDescription {
     );
     forms.addAll(json.parseForms(this, prefixMapping, parsedFields) ?? []);
 
-    properties.addAll(json.parseProperties(this, prefixMapping) ?? {});
-    actions.addAll(json.parseActions(this, prefixMapping) ?? {});
-    events.addAll(json.parseEvents(this, prefixMapping) ?? {});
+    properties
+        .addAll(json.parseProperties(this, prefixMapping, parsedFields) ?? {});
+    actions.addAll(json.parseActions(this, prefixMapping, parsedFields) ?? {});
+    events.addAll(json.parseEvents(this, prefixMapping, parsedFields) ?? {});
 
-    links.addAll(json.parseLinks(prefixMapping) ?? []);
+    links.addAll(json.parseLinks(prefixMapping, parsedFields) ?? []);
 
     profile.addAll(json.parseUriArrayField('profile', parsedFields) ?? []);
     schemaDefinitions.addAll(

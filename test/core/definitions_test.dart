@@ -247,6 +247,7 @@ void main() {
         () => <String, dynamic>{}.parseAffordanceForms(
           Action(ThingDescription(null)),
           PrefixMapping(),
+          {},
         ),
         throwsA(isA<ValidationException>()),
       );

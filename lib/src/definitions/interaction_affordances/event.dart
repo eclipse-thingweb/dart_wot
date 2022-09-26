@@ -63,7 +63,8 @@ class Event extends InteractionAffordance {
       cancellation: cancellation,
     );
 
-    event.forms.addAll(json.parseAffordanceForms(event, prefixMapping));
+    event.forms
+        .addAll(json.parseAffordanceForms(event, prefixMapping, parsedFields));
     event.additionalFields.addAll(
       json.parseAdditionalFields(prefixMapping, parsedFields),
     );

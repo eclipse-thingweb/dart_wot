@@ -165,9 +165,9 @@ extension ParseField on Map<String, dynamic> {
   /// will added. This can be used for filtering when parsing additional fields.
   DataSchema? parseDataSchemaField(
     String name,
-    PrefixMapping prefixMapping, [
+    PrefixMapping prefixMapping,
     Set<String>? parsedFields,
-  ]) {
+  ) {
     final fieldValue = parseField(name, parsedFields);
 
     if (fieldValue is Map<String, dynamic>) {
@@ -186,9 +186,9 @@ extension ParseField on Map<String, dynamic> {
   /// will added. This can be used for filtering when parsing additional fields.
   List<DataSchema>? parseDataSchemaArrayField(
     String name,
-    PrefixMapping prefixMapping, [
+    PrefixMapping prefixMapping,
     Set<String>? parsedFields,
-  ]) {
+  ) {
     final fieldValue = parseField(name, parsedFields);
 
     if (fieldValue is List<Map<String, dynamic>>) {
@@ -209,9 +209,9 @@ extension ParseField on Map<String, dynamic> {
   /// will added. This can be used for filtering when parsing additional fields.
   Map<String, DataSchema>? parseDataSchemaMapField(
     String name,
-    PrefixMapping prefixMapping, [
+    PrefixMapping prefixMapping,
     Set<String>? parsedFields,
-  ]) {
+  ) {
     final fieldValue = parseField(name, parsedFields);
 
     if (fieldValue is Map<String, Map<String, dynamic>>) {
@@ -236,8 +236,8 @@ extension ParseField on Map<String, dynamic> {
   /// Adds the key `forms` to the set of [parsedFields], if defined.
   List<Form>? parseForms(
     ThingDescription thingDescription,
-    PrefixMapping prefixMapping, [
-    Set<String>? parsedFields,
+    PrefixMapping prefixMapping,
+    Set<String>? parsedFields, [
     InteractionAffordance? interactionAffordance,
   ]) {
     final fieldValue = parseField('forms', parsedFields);
@@ -268,9 +268,9 @@ extension ParseField on Map<String, dynamic> {
   /// Adds the key `forms` to the set of [parsedFields], if defined.
   List<Form> parseAffordanceForms(
     InteractionAffordance interactionAffordance,
-    PrefixMapping prefixMapping, [
+    PrefixMapping prefixMapping,
     Set<String>? parsedFields,
-  ]) {
+  ) {
     final forms = parseForms(
       interactionAffordance.thingDescription,
       prefixMapping,
@@ -291,9 +291,9 @@ extension ParseField on Map<String, dynamic> {
   ///
   /// Adds the key `links` to the set of [parsedFields], if defined.
   List<Link>? parseLinks(
-    PrefixMapping prefixMapping, [
+    PrefixMapping prefixMapping,
     Set<String>? parsedFields,
-  ]) {
+  ) {
     final fieldValue = parseField('links', parsedFields);
 
     if (fieldValue is! List) {
@@ -311,9 +311,9 @@ extension ParseField on Map<String, dynamic> {
   /// Adds the key `securityDefinitions` to the set of [parsedFields], if
   /// defined.
   Map<String, SecurityScheme>? parseSecurityDefinitions(
-    PrefixMapping prefixMapping, [
+    PrefixMapping prefixMapping,
     Set<String>? parsedFields,
-  ]) {
+  ) {
     final fieldValue =
         parseMapField<dynamic>('securityDefinitions', parsedFields);
 
@@ -341,9 +341,9 @@ extension ParseField on Map<String, dynamic> {
   /// Adds the key `properties` to the set of [parsedFields], if defined.
   Map<String, Property>? parseProperties(
     ThingDescription thingDescription,
-    PrefixMapping prefixMapping, [
+    PrefixMapping prefixMapping,
     Set<String>? parsedFields,
-  ]) {
+  ) {
     final fieldValue = parseMapField<dynamic>('properties', parsedFields);
 
     if (fieldValue == null) {
@@ -368,9 +368,9 @@ extension ParseField on Map<String, dynamic> {
   /// Adds the key `actions` to the set of [parsedFields], if defined.
   Map<String, Action>? parseActions(
     ThingDescription thingDescription,
-    PrefixMapping prefixMapping, [
+    PrefixMapping prefixMapping,
     Set<String>? parsedFields,
-  ]) {
+  ) {
     final fieldValue = parseMapField<dynamic>('actions', parsedFields);
 
     if (fieldValue == null) {
@@ -395,9 +395,9 @@ extension ParseField on Map<String, dynamic> {
   /// Adds the key `events` to the set of [parsedFields], if defined.
   Map<String, Event>? parseEvents(
     ThingDescription thingDescription,
-    PrefixMapping prefixMapping, [
+    PrefixMapping prefixMapping,
     Set<String>? parsedFields,
-  ]) {
+  ) {
     final fieldValue = parseMapField<dynamic>('events', parsedFields);
 
     if (fieldValue == null) {
@@ -421,9 +421,9 @@ extension ParseField on Map<String, dynamic> {
   ///
   /// Adds the key `events` to the set of [parsedFields], if defined.
   ExpectedResponse? parseExpectedResponse(
-    PrefixMapping prefixMapping, [
+    PrefixMapping prefixMapping,
     Set<String>? parsedFields,
-  ]) {
+  ) {
     final fieldValue = parseMapField<dynamic>('response', parsedFields);
 
     if (fieldValue == null) {
@@ -439,9 +439,9 @@ extension ParseField on Map<String, dynamic> {
   /// defined.
   List<AdditionalExpectedResponse>? parseAdditionalExpectedResponse(
     PrefixMapping prefixMapping,
-    String formContentType, [
+    String formContentType,
     Set<String>? parsedFields,
-  ]) {
+  ) {
     final fieldValue = parseArrayField<Map<String, dynamic>>(
       'additionalResponses',
       parsedFields,
@@ -466,9 +466,9 @@ extension ParseField on Map<String, dynamic> {
   ///
   /// Adds the key `version` to the set of [parsedFields], if defined.
   VersionInfo? parseVersionInfo(
-    PrefixMapping prefixMapping, [
+    PrefixMapping prefixMapping,
     Set<String>? parsedFields,
-  ]) {
+  ) {
     final fieldValue = parseMapField<dynamic>('version', parsedFields);
 
     if (fieldValue == null) {
@@ -486,9 +486,9 @@ extension ParseField on Map<String, dynamic> {
   /// If a [Set] of [parsedFields] is passed to this function, the field [name]
   /// will added. This can be used for filtering when parsing additional fields.
   DateTime? parseDateTime(
-    String name, [
+    String name,
     Set<String>? parsedFields,
-  ]) {
+  ) {
     final fieldValue = parseField<String>(name, parsedFields);
 
     if (fieldValue == null) {
