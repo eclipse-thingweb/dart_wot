@@ -15,10 +15,7 @@ class AutoSecurityScheme extends SecurityScheme {
   AutoSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) {
+  ) : super('auto') {
     parseSecurityJson(json, {}, prefixMapping);
   }
-
-  @override
-  String get scheme => 'auto';
 }

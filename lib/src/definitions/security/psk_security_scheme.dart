@@ -18,7 +18,7 @@ class PskSecurityScheme extends SecurityScheme {
     String? description,
     String? proxy,
     Map<String, String>? descriptions,
-  }) {
+  }) : super('psk') {
     this.description = description;
     this.proxy = proxy;
     this.descriptions.addAll(descriptions ?? {});
@@ -28,16 +28,13 @@ class PskSecurityScheme extends SecurityScheme {
   PskSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) {
+  ) : super('psk') {
     final Set<String> parsedFields = {};
 
     identity = json.parseField<String>('identity');
 
     parseSecurityJson(json, parsedFields, prefixMapping);
   }
-
-  @override
-  String get scheme => 'psk';
 
   /// Name for query, header, cookie, or uri parameters.
   String? identity;

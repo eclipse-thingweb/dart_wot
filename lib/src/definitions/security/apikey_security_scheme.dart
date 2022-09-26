@@ -21,13 +21,14 @@ class ApiKeySecurityScheme extends SecurityScheme {
     this.name,
     String? in_,
     super.descriptions,
-  }) : in_ = in_ ?? _defaultInValue;
+  })  : in_ = in_ ?? _defaultInValue,
+        super('apikey');
 
   /// Creates a [ApiKeySecurityScheme] from a [json] object.
   ApiKeySecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) {
+  ) : super('apikey') {
     final Set<String> parsedFields = {};
 
     name = json.parseField<String>('name', parsedFields);
@@ -35,9 +36,6 @@ class ApiKeySecurityScheme extends SecurityScheme {
 
     parseSecurityJson(json, parsedFields, prefixMapping);
   }
-
-  @override
-  String get scheme => 'apikey';
 
   /// Name for query, header, cookie, or uri parameters.
   String? name;

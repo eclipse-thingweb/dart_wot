@@ -21,13 +21,14 @@ class BasicSecurityScheme extends SecurityScheme {
     this.name,
     String? in_,
     super.descriptions,
-  }) : in_ = in_ ?? _defaultInValue;
+  })  : in_ = in_ ?? _defaultInValue,
+        super('basic');
 
   /// Creates a [BasicSecurityScheme] from a [json] object.
   BasicSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) {
+  ) : super('basic') {
     final Set<String> parsedFields = {};
 
     name = json.parseField<String>('name', parsedFields);
@@ -35,9 +36,6 @@ class BasicSecurityScheme extends SecurityScheme {
 
     parseSecurityJson(json, parsedFields, prefixMapping);
   }
-
-  @override
-  String get scheme => 'basic';
 
   /// Name for query, header, cookie, or uri parameters.
   late final String? name;

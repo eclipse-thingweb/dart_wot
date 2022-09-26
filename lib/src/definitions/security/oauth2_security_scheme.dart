@@ -22,7 +22,7 @@ class OAuth2SecurityScheme extends SecurityScheme {
     this.refresh,
     this.token,
     Map<String, String>? descriptions,
-  }) {
+  }) : super('oauth2') {
     this.description = description;
     this.descriptions.addAll(descriptions ?? {});
   }
@@ -31,7 +31,7 @@ class OAuth2SecurityScheme extends SecurityScheme {
   OAuth2SecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) {
+  ) : super('oauth2') {
     final Set<String> parsedFields = {};
 
     authorization = json.parseField<String>('authorization', parsedFields);
@@ -42,8 +42,6 @@ class OAuth2SecurityScheme extends SecurityScheme {
 
     parseSecurityJson(json, parsedFields, prefixMapping);
   }
-  @override
-  String get scheme => 'oauth2';
 
   /// URI of the authorization server.
   ///

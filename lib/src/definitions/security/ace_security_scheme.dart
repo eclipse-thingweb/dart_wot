@@ -20,7 +20,7 @@ class AceSecurityScheme extends SecurityScheme {
     this.scopes,
     this.cnonce,
     Map<String, String>? descriptions,
-  }) {
+  }) : super('ace:ACESecurityScheme') {
     this.description = description;
     this.descriptions.addAll(descriptions ?? {});
   }
@@ -29,7 +29,7 @@ class AceSecurityScheme extends SecurityScheme {
   AceSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) {
+  ) : super('ace:ACESecurityScheme') {
     final Set<String> parsedFields = {};
 
     as = json.parseField<String>('ace:as', parsedFields);
@@ -39,9 +39,6 @@ class AceSecurityScheme extends SecurityScheme {
 
     parseSecurityJson(json, parsedFields, prefixMapping);
   }
-
-  @override
-  String get scheme => 'ace:ACESecurityScheme';
 
   /// URI of the authorization server.
   String? as;

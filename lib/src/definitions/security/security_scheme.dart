@@ -21,7 +21,8 @@ import 'psk_security_scheme.dart';
 /// mechanism.
 abstract class SecurityScheme {
   /// Constructor.
-  SecurityScheme({
+  SecurityScheme(
+    this.scheme, {
     this.description,
     this.proxy,
     Map<String, String>? descriptions,
@@ -33,7 +34,7 @@ abstract class SecurityScheme {
   ///
   /// Can be one of `nosec`, `combo`, `basic`, `digest`, `bearer`, `psk`,
   /// `oauth2`, or `apikey`.
-  String get scheme;
+  final String scheme;
 
   /// The default [description] of this [SecurityScheme].
   String? description;

@@ -15,10 +15,7 @@ class NoSecurityScheme extends SecurityScheme {
   NoSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) {
+  ) : super('nosec') {
     parseSecurityJson(json, {}, prefixMapping);
   }
-
-  @override
-  String get scheme => 'nosec';
 }

@@ -25,13 +25,14 @@ class DigestSecurityScheme extends SecurityScheme {
     this.name,
     super.descriptions,
   })  : in_ = in_ ?? _defaultInValue,
-        qop = qop ?? _defaultQoPValue;
+        qop = qop ?? _defaultQoPValue,
+        super('digest');
 
   /// Creates a [DigestSecurityScheme] from a [json] object.
   DigestSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) {
+  ) : super('digest') {
     final Set<String> parsedFields = {};
 
     name = json.parseField<String>('name', parsedFields);
@@ -40,9 +41,6 @@ class DigestSecurityScheme extends SecurityScheme {
 
     parseSecurityJson(json, parsedFields, prefixMapping);
   }
-
-  @override
-  String get scheme => 'digest';
 
   /// Name for query, header, cookie, or uri parameters.
   late final String? name;
