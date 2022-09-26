@@ -139,66 +139,16 @@ class ThingDescription {
     security
         .addAll(json.parseArrayField<String>('security', parsedFields) ?? []);
 
-    final dynamic securityDefinitions = json['securityDefinitions'];
-    if (securityDefinitions is Map<String, dynamic>) {
-      _parseSecurityDefinitions(securityDefinitions);
-    }
+    securityDefinitions.addAll(
+      json.parseSecurityDefinitions(prefixMapping, parsedFields) ?? {},
+    );
 
     uriVariables = json.parseMapField<dynamic>('uriVariables');
 
-    final dynamic properties = json['properties'];
-    if (properties is Map<String, dynamic>) {
-      _parseProperties(properties);
-    }
-    final dynamic actions = json['actions'];
-    if (actions is Map<String, dynamic>) {
-      _parseActions(actions);
-    }
-    final dynamic events = json['events'];
-    if (events is Map<String, dynamic>) {
-      _parseEvents(events);
-    }
+    properties.addAll(json.parseProperties(this, prefixMapping) ?? {});
+    actions.addAll(json.parseActions(this, prefixMapping) ?? {});
+    events.addAll(json.parseEvents(this, prefixMapping) ?? {});
 
     links.addAll(json.parseLinks(prefixMapping) ?? []);
-  }
-
-  void _parseProperties(Map<String, dynamic> json) {
-    for (final property in json.entries) {
-      final dynamic value = property.value;
-      if (value is Map<String, dynamic>) {
-        properties[property.key] =
-            Property.fromJson(value, this, prefixMapping);
-      }
-    }
-  }
-
-  void _parseActions(Map<String, dynamic> json) {
-    for (final action in json.entries) {
-      final dynamic value = action.value;
-      if (value is Map<String, dynamic>) {
-        actions[action.key] = Action.fromJson(value, this, prefixMapping);
-      }
-    }
-  }
-
-  void _parseEvents(Map<String, dynamic> json) {
-    for (final event in json.entries) {
-      final dynamic value = event.value;
-      if (value is Map<String, dynamic>) {
-        events[event.key] = Event.fromJson(value, this, prefixMapping);
-      }
-    }
-  }
-
-  void _parseSecurityDefinitions(Map<String, dynamic> json) {
-    for (final securityDefinition in json.entries) {
-      final dynamic value = securityDefinition.value;
-      if (value is Map<String, dynamic>) {
-        final securityScheme = SecurityScheme.fromJson(value);
-        if (securityScheme != null) {
-          securityDefinitions[securityDefinition.key] = securityScheme;
-        }
-      }
-    }
   }
 }

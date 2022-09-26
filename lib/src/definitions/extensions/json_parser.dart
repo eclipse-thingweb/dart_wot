@@ -2,8 +2,13 @@ import 'package:curie/curie.dart';
 
 import '../data_schema.dart';
 import '../form.dart';
+import '../interaction_affordances/action.dart';
+import '../interaction_affordances/event.dart';
 import '../interaction_affordances/interaction_affordance.dart';
+import '../interaction_affordances/property.dart';
 import '../link.dart';
+import '../security/security_scheme.dart';
+import '../thing_description.dart';
 import '../validation/validation_exception.dart';
 
 /// Extension for parsing fields of JSON objects.
@@ -197,5 +202,116 @@ extension ParseField on Map<String, dynamic> {
         .whereType<Map<String, dynamic>>()
         .map(Link.fromJson)
         .toList();
+  }
+
+  /// Parses [SecurityScheme]s contained in this JSON object.
+  ///
+  /// Adds the key `securityDefinitions` to the set of [parsedFields], if
+  /// defined.
+  Map<String, SecurityScheme>? parseSecurityDefinitions(
+    PrefixMapping prefixMapping, [
+    Set<String>? parsedFields,
+  ]) {
+    final fieldValue =
+        parseMapField<dynamic>('securityDefinitions', parsedFields);
+
+    if (fieldValue == null) {
+      return null;
+    }
+
+    final Map<String, SecurityScheme> result = {};
+
+    for (final securityDefinition in fieldValue.entries) {
+      final dynamic value = securityDefinition.value;
+      if (value is Map<String, dynamic>) {
+        final securityScheme = SecurityScheme.fromJson(value);
+        if (securityScheme != null) {
+          result[securityDefinition.key] = securityScheme;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  /// Parses [Property]s contained in this JSON object.
+  ///
+  /// Adds the key `properties` to the set of [parsedFields], if defined.
+  Map<String, Property>? parseProperties(
+    ThingDescription thingDescription,
+    PrefixMapping prefixMapping, [
+    Set<String>? parsedFields,
+  ]) {
+    final fieldValue = parseMapField<dynamic>('properties', parsedFields);
+
+    if (fieldValue == null) {
+      return null;
+    }
+
+    final Map<String, Property> result = {};
+
+    for (final property in fieldValue.entries) {
+      final dynamic value = property.value;
+      if (value is Map<String, dynamic>) {
+        result[property.key] =
+            Property.fromJson(value, thingDescription, prefixMapping);
+      }
+    }
+
+    return result;
+  }
+
+  /// Parses [Action]s contained in this JSON object.
+  ///
+  /// Adds the key `actions` to the set of [parsedFields], if defined.
+  Map<String, Action>? parseActions(
+    ThingDescription thingDescription,
+    PrefixMapping prefixMapping, [
+    Set<String>? parsedFields,
+  ]) {
+    final fieldValue = parseMapField<dynamic>('actions', parsedFields);
+
+    if (fieldValue == null) {
+      return null;
+    }
+
+    final Map<String, Action> result = {};
+
+    for (final property in fieldValue.entries) {
+      final dynamic value = property.value;
+      if (value is Map<String, dynamic>) {
+        result[property.key] =
+            Action.fromJson(value, thingDescription, prefixMapping);
+      }
+    }
+
+    return result;
+  }
+
+  /// Parses [Event]s contained in this JSON object.
+  ///
+  /// Adds the key `events` to the set of [parsedFields], if defined.
+  Map<String, Event>? parseEvents(
+    ThingDescription thingDescription,
+    PrefixMapping prefixMapping, [
+    Set<String>? parsedFields,
+  ]) {
+    final fieldValue = parseMapField<dynamic>('events', parsedFields);
+
+    if (fieldValue == null) {
+      return null;
+    }
+
+    final Map<String, Event> result = {};
+
+    for (final property in fieldValue.entries) {
+      final dynamic value = property.value;
+      if (value is Map<String, dynamic>) {
+        result[property.key] =
+            Event.fromJson(value, thingDescription, prefixMapping);
+      }
+    }
+
+    return result;
   }
 }
