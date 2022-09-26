@@ -105,6 +105,7 @@ extension OperationTypeExtension on OperationType {
         return CoapRequestMethod.get;
       case OperationType.writeproperty:
       case OperationType.writemultipleproperties:
+      case OperationType.writeallproperties:
         return CoapRequestMethod.put;
       case OperationType.invokeaction:
         return CoapRequestMethod.post;

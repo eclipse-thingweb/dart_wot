@@ -34,6 +34,9 @@ enum OperationType {
   /// Corresponds with the `writemultipleproperties` operation type.
   writemultipleproperties,
 
+  /// Corresponds with the `writeallproperties` operation type.
+  writeallproperties,
+
   /// Corresponds with the `invokeaction` operation type.
   invokeaction,
 
