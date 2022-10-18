@@ -197,6 +197,32 @@ class CoapClient extends ProtocolClient {
     return response.content;
   }
 
+  Future<DiscoveryContent> _sendDiscoveryRequest(
+    Uri uri,
+    coap.CoapCode method, {
+    Content? content,
+    required Form? form,
+    coap.CoapMediaType? format,
+    coap.CoapMediaType? accept,
+    int? block1Size,
+    int? block2Size,
+    coap.CoapMulticastResponseHandler? multicastResponseHandler,
+  }) async {
+    final responseContent = await _sendRequest(
+      uri,
+      method,
+      content: content,
+      form: form,
+      format: format,
+      accept: accept,
+      block1Size: block1Size,
+      block2Size: block2Size,
+      multicastResponseHandler: multicastResponseHandler,
+    );
+
+    return DiscoveryContent.fromContent(responseContent, uri);
+  }
+
   Future<AuthServerRequestCreationHint?> _obtainCreationHintFromResourceServer(
     Form form,
   ) async {
@@ -427,16 +453,14 @@ class CoapClient extends ProtocolClient {
   @override
   Future<void> stop() async {}
 
-  Stream<Content> _discoverFromMulticast(
+  Stream<DiscoveryContent> _discoverFromMulticast(
     coap.CoapClient client,
     Uri uri,
   ) async* {
-    // TODO(JKRhb): This method currently does not work with block-wise transfer
-    //               due to a bug in the CoAP library.
-    final streamController = StreamController<Content>();
+    final streamController = StreamController<DiscoveryContent>();
     final multicastResponseHandler = coap.CoapMulticastResponseHandler(
       (data) {
-        streamController.add(data.resp.content);
+        streamController.add(data.resp.determineDiscoveryContent(uri.scheme));
       },
       onError: streamController.addError,
       onDone: () async {
@@ -444,7 +468,7 @@ class CoapClient extends ProtocolClient {
       },
     );
 
-    final content = _sendRequest(
+    final content = _sendDiscoveryRequest(
       uri,
       coap.CoapCode.get,
       form: null,
@@ -455,11 +479,11 @@ class CoapClient extends ProtocolClient {
     yield* streamController.stream;
   }
 
-  Stream<Content> _discoverFromUnicast(
+  Stream<DiscoveryContent> _discoverFromUnicast(
     coap.CoapClient client,
     Uri uri,
   ) async* {
-    yield await _sendRequest(
+    yield await _sendDiscoveryRequest(
       uri,
       coap.CoapCode.get,
       form: null,
@@ -468,7 +492,7 @@ class CoapClient extends ProtocolClient {
   }
 
   @override
-  Stream<Content> discoverDirectly(
+  Stream<DiscoveryContent> discoverDirectly(
     Uri uri, {
     bool disableMulticast = false,
   }) async* {
@@ -485,15 +509,15 @@ class CoapClient extends ProtocolClient {
   }
 
   @override
-  Stream<Content> discoverWithCoreLinkFormat(Uri uri) async* {
+  Stream<DiscoveryContent> discoverWithCoreLinkFormat(Uri uri) async* {
     coap.CoapMulticastResponseHandler? multicastResponseHandler;
-    final streamController = StreamController<Content>();
+    final streamController = StreamController<DiscoveryContent>();
 
     // TODO: Replace once https://github.com/shamblett/coap/pull/129 is merged
     if (uri.isMulticastAddress) {
       multicastResponseHandler = coap.CoapMulticastResponseHandler(
         (data) {
-          streamController.add(data.resp.content);
+          streamController.add(data.resp.determineDiscoveryContent(uri.scheme));
         },
         onError: streamController.addError,
         onDone: () async {
@@ -502,7 +526,7 @@ class CoapClient extends ProtocolClient {
       );
     }
 
-    final content = await _sendRequest(
+    final content = await _sendDiscoveryRequest(
       uri,
       coap.CoapCode.get,
       form: null,

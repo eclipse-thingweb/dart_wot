@@ -199,14 +199,14 @@ class MqttClient extends ProtocolClient {
   }
 
   @override
-  Stream<Content> discoverDirectly(
+  Stream<DiscoveryContent> discoverDirectly(
     Uri uri, {
     bool disableMulticast = false,
   }) async* {
     final client = await _connect(uri, null);
     const discoveryTopic = 'wot/td/#';
 
-    final streamController = StreamController<Content>();
+    final streamController = StreamController<DiscoveryContent>();
 
     Timer(
       _mqttConfig.discoveryTimeout,
@@ -229,8 +229,13 @@ class MqttClient extends ProtocolClient {
           final publishedMessage = message.payload as MqttPublishMessage;
           final payload = publishedMessage.payload.message;
 
-          streamController
-              .add(Content(discoveryContentType, Stream.value(payload)));
+          streamController.add(
+            DiscoveryContent(
+              discoveryContentType,
+              Stream.value(payload),
+              uri,
+            ),
+          );
         }
       },
       cancelOnError: false,
@@ -240,7 +245,7 @@ class MqttClient extends ProtocolClient {
   }
 
   @override
-  Stream<Content> discoverWithCoreLinkFormat(Uri uri) {
+  Stream<DiscoveryContent> discoverWithCoreLinkFormat(Uri uri) {
     // TODO: implement discoverWithCoreLinkFormat
     throw UnimplementedError();
   }

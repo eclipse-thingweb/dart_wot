@@ -299,21 +299,22 @@ class HttpClient extends ProtocolClient {
     throw UnimplementedError();
   }
 
-  Future<Content> _sendDiscoveryRequest(
+  Future<DiscoveryContent> _sendDiscoveryRequest(
     Request request, {
     required String acceptHeaderValue,
   }) async {
     request.headers['Accept'] = acceptHeaderValue;
     final response = await _client.send(request);
     final finalResponse = await _handleResponse(request, response);
-    return Content(
+    return DiscoveryContent(
       response.headers['Content-Type'] ?? acceptHeaderValue,
       finalResponse.stream,
+      request.url,
     );
   }
 
   @override
-  Stream<Content> discoverDirectly(
+  Stream<DiscoveryContent> discoverDirectly(
     Uri uri, {
     bool disableMulticast = false,
   }) async* {
@@ -326,7 +327,7 @@ class HttpClient extends ProtocolClient {
   }
 
   @override
-  Stream<Content> discoverWithCoreLinkFormat(Uri uri) async* {
+  Stream<DiscoveryContent> discoverWithCoreLinkFormat(Uri uri) async* {
     final request = Request(HttpRequestMethod.get.methodName, uri);
 
     final encodedLinks = await _sendDiscoveryRequest(

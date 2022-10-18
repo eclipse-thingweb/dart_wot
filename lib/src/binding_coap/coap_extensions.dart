@@ -154,6 +154,13 @@ extension ResponseExtension on CoapResponse {
     return Content(_contentType, _payloadStream);
   }
 
+  /// Extract the [Content] of this [CoapResponse].
+  DiscoveryContent determineDiscoveryContent(String scheme) {
+    // ignore: invalid_use_of_internal_member
+    final discoveryUri = Uri(scheme: scheme, host: source?.host);
+    return DiscoveryContent(_contentType, _payloadStream, discoveryUri);
+  }
+
   /// Checks the [code] of this [CoapResponse] and throws an [Exception] if it
   /// should indicate an error.
   void checkResponseCode() {
