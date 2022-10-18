@@ -88,13 +88,12 @@ class ThingDiscovery extends Stream<ThingDescription>
   }
 
   Future<ThingDescription> _decodeThingDescription(
-    Content content,
-    Uri uri,
+    DiscoveryContent content,
   ) async {
     final value = await _servient.contentSerdes.contentToValue(content, null);
     if (value is! Map<String, dynamic>) {
       throw DiscoveryException(
-        'Could not parse Thing Description obtained from $uri',
+        'Could not parse Thing Description obtained from ${content.sourceUri}',
       );
     }
 
@@ -106,7 +105,7 @@ class ThingDiscovery extends Stream<ThingDescription>
 
     yield* client
         .discoverDirectly(uri, disableMulticast: true)
-        .asyncMap((content) => _decodeThingDescription(content, uri));
+        .asyncMap(_decodeThingDescription);
   }
 
   Future<List<CoapWebLink>?> _getCoreWebLinks(Content content) async {
@@ -122,14 +121,14 @@ class ThingDiscovery extends Stream<ThingDescription>
 
   Future<Iterable<Uri>> _filterCoreWebLinks(
     String resourceType,
-    Content coreWebLink,
-    Uri baseUri,
+    DiscoveryContent coreWebLink,
   ) async {
     final webLinks = await _getCoreWebLinks(coreWebLink);
+    final sourceUri = coreWebLink.sourceUri;
 
     if (webLinks == null) {
       throw DiscoveryException(
-        'Discovery from $baseUri returned no valid CoRE Link-Format Links.',
+        'Discovery from $sourceUri returned no valid CoRE Link-Format Links.',
       );
     }
 
@@ -141,7 +140,7 @@ class ThingDiscovery extends Stream<ThingDescription>
         )
         .map((weblink) => Uri.tryParse(weblink.uri))
         .whereType<Uri>()
-        .map((uri) => uri.toAbsoluteUri(baseUri));
+        .map((uri) => uri.toAbsoluteUri(sourceUri));
   }
 
   Stream<ThingDescription> _discoverWithCoreLinkFormat(Uri uri) async* {
@@ -171,8 +170,7 @@ class ThingDiscovery extends Stream<ThingDescription>
       final Iterable<Uri> parsedUris;
 
       try {
-        parsedUris =
-            await _filterCoreWebLinks(resourceType, coreWebLink, discoveryUri);
+        parsedUris = await _filterCoreWebLinks(resourceType, coreWebLink);
       } on Exception catch (exception) {
         yield* Stream.error(exception);
         continue;

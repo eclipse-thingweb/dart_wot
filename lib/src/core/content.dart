@@ -31,3 +31,27 @@ class Content {
     return buffer.buffer;
   }
 }
+
+/// [Content] specific for discovery.
+///
+/// Mostly used for being able to convert results from multicast discovery to
+/// unicast discovery operations.
+class DiscoveryContent extends Content {
+  /// Creates a new [Content] object from a media [type], a [body], and an
+  /// optional [sourceUri].
+  DiscoveryContent(
+    super.type,
+    super.body,
+    this.sourceUri,
+  );
+
+  /// Creates a new [DiscoveryContent] object from regular [Content] and a
+  /// [sourceUri].
+  DiscoveryContent.fromContent(Content content, this.sourceUri)
+      : super(content.type, content.body);
+
+  /// The source of this [DiscoveryContent].
+  ///
+  /// Relevant when following up to multicast discovery with a unicast request.
+  final Uri sourceUri;
+}

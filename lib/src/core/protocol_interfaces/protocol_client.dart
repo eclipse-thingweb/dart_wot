@@ -21,7 +21,7 @@ abstract class ProtocolClient {
   ///
   /// Allows the caller to explicitly [disableMulticast], overriding the
   /// multicast settings in the config of the underlying binding implementation.
-  Stream<Content> discoverDirectly(
+  Stream<DiscoveryContent> discoverDirectly(
     Uri uri, {
     bool disableMulticast = false,
   });
@@ -41,7 +41,7 @@ abstract class ProtocolClient {
   ///
   /// [RFC 6690]: https://datatracker.ietf.org/doc/html/rfc6690
   /// [RFC 9176]: https://datatracker.ietf.org/doc/html/rfc9176
-  Stream<Content> discoverWithCoreLinkFormat(Uri uri);
+  Stream<DiscoveryContent> discoverWithCoreLinkFormat(Uri uri);
 
   /// Requests the client to perform a `readproperty` operation on a [form].
   Future<Content> readResource(Form form);
