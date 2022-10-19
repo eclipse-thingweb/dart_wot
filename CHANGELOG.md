@@ -1,3 +1,7 @@
+# 0.23.0
+
+- fix: improved multicast discovery with CoRE Link-Format
+
 # 0.22.1
 
 - fix(definitions): added missing `writeallproperties` operation
