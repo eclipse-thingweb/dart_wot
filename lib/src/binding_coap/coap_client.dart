@@ -96,7 +96,7 @@ class CoapClient extends ProtocolClient {
   final ClientSecurityProvider? _clientSecurityProvider;
 
   Future<coap.CoapRequest> _createRequest(
-    coap.CoapCode code,
+    coap.RequestMethod requestMethod,
     Uri uri, {
     Content? content,
     coap.CoapMediaType? format,
@@ -109,7 +109,7 @@ class CoapClient extends ProtocolClient {
       payload.addAll((await content.byteBuffer).asUint8List());
     }
 
-    final request = coap.CoapRequest(code)
+    final request = coap.CoapRequest(requestMethod)
       ..payload = payload
       ..uriPath = uri.path
       ..accept = accept
@@ -145,7 +145,7 @@ class CoapClient extends ProtocolClient {
   //              limitations of the CoAP library
   Future<Content> _sendRequest(
     Uri uri,
-    coap.CoapCode method, {
+    coap.RequestMethod method, {
     Content? content,
     required Form? form,
     coap.CoapMediaType? format,
@@ -156,7 +156,7 @@ class CoapClient extends ProtocolClient {
   }) async {
     final coapClient = coap.CoapClient(
       uri,
-      _InternalCoapConfig(_coapConfig ?? CoapConfig(), form),
+      config: _InternalCoapConfig(_coapConfig ?? CoapConfig(), form),
       pskCredentialsCallback:
           _createPskCallback(uri, form, _clientSecurityProvider),
     );
@@ -199,7 +199,7 @@ class CoapClient extends ProtocolClient {
 
   Future<DiscoveryContent> _sendDiscoveryRequest(
     Uri uri,
-    coap.CoapCode method, {
+    coap.RequestMethod method, {
     Content? content,
     required Form? form,
     coap.CoapMediaType? format,
@@ -240,7 +240,7 @@ class CoapClient extends ProtocolClient {
 
     final coapClient = coap.CoapClient(
       creationHintUri,
-      _InternalCoapConfig(_coapConfig ?? CoapConfig(), form),
+      config: _InternalCoapConfig(_coapConfig ?? CoapConfig(), form),
     );
 
     final response = await coapClient.send(request);
@@ -314,7 +314,7 @@ class CoapClient extends ProtocolClient {
 
     final client = coap.CoapClient(
       request.uri.replace(scheme: 'coaps'),
-      coap.CoapConfigTinydtls(),
+      config: coap.CoapConfigTinydtls(),
       pskCredentialsCallback: (identityHint) => pskCredentials,
     );
 
@@ -429,14 +429,12 @@ class CoapClient extends ProtocolClient {
 
     final coapClient = coap.CoapClient(
       form.resolvedHref,
-      _InternalCoapConfig(_coapConfig ?? CoapConfig(), form),
+      config: _InternalCoapConfig(_coapConfig ?? CoapConfig(), form),
     );
 
     if (subprotocol == CoapSubprotocol.observe) {
       final observeClientRelation = await coapClient.observe(request);
-      observeClientRelation.stream.listen((event) {
-        handleResponse(event.resp);
-      });
+      observeClientRelation.listen(handleResponse);
       return CoapSubscription(coapClient, observeClientRelation, complete);
     }
 
@@ -460,7 +458,7 @@ class CoapClient extends ProtocolClient {
     final streamController = StreamController<DiscoveryContent>();
     final multicastResponseHandler = coap.CoapMulticastResponseHandler(
       (data) {
-        streamController.add(data.resp.determineDiscoveryContent(uri.scheme));
+        streamController.add(data.determineDiscoveryContent(uri.scheme));
       },
       onError: streamController.addError,
       onDone: () async {
@@ -470,7 +468,7 @@ class CoapClient extends ProtocolClient {
 
     final content = _sendDiscoveryRequest(
       uri,
-      coap.CoapCode.get,
+      coap.RequestMethod.get,
       form: null,
       accept: coap.CoapMediaType.applicationTdJson,
       multicastResponseHandler: multicastResponseHandler,
@@ -485,7 +483,7 @@ class CoapClient extends ProtocolClient {
   ) async* {
     yield await _sendDiscoveryRequest(
       uri,
-      coap.CoapCode.get,
+      coap.RequestMethod.get,
       form: null,
       accept: coap.CoapMediaType.applicationTdJson,
     );
@@ -496,8 +494,7 @@ class CoapClient extends ProtocolClient {
     Uri uri, {
     bool disableMulticast = false,
   }) async* {
-    final config = CoapConfigDefault();
-    final client = coap.CoapClient(uri, config);
+    final client = coap.CoapClient(uri);
 
     if (uri.isMulticastAddress) {
       if (!disableMulticast) {
@@ -517,7 +514,7 @@ class CoapClient extends ProtocolClient {
     if (uri.isMulticastAddress) {
       multicastResponseHandler = coap.CoapMulticastResponseHandler(
         (data) {
-          streamController.add(data.resp.determineDiscoveryContent(uri.scheme));
+          streamController.add(data.determineDiscoveryContent(uri.scheme));
         },
         onError: streamController.addError,
         onDone: () async {
@@ -528,7 +525,7 @@ class CoapClient extends ProtocolClient {
 
     final content = await _sendDiscoveryRequest(
       uri,
-      coap.CoapCode.get,
+      coap.RequestMethod.get,
       form: null,
       accept: coap.CoapMediaType.applicationLinkFormat,
       multicastResponseHandler: multicastResponseHandler,
