@@ -178,9 +178,9 @@ extension ResponseExtension on CoapResponse {
   AuthServerRequestCreationHint? get creationHint {
     const unauthorizedAceCodes = [
       // TODO: Should other response codes be included as well?
-      CoapCode.unauthorized,
-      CoapCode.methodNotAllowed,
-      CoapCode.forbidden,
+      ResponseCode.unauthorized,
+      ResponseCode.methodNotAllowed,
+      ResponseCode.forbidden,
     ];
 
     final responsePayload = payload;

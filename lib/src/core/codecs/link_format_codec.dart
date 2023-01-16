@@ -24,7 +24,7 @@ class LinkFormatCodec extends ContentCodec {
   ) {
     // TODO(JKRhb): The question which value types are allowed needs to be
     //              revisited.
-    if (value is CoapIResource) {
+    if (value is CoapResource) {
       return Uint8List.fromList(CoapLinkFormat.serialize(value).codeUnits)
           .buffer;
     }
