@@ -101,8 +101,8 @@ class CoapClient extends ProtocolClient {
     Content? content,
     coap.CoapMediaType? format,
     coap.CoapMediaType? accept,
-    int? block1Size,
-    int? block2Size,
+    coap.BlockSize? block1Size,
+    coap.BlockSize? block2Size,
   }) async {
     final payload = Uint8Buffer();
     if (content != null) {
@@ -114,6 +114,14 @@ class CoapClient extends ProtocolClient {
       ..uriPath = uri.path
       ..accept = accept
       ..contentFormat = format;
+
+    if (block1Size != null) {
+      request.block1 = coap.Block1Option.fromParts(0, block1Size);
+    }
+
+    if (block2Size != null) {
+      request.block2 = coap.Block2Option.fromParts(0, block2Size);
+    }
 
     if (uri.query.isNotEmpty) {
       request.uriQuery = uri.query;
@@ -127,16 +135,17 @@ class CoapClient extends ProtocolClient {
     OperationType operationType, [
     Content? content,
   ]) async {
-    final requestMethod =
-        CoapRequestMethod.fromForm(form) ?? operationType.requestMethod;
+    final requestMethod = form.method ?? operationType.requestMethod;
     final code = requestMethod.code;
 
     return _sendRequest(
       form.resolvedHref,
       code,
       content: content,
-      format: form.format,
+      format: form.contentFormat,
       accept: form.accept,
+      block1Size: form.block1Size,
+      block2Size: form.block2Size,
       form: form,
     );
   }
@@ -150,8 +159,8 @@ class CoapClient extends ProtocolClient {
     required Form? form,
     coap.CoapMediaType? format,
     coap.CoapMediaType? accept,
-    int? block1Size,
-    int? block2Size,
+    coap.BlockSize? block1Size,
+    coap.BlockSize? block2Size,
     coap.CoapMulticastResponseHandler? multicastResponseHandler,
   }) async {
     final coapClient = coap.CoapClient(
@@ -204,8 +213,8 @@ class CoapClient extends ProtocolClient {
     required Form? form,
     coap.CoapMediaType? format,
     coap.CoapMediaType? accept,
-    int? block1Size,
-    int? block2Size,
+    coap.BlockSize? block1Size,
+    coap.BlockSize? block2Size,
     coap.CoapMulticastResponseHandler? multicastResponseHandler,
   }) async {
     final responseContent = await _sendRequest(
@@ -226,15 +235,14 @@ class CoapClient extends ProtocolClient {
   Future<AuthServerRequestCreationHint?> _obtainCreationHintFromResourceServer(
     Form form,
   ) async {
-    final requestMethod =
-        (CoapRequestMethod.fromForm(form) ?? CoapRequestMethod.get).code;
+    final requestMethod = (form.method ?? CoapRequestMethod.get).code;
 
     final creationHintUri = form.resolvedHref.replace(scheme: 'coap');
 
     final request = await _createRequest(
       requestMethod,
       creationHintUri,
-      format: form.format,
+      format: form.contentFormat,
       accept: form.accept,
     );
 
@@ -415,13 +423,10 @@ class CoapClient extends ProtocolClient {
       next(response.content);
     }
 
-    final requestMethod =
-        (CoapRequestMethod.fromForm(form) ?? CoapRequestMethod.get).code;
-
     final request = await _createRequest(
-      requestMethod,
+      (form.method ?? CoapRequestMethod.get).code,
       form.resolvedHref,
-      format: form.format,
+      format: form.contentFormat,
       accept: form.accept,
     );
 

@@ -1,0 +1,85 @@
+// Copyright 2023 The NAMIB Project Developers
+//
+// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
+// option. This file may not be copied, modified, or distributed
+// except according to those terms.
+//
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
+import 'package:coap/coap.dart';
+import 'package:dart_wot/dart_wot.dart';
+import 'package:dart_wot/src/binding_coap/coap_definitions.dart';
+import 'package:dart_wot/src/binding_coap/coap_extensions.dart';
+import 'package:dart_wot/src/definitions/validation/validation_exception.dart';
+import 'package:test/test.dart';
+
+void main() {
+  group('CoAP Vocabulary Tests', () {
+    test('Should deserialize CoAP Forms', () async {
+      const thingDescriptionJson = {
+        '@context': [
+          'https://www.w3.org/2022/wot/td/v1.1',
+          {'cov': 'http://www.example.org/coap-binding#'}
+        ],
+        'title': 'Test Thing',
+        'properties': {
+          'status': {
+            'forms': [
+              {
+                'href': 'coap://example.org',
+                'cov:method': 'iPATCH',
+                'contentType': 'application/cbor',
+                'cov:contentFormat': 60,
+                'cov:accept': 60,
+                'cov:blockwise': {
+                  'cov:block1SZX': 32,
+                  'cov:block2SZX': 64,
+                },
+                'response': {
+                  'contentType': 'application/cbor',
+                  'cov:contentFormat': 60,
+                }
+              },
+              {
+                'href': 'coap://example.org',
+                'cov:blockwise': {
+                  'cov:block1SZX': 5000,
+                  'cov:block2SZX': 4096,
+                },
+              },
+            ]
+          }
+        },
+        'securityDefinitions': {
+          'nosec_sc': {'scheme': 'nosec'}
+        },
+        'security': ['nosec_sc']
+      };
+
+      final thingDescription = ThingDescription.fromJson(thingDescriptionJson);
+      final property = thingDescription.properties['status'];
+      final form = property?.forms[0];
+
+      expect(form?.href, Uri.parse('coap://example.org'));
+      expect(form?.method, CoapRequestMethod.ipatch);
+      expect(form?.contentFormat, CoapMediaType.applicationCbor);
+      expect(form?.accept, CoapMediaType.applicationCbor);
+      expect(form?.block1Size, BlockSize.blockSize32);
+      expect(form?.block2Size, BlockSize.blockSize64);
+      expect(form?.response?.contentFormat, CoapMediaType.applicationCbor);
+
+      // TODO(JKRhb): Validation should happen earlier
+      final invalidForm = property?.forms[1];
+      expect(
+        () => invalidForm?.block1Size,
+        throwsA(isA<ValidationException>()),
+      );
+      expect(
+        () => invalidForm?.block2Size,
+        throwsA(isA<ValidationException>()),
+      );
+    });
+  });
+}
