@@ -1,3 +1,7 @@
+# 0.23.1
+
+- chore: update dependencies
+
 # 0.23.0
 
 - fix: improved multicast discovery with CoRE Link-Format
