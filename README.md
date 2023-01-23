@@ -109,7 +109,8 @@ See the `LICENSE` file for more information.
 
 This software includes material copied from
 Eclipse Thingweb node-wot (https://github.com/eclipse/thingweb.node-wot).
-Copyright © 2018 Contributors to the Eclipse Foundation
+Copyright © 2018 Contributors to the Eclipse Foundation.
+See the `LICENSE-THIRD-PARTY` file for more information.
 
 ## Contribution
 
