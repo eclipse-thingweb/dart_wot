@@ -9,8 +9,6 @@ import 'dart:collection';
 import 'package:coap/coap.dart';
 import 'package:curie/curie.dart';
 
-import '../definitions/form.dart';
-
 /// [PrefixMapping] for expanding CoAP Vocabulary terms from compact IRIs.
 final coapPrefixMapping =
     PrefixMapping(defaultPrefixValue: 'http://www.example.org/coap-binding#');
@@ -48,21 +46,9 @@ enum CoapRequestMethod {
     values.map((e) => MapEntry(e.code.description, e)),
   );
 
-  static CoapRequestMethod? _fromString(String stringValue) =>
+  /// Generates a [CoapRequestMethod] from a [stringValue].
+  static CoapRequestMethod? fromString(String stringValue) =>
       _registry[stringValue];
-
-  /// Determines the [CoapRequestMethod] to use based on a given [form].
-  static CoapRequestMethod? fromForm(Form form) {
-    final curieString =
-        coapPrefixMapping.expandCurie(Curie(reference: 'method'));
-    final dynamic formDefinition = form.additionalFields[curieString];
-
-    if (formDefinition is! String) {
-      return null;
-    }
-
-    return CoapRequestMethod._fromString(formDefinition);
-  }
 }
 
 /// Enumeration of available CoAP subprotocols.

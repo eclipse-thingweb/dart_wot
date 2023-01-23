@@ -51,7 +51,7 @@ const thingDescriptionJson = '''
       "forms": [
         {
           "href": "coap://coap.me",
-          "coap:method": "PUT"
+          "coap:method": "GET"
         }
       ]
     },
@@ -80,7 +80,7 @@ const thingDescriptionJson = '''
     "toggle": {
       "forms": [
         {
-          "href": "coap://coap.me"
+          "href": "coap://coap.me/large-create"
         }
       ]
     }

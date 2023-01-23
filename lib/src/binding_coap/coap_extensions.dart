@@ -6,15 +6,15 @@ import 'package:coap/coap.dart';
 import 'package:dcaf/dcaf.dart';
 
 import '../core/content.dart';
+import '../definitions/expected_response.dart';
 import '../definitions/form.dart';
 import '../definitions/operation_type.dart';
 import '../definitions/security/ace_security_scheme.dart';
 import '../definitions/security/auto_security_scheme.dart';
 import '../definitions/security/psk_security_scheme.dart';
+import '../definitions/validation/validation_exception.dart';
 import 'coap_binding_exception.dart';
 import 'coap_definitions.dart';
-
-const _validBlockwiseValues = [16, 32, 64, 128, 256, 512, 1024];
 
 /// Extension which makes it easier to handle [Uri]s containing
 /// [InternetAddress]es.
@@ -27,6 +27,17 @@ extension InternetAddressMethods on Uri {
 
 /// CoAP-specific extensions for the [Form] class.
 extension CoapFormExtension on Form {
+  T? _obtainVocabularyTerm<T>(String vocabularyTerm) {
+    final curieString = coapPrefixMapping.expandCurieString(vocabularyTerm);
+    final formDefinition = additionalFields[curieString];
+
+    if (formDefinition is T) {
+      return formDefinition;
+    }
+
+    return null;
+  }
+
   /// Determines if this [Form] supports the [PskSecurityScheme].
   bool get usesPskScheme =>
       securityDefinitions.whereType<PskSecurityScheme>().isNotEmpty;
@@ -44,53 +55,95 @@ extension CoapFormExtension on Form {
     return null;
   }
 
-  CoapMediaType _determineContentFormat(String contentType, String? encoding) {
-    return CoapMediaType.parse(contentType, encoding) ??
-        CoapMediaType.applicationJson;
-  }
-
   /// The Content-Format for CoAP request and response payloads.
-  CoapMediaType get format {
-    return _determineContentFormat(contentType, contentCoding);
+  CoapMediaType get contentFormat {
+    final formDefinition = _obtainVocabularyTerm<int>('contentFormat');
+    final contentFormat = CoapMediaType.fromIntValue(formDefinition ?? -1);
+
+    return contentFormat ??
+        CoapMediaType.parse(contentType, contentCoding) ??
+        CoapMediaType.applicationJson;
   }
 
   /// The Content-Format for the Accept option CoAP request and response
   /// payloads.
-  CoapMediaType get accept {
-    // TODO: The algorithm for accept needs to be adjusted
-    return _determineContentFormat(contentType, contentCoding);
+  CoapMediaType? get accept {
+    final formDefinition = _obtainVocabularyTerm<int>('accept');
+    return CoapMediaType.fromIntValue(formDefinition ?? -1);
   }
 
-  int? _determineBlockSize(String fieldName) {
-    const blockwiseVocabularyName = 'blockwise';
-    final curieString =
-        coapPrefixMapping.expandCurieString(blockwiseVocabularyName);
-    final dynamic formDefinition = additionalFields[curieString];
+  BlockSize? _determineBlockSize(String fieldName) {
+    final blockwiseParameters =
+        _obtainVocabularyTerm<Map<String, dynamic>>('blockwise');
 
-    if (formDefinition is! Map<String, dynamic>) {
+    if (blockwiseParameters == null) {
       return null;
     }
 
     final blockwiseParameterName =
         coapPrefixMapping.expandCurieString(fieldName);
-    final dynamic value = formDefinition[blockwiseParameterName];
+    final dynamic value = blockwiseParameters[blockwiseParameterName];
 
-    if (value is int && !_validBlockwiseValues.contains(value)) {
-      return value;
+    if (value is! int) {
+      return null;
+    }
+
+    // FIXME: Should not throw an ArgumentError
+    try {
+      return BlockSize.fromDecodedValue(value);
+      // ignore: avoid_catching_errors
+    } on ArgumentError {
+      throw ValidationException(
+        'Encountered invalid blocksize $value in CoAP form',
+      );
+    }
+  }
+
+  /// Indicates the Block2 size preferred by a server.
+  BlockSize? get block2Size => _determineBlockSize('block2SZX');
+
+  /// Indicates the Block1 size preferred by a server.
+  BlockSize? get block1Size => _determineBlockSize('block1SZX');
+
+  // TODO: Consider default method
+  /// Indicates the [CoapRequestMethod] contained in this [Form].
+  CoapRequestMethod? get method {
+    final methodDefinition = _obtainVocabularyTerm<String>('method');
+
+    if (methodDefinition == null) {
+      return null;
+    }
+
+    return CoapRequestMethod.fromString(methodDefinition);
+  }
+
+  /// Gets a list of all defined [AceSecurityScheme]s for this form.
+  List<AceSecurityScheme> get aceSecuritySchemes =>
+      securityDefinitions.whereType<AceSecurityScheme>().toList();
+}
+
+/// CoAP-specific extensions for the [ExpectedResponse] class.
+extension CoapExpectedResponseExtension on ExpectedResponse {
+  T? _obtainVocabularyTerm<T>(String vocabularyTerm) {
+    final curieString = coapPrefixMapping.expandCurieString(vocabularyTerm);
+    final formDefinition = additionalFields?[curieString];
+
+    if (formDefinition is T) {
+      return formDefinition;
     }
 
     return null;
   }
 
-  /// Indicates the Block2 size preferred by a server.
-  int? get block2Size => _determineBlockSize('block2SZX');
+  /// The Content-Format for CoAP request and response payloads.
+  CoapMediaType get contentFormat {
+    final formDefinition = _obtainVocabularyTerm<int>('contentFormat');
+    final contentFormat = CoapMediaType.fromIntValue(formDefinition ?? -1);
 
-  /// Indicates the Block1 size preferred by a server.
-  int? get block1Size => _determineBlockSize('block1SZX');
-
-  /// Gets a list of all defined [AceSecurityScheme]s for this form.
-  List<AceSecurityScheme> get aceSecuritySchemes =>
-      securityDefinitions.whereType<AceSecurityScheme>().toList();
+    return contentFormat ??
+        CoapMediaType.parse(contentType) ??
+        CoapMediaType.applicationJson;
+  }
 }
 
 /// Extension for determining the corresponding [CoapRequestMethod] and

@@ -22,24 +22,26 @@ class ContextEntry {
   /// Creates a new [ContextEntry].
   const ContextEntry(this.value, this.key);
 
-  /// Parses a single `@context` entry from a given [json] value.
+  /// Parses a [List] of `@context` entries from a given [json] value.
   ///
-  /// @context extensions are added to the provided [prefixMapping].
-  /// If the given entry is the [firstEntry], it will be set in the
+  /// `@context` extensions are added to the provided [prefixMapping].
+  /// If a given entry is the [firstEntry], it will be set in the
   /// [prefixMapping] accordingly.
-  factory ContextEntry.fromJson(
+  static List<ContextEntry> fromJson(
     dynamic json,
     PrefixMapping prefixMapping, {
     required bool firstEntry,
   }) {
+    // TODO: Refactor
     if (json is String) {
       if (firstEntry && _validTdContextValues.contains(json)) {
         prefixMapping.defaultPrefixValue = json;
       }
-      return ContextEntry(json, null);
+      return [ContextEntry(json, null)];
     }
 
     if (json is Map<String, dynamic>) {
+      final contextEntries = <ContextEntry>[];
       for (final contextEntry in json.entries) {
         final key = contextEntry.key;
         final value = contextEntry.value;
@@ -47,9 +49,11 @@ class ContextEntry {
           if (!key.startsWith('@') && Uri.tryParse(value) != null) {
             prefixMapping.addPrefix(key, value);
           }
-          return ContextEntry(value, key);
+          contextEntries.add(ContextEntry(value, key));
         }
       }
+
+      return contextEntries;
     }
 
     throw ValidationException(
@@ -68,15 +72,13 @@ class ContextEntry {
     var firstEntry = true;
 
     if (json is String) {
-      return [
-        ContextEntry.fromJson(json, prefixMapping, firstEntry: firstEntry)
-      ];
+      return ContextEntry.fromJson(json, prefixMapping, firstEntry: firstEntry);
     }
 
     if (json is List<dynamic>) {
       final List<ContextEntry> result = [];
       for (final contextEntry in json) {
-        result.add(
+        result.addAll(
           ContextEntry.fromJson(
             contextEntry,
             prefixMapping,
