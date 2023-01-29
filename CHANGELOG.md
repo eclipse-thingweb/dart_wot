@@ -1,3 +1,10 @@
+## 0.24.0
+
+- feat: implement new CoAP vocabulary terms
+- chore: move node-wot license to a separate file
+- style: fix formatting of mocked classes
+- chore(form): address linting issue
+
 # 0.23.1
 
 - chore: update dependencies
