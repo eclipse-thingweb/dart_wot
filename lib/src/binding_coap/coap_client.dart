@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:coap/coap.dart' as coap;
 import 'package:coap/config/coap_config_default.dart';
@@ -26,35 +27,28 @@ import 'coap_extensions.dart';
 import 'coap_subscription.dart';
 
 class _InternalCoapConfig extends CoapConfigDefault {
-  _InternalCoapConfig(CoapConfig coapConfig, this._form)
+  _InternalCoapConfig(CoapConfig coapConfig)
       : preferredBlockSize =
-            coapConfig.blocksize ?? coap.CoapConstants.preferredBlockSize {
-    if (!_dtlsNeeded) {
-      return;
-    }
-
-    final form = _form;
-
-    if (form == null) {
-      return;
-    }
-
-    if (form.usesPskScheme && coapConfig.useTinyDtls) {
-      dtlsBackend = coap.DtlsBackend.TinyDtls;
-    } else if (coapConfig.useOpenSsl) {
-      dtlsBackend = coap.DtlsBackend.OpenSsl;
-    }
-  }
+            coapConfig.blocksize ?? coap.CoapConstants.preferredBlockSize,
+        dtlsCiphers = coapConfig.dtlsCiphers,
+        dtlsVerify = coapConfig.dtlsVerify,
+        dtlsWithTrustedRoots = coapConfig.dtlsWithTrustedRoots,
+        rootCertificates = coapConfig.rootCertificates;
 
   @override
-  int preferredBlockSize;
+  final int preferredBlockSize;
 
   @override
-  coap.DtlsBackend? dtlsBackend;
+  final String? dtlsCiphers;
 
-  final Form? _form;
+  @override
+  final bool dtlsVerify;
 
-  bool get _dtlsNeeded => _form?.resolvedHref.scheme == 'coaps';
+  @override
+  final bool dtlsWithTrustedRoots;
+
+  @override
+  final List<Uint8List> rootCertificates;
 }
 
 coap.PskCredentialsCallback? _createPskCallback(
@@ -165,7 +159,7 @@ class CoapClient extends ProtocolClient {
   }) async {
     final coapClient = coap.CoapClient(
       uri,
-      config: _InternalCoapConfig(_coapConfig ?? CoapConfig(), form),
+      config: _InternalCoapConfig(_coapConfig ?? CoapConfig()),
       pskCredentialsCallback:
           _createPskCallback(uri, form, _clientSecurityProvider),
     );
@@ -248,7 +242,7 @@ class CoapClient extends ProtocolClient {
 
     final coapClient = coap.CoapClient(
       creationHintUri,
-      config: _InternalCoapConfig(_coapConfig ?? CoapConfig(), form),
+      config: _InternalCoapConfig(_coapConfig ?? CoapConfig()),
     );
 
     final response = await coapClient.send(request);
@@ -322,7 +316,6 @@ class CoapClient extends ProtocolClient {
 
     final client = coap.CoapClient(
       request.uri.replace(scheme: 'coaps'),
-      config: coap.CoapConfigTinydtls(),
       pskCredentialsCallback: (identityHint) => pskCredentials,
     );
 
@@ -434,7 +427,7 @@ class CoapClient extends ProtocolClient {
 
     final coapClient = coap.CoapClient(
       form.resolvedHref,
-      config: _InternalCoapConfig(_coapConfig ?? CoapConfig(), form),
+      config: _InternalCoapConfig(_coapConfig ?? CoapConfig()),
     );
 
     if (subprotocol == CoapSubprotocol.observe) {
