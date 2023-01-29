@@ -301,7 +301,9 @@ class Form {
 
   /// Resolves all [uriVariables] in this [Form] and creates a copy with an
   /// updated [resolvedHref].
-  Form resolveUriVariables(Map<String, Object>? uriVariables) {
+  ///
+  /// Returns [Null] if the [href] field does not use any URI variables.
+  Form? resolveUriVariables(Map<String, Object>? uriVariables) {
     final hrefUriVariables = _filterUriVariables(resolvedHref);
 
     // Use global URI variables by default and override them with
@@ -313,7 +315,7 @@ class Form {
     if (hrefUriVariables.isEmpty) {
       // The href uses no uriVariables, therefore we can abort all further
       // checks.
-      return this;
+      return null;
     }
 
     if (affordanceUriVariables.isEmpty) {

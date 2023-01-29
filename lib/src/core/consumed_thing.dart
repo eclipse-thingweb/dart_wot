@@ -114,7 +114,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       client = servient.clientFor(scheme);
     }
 
-    final form = foundForm.resolveUriVariables(options?.uriVariables);
+    final form =
+        foundForm.resolveUriVariables(options?.uriVariables) ?? foundForm;
 
     return _ClientAndForm(client, form);
   }
