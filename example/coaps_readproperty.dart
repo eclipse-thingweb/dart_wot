@@ -29,8 +29,11 @@ PskCredentials? _pskCredentialsCallback(
 }
 
 Future<void> main(List<String> args) async {
-  final CoapClientFactory coapClientFactory =
-      CoapClientFactory(CoapConfig(useTinyDtls: true));
+  final CoapClientFactory coapClientFactory = CoapClientFactory(
+    CoapConfig(
+      dtlsCiphers: 'PSK-AES128-CCM8',
+    ),
+  );
   final securityProvider =
       ClientSecurityProvider(pskCredentialsCallback: _pskCredentialsCallback);
   final servient = Servient(clientSecurityProvider: securityProvider)

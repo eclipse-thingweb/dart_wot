@@ -190,14 +190,7 @@ extension OperationTypeExtension on OperationType {
 
 /// Extension for easily extracting the [content] from a [CoapResponse].
 extension ResponseExtension on CoapResponse {
-  Stream<List<int>> get _payloadStream {
-    final payload = this.payload;
-    if (payload != null) {
-      return Stream.value(payload);
-    } else {
-      return const Stream.empty();
-    }
-  }
+  Stream<List<int>> get _payloadStream => Stream.value(payload);
 
   String get _contentType =>
       contentFormat?.contentType.toString() ?? 'application/json';
@@ -238,8 +231,7 @@ extension ResponseExtension on CoapResponse {
 
     final responsePayload = payload;
 
-    if (responsePayload != null &&
-        contentFormat == CoapMediaType.applicationAceCbor &&
+    if (contentFormat == CoapMediaType.applicationAceCbor &&
         unauthorizedAceCodes.contains(contentFormat)) {
       return AuthServerRequestCreationHint.fromSerialized(
         responsePayload.toList(),
