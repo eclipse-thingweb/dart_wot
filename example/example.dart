@@ -107,7 +107,7 @@ Future<void> main(List<String> args) async {
     '/Oracle/oracle-Festo_Shared.td.jsonld',
   );
 
-  final thingDiscovery = wot.discover(ThingFilter(url: thingUri));
+  final thingDiscovery = wot.discover(thingUri);
 
   await for (final thingDescription in thingDiscovery) {
     final consumedDiscoveredThing = await wot.consume(thingDescription);

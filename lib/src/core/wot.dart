@@ -6,6 +6,7 @@
 
 import '../../scripting_api.dart' as scripting_api;
 import '../definitions/thing_description.dart';
+import '../scripting_api/discovery/discovery_method.dart';
 import 'consumed_thing.dart';
 import 'exposed_thing.dart';
 import 'servient.dart';
@@ -81,9 +82,12 @@ class WoT implements scripting_api.WoT {
     }
   }
 
-  /// Discovers [ThingDescription]s matching a given [filter].
   @override
-  ThingDiscovery discover(scripting_api.ThingFilter filter) {
-    return ThingDiscovery(filter, _servient);
+  ThingDiscovery discover(
+    Uri url, {
+    scripting_api.ThingFilter? thingFilter,
+    DiscoveryMethod method = DiscoveryMethod.direct,
+  }) {
+    return ThingDiscovery(url, thingFilter, _servient, method: method);
   }
 }
