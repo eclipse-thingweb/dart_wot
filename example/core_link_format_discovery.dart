@@ -20,10 +20,9 @@ Future<void> main(List<String> args) async {
   //              to TDs. At the moment, this URI is just for illustrative
   //              purpose and will not return actual Thing Description links.
   final discoveryUri = Uri.parse('coap://coap.me/.well-known/core');
-  final thingFilter =
-      ThingFilter(url: discoveryUri, method: DiscoveryMethod.coreLinkFormat);
 
-  await for (final thingDescription in wot.discover(thingFilter)) {
+  await for (final thingDescription
+      in wot.discover(discoveryUri, method: DiscoveryMethod.coreLinkFormat)) {
     final consumedThing = await wot.consume(thingDescription);
 
     try {

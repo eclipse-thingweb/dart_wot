@@ -11,6 +11,7 @@ import 'package:coap/coap.dart';
 import '../../core.dart';
 import '../../scripting_api.dart' as scripting_api;
 import '../definitions/thing_description.dart';
+import '../scripting_api/discovery/discovery_method.dart';
 import 'content.dart';
 
 /// Custom [Exception] that is thrown when the discovery process fails.
@@ -31,9 +32,24 @@ class DiscoveryException implements Exception {
 class ThingDiscovery extends Stream<ThingDescription>
     implements scripting_api.ThingDiscovery {
   /// Creates a new [ThingDiscovery] object with a given [thingFilter].
-  ThingDiscovery(this.thingFilter, this._servient) {
+  ThingDiscovery(
+    this._url,
+    this.thingFilter,
+    this._servient, {
+    required DiscoveryMethod method,
+  }) : _method = method {
     _stream = _start();
   }
+
+  /// Represents the discovery type that should be used in the discovery process
+  final DiscoveryMethod _method;
+
+  /// Represents the URL of the target entity serving the discovery request.
+  ///
+  /// This is, for instance the URL of a Thing Directory (if [_method] is
+  /// [DiscoveryMethod.directory]), or the URL of a directly targeted Thing (if
+  /// [_method] is [DiscoveryMethod.direct]).
+  final Uri _url;
 
   final Servient _servient;
 
@@ -45,22 +61,20 @@ class ThingDiscovery extends Stream<ThingDescription>
   bool get active => _active;
 
   @override
-  final scripting_api.ThingFilter thingFilter;
+  final scripting_api.ThingFilter? thingFilter;
 
   late final Stream<ThingDescription> _stream;
 
   Stream<ThingDescription> _start() async* {
-    final discoveryMethod = thingFilter.method;
-
-    switch (discoveryMethod) {
+    switch (_method) {
       case scripting_api.DiscoveryMethod.direct:
-        yield* _discoverDirectly(thingFilter.url);
+        yield* _discoverDirectly(_url);
         break;
       case scripting_api.DiscoveryMethod.coreLinkFormat:
-        yield* _discoverWithCoreLinkFormat(thingFilter.url);
+        yield* _discoverWithCoreLinkFormat(_url);
         break;
       case scripting_api.DiscoveryMethod.coreResourceDirectory:
-        yield* _discoverfromCoreResourceDirectory(thingFilter.url);
+        yield* _discoverfromCoreResourceDirectory(_url);
         break;
       default:
         throw UnimplementedError();

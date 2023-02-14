@@ -6,6 +6,7 @@
 
 import '../definitions/thing_description.dart';
 import 'consumed_thing.dart';
+import 'discovery/discovery_method.dart';
 import 'discovery/thing_discovery.dart';
 import 'discovery/thing_filter.dart';
 import 'exposed_thing.dart';
@@ -30,28 +31,28 @@ abstract class WoT {
   /// based on the underlying impementation.
   Future<ExposedThing> produce(ExposedThingInit exposedThingInit);
 
-  /// Discovers [ThingDescription]s which can be obtained by calling `next()`
-  /// on the returned [ThingDiscovery] object.
+  /// Discovers [ThingDescription]s from a given [url] using the specified
+  /// [method].
   ///
   /// As this part of the Scripting API specification is still in development,
   /// this method's implementation is in an experimental state and does not
   /// conform to the specification's latest version.
   ///
-  /// A [thingFilter] has to be passed for filtering out TDs before they
-  /// are processed. The [thingFilter] also contains relevant information for
-  /// controlling the Discovery process, e. g. a URL, the discovery method
-  /// (`direct` or `directory`), and an optional `fragment` [Map] for filtering
-  /// out properties of a [ThingDescription].
+  /// A [thingFilter] may be passed for filtering out TDs before they
+  /// are processed.
+  /// However, since the semantics of the [ThingFilter] are not well-defined in
+  /// the Scripting API document, this parameter does not have an effect yet.
   ///
-  /// So far, however, only `direct` discovery is supported. Therefore, despite
-  /// its method signature, a compatible [ThingFilter] with a defined URL is
-  /// required. Also, handling the fragment map is not yet supported.
-  ///
-  /// The [ThingDiscovery] object that is returned by this function can be used
-  /// for stopping the Discovery process and retrieving information about its
-  /// current state (i.e., whether it is still `active`). It implements the
-  /// [Stream] interface, which makes it possible to `listen` for discovered
-  /// [ThingDescription]s or to iterate over the discovered results using the
-  /// `await for` syntax.
-  ThingDiscovery discover(ThingFilter thingFilter);
+  /// The [ThingDiscovery] object that is returned by this function implements
+  /// the  [Stream] interface, which makes it possible to `listen` for
+  /// discovered [ThingDescription]s or to iterate over the discovered results
+  /// using the `await for` syntax.
+  /// It also allows for stopping the Discovery process prematurely and
+  /// for retrieving information about its current state (i.e., whether it is
+  /// still `active`).
+  ThingDiscovery discover(
+    Uri url, {
+    ThingFilter? thingFilter,
+    DiscoveryMethod method = DiscoveryMethod.direct,
+  });
 }

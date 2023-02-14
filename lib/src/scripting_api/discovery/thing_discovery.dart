@@ -14,7 +14,7 @@ import 'thing_filter.dart';
 ///       to discovery.
 abstract class ThingDiscovery implements Stream<ThingDescription> {
   /// The [thingFilter] that is applied during the discovery process.
-  ThingFilter get thingFilter;
+  ThingFilter? get thingFilter;
 
   /// Indicates if this [ThingDiscovery] object is active.
   bool get active;
