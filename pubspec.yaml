@@ -27,6 +27,7 @@ dependencies:
   json_schema3: ^1.0.0
   meta: ^1.8.0
   mqtt_client: ^9.7.4
+  multicast_dns: ^0.3.2+1
   typed_data: ^1.3.0
   uri: ^1.0.0
   uuid: ^3.0.7

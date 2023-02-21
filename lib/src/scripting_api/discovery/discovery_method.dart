@@ -35,4 +35,15 @@ enum DiscoveryMethod {
   ///
   /// [RFC 9176]: https://datatracker.ietf.org/doc/html/rfc9176
   coreResourceDirectory,
+
+  /// Discovery using DNS-Based Service Discovery (DNS-SD, [RFC 6763].
+  ///
+  /// Currently, only Multicast DNS (mDNS, [RFC 6762]) for discovery on the same
+  /// network is supported.
+  /// Futhermore, discovery using this method currently does not work on Windows
+  /// due to limitations in the `multicast_dns` package.
+  ///
+  /// [RFC 6762]: https://www.rfc-editor.org/rfc/rfc6762
+  /// [RFC 6763]: https://www.rfc-editor.org/rfc/rfc6763
+  dnsServiceDiscovery,
 }

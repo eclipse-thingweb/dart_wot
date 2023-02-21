@@ -7,6 +7,8 @@
 import 'dart:async';
 
 import 'package:coap/coap.dart';
+import 'package:collection/collection.dart';
+import 'package:multicast_dns/multicast_dns.dart';
 
 import '../../core.dart';
 import '../../scripting_api.dart' as scripting_api;
@@ -75,6 +77,9 @@ class ThingDiscovery extends Stream<ThingDescription>
         break;
       case scripting_api.DiscoveryMethod.coreResourceDirectory:
         yield* _discoverfromCoreResourceDirectory(_url);
+        break;
+      case scripting_api.DiscoveryMethod.dnsServiceDiscovery:
+        yield* _discoverUsingDnsServiceDiscovery(_url);
         break;
       default:
         throw UnimplementedError();
@@ -222,6 +227,100 @@ class ThingDiscovery extends Stream<ThingDescription>
       onDone: cleanUpAndDone,
       cancelOnError: cancelOnError,
     );
+  }
+
+  Stream<ThingDescription> _discoverUsingDnsServiceDiscovery(Uri url) async* {
+    final dnsName = url.toString();
+
+    if (dnsName.endsWith('local')) {
+      yield* _discoverUsingMdnssd(dnsName);
+    } else {
+      throw UnimplementedError('Only mDNS-SD is currently supported!');
+    }
+  }
+
+  // TODO(JKRhb): Should be handled in a more robust way
+  bool _isUdpDiscovery(String name) {
+    if (name.contains('_udp')) {
+      return true;
+    }
+
+    if (name.contains('_tcp')) {
+      return false;
+    }
+
+    // TODO(JKRhb): Check if this error message is correct.
+    throw DiscoveryException(
+      'Service name $name neither includes _udp nor _tcp',
+    );
+  }
+
+  Future<Map<String, String>?> _lookupTxtRecords(
+    MDnsClient client,
+    String domainName,
+  ) async {
+    final txtRecords = await client
+        .lookup<TxtResourceRecord>(ResourceRecordQuery.text(domainName))
+        .toList();
+    final recordsList = txtRecords.firstOrNull?.text
+        .split('\n')
+        .map((property) => property.split('='))
+        .where((list) => list.length > 1)
+        .map((list) => MapEntry(list[0], list[1]));
+
+    if (recordsList == null) {
+      return null;
+    }
+
+    return Map.fromEntries(recordsList);
+  }
+
+  Stream<ThingDescription> _discoverUsingMdnssd(String name) async* {
+    final MDnsClient client = MDnsClient();
+    await client.start();
+
+    final discoveredUris = <Uri>{};
+    final defaultScheme = _isUdpDiscovery(name) ? 'coap' : 'http';
+    const defaultType = 'Thing';
+
+    await for (final PtrResourceRecord ptr in client
+        .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
+      final query = ResourceRecordQuery.service(ptr.domainName);
+
+      await for (final SrvResourceRecord srv
+          in client.lookup<SrvResourceRecord>(query)) {
+        final txtRecords = await _lookupTxtRecords(client, ptr.domainName);
+
+        if (txtRecords == null) {
+          continue;
+        }
+
+        final uri = Uri(
+          host: srv.target,
+          path: txtRecords['td'],
+          scheme: txtRecords['scheme'] ?? defaultScheme,
+        );
+
+        final duplicate = discoveredUris.add(uri);
+
+        if (duplicate) {
+          continue;
+        }
+
+        final type = txtRecords['type'] ?? defaultType;
+
+        switch (type) {
+          case 'Thing':
+            yield* _discoverDirectly(uri);
+            break;
+          case 'Directory':
+            // TODO(JKRhb): Implement directory discovery.
+            break;
+        }
+      }
+    }
+
+    client.stop();
   }
 }
 
