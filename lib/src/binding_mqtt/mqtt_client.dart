@@ -202,6 +202,7 @@ final class MqttClient implements ProtocolClient {
   Stream<DiscoveryContent> discoverDirectly(
     Uri uri, {
     bool disableMulticast = false,
+    String accept = 'application/td+json',
   }) async* {
     final client = await _connect(uri, null);
     const discoveryTopic = 'wot/td/#';
@@ -231,7 +232,7 @@ final class MqttClient implements ProtocolClient {
 
           streamController.add(
             DiscoveryContent(
-              discoveryContentType,
+              accept,
               Stream.value(payload),
               uri,
             ),

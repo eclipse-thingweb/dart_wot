@@ -24,6 +24,7 @@ abstract interface class ProtocolClient {
   Stream<DiscoveryContent> discoverDirectly(
     Uri uri, {
     bool disableMulticast = false,
+    String accept = 'application/td+json',
   });
 
   /// Discovers links using the CoRE Link Format (see [RFC 6690]) from a [uri],

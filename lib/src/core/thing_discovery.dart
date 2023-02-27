@@ -143,11 +143,22 @@ class ThingDiscovery extends Stream<ThingDescription>
   Stream<ThingDescription> _discoverFromDirectory(Uri uri) async* {
     final client = _clientForUriScheme(uri);
 
-    final discoveryUri = uri.replace(path: 'things');
+    final Uri discoveryUri;
+
+    final uriPath = uri.path;
+    if (uriPath.isEmpty) {
+      discoveryUri = uri.replace(path: 'things');
+    } else {
+      discoveryUri = uri;
+    }
 
     // TODO: Can this be done more elegantly?
     yield* client
-        .discoverDirectly(discoveryUri, disableMulticast: true)
+        .discoverDirectly(
+          discoveryUri,
+          disableMulticast: true,
+          accept: 'application/ld+json',
+        )
         .asyncMap((event) => _convertToArray(event, uri))
         .map(
           (event) => Stream.fromIterable(event.map(ThingDescription.fromJson)),
@@ -191,6 +202,7 @@ class ThingDiscovery extends Stream<ThingDescription>
   }
 
   Stream<ThingDescription> _discoverWithCoreLinkFormat(Uri uri) async* {
+    // TODO: Add TDD discovery
     // TODO: Remove additional quotes once fixed in CoAP library
     yield* _performCoreLinkFormatDiscovery('"wot.thing"', uri)
         .map(_discoverDirectly)
@@ -342,7 +354,7 @@ class ThingDiscovery extends Stream<ThingDescription>
           case 'Thing':
             yield* _discoverDirectly(uri);
           case 'Directory':
-            // TODO(JKRhb): Implement directory discovery.
+            yield* _discoverFromDirectory(uri);
             break;
         }
       }

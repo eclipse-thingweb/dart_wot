@@ -306,12 +306,13 @@ final class HttpClient implements ProtocolClient {
   Stream<DiscoveryContent> discoverDirectly(
     Uri uri, {
     bool disableMulticast = false,
+    String accept = 'application/td+json',
   }) async* {
     final request = Request(HttpRequestMethod.get.methodName, uri);
 
     yield await _sendDiscoveryRequest(
       request,
-      acceptHeaderValue: 'application/td+json',
+      acceptHeaderValue: accept,
     );
   }
 

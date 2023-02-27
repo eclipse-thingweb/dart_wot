@@ -446,6 +446,7 @@ final class CoapClient implements ProtocolClient {
   Stream<DiscoveryContent> _discoverFromMulticast(
     coap.CoapClient client,
     Uri uri,
+    coap.CoapMediaType accept,
   ) async* {
     final streamController = StreamController<DiscoveryContent>();
     final multicastResponseHandler = coap.CoapMulticastResponseHandler(
@@ -462,7 +463,7 @@ final class CoapClient implements ProtocolClient {
       uri,
       coap.RequestMethod.get,
       form: null,
-      accept: coap.CoapMediaType.applicationTdJson,
+      accept: accept,
       multicastResponseHandler: multicastResponseHandler,
     );
     unawaited(content);
@@ -472,12 +473,13 @@ final class CoapClient implements ProtocolClient {
   Stream<DiscoveryContent> _discoverFromUnicast(
     coap.CoapClient client,
     Uri uri,
+    coap.CoapMediaType accept,
   ) async* {
     yield await _sendDiscoveryRequest(
       uri,
       coap.RequestMethod.get,
       form: null,
-      accept: coap.CoapMediaType.applicationTdJson,
+      accept: accept,
     );
   }
 
@@ -485,15 +487,19 @@ final class CoapClient implements ProtocolClient {
   Stream<DiscoveryContent> discoverDirectly(
     Uri uri, {
     bool disableMulticast = false,
+    String accept = 'application/td+json',
   }) async* {
     final client = coap.CoapClient(uri);
 
+    final parsedAccept = coap.CoapMediaType.parse(accept) ??
+        coap.CoapMediaType.applicationTdJson;
+
     if (uri.isMulticastAddress) {
       if (!disableMulticast) {
-        yield* _discoverFromMulticast(client, uri);
+        yield* _discoverFromMulticast(client, uri, parsedAccept);
       }
     } else {
-      yield* _discoverFromUnicast(client, uri);
+      yield* _discoverFromUnicast(client, uri, parsedAccept);
     }
   }
 
