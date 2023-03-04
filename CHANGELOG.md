@@ -1,3 +1,7 @@
+## 0.24.1
+
+- fix(discovery): extract port from DNS SRV records
+
 ## 0.24.0
 
 - feat: implement new CoAP vocabulary terms
