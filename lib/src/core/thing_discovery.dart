@@ -297,6 +297,7 @@ class ThingDiscovery extends Stream<ThingDescription>
 
         final uri = Uri(
           host: srv.target,
+          port: srv.port,
           path: txtRecords['td'],
           scheme: txtRecords['scheme'] ?? defaultScheme,
         );
