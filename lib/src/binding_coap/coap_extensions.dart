@@ -100,10 +100,10 @@ extension CoapFormExtension on Form {
   }
 
   /// Indicates the Block2 size preferred by a server.
-  BlockSize? get block2Size => _determineBlockSize('block2SZX');
+  BlockSize? get block2Size => _determineBlockSize('block2Size');
 
   /// Indicates the Block1 size preferred by a server.
-  BlockSize? get block1Size => _determineBlockSize('block1SZX');
+  BlockSize? get block1Size => _determineBlockSize('block1Size');
 
   // TODO: Consider default method
   /// Indicates the [CoapRequestMethod] contained in this [Form].
