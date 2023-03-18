@@ -34,8 +34,8 @@ void main() {
                 'cov:contentFormat': 60,
                 'cov:accept': 60,
                 'cov:blockwise': {
-                  'cov:block1SZX': 32,
-                  'cov:block2SZX': 64,
+                  'cov:block1Size': 32,
+                  'cov:block2Size': 64,
                 },
                 'response': {
                   'contentType': 'application/cbor',
@@ -45,8 +45,8 @@ void main() {
               {
                 'href': 'coap://example.org',
                 'cov:blockwise': {
-                  'cov:block1SZX': 5000,
-                  'cov:block2SZX': 4096,
+                  'cov:block1Size': 5000,
+                  'cov:block2Size': 4096,
                 },
               },
             ]
