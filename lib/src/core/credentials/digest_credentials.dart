@@ -8,9 +8,9 @@ import '../../definitions/security/digest_security_scheme.dart';
 import 'credentials.dart';
 
 /// [Credentials] used for the [DigestSecurityScheme].
-class DigestCredentials extends Credentials<DigestSecurityScheme> {
+class DigestCredentials extends Credentials {
   /// Constructor.
-  DigestCredentials(this.username, this.password) : super('digest');
+  DigestCredentials(this.username, this.password);
 
   /// The [username] associated with these [DigestCredentials].
   String username;

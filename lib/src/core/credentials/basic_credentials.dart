@@ -8,12 +8,12 @@ import '../../definitions/security/basic_security_scheme.dart';
 
 import 'credentials.dart';
 
-/// [Credentials] used for the `BasicSecurityScheme`.
+/// [Credentials] used for the [BasicSecurityScheme].
 ///
 /// Provides an unencrypted [username] and [password] combination.
-class BasicCredentials extends Credentials<BasicSecurityScheme> {
+class BasicCredentials extends Credentials {
   /// Constructor.
-  BasicCredentials(this.username, this.password) : super('basic');
+  BasicCredentials(this.username, this.password);
 
   /// The [username] associated with these [BasicCredentials].
   String username;
