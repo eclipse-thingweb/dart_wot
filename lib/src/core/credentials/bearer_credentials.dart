@@ -9,7 +9,7 @@ import '../../definitions/security/bearer_security_scheme.dart';
 import 'credentials.dart';
 
 /// [Credentials] used for the [BearerSecurityScheme].
-class BearerCredentials extends Credentials {
+final class BearerCredentials extends Credentials {
   /// Constructor.
   BearerCredentials(this.token);
 

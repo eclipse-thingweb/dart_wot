@@ -8,7 +8,7 @@ import '../../definitions/security/oauth2_security_scheme.dart';
 import 'credentials.dart';
 
 /// [Credentials] used for the [OAuth2SecurityScheme].
-class OAuth2Credentials extends Credentials {
+final class OAuth2Credentials extends Credentials {
   /// Constructor.
   OAuth2Credentials([this.secret]);
 
