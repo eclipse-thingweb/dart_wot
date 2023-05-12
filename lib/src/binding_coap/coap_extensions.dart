@@ -232,7 +232,7 @@ extension ResponseExtension on CoapResponse {
     final responsePayload = payload;
 
     if (contentFormat == CoapMediaType.applicationAceCbor &&
-        unauthorizedAceCodes.contains(contentFormat)) {
+        unauthorizedAceCodes.contains(responseCode)) {
       return AuthServerRequestCreationHint.fromSerialized(
         responsePayload.toList(),
       );
