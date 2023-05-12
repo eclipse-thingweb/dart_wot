@@ -7,6 +7,7 @@
 /// Core implementation providing Scripting API implementations, interfaces
 /// for protocol bindings, and the `Servient` class which provides the WoT
 /// runtime used for consuming, exposing, and discovering Things.
+library core;
 
 export 'package:dcaf/dcaf.dart';
 

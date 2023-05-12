@@ -8,6 +8,7 @@
 /// [WoT Thing Description Specification][spec link].
 ///
 /// [spec link]: https://www.w3.org/TR/wot-thing-description11/
+library definitions;
 
 export 'src/definitions/form.dart';
 export 'src/definitions/thing_description.dart';
