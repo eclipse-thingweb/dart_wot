@@ -398,10 +398,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     switch (type) {
       case SubscriptionType.property:
         _observedProperties.remove(key);
-        break;
       case SubscriptionType.event:
         _subscribedEvents.remove(key);
-        break;
     }
   }
 
