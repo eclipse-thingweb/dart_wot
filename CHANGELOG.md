@@ -1,3 +1,7 @@
+## 0.27.0
+
+- feat!: migrate library to Dart 3
+
 ## 0.26.0
 
 - chore: address linting issues
