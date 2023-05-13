@@ -8,6 +8,7 @@
 /// the latest [WoT Binding Templates Specification][spec link] for MQTT.
 ///
 /// [spec link]: https://w3c.github.io/wot-binding-templates/bindings/protocols/mqtt
+library binding_mqtt;
 
 export 'src/binding_mqtt/mqtt_client_factory.dart';
 export 'src/binding_mqtt/mqtt_config.dart';

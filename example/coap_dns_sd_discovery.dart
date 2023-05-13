@@ -8,14 +8,6 @@
 
 import 'package:dart_wot/dart_wot.dart';
 
-const propertyName = 'string';
-
-extension PrintExtension on InteractionOutput {
-  Future<void> printValue() async {
-    print(await value());
-  }
-}
-
 void handleThingDescription(ThingDescription thingDescription) =>
     print('Discovered TD with title "${thingDescription.title}".');
 

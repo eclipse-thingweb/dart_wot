@@ -8,6 +8,7 @@
 /// the [WoT Binding Templates Specification][spec link] for CoAP.
 ///
 /// [spec link]: https://www.w3.org/TR/wot-binding-templates/
+library binding_coap;
 
 export 'src/binding_coap/coap_client_factory.dart';
 export 'src/binding_coap/coap_config.dart';
