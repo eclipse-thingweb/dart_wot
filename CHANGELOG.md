@@ -1,3 +1,7 @@
+## 0.25.1
+
+- fix: mark package as compatible with Dart 3.x.x
+
 ## 0.25.0
 
 - feat(binding-coap)!: use blockSize instead of blockSZX
