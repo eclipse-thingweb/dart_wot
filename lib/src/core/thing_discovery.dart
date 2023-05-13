@@ -71,16 +71,12 @@ class ThingDiscovery extends Stream<ThingDescription>
     switch (_method) {
       case scripting_api.DiscoveryMethod.direct:
         yield* _discoverDirectly(_url);
-        break;
       case scripting_api.DiscoveryMethod.coreLinkFormat:
         yield* _discoverWithCoreLinkFormat(_url);
-        break;
       case scripting_api.DiscoveryMethod.coreResourceDirectory:
         yield* _discoverfromCoreResourceDirectory(_url);
-        break;
       case scripting_api.DiscoveryMethod.dnsServiceDiscovery:
         yield* _discoverUsingDnsServiceDiscovery(_url);
-        break;
       default:
         throw UnimplementedError();
     }
@@ -313,7 +309,6 @@ class ThingDiscovery extends Stream<ThingDescription>
         switch (type) {
           case 'Thing':
             yield* _discoverDirectly(uri);
-            break;
           case 'Directory':
             // TODO(JKRhb): Implement directory discovery.
             break;

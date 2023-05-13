@@ -9,7 +9,6 @@ import 'dart:convert';
 import 'package:curie/curie.dart';
 
 import 'additional_expected_response.dart';
-import 'context_entry.dart';
 import 'data_schema.dart';
 import 'extensions/json_parser.dart';
 import 'form.dart';
@@ -21,6 +20,9 @@ import 'security/security_scheme.dart';
 import 'thing_model.dart';
 import 'validation/thing_description_schema.dart';
 import 'version_info.dart';
+
+/// Type definition for a JSON-LD @context entry.
+typedef ContextEntry = ({String? key, String value});
 
 /// Represents a WoT Thing Description
 class ThingDescription {
@@ -172,7 +174,7 @@ class ThingDescription {
   void _parseJson(Map<String, dynamic> json) {
     final Set<String> parsedFields = {};
 
-    context.addAll(ContextEntry.parseContext(json['@context'], prefixMapping));
+    context.addAll(json.parseContext(prefixMapping, parsedFields));
     title = json.parseRequiredField<String>('title', parsedFields);
     titles.addAll(json.parseMapField<String>('titles', parsedFields) ?? {});
     description = json.parseField<String>('description', parsedFields);

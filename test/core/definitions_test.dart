@@ -9,7 +9,6 @@ import 'dart:convert';
 import 'package:curie/curie.dart';
 import 'package:dart_wot/dart_wot.dart';
 import 'package:dart_wot/src/definitions/additional_expected_response.dart';
-import 'package:dart_wot/src/definitions/context_entry.dart';
 import 'package:dart_wot/src/definitions/data_schema.dart';
 import 'package:dart_wot/src/definitions/expected_response.dart';
 import 'package:dart_wot/src/definitions/extensions/json_parser.dart';
@@ -66,7 +65,7 @@ void main() {
       expect(thingDescription.title, 'MyLampThing');
       expect(
         thingDescription.context,
-        [const ContextEntry('https://www.w3.org/2022/wot/td/v1.1', null)],
+        [const (key: null, value: 'https://www.w3.org/2022/wot/td/v1.1')],
       );
       expect(thingDescription.security, ['nosec_sc']);
       expect(thingDescription.securityDefinitions['nosec_sc']?.scheme, 'nosec');
@@ -563,6 +562,28 @@ void main() {
     expect(
       () => ThingDescription.fromJson(invalidThingDescription2),
       throwsA(isA<ValidationException>()),
+    );
+  });
+
+  test('Should reject invalid @context entries', () {
+    // TODO(JKRhb): Double-check if this the correct behavior.
+    final invalidThingDescription1 = {
+      '@context': [
+        'https://www.w3.org/2022/wot/td/v1.1',
+        {'invalid': 1}
+      ],
+      'title': 'NAMIB WoT Thing',
+      'security': ['nosec_sc'],
+      'securityDefinitions': {
+        'nosec_sc': {
+          'scheme': 'nosec',
+        }
+      }
+    };
+
+    expect(
+      () => ThingDescription.fromJson(invalidThingDescription1),
+      throwsA(isA<ContextValidationException>()),
     );
   });
 }

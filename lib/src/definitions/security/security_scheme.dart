@@ -10,7 +10,7 @@ import '../extensions/json_parser.dart';
 
 /// Class that contains metadata describing the configuration of a security
 /// mechanism.
-abstract class SecurityScheme {
+base class SecurityScheme {
   /// Constructor.
   SecurityScheme(
     this.scheme, {

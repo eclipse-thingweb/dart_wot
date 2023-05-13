@@ -40,7 +40,7 @@ enum SubscriptionType {
 }
 
 /// Represents a subscription to Property change and Event interactions.
-abstract class Subscription {
+abstract interface class Subscription {
   /// Denotes whether the subsciption is active, i.e. it is not stopped because
   /// of an error or because of invocation of the [stop] method.
   bool get active;

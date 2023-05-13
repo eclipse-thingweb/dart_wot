@@ -12,7 +12,7 @@ const _schemeName = 'auto';
 
 /// An automatic security configuration identified by the
 /// vocabulary term `auto`.
-class AutoSecurityScheme extends SecurityScheme {
+final class AutoSecurityScheme extends SecurityScheme {
   /// Constructor.
   AutoSecurityScheme({
     super.description,

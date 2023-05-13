@@ -15,7 +15,7 @@ const _defaultQoPValue = 'auth';
 
 /// Digest Access Authentication security configuration identified by the
 /// Vocabulary Term `digest`.
-class DigestSecurityScheme extends SecurityScheme {
+final class DigestSecurityScheme extends SecurityScheme {
   /// Constructor.
   DigestSecurityScheme({
     this.in_ = _defaultInValue,

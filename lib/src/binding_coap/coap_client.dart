@@ -81,7 +81,7 @@ coap.PskCredentialsCallback? _createPskCallback(
 }
 
 /// A [ProtocolClient] for the Constrained Application Protocol (CoAP).
-class CoapClient extends ProtocolClient {
+final class CoapClient implements ProtocolClient {
   /// Creates a new [CoapClient] based on an optional [CoapConfig].
   CoapClient([this._coapConfig, this._clientSecurityProvider]);
 

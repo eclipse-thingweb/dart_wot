@@ -5,4 +5,4 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 /// Base class used for defining credentials for Thing Interactions.
-abstract class Credentials {}
+abstract base class Credentials {}

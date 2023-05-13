@@ -10,7 +10,7 @@ import '../scripting_api/exposed_thing.dart';
 import 'coap_config.dart';
 
 /// A [ProtocolServer] for the Constrained Application Protocol (CoAP).
-class CoapServer extends ProtocolServer {
+final class CoapServer implements ProtocolServer {
   /// Creates a new [CoapServer] which can be configured using a [CoapConfig].
   CoapServer([CoapConfig? coapConfig])
       : port = coapConfig?.port ?? 5683,

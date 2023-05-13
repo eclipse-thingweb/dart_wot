@@ -10,7 +10,7 @@ import '../scripting_api/exposed_thing.dart';
 import 'http_config.dart';
 
 /// A [ProtocolServer] for the Hypertext Transfer Protocol (HTTP).
-class HttpServer extends ProtocolServer {
+final class HttpServer implements ProtocolServer {
   /// Create a new [HttpServer] from an optional [HttpConfig].
   HttpServer(HttpConfig? httpConfig)
       // TODO(JKRhb): Check if the scheme should be determined differently.

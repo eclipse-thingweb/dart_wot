@@ -10,7 +10,7 @@ import '../../definitions/security/ace_security_scheme.dart';
 import 'credentials.dart';
 
 /// [Credentials] used for the [AceSecurityScheme].
-class AceCredentials extends Credentials {
+final class AceCredentials extends Credentials {
   /// Constructor.
   AceCredentials(this.accessToken);
 

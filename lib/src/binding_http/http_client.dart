@@ -44,7 +44,7 @@ const _authorizationHeader = 'Authorization';
 /// [RFC 7616]: https://datatracker.ietf.org/doc/html/rfc7616
 /// [RFC 6750]: https://datatracker.ietf.org/doc/html/rfc6750
 /// [`ComboSecurityScheme`]: https://w3c.github.io/wot-thing-description/#combosecurityscheme
-class HttpClient extends ProtocolClient {
+final class HttpClient implements ProtocolClient {
   /// Creates a new [HttpClient].
   HttpClient(this._clientSecurityProvider);
 

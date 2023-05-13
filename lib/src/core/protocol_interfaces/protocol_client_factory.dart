@@ -8,7 +8,7 @@ import '../security_provider.dart';
 import 'protocol_client.dart';
 
 /// Base class for a factory that produces [ProtocolClient]s.
-abstract class ProtocolClientFactory {
+abstract interface class ProtocolClientFactory {
   /// The protocol [schemes] support of the clients this factory produces.
   Set<String> get schemes;
 

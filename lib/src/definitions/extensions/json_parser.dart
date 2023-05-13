@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:curie/curie.dart';
 
 import '../additional_expected_response.dart';
@@ -23,6 +24,12 @@ import '../security/security_scheme.dart';
 import '../thing_description.dart';
 import '../validation/validation_exception.dart';
 import '../version_info.dart';
+
+const _validTdContextValues = [
+  'https://www.w3.org/2019/wot/td/v1',
+  'https://www.w3.org/2022/wot/td/v1.1',
+  'http://www.w3.org/ns/td'
+];
 
 /// Extension for parsing fields of JSON objects.
 extension ParseField on Map<String, dynamic> {
@@ -583,4 +590,80 @@ extension ParseField on Map<String, dynamic> {
 
     return value;
   }
+
+  /// Parses the JSON-LD @context of a TD and returns a [List] of
+  /// [ContextEntry]s.
+  List<ContextEntry> parseContext(
+    PrefixMapping prefixMapping,
+    Set<String>? parsedFields, {
+    bool firstEntry = true,
+  }) {
+    final fieldValue = parseField('@context', parsedFields);
+
+    return _parseContext(fieldValue, prefixMapping);
+  }
+}
+
+/// Parses a [List] of `@context` entries from a given [json] value.
+///
+/// `@context` extensions are added to the provided [prefixMapping].
+/// If a given entry is the [firstEntry], it will be set in the
+/// [prefixMapping] accordingly.
+List<ContextEntry> _parseContext(
+  dynamic json,
+  PrefixMapping prefixMapping, {
+  bool firstEntry = true,
+}) {
+  switch (json) {
+    case final String jsonString:
+      {
+        if (firstEntry && _validTdContextValues.contains(jsonString)) {
+          prefixMapping.defaultPrefixValue = jsonString;
+        }
+        return [(key: null, value: jsonString)];
+      }
+    case final List<dynamic> contextList:
+      {
+        final List<ContextEntry> result = [];
+        contextList
+            .mapIndexed(
+              (index, contextEntry) => _parseContext(
+                contextEntry,
+                prefixMapping,
+                firstEntry: index == 0,
+              ),
+            )
+            .forEach(result.addAll);
+        return result;
+      }
+    case final Map<String, dynamic> contextList:
+      {
+        return contextList.entries.map((entry) {
+          final key = entry.key;
+          final value = entry.value;
+
+          if (value is! String) {
+            throw ContextValidationException(value.runtimeType);
+          }
+
+          if (!key.startsWith('@') && Uri.tryParse(value) != null) {
+            prefixMapping.addPrefix(key, value);
+          }
+          return (key: key, value: value);
+        }).toList();
+      }
+  }
+
+  throw ContextValidationException(json.runtimeType);
+}
+
+/// Custom [ValidationException] that is thrown for an invalid [ContextEntry].
+class ContextValidationException extends ValidationException {
+  /// Creates a new [ContextValidationException] indicating the invalid
+  /// [runtimeType].
+  ContextValidationException(Type runtimeType)
+      : super(
+          'Excepted either a String or a Map<String, String> '
+          'as @context entry, got $runtimeType instead.',
+        );
 }

@@ -9,7 +9,7 @@ import '../../scripting_api/subscription.dart';
 import '../content.dart';
 
 /// Base class for a Protocol Client.
-abstract class ProtocolClient {
+abstract interface class ProtocolClient {
   /// Starts this [ProtocolClient].
   Future<void> start();
 

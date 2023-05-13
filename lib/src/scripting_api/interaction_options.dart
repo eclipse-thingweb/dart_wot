@@ -13,7 +13,7 @@ import 'package:meta/meta.dart';
 ///
 /// [spec link]: https://w3c.github.io/wot-scripting-api/#the-interactionoptions-dictionary
 @immutable
-class InteractionOptions {
+final class InteractionOptions {
   /// Constructor
   const InteractionOptions({this.formIndex, this.uriVariables, this.data});
 

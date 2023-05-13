@@ -13,7 +13,7 @@ import 'security_scheme.dart';
 const _schemeName = 'ace:ACESecurityScheme';
 
 /// Experimental ACE Security Scheme.
-class AceSecurityScheme extends SecurityScheme {
+final class AceSecurityScheme extends SecurityScheme {
   /// Constructor.
   AceSecurityScheme({
     this.as,

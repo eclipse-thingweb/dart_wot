@@ -25,7 +25,7 @@ typedef ErrorListener = void Function(Exception data);
 /// See [WoT Scripting API Specification, Section 8][spec link].
 ///
 /// [spec link]: https://w3c.github.io/wot-scripting-api/#the-consumedthing-interface
-abstract class ConsumedThing {
+abstract interface class ConsumedThing {
   /// Returns the [ThingDescription] that represents the consumed Thing.
   ThingDescription get thingDescription;
 

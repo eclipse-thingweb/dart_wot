@@ -14,7 +14,7 @@ const _schemeName = 'apikey';
 
 /// API key authentication security configuration identified by the Vocabulary
 /// Term `apikey`.
-class ApiKeySecurityScheme extends SecurityScheme {
+final class ApiKeySecurityScheme extends SecurityScheme {
   /// Constructor.
   ApiKeySecurityScheme({
     this.name,

@@ -72,7 +72,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   /// [scheme].
   bool hasClientFor(String scheme) => servient.hasClientFor(scheme);
 
-  _ClientAndForm _getClientFor(
+  ({ProtocolClient client, Form form}) _getClientFor(
     List<Form> forms,
     OperationType operationType,
     _AffordanceType affordanceType,
@@ -117,7 +117,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final form =
         foundForm.resolveUriVariables(options?.uriVariables) ?? foundForm;
 
-    return _ClientAndForm(client, form);
+    return (client: client, form: form);
   }
 
   @override
@@ -398,10 +398,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     switch (type) {
       case SubscriptionType.property:
         _observedProperties.remove(key);
-        break;
       case SubscriptionType.event:
         _subscribedEvents.remove(key);
-        break;
     }
   }
 
@@ -424,13 +422,4 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     }
     _subscribedEvents.clear();
   }
-}
-
-/// Private class providing a tuple of a [ProtocolClient] and a [Form].
-class _ClientAndForm {
-  _ClientAndForm(this.client, this.form);
-
-  // TODO(JKRhb): Check if this class is actually needed
-  final ProtocolClient client;
-  final Form form;
 }
