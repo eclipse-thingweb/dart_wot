@@ -8,6 +8,7 @@ import 'package:dart_wot/dart_wot.dart';
 import 'package:dart_wot/src/definitions/security/apikey_security_scheme.dart';
 import 'package:dart_wot/src/definitions/security/basic_security_scheme.dart';
 import 'package:dart_wot/src/definitions/security/bearer_security_scheme.dart';
+import 'package:dart_wot/src/definitions/security/combo_security_scheme.dart';
 import 'package:dart_wot/src/definitions/security/digest_security_scheme.dart';
 import 'package:dart_wot/src/definitions/security/no_security_scheme.dart';
 import 'package:dart_wot/src/definitions/security/oauth2_security_scheme.dart';
@@ -79,6 +80,14 @@ void main() {
             "refresh": "http://example.org",
             "scopes": "test",
             "flow": "client"
+          },
+          "combo_sc1": {
+            "scheme": "combo",
+            "allOf": ["digest_sc", "apikey_sc"]
+          },
+          "combo_sc2": {
+            "scheme": "combo",
+            "oneOf": ["oauth2_sc", "bearer_sc"]
           }
         },
         "security": "nosec_sc",
@@ -210,6 +219,22 @@ void main() {
       expect(oauth2Sc.token, 'http://example.org');
       expect(oauth2Sc.scopes, ['test']);
       expect(oauth2Sc.flow, 'client');
+
+      final comboSc1 = parsedTd.securityDefinitions['combo_sc1'];
+      expect(comboSc1 is ComboSecurityScheme, true);
+      expect(
+        (comboSc1 as ComboSecurityScheme?)!.allOf,
+        ['digest_sc', 'apikey_sc'],
+      );
+      expect(comboSc1!.oneOf, null);
+
+      final comboSc2 = parsedTd.securityDefinitions['combo_sc2'];
+      expect(comboSc2 is ComboSecurityScheme, true);
+      expect(
+        (comboSc2 as ComboSecurityScheme?)!.oneOf,
+        ['oauth2_sc', 'bearer_sc'],
+      );
+      expect(comboSc2!.allOf, null);
     });
   });
 
