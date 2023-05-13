@@ -13,7 +13,7 @@ const _schemeName = 'psk';
 
 /// Pre-shared key authentication security configuration identified by the
 /// Vocabulary Term `psk`.
-class PskSecurityScheme extends SecurityScheme {
+final class PskSecurityScheme extends SecurityScheme {
   /// Constructor.
   PskSecurityScheme({
     this.identity,

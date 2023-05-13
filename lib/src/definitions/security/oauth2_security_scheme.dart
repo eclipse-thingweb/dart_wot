@@ -14,7 +14,7 @@ const _schemeName = 'oauth2';
 /// OAuth 2.0 authentication security configuration for systems conformant with
 /// RFC 6749, RFC 8252 and (for the device flow) RFC 8628, identified by the
 /// Vocabulary Term `oauth2`.
-class OAuth2SecurityScheme extends SecurityScheme {
+final class OAuth2SecurityScheme extends SecurityScheme {
   /// Constructor.
   OAuth2SecurityScheme(
     this.flow, {

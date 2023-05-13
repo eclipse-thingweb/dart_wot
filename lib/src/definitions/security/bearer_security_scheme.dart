@@ -17,7 +17,7 @@ const _schemeName = 'bearer';
 
 /// Bearer Token security configuration identified by the Vocabulary Term
 /// `bearer`.
-class BearerSecurityScheme extends SecurityScheme {
+final class BearerSecurityScheme extends SecurityScheme {
   /// Constructor.
   BearerSecurityScheme({
     this.name,

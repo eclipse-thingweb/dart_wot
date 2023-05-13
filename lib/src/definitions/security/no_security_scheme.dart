@@ -12,7 +12,7 @@ const _schemeName = 'nosec';
 
 /// A security configuration corresponding to identified by the Vocabulary Term
 /// `nosec`.
-class NoSecurityScheme extends SecurityScheme {
+final class NoSecurityScheme extends SecurityScheme {
   /// Constructor.
   NoSecurityScheme({
     super.description,

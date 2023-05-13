@@ -13,7 +13,7 @@ const _schemeName = 'combo';
 
 /// A combination of other security schemes identified by the Vocabulary Term
 /// `combo` (i.e., "scheme": "combo").
-class ComboSecurityScheme extends SecurityScheme {
+final class ComboSecurityScheme extends SecurityScheme {
   /// Constructor.
   ComboSecurityScheme({
     this.allOf,

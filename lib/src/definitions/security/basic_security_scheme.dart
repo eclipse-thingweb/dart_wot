@@ -15,7 +15,7 @@ const _schemeName = 'basic';
 
 /// Basic Authentication security configuration identified by the Vocabulary
 /// Term `basic`.
-class BasicSecurityScheme extends SecurityScheme {
+final class BasicSecurityScheme extends SecurityScheme {
   /// Constructor.
   BasicSecurityScheme({
     this.name,
