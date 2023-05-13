@@ -11,7 +11,7 @@ import 'http_client.dart';
 import 'http_config.dart';
 
 /// A [ProtocolClientFactory] that produces HTTP and HTTPS clients.
-class HttpClientFactory extends ProtocolClientFactory {
+final class HttpClientFactory implements ProtocolClientFactory {
   /// Creates a new [HttpClientFactory] based on an optional [HttpConfig].
   HttpClientFactory([this.httpConfig]);
 

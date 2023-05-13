@@ -11,7 +11,7 @@ import 'coap_client.dart';
 import 'coap_config.dart';
 
 /// A [ProtocolClientFactory] that produces CoAP clients.
-class CoapClientFactory extends ProtocolClientFactory {
+final class CoapClientFactory implements ProtocolClientFactory {
   /// Creates a new [CoapClientFactory] based on an optional [CoapConfig].
   CoapClientFactory([this.coapConfig]);
 

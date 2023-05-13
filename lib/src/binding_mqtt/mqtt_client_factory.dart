@@ -13,7 +13,7 @@ import 'mqtt_client.dart';
 import 'mqtt_config.dart';
 
 /// [ProtocolClientFactory] for creating [MqttClient]s.
-class MqttClientFactory extends ProtocolClientFactory {
+final class MqttClientFactory implements ProtocolClientFactory {
   @override
   ProtocolClient createClient([
     ClientSecurityProvider? clientSecurityProvider,

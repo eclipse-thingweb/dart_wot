@@ -8,7 +8,7 @@ import '../../../scripting_api.dart';
 import '../security_provider.dart';
 
 /// Base class for a Protocol Server.
-abstract class ProtocolServer {
+abstract interface class ProtocolServer {
   /// The [port] number used by this Server.
   int get port;
 
