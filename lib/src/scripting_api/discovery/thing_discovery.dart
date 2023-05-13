@@ -12,7 +12,7 @@ import 'thing_filter.dart';
 /// Note: This interface definition does not conform to the current Scripting
 ///       API specification, which is still a Work-in-Progress when it comes
 ///       to discovery.
-abstract class ThingDiscovery implements Stream<ThingDescription> {
+abstract interface class ThingDiscovery implements Stream<ThingDescription> {
   /// The [thingFilter] that is applied during the discovery process.
   ThingFilter? get thingFilter;
 

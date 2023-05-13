@@ -14,7 +14,7 @@ import '../definitions/form.dart';
 /// See [WoT Scripting API Specification, Section 7.2][spec link].
 ///
 /// [spec link]: https://w3c.github.io/wot-scripting-api/#the-interactionoutput-interface
-abstract class InteractionOutput {
+abstract interface class InteractionOutput {
   /// The raw payload of the [InteractionOutput] as a Byte [Stream].
   Stream<List<int>>? get data;
 

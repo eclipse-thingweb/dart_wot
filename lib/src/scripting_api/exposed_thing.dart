@@ -45,7 +45,7 @@ typedef EventListenerHandler = Future<InteractionInput> Function();
 /// See [WoT Scripting API Specification, Section 9][spec link].
 ///
 /// [spec link]: https://w3c.github.io/wot-scripting-api/#the-exposedthing-interface
-abstract class ExposedThing {
+abstract interface class ExposedThing {
   /// The [ThingDescription] that represents this [ExposedThing].
   ThingDescription get thingDescription;
 

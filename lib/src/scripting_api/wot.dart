@@ -16,7 +16,7 @@ import 'types.dart';
 ///
 /// See WoT Scripting API specification,
 /// [section 5](https://w3c.github.io/wot-scripting-api/#the-wot-namespace)
-abstract class WoT {
+abstract interface class WoT {
   /// Asynchronously creates a [ConsumedThing] from a [thingDescription].
   ///
   /// This [ConsumedThing] can then be used to perform interactions with the
