@@ -355,7 +355,6 @@ class ThingDiscovery extends Stream<ThingDescription>
             yield* _discoverDirectly(uri);
           case 'Directory':
             yield* _discoverFromDirectory(uri);
-            break;
         }
       }
     }
