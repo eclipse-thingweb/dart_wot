@@ -4,24 +4,27 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'package:meta/meta.dart';
+
 /// Holds the interaction options that need to be exposed for application
 /// scripts according to the Thing Description.
 ///
 /// See [WoT Scripting API Specification, Section 8.12][spec link].
 ///
 /// [spec link]: https://w3c.github.io/wot-scripting-api/#the-interactionoptions-dictionary
+@immutable
 class InteractionOptions {
   /// Constructor
-  InteractionOptions({this.formIndex, this.uriVariables, this.data});
+  const InteractionOptions({this.formIndex, this.uriVariables, this.data});
 
   /// Represents an application hint for which Form definition should be used
   /// for the given interaction.
-  int? formIndex;
+  final int? formIndex;
 
   /// Represents the URI template variables to be used with the interaction.
-  Map<String, Object>? uriVariables;
+  final Map<String, Object>? uriVariables;
 
   /// Represents additional opaque data that needs to be passed to the
   /// interaction.
-  Object? data;
+  final Object? data;
 }
