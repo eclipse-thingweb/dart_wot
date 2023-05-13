@@ -42,7 +42,10 @@ abstract class SecurityScheme {
   /// A [Map] of multi-language [descriptions].
   Map<String, String> descriptions = {};
 
+  /// [Uri] of the proxy server this security configuration provides access to.
   ///
+  /// If not given, the corresponding security configuration is for the
+  /// endpoint.
   Uri? proxy;
 
   /// A [List] of JSON-LD `@type` annotations.
