@@ -166,7 +166,7 @@ void main() {
 
       final nosecSc = parsedTd.securityDefinitions['nosec_sc'];
       expect(nosecSc is NoSecurityScheme, true);
-      expect(nosecSc?.proxy, 'http://example.org');
+      expect(nosecSc?.proxy, Uri.parse('http://example.org'));
       expect(nosecSc?.jsonLdType, ['Test']);
 
       final basicSc = parsedTd.securityDefinitions['basic_sc'];

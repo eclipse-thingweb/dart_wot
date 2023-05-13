@@ -42,8 +42,11 @@ abstract class SecurityScheme {
   /// A [Map] of multi-language [descriptions].
   Map<String, String> descriptions = {};
 
+  /// [Uri] of the proxy server this security configuration provides access to.
   ///
-  String? proxy;
+  /// If not given, the corresponding security configuration is for the
+  /// endpoint.
+  Uri? proxy;
 
   /// A [List] of JSON-LD `@type` annotations.
   List<String>? jsonLdType = [];
@@ -59,7 +62,7 @@ abstract class SecurityScheme {
   ) {
     parsedFields.add('scheme');
 
-    proxy = json.parseField<String>('proxy', parsedFields);
+    proxy = json.parseUriField('proxy', parsedFields);
     description = json.parseField<String>('description', parsedFields);
     descriptions
         .addAll(json.parseMapField<String>('descriptions', parsedFields) ?? {});
