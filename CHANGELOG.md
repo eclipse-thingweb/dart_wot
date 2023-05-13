@@ -1,3 +1,14 @@
+## 0.26.0
+
+- chore: address linting issues
+- refactor: decouple credentials and security scheme classes
+- feat!(security_scheme): use Uri instead of String for proxy field
+- feat: add ComboSecurityScheme
+- refactor!: rework deserialization of security schemes
+- feat(scripting_api): make InteractionOptions immutable
+- style: use const constructor in complex_example
+- feat: update JSON Schema definition to latest version
+
 ## 0.25.1
 
 - fix: mark package as compatible with Dart 3.x.x
