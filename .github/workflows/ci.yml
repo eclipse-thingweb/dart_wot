@@ -31,7 +31,7 @@ jobs:
       - name: Run tests with coverage
         run: dart run coverage:test_with_coverage
 
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: coverage/lcov.info
