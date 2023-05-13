@@ -12,7 +12,7 @@ import 'credentials.dart';
 /// [Credentials] used for the [AceSecurityScheme].
 class AceCredentials extends Credentials {
   /// Constructor.
-  AceCredentials(this.accessToken) : super('ace:ACESecurityScheme');
+  AceCredentials(this.accessToken);
 
   /// The access token associated with these [AceCredentials] in serialized
   /// form.

@@ -8,10 +8,10 @@ import '../../definitions/security/bearer_security_scheme.dart';
 
 import 'credentials.dart';
 
-/// [Credentials] used for the `BearerSecurityScheme`.
-class BearerCredentials extends Credentials<BearerSecurityScheme> {
+/// [Credentials] used for the [BearerSecurityScheme].
+class BearerCredentials extends Credentials {
   /// Constructor.
-  BearerCredentials(this.token) : super('bearer');
+  BearerCredentials(this.token);
 
   /// The [token] associated with these [BearerCredentials].
   String token;
