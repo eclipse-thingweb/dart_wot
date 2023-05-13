@@ -16,7 +16,7 @@ class PskSecurityScheme extends SecurityScheme {
   PskSecurityScheme({
     this.identity,
     String? description,
-    String? proxy,
+    Uri? proxy,
     Map<String, String>? descriptions,
   }) : super('psk') {
     this.description = description;

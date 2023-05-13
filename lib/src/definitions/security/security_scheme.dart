@@ -43,7 +43,7 @@ abstract class SecurityScheme {
   Map<String, String> descriptions = {};
 
   ///
-  String? proxy;
+  Uri? proxy;
 
   /// A [List] of JSON-LD `@type` annotations.
   List<String>? jsonLdType = [];
@@ -59,7 +59,7 @@ abstract class SecurityScheme {
   ) {
     parsedFields.add('scheme');
 
-    proxy = json.parseField<String>('proxy', parsedFields);
+    proxy = json.parseUriField('proxy', parsedFields);
     description = json.parseField<String>('description', parsedFields);
     descriptions
         .addAll(json.parseMapField<String>('descriptions', parsedFields) ?? {});
