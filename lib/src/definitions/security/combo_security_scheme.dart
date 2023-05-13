@@ -21,6 +21,8 @@ class ComboSecurityScheme extends SecurityScheme {
     super.description,
     super.descriptions,
     super.proxy,
+    super.jsonLdType,
+    super.additionalFields,
   }) : super(_schemeName);
 
   /// Creates a [ComboSecurityScheme] from a [json] object.
@@ -30,9 +32,7 @@ class ComboSecurityScheme extends SecurityScheme {
     Set<String> parsedFields,
   )   : oneOf = json.parseArrayField<String>('oneOf', parsedFields),
         allOf = json.parseArrayField<String>('allOf', parsedFields),
-        super(_schemeName) {
-    parseSecurityJson(json, parsedFields, prefixMapping);
-  }
+        super.fromJson(_schemeName, json, prefixMapping, parsedFields);
 
   /// Array of two or more strings identifying other named security scheme
   /// definitions, any one of which, when satisfied, will allow access.

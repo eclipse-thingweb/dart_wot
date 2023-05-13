@@ -11,35 +11,34 @@ import 'security_scheme.dart';
 
 const _defaultInValue = 'header';
 
+const _schemeName = 'basic';
+
 /// Basic Authentication security configuration identified by the Vocabulary
 /// Term `basic`.
 class BasicSecurityScheme extends SecurityScheme {
   /// Constructor.
   BasicSecurityScheme({
-    super.description,
-    super.proxy,
     this.name,
-    String? in_,
+    this.in_ = _defaultInValue,
+    super.description,
     super.descriptions,
-  })  : in_ = in_ ?? _defaultInValue,
-        super('basic');
+    super.proxy,
+    super.jsonLdType,
+    super.additionalFields,
+  }) : super(_schemeName);
 
   /// Creates a [BasicSecurityScheme] from a [json] object.
   BasicSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) : super('basic') {
-    final Set<String> parsedFields = {};
-
-    name = json.parseField<String>('name', parsedFields);
-    in_ = json.parseField<String>('in', parsedFields) ?? _defaultInValue;
-
-    parseSecurityJson(json, parsedFields, prefixMapping);
-  }
+    Set<String> parsedFields,
+  )   : name = json.parseField<String>('name', parsedFields),
+        in_ = json.parseField<String>('in', parsedFields) ?? _defaultInValue,
+        super.fromJson(_schemeName, json, prefixMapping, parsedFields);
 
   /// Name for query, header, cookie, or uri parameters.
-  late final String? name;
+  final String? name;
 
   /// Specifies the location of security authentication information.
-  late String in_ = 'header';
+  final String in_;
 }

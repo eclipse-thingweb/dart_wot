@@ -8,14 +8,24 @@ import 'package:curie/curie.dart';
 
 import 'security_scheme.dart';
 
+const _schemeName = 'auto';
+
 /// An automatic security configuration identified by the
 /// vocabulary term `auto`.
 class AutoSecurityScheme extends SecurityScheme {
+  /// Constructor.
+  AutoSecurityScheme({
+    super.description,
+    super.descriptions,
+    super.proxy,
+    super.jsonLdType,
+    super.additionalFields,
+  }) : super(_schemeName);
+
   /// Creates an [AutoSecurityScheme] from a [json] object.
   AutoSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) : super('auto') {
-    parseSecurityJson(json, {}, prefixMapping);
-  }
+    Set<String> parsedFields,
+  ) : super.fromJson(_schemeName, json, prefixMapping, parsedFields);
 }

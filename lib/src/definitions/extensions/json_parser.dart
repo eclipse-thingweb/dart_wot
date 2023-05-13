@@ -9,6 +9,16 @@ import '../interaction_affordances/event.dart';
 import '../interaction_affordances/interaction_affordance.dart';
 import '../interaction_affordances/property.dart';
 import '../link.dart';
+import '../security/ace_security_scheme.dart';
+import '../security/apikey_security_scheme.dart';
+import '../security/auto_security_scheme.dart';
+import '../security/basic_security_scheme.dart';
+import '../security/bearer_security_scheme.dart';
+import '../security/combo_security_scheme.dart';
+import '../security/digest_security_scheme.dart';
+import '../security/no_security_scheme.dart';
+import '../security/oauth2_security_scheme.dart';
+import '../security/psk_security_scheme.dart';
 import '../security/security_scheme.dart';
 import '../thing_description.dart';
 import '../validation/validation_exception.dart';
@@ -312,7 +322,7 @@ extension ParseField on Map<String, dynamic> {
   /// defined.
   Map<String, SecurityScheme>? parseSecurityDefinitions(
     PrefixMapping prefixMapping,
-    Set<String>? parsedFields,
+    Set<String> parsedFields,
   ) {
     final fieldValue =
         parseMapField<dynamic>('securityDefinitions', parsedFields);
@@ -326,7 +336,7 @@ extension ParseField on Map<String, dynamic> {
     for (final securityDefinition in fieldValue.entries) {
       final dynamic value = securityDefinition.value;
       if (value is Map<String, dynamic>) {
-        final securityScheme = SecurityScheme.fromJson(value, prefixMapping);
+        final securityScheme = value._parseSecurityScheme(prefixMapping, {});
         if (securityScheme != null) {
           result[securityDefinition.key] = securityScheme;
         }
@@ -334,6 +344,38 @@ extension ParseField on Map<String, dynamic> {
     }
 
     return result;
+  }
+
+  SecurityScheme? _parseSecurityScheme(
+    PrefixMapping prefixMapping,
+    Set<String> parsedFields,
+  ) {
+    final scheme = parseRequiredField('scheme', parsedFields);
+
+    switch (scheme) {
+      case 'auto':
+        return AutoSecurityScheme.fromJson(this, prefixMapping, parsedFields);
+      case 'basic':
+        return BasicSecurityScheme.fromJson(this, prefixMapping, parsedFields);
+      case 'bearer':
+        return BearerSecurityScheme.fromJson(this, prefixMapping, parsedFields);
+      case 'combo':
+        return ComboSecurityScheme.fromJson(this, prefixMapping, parsedFields);
+      case 'nosec':
+        return NoSecurityScheme.fromJson(this, prefixMapping, parsedFields);
+      case 'psk':
+        return PskSecurityScheme.fromJson(this, prefixMapping, parsedFields);
+      case 'digest':
+        return DigestSecurityScheme.fromJson(this, prefixMapping, parsedFields);
+      case 'apikey':
+        return ApiKeySecurityScheme.fromJson(this, prefixMapping, parsedFields);
+      case 'oauth2':
+        return OAuth2SecurityScheme.fromJson(this, prefixMapping, parsedFields);
+      case 'ace:ACESecurityScheme':
+        return AceSecurityScheme.fromJson(this, prefixMapping, parsedFields);
+    }
+
+    return null;
   }
 
   /// Parses [Property]s contained in this JSON object.
