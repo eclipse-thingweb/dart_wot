@@ -18,36 +18,32 @@ const _defaultQoPValue = 'auth';
 class DigestSecurityScheme extends SecurityScheme {
   /// Constructor.
   DigestSecurityScheme({
-    String? in_,
-    String? qop,
-    super.description,
-    super.proxy,
+    this.in_ = _defaultInValue,
+    this.qop = _defaultQoPValue,
     this.name,
+    super.description,
     super.descriptions,
-  })  : in_ = in_ ?? _defaultInValue,
-        qop = qop ?? _defaultQoPValue,
-        super('digest');
+    super.proxy,
+    super.jsonLdType,
+    super.additionalFields,
+  }) : super('digest');
 
   /// Creates a [DigestSecurityScheme] from a [json] object.
   DigestSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) : super('digest') {
-    final Set<String> parsedFields = {};
-
-    name = json.parseField<String>('name', parsedFields);
-    in_ = json.parseField<String>('in', parsedFields) ?? _defaultInValue;
-    qop = json.parseField<String>('qop', parsedFields) ?? _defaultInValue;
-
-    parseSecurityJson(json, parsedFields, prefixMapping);
-  }
+    Set<String> parsedFields,
+  )   : name = json.parseField<String>('name', parsedFields),
+        in_ = json.parseField<String>('in', parsedFields) ?? _defaultInValue,
+        qop = json.parseField<String>('qop', parsedFields) ?? _defaultInValue,
+        super.fromJson('digest', json, prefixMapping, parsedFields);
 
   /// Name for query, header, cookie, or uri parameters.
-  late final String? name;
+  final String? name;
 
   /// Specifies the location of security authentication information.
-  late final String in_;
+  final String in_;
 
   /// Quality of protection.
-  late final String? qop;
+  final String qop;
 }

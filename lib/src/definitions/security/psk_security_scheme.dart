@@ -9,33 +9,29 @@ import 'package:curie/curie.dart';
 import '../extensions/json_parser.dart';
 import 'security_scheme.dart';
 
+const _schemeName = 'psk';
+
 /// Pre-shared key authentication security configuration identified by the
 /// Vocabulary Term `psk`.
 class PskSecurityScheme extends SecurityScheme {
   /// Constructor.
   PskSecurityScheme({
     this.identity,
-    String? description,
-    Uri? proxy,
-    Map<String, String>? descriptions,
-  }) : super('psk') {
-    this.description = description;
-    this.proxy = proxy;
-    this.descriptions.addAll(descriptions ?? {});
-  }
+    super.description,
+    super.descriptions,
+    super.proxy,
+    super.jsonLdType,
+    super.additionalFields,
+  }) : super(_schemeName);
 
   /// Creates a [PskSecurityScheme] from a [json] object.
   PskSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) : super('psk') {
-    final Set<String> parsedFields = {};
-
-    identity = json.parseField<String>('identity');
-
-    parseSecurityJson(json, parsedFields, prefixMapping);
-  }
+    Set<String> parsedFields,
+  )   : identity = json.parseField<String>('identity'),
+        super.fromJson(_schemeName, json, prefixMapping, parsedFields);
 
   /// Name for query, header, cookie, or uri parameters.
-  String? identity;
+  final String? identity;
 }

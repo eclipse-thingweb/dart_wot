@@ -10,41 +10,44 @@ import '../extensions/json_parser.dart';
 
 import 'security_scheme.dart';
 
+const _schemeName = 'ace:ACESecurityScheme';
+
 /// Experimental ACE Security Scheme.
 class AceSecurityScheme extends SecurityScheme {
   /// Constructor.
   AceSecurityScheme({
-    String? description,
     this.as,
     this.audience,
     this.scopes,
     this.cnonce,
-    Map<String, String>? descriptions,
-  }) : super('ace:ACESecurityScheme') {
-    this.description = description;
-    this.descriptions.addAll(descriptions ?? {});
-  }
+    super.description,
+    super.descriptions,
+    super.proxy,
+    super.jsonLdType,
+    super.additionalFields,
+  }) : super(_schemeName);
 
   /// Creates an [AceSecurityScheme] from a [json] object.
   AceSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) : super('ace:ACESecurityScheme') {
-    final Set<String> parsedFields = {};
-
-    as = json.parseField<String>('ace:as', parsedFields);
-    cnonce = json.parseField<bool>('ace:cnonce', parsedFields);
-    audience = json.parseField<String>('ace:audience', parsedFields);
-    scopes = json.parseArrayField<String>('ace:scopes', parsedFields);
-
-    parseSecurityJson(json, parsedFields, prefixMapping);
-  }
+    Set<String> parsedFields,
+  )   : as = json.parseField<String>('ace:as', parsedFields),
+        cnonce = json.parseField<bool>('ace:cnonce', parsedFields),
+        audience = json.parseField<String>('ace:audience', parsedFields),
+        scopes = json.parseArrayField<String>('ace:scopes', parsedFields),
+        super.fromJson(
+          _schemeName,
+          json,
+          prefixMapping,
+          parsedFields,
+        );
 
   /// URI of the authorization server.
-  String? as;
+  final String? as;
 
   /// The intended audience for this [AceSecurityScheme].
-  String? audience;
+  final String? audience;
 
   /// Set of authorization scope identifiers provided as an array.
   ///
@@ -52,8 +55,8 @@ class AceSecurityScheme extends SecurityScheme {
   /// associated with forms in order to identify what resources a client may
   /// access and how. The values associated with a form should be chosen from
   /// those defined in an [AceSecurityScheme] active on that form.
-  List<String>? scopes;
+  final List<String>? scopes;
 
   /// Indicates whether a [cnonce] is required by the Resource Server.
-  bool? cnonce;
+  final bool? cnonce;
 }

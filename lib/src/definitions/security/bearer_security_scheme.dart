@@ -13,53 +13,50 @@ const _defaultInValue = 'header';
 const _defaultAlgValue = 'ES256';
 const _defaultFormatValue = 'jwt';
 
+const _schemeName = 'bearer';
+
 /// Bearer Token security configuration identified by the Vocabulary Term
 /// `bearer`.
 class BearerSecurityScheme extends SecurityScheme {
   /// Constructor.
   BearerSecurityScheme({
     this.name,
-    String? alg,
-    String? format,
+    this.alg = _defaultAlgValue,
+    this.format = _defaultFormatValue,
     this.authorization,
-    String? in_,
-    super.proxy,
+    this.in_ = _defaultInValue,
     super.description,
     super.descriptions,
-  })  : in_ = in_ ?? _defaultInValue,
-        alg = alg ?? _defaultAlgValue,
-        format = format ?? _defaultFormatValue,
-        super('bearer');
+    super.proxy,
+    super.jsonLdType,
+    super.additionalFields,
+  }) : super(_schemeName);
 
   /// Creates a [BearerSecurityScheme] from a [json] object.
   BearerSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) : super('bearer') {
-    final Set<String> parsedFields = {};
-
-    name = json.parseField<String>('name', parsedFields);
-    in_ = json.parseField<String>('in', parsedFields) ?? _defaultInValue;
-    format =
-        json.parseField<String>('format', parsedFields) ?? _defaultFormatValue;
-    alg = json.parseField<String>('alg', parsedFields) ?? _defaultAlgValue;
-    authorization = json.parseField<String>('authorization', parsedFields);
-
-    parseSecurityJson(json, parsedFields, prefixMapping);
-  }
+    Set<String> parsedFields,
+  )   : name = json.parseField<String>('name', parsedFields),
+        in_ = json.parseField<String>('in', parsedFields) ?? _defaultInValue,
+        format = json.parseField<String>('format', parsedFields) ??
+            _defaultFormatValue,
+        alg = json.parseField<String>('alg', parsedFields) ?? _defaultAlgValue,
+        authorization = json.parseField<String>('authorization', parsedFields),
+        super.fromJson(_schemeName, json, prefixMapping, parsedFields);
 
   /// URI of the authorization server.
-  late final String? authorization;
+  final String? authorization;
 
   /// Name for query, header, cookie, or uri parameters.
-  late final String? name;
+  final String? name;
 
   /// Encoding, encryption, or digest algorithm.
-  late final String alg;
+  final String alg;
 
   /// Specifies format of security authentication information.
-  late final String format;
+  final String format;
 
   /// Specifies the location of security authentication information.
-  late final String in_;
+  final String in_;
 }

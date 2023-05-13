@@ -8,14 +8,24 @@ import 'package:curie/curie.dart';
 
 import 'security_scheme.dart';
 
+const _schemeName = 'nosec';
+
 /// A security configuration corresponding to identified by the Vocabulary Term
 /// `nosec`.
 class NoSecurityScheme extends SecurityScheme {
+  /// Constructor.
+  NoSecurityScheme({
+    super.description,
+    super.descriptions,
+    super.proxy,
+    super.jsonLdType,
+    super.additionalFields,
+  }) : super(_schemeName);
+
   /// Creates a [NoSecurityScheme] from a [json] object.
   NoSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
-  ) : super('nosec') {
-    parseSecurityJson(json, {}, prefixMapping);
-  }
+    Set<String> parsedFields,
+  ) : super.fromJson(_schemeName, json, prefixMapping, parsedFields);
 }
