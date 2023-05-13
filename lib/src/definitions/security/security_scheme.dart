@@ -12,6 +12,7 @@ import 'apikey_security_scheme.dart';
 import 'auto_security_scheme.dart';
 import 'basic_security_scheme.dart';
 import 'bearer_security_scheme.dart';
+import 'combo_security_scheme.dart';
 import 'digest_security_scheme.dart';
 import 'no_security_scheme.dart';
 import 'oauth2_security_scheme.dart';
@@ -84,6 +85,8 @@ abstract class SecurityScheme {
         return BasicSecurityScheme.fromJson(json, prefixMapping);
       case 'bearer':
         return BearerSecurityScheme.fromJson(json, prefixMapping);
+      case 'combo':
+        return ComboSecurityScheme.fromJson(json, prefixMapping, {});
       case 'nosec':
         return NoSecurityScheme.fromJson(json, prefixMapping);
       case 'psk':
