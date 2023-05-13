@@ -34,12 +34,12 @@ class ThingDescriptionValidationException extends ValidationException {
 
 final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
   'title': 'Thing Description',
-  'version': '1.1-10-June-2022',
+  'version': '1.1-23-March-2023',
   'description':
       'JSON Schema for validating TD instances against the TD information '
           'model. TD instances can be with or without terms that have default '
           'values',
-  '\$schema ': 'http://json-schema.org/draft-07/schema#',
+  '\$schema': 'http://json-schema.org/draft-07/schema#',
   '\$id':
       'https://raw.githubusercontent.com/w3c/wot-thing-description/main/validation/td-json-schema-validation.json',
   'definitions': {
@@ -58,7 +58,8 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
       'oneOf': [
         {
           'type': 'array',
-          'items': {'type': 'string'}
+          'items': {'type': 'string'},
+          'minItems': 1
         },
         {'type': 'string'}
       ]
@@ -148,7 +149,7 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
           }
         },
         {
-          '\$comment': 'Only the new context URI',
+          '\$comment': 'Only the old context URI',
           '\$ref': '#/definitions/thing-context-td-uri-v1'
         }
       ]
@@ -261,7 +262,8 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
       'type': 'object',
       'properties': {
         'contentType': {'type': 'string'}
-      }
+      },
+      'required': ['contentType']
     },
     'form_element_base': {
       'type': 'object',
