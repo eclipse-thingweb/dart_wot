@@ -1,3 +1,8 @@
+## 0.25.0
+
+- feat(binding-coap)!: use blockSize instead of blockSZX
+- fix(binding-coap): fix ACE behavior on Unauthorized Response
+
 ## 0.24.1
 
 - fix(discovery): extract port from DNS SRV records
