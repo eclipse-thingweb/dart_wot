@@ -33,37 +33,37 @@
 - style: fix formatting of mocked classes
 - chore(form): address linting issue
 
-# 0.23.1
+## 0.23.1
 
 - chore: update dependencies
 
-# 0.23.0
+## 0.23.0
 
 - fix: improved multicast discovery with CoRE Link-Format
 
-# 0.22.1
+## 0.22.1
 
 - fix(definitions): added missing `writeallproperties` operation
 
-# 0.22.0
+## 0.22.0
 
 Applied an extensive rework to the `DataSchema` class, added missing TD fields,
 and improved the support for additional fields and `@context` extensions via
 JSON-LD.
 
-# 0.21.1
+## 0.21.1
 
 - fix: correctly parse String @context entries
 
-# 0.21.0
+## 0.21.0
 
-## Fixes
+### Fixes
 
 - fix(coap_client): correctly set URI path for discovery
 - fix(coap_client): set accept to application/link-format for CoRE Link Format discovery
 - fix(binding-coap): improve reponse error handling
 
-## New or Updated Features
+### New or Updated Features
 
 - feat: adjust CoAP binding to new library API
 - feat: add Codec for CoRE Link Format
@@ -75,18 +75,18 @@ JSON-LD.
 - feat: add support for CoRE RD discovery
 - feat: add missing data schema fields
 
-## Miscellaneous
+### Miscellaneous
 
 Various refactorings, updated README file.
 
-# 0.20.1
+## 0.20.1
 
 - Refactored Direct CoAP Discovery internally and updated example
 - Fixed a bug that occurred when an affordance output contains zero bytes
 - Fixed a bug that prevented the correct setting of a CoAP Discovery URL
 - Set the correct Content-Format for CoAP Discovery with CoRE Link Format
 
-# 0.20.0
+## 0.20.0
 
 - feat: add data model for AutoSecurityScheme
 - refactor: refactor HttpRequestMethod as enhanced enum
@@ -94,26 +94,26 @@ Various refactorings, updated README file.
   for discovery
 - feat: add example for basic and auto security
 
-# 0.19.2
+## 0.19.2
 
 - fix: temporarily set `coap` version to 4.1.0
 
-# 0.19.1
+## 0.19.1
 
 - fix: prevent CoRE Web Links from being fetched twice
 
-# 0.19.0
+## 0.19.0
 
 - Breaking: Set direct as default Discovery method
 - Made linting config even stricter
 
-# 0.18.0
+## 0.18.0
 
 - Added support for parsing of a number of missing TD fields
 - Replaced a number of Errors with Exceptions to make library more stable
 - Made various refactorings, applying a stricter linting config
 
-# 0.17.0
+## 0.17.0
 
 - Added JSON Schema Validation for TDs
 - Added support for basic CoRE Resource Discovery
