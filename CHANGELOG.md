@@ -1,3 +1,7 @@
+## 0.27.1
+
+- chore: fix CHANGELOG formatting
+
 ## 0.27.0
 
 - feat!: migrate library to Dart 3
