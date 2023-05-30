@@ -24,10 +24,8 @@ class Content {
 
   /// Converts the [body] of the content to a [ByteBuffer] asynchronously.
   Future<ByteBuffer> get byteBuffer async {
-    final buffer = Uint8Buffer();
-    await for (final bytes in body) {
-      buffer.addAll(bytes);
-    }
+    final buffer = Uint8Buffer()..addAll(await toByteList());
+
     return buffer.buffer;
   }
 
