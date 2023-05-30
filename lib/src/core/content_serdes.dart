@@ -6,7 +6,6 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:http_parser/http_parser.dart';
 import 'package:json_schema/json_schema.dart';
@@ -169,19 +168,19 @@ class ContentSerdes {
     final mimeType = parsedMediaType.mimeType;
     final parameters = parsedMediaType.parameters;
 
-    ByteBuffer bytes;
+    List<int> bytes;
     final codec = _getCodecFromMediaType(mimeType);
+
     if (codec != null) {
       bytes = codec.valueToBytes(value, dataSchema, parameters);
     } else {
       // Media Type is unsupported. Convert the String representation to bytes
       // instead.
       // TODO(JKRhb): Could be moved to a dedicated Value class method.
-      bytes = utf8.encoder.convert(value.toString()).buffer;
+      bytes = utf8.encoder.convert(value.toString());
     }
 
-    final byteList = bytes.asUint8List().toList(growable: false);
-    return Content(resolvedMediaType, Stream.value(byteList));
+    return Content(resolvedMediaType, Stream.value(bytes));
   }
 
   /// Converts a [Content] object to a typed [Object].
@@ -197,10 +196,10 @@ class ContentSerdes {
     final mimeType = parsedMediaType.mimeType;
     final parameters = parsedMediaType.parameters;
 
-    final bytes = await content.byteBuffer;
+    final bytes = await content.toByteList();
 
     // TODO: Should null be returned in this case?
-    if (bytes.lengthInBytes == 0) {
+    if (bytes.isEmpty) {
       return null;
     }
 
@@ -211,7 +210,7 @@ class ContentSerdes {
       return value;
     } else {
       // TODO(JKRhb): Should unsupported data be returned as a String?
-      return utf8.decode(bytes.asUint8List());
+      return utf8.decode(bytes.toList());
     }
   }
 }

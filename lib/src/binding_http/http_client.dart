@@ -245,9 +245,9 @@ final class HttpClient implements ProtocolClient {
   }
 
   Future<String> _getInputFromContent(Content content) async {
-    final inputBuffer = await content.byteBuffer;
-    return utf8.decoder
-        .convert(inputBuffer.asUint8List().toList(growable: false));
+    final inputBuffer =
+        await content.body.expand((element) => element).toList();
+    return utf8.decoder.convert(inputBuffer);
   }
 
   Content _contentFromResponse(Form form, StreamedResponse response) {

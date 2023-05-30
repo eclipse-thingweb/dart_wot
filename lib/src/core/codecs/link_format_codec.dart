@@ -5,7 +5,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:coap/coap.dart';
 
@@ -17,7 +16,7 @@ import 'content_codec.dart';
 /// [RFC 6690]: https://datatracker.ietf.org/doc/html/rfc6690
 class LinkFormatCodec extends ContentCodec {
   @override
-  ByteBuffer valueToBytes(
+  List<int> valueToBytes(
     Object? value,
     DataSchema? dataSchema,
     Map<String, String>? parameters,
@@ -25,8 +24,7 @@ class LinkFormatCodec extends ContentCodec {
     // TODO(JKRhb): The question which value types are allowed needs to be
     //              revisited.
     if (value is CoapResource) {
-      return Uint8List.fromList(CoapLinkFormat.serialize(value).codeUnits)
-          .buffer;
+      return CoapLinkFormat.serialize(value).codeUnits;
     }
 
     throw FormatException('Error deserializing CoRE Link Format', value);
@@ -34,11 +32,11 @@ class LinkFormatCodec extends ContentCodec {
 
   @override
   Object? bytesToValue(
-    ByteBuffer bytes,
+    List<int> bytes,
     DataSchema? dataSchema,
     Map<String, String>? parameters,
   ) {
-    final string = utf8.decode(bytes.asUint8List().toList(growable: false));
+    final string = utf8.decode(bytes);
     return CoapLinkFormat.parse(string);
   }
 }

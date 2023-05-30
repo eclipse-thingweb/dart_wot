@@ -107,7 +107,7 @@ final class MqttClient implements ProtocolClient {
       ..publishMessage(
         topic,
         qualityOfService,
-        Uint8Buffer()..addAll((await content.byteBuffer).asUint8List()),
+        Uint8Buffer()..addAll(await content.toByteList()),
         retain: form.retain ?? false,
       )
       ..disconnect();
@@ -162,7 +162,7 @@ final class MqttClient implements ProtocolClient {
       ..publishMessage(
         topic,
         qualityOfService,
-        Uint8Buffer()..addAll((await content.byteBuffer).asUint8List()),
+        Uint8Buffer()..addAll(await content.toByteList()),
         retain: form.retain ?? false,
       )
       ..disconnect();
