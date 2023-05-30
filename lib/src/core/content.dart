@@ -30,6 +30,10 @@ class Content {
     }
     return buffer.buffer;
   }
+
+  /// Converts the [body] of this [Content] to a [List] of bytes asynchronously.
+  Future<List<int>> toByteList() async =>
+      body.expand<int>((element) => element).toList();
 }
 
 /// [Content] specific for discovery.
