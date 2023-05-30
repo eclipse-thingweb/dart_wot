@@ -17,7 +17,7 @@ dev_dependencies:
 
 dependencies:
   cbor: ^5.1.2
-  coap: ^8.0.0
+  coap: ^9.0.0
   collection: ^1.16.0
   curie: ^0.1.0
   dcaf: ^0.1.0
