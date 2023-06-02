@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import 'package:curie/curie.dart';
-import 'package:json_schema3/json_schema3.dart';
+import 'package:json_schema/json_schema.dart';
 import 'package:uri/uri.dart';
 
 import '../../dart_wot.dart';

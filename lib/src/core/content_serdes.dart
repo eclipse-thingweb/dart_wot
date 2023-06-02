@@ -9,7 +9,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:http_parser/http_parser.dart';
-import 'package:json_schema3/json_schema3.dart';
+import 'package:json_schema/json_schema.dart';
 
 import '../definitions/data_schema.dart';
 import 'codecs/cbor_codec.dart';

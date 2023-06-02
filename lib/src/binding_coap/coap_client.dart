@@ -10,7 +10,6 @@ import 'dart:typed_data';
 import 'package:coap/coap.dart' as coap;
 import 'package:coap/config/coap_config_default.dart';
 import 'package:dcaf/dcaf.dart';
-import 'package:typed_data/typed_buffers.dart';
 
 import '../core/content.dart';
 import '../core/credentials/ace_credentials.dart';
@@ -98,14 +97,13 @@ final class CoapClient implements ProtocolClient {
     coap.BlockSize? block1Size,
     coap.BlockSize? block2Size,
   }) async {
-    final payload = Uint8Buffer();
-    if (content != null) {
-      payload.addAll((await content.byteBuffer).asUint8List());
-    }
+    final payload = (await content?.byteBuffer)?.asUint8List();
 
-    final request = coap.CoapRequest(requestMethod)
-      ..payload = payload
-      ..uriPath = uri.path
+    final request = coap.CoapRequest(
+      uri,
+      requestMethod,
+      payload: payload,
+    )
       ..accept = accept
       ..contentFormat = format;
 
@@ -115,10 +113,6 @@ final class CoapClient implements ProtocolClient {
 
     if (block2Size != null) {
       request.block2 = coap.Block2Option.fromParts(0, block2Size);
-    }
-
-    if (uri.query.isNotEmpty) {
-      request.uriQuery = uri.query;
     }
 
     return request;

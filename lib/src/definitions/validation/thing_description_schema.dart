@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:json_schema3/json_schema3.dart';
+import 'package:json_schema/json_schema.dart';
 
 import 'validation_exception.dart';
 

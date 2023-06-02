@@ -21,7 +21,7 @@ final Map<Uri, PskCredentials> _pskCredentialsStore = {
 PskCredentials? _pskCredentialsCallback(
   Uri uri,
   Form? form,
-  Uint8List? identityHint,
+  String? identityHint,
 ) {
   final key = Uri(scheme: uri.scheme, host: uri.host);
 
