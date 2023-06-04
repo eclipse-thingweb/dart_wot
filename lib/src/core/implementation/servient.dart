@@ -71,9 +71,8 @@ class Servient {
   /// The [WoT] runtime can be used for consuming, procuding, and discovering
   /// Things.
   Future<WoT> start() async {
-    final serverStatuses = _servers
-        .map((server) => server.start(_serverSecurityCallback))
-        .toList(growable: false);
+    final serverStatuses =
+        _servers.map((server) => server.start(this)).toList(growable: false);
 
     for (final clientFactory in _clientFactories.values) {
       clientFactory.init();
@@ -104,6 +103,7 @@ class Servient {
       return;
     }
     for (final interactionAffordance in interactionAffordances) {
+      // FIXME: Properly augment forms
       interactionAffordance.forms.clear();
     }
   }

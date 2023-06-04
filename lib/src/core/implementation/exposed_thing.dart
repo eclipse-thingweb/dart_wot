@@ -58,9 +58,9 @@ class ExposedThing implements scripting_api.ExposedThing {
   }
 
   @override
-  Future<void> expose() {
-    // TODO(JKRhb): implement expose
-    throw UnimplementedError();
+  Future<void> expose() async {
+    // TODO: Refactor
+    return servient.expose(this);
   }
 
   @override

@@ -32,7 +32,7 @@ final class CoapServer implements ProtocolServer {
   }
 
   @override
-  Future<void> start([ServerSecurityCallback? serverSecurityCallback]) {
+  Future<void> start(Servient servient) {
     // TODO(JKRhb): implement start
     throw UnimplementedError();
   }

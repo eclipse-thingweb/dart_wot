@@ -24,8 +24,10 @@ void main() {
       expect(defaultServer.port, 5683);
       expect(defaultServer.scheme, "coap");
 
+      final servient = Servient();
+
       expect(
-        () async => defaultServer.start(),
+        () async => defaultServer.start(servient),
         throwsA(const TypeMatcher<UnimplementedError>()),
       );
       expect(
