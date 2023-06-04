@@ -4,6 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+export "protocol_interfaces/exposable_thing.dart";
 export "protocol_interfaces/protocol_client.dart";
 export "protocol_interfaces/protocol_client_factory.dart";
 export "protocol_interfaces/protocol_discoverer.dart";

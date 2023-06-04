@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "package:meta/meta.dart";
+
 import "../definitions.dart";
 import "interaction_input.dart";
 import "interaction_output.dart";
@@ -88,7 +90,11 @@ abstract interface class ExposedThing {
 
   /// Informs all subscribers about the change of the property with the given
   /// [name].
-  Future<void> emitPropertyChange(String name);
+  @experimental
+  Future<void> emitPropertyChange(
+    String name, [
+    String contentType = "application/json",
+  ]);
 
   /// Assigns a [handler] function to an action with a given [name].
   ///
@@ -115,5 +121,10 @@ abstract interface class ExposedThing {
   /// occurred.
   ///
   /// You can provide (optional) input [data] that is emitted with the event.
-  Future<void> emitEvent(String name, InteractionInput data);
+  @experimental
+  Future<void> emitEvent(
+    String name,
+    InteractionInput data, [
+    String contentType = "application/json",
+  ]);
 }
