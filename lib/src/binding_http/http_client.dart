@@ -188,18 +188,15 @@ final class HttpClient implements ProtocolClient {
   Future<StreamedResponse> _createRequest(
     Form form,
     OperationType operationType,
-    String? payload,
+    Content? content,
   ) async {
     final requestMethod =
         HttpRequestMethod.getRequestMethod(form, operationType);
     final Uri uri = form.resolvedHref;
 
     final request = Request(requestMethod.methodName, uri)
-      ..headers.addAll(_getHeadersFromForm(form));
-
-    if (payload != null) {
-      request.body = payload;
-    }
+      ..headers.addAll(_getHeadersFromForm(form))
+      ..bodyBytes = await content?.toByteList() ?? [];
 
     await _applyCredentialsFromForm(request, form);
 
@@ -244,12 +241,6 @@ final class HttpClient implements ProtocolClient {
     return headers;
   }
 
-  Future<String> _getInputFromContent(Content content) async {
-    final inputBuffer = await content.byteBuffer;
-    return utf8.decoder
-        .convert(inputBuffer.asUint8List().toList(growable: false));
-  }
-
   Content _contentFromResponse(Form form, StreamedResponse response) {
     final type = response.headers['Content-Type'] ?? form.contentType;
     final responseStream = response.stream.asBroadcastStream()
@@ -259,9 +250,8 @@ final class HttpClient implements ProtocolClient {
 
   @override
   Future<Content> invokeResource(Form form, Content content) async {
-    final input = await _getInputFromContent(content);
     final response =
-        await _createRequest(form, OperationType.invokeaction, input);
+        await _createRequest(form, OperationType.invokeaction, content);
     return _contentFromResponse(form, response);
   }
 
@@ -284,8 +274,7 @@ final class HttpClient implements ProtocolClient {
 
   @override
   Future<void> writeResource(Form form, Content content) async {
-    final input = await _getInputFromContent(content);
-    await _createRequest(form, OperationType.writeproperty, input);
+    await _createRequest(form, OperationType.writeproperty, content);
   }
 
   @override

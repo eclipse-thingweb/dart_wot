@@ -97,7 +97,7 @@ final class CoapClient implements ProtocolClient {
     coap.BlockSize? block1Size,
     coap.BlockSize? block2Size,
   }) async {
-    final payload = (await content?.byteBuffer)?.asUint8List();
+    final payload = await content?.toByteList();
 
     final request = coap.CoapRequest(
       uri,

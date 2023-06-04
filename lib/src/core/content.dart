@@ -24,12 +24,14 @@ class Content {
 
   /// Converts the [body] of the content to a [ByteBuffer] asynchronously.
   Future<ByteBuffer> get byteBuffer async {
-    final buffer = Uint8Buffer();
-    await for (final bytes in body) {
-      buffer.addAll(bytes);
-    }
+    final buffer = Uint8Buffer()..addAll(await toByteList());
+
     return buffer.buffer;
   }
+
+  /// Converts the [body] of this [Content] to a [List] of bytes asynchronously.
+  Future<List<int>> toByteList() async =>
+      body.expand<int>((element) => element).toList();
 }
 
 /// [Content] specific for discovery.
