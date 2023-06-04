@@ -19,7 +19,7 @@ class ExposedThing implements scripting_api.ExposedThing {
   final ThingDescription thingDescription;
 
   /// The [Servient] associated with this [ExposedThing].
-  final Servient servient;
+  final InternalServient servient;
 
   /// A [Map] of all the [properties] of this [ExposedThing].
   final Map<String, Property>? properties = {};
@@ -57,9 +57,9 @@ class ExposedThing implements scripting_api.ExposedThing {
   }
 
   @override
-  Future<void> expose() {
-    // TODO(JKRhb): implement expose
-    throw UnimplementedError();
+  Future<void> expose() async {
+    // TODO: Refactor
+    return servient.expose(this);
   }
 
   @override

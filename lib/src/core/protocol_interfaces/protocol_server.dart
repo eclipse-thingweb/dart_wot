@@ -4,6 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "../implementation/servient.dart";
 import "../definitions/credentials/callbacks.dart";
 import "../scripting_api/exposed_thing.dart";
 
@@ -18,7 +19,7 @@ abstract interface class ProtocolServer {
   // TODO(JKRhb): Check if a Servient should be passed as a parameter instead
   /// Starts the server. Accepts a callback for retrieving a [Map] of
   /// credentials for [ExposedThing]s at runtime.
-  Future<void> start([ServerSecurityCallback? serverSecurityCallback]);
+  Future<void> start(Servient servient);
 
   /// Stops the server.
   Future<void> stop();

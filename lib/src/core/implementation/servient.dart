@@ -91,9 +91,8 @@ class InternalServient implements Servient {
 
   @override
   Future<WoT> start() async {
-    final serverStatuses = _servers
-        .map((server) => server.start(_serverSecurityCallback))
-        .toList(growable: false);
+    final serverStatuses =
+        _servers.map((server) => server.start(this)).toList(growable: false);
 
     for (final clientFactory in _clientFactories.values) {
       clientFactory.init();
@@ -120,6 +119,7 @@ class InternalServient implements Servient {
       return;
     }
     for (final interactionAffordance in interactionAffordances) {
+      // FIXME: Properly augment forms
       interactionAffordance.forms.clear();
     }
   }
