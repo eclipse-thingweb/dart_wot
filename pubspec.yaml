@@ -15,15 +15,15 @@ dev_dependencies:
   test: ^1.24.3
 
 dependencies:
-  cbor: ^5.1.2
+  cbor: ^6.1.0
   coap: ^9.0.0
   collection: ^1.17.2
   curie: ^0.1.0
   dcaf: ^0.1.0
-  http: ^0.13.4
-  http_auth: ^1.0.1
+  http: ^1.0.0
+  http_auth: ^1.0.2
   http_parser: ^4.0.0
-  json_schema: ^5.0.0
+  json_schema: ^5.1.2
   meta: ^1.8.0
   mqtt_client: ^10.0.0
   multicast_dns: ^0.3.2+1
