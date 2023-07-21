@@ -87,15 +87,22 @@ extension MqttFormExtension on AugmentedForm {
 
   /// Gets the MQTT topic for publishing from this [Form].
   ///
-  /// Throws an [Exception] if no topic could be retrieved.
+  /// If present, this getter uses the dedicated vocabulary term `topic`.
+  /// Otherwise, the URI path from the `href` field is being used as a fallback.
   String get topicName {
     final topic = _obtainVocabularyTerm<String>("topic");
 
-    if (topic == null) {
-      throw MqttBindingException("MQTT topic was not defined on form.");
+    if (topic != null) {
+      return topic;
     }
 
-    return topic;
+    final path = Uri.decodeComponent(href.path);
+
+    if (path.isEmpty) {
+      return path;
+    }
+
+    return path.substring(1);
   }
 
   /// Gets the MQTT topic for subscribing from this [Form].
