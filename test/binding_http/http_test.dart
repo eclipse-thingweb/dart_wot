@@ -46,16 +46,18 @@ void main() {
       expect(customServer2.scheme, 'https');
     });
 
-    test('HTTP Security Schemes', () async {
-      const username = 'username';
-      const password = 'password';
-      const token = 'thisIsTheMostAwesomeTokenEver!';
+    test(
+      'HTTP Security Schemes',
+      () async {
+        const username = 'username';
+        const password = 'password';
+        const token = 'thisIsTheMostAwesomeTokenEver!';
 
-      // TODO(JKRhb): Does not have an effect in the TD yet (and is negotiated
-      //              automatically by http_auth instead)
-      const qop = 'auth-int';
+        // TODO(JKRhb): Does not have an effect in the TD yet (and is negotiated
+        //              automatically by http_auth instead)
+        const qop = 'auth-int';
 
-      const thingDescriptionJson = '''
+        const thingDescriptionJson = '''
       {
         "@context": ["http://www.w3.org/ns/td"],
         "title": "Test Thing",
@@ -101,46 +103,49 @@ void main() {
       }
       ''';
 
-      final parsedTd = ThingDescription(thingDescriptionJson);
+        final parsedTd = ThingDescription(thingDescriptionJson);
 
-      final Map<String, BasicCredentials> basicCredentialsStore = {
-        'httpbin.org': BasicCredentials(username, password),
-      };
+        final Map<String, BasicCredentials> basicCredentialsStore = {
+          'httpbin.org': BasicCredentials(username, password),
+        };
 
-      final Map<String, DigestCredentials> digestCredentialsStore = {
-        'httpbin.org': DigestCredentials(username, password),
-      };
+        final Map<String, DigestCredentials> digestCredentialsStore = {
+          'httpbin.org': DigestCredentials(username, password),
+        };
 
-      final Map<String, BearerCredentials> bearerCredentialsStore = {
-        'httpbin.org': BearerCredentials(token),
-      };
+        final Map<String, BearerCredentials> bearerCredentialsStore = {
+          'httpbin.org': BearerCredentials(token),
+        };
 
-      final clientSecurityProvider = ClientSecurityProvider(
-        basicCredentialsCallback: (uri, form, [invalidCredentials]) async {
-          return basicCredentialsStore[uri.host];
-        },
-        digestCredentialsCallback: (uri, form, [invalidCredentials]) async =>
-            digestCredentialsStore[uri.host],
-        bearerCredentialsCallback: (uri, form, [invalidCredentials]) async =>
-            bearerCredentialsStore[uri.host],
-      );
+        final clientSecurityProvider = ClientSecurityProvider(
+          basicCredentialsCallback: (uri, form, [invalidCredentials]) async {
+            return basicCredentialsStore[uri.host];
+          },
+          digestCredentialsCallback: (uri, form, [invalidCredentials]) async =>
+              digestCredentialsStore[uri.host],
+          bearerCredentialsCallback: (uri, form, [invalidCredentials]) async =>
+              bearerCredentialsStore[uri.host],
+        );
 
-      final servient = Servient(clientSecurityProvider: clientSecurityProvider)
-        ..addClientFactory(HttpClientFactory());
-      final wot = await servient.start();
+        final servient =
+            Servient(clientSecurityProvider: clientSecurityProvider)
+              ..addClientFactory(HttpClientFactory());
+        final wot = await servient.start();
 
-      final consumedThing = await wot.consume(parsedTd);
-      final result = await consumedThing.readProperty('status');
-      final value = await result.value();
-      expect(value, {'authenticated': true, 'user': username});
+        final consumedThing = await wot.consume(parsedTd);
+        final result = await consumedThing.readProperty('status');
+        final value = await result.value();
+        expect(value, {'authenticated': true, 'user': username});
 
-      // final result2 = await consumedThing.readProperty('status2');
-      // final value2 = await result2.value();
-      // expect(value2, {'authenticated': true, 'user': username});
+        // final result2 = await consumedThing.readProperty('status2');
+        // final value2 = await result2.value();
+        // expect(value2, {'authenticated': true, 'user': username});
 
-      final result3 = await consumedThing.readProperty('status3');
-      final value3 = await result3.value();
-      expect(value3, {'authenticated': true, 'token': token});
-    });
+        final result3 = await consumedThing.readProperty('status3');
+        final value3 = await result3.value();
+        expect(value3, {'authenticated': true, 'token': token});
+      },
+      skip: true,
+    );
   });
 }

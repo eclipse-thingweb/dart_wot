@@ -238,8 +238,10 @@ void main() {
     });
   });
 
-  test('Use of URI Template Variables', () async {
-    const thingDescriptionJson = '''
+  test(
+    'Use of URI Template Variables',
+    () async {
+      const thingDescriptionJson = '''
       {
         "@context": ["http://www.w3.org/ns/td"],
         "title": "Test Thing",
@@ -280,28 +282,30 @@ void main() {
       }
       ''';
 
-    final parsedTd = ThingDescription(thingDescriptionJson);
+      final parsedTd = ThingDescription(thingDescriptionJson);
 
-    final servient = Servient()..addClientFactory(HttpClientFactory());
-    final wot = await servient.start();
+      final servient = Servient()..addClientFactory(HttpClientFactory());
+      final wot = await servient.start();
 
-    final uriVariables = {'value': 'SFRUUEJJTiBpcyBhd2Vzb21l'};
-    final interactionOptions = InteractionOptions(uriVariables: uriVariables);
+      final uriVariables = {'value': 'SFRUUEJJTiBpcyBhd2Vzb21l'};
+      final interactionOptions = InteractionOptions(uriVariables: uriVariables);
 
-    final consumedThing = await wot.consume(parsedTd);
-    final result =
-        await consumedThing.readProperty('status', interactionOptions);
-    final value = await result.value();
-    expect(value, 'HTTPBIN is awesome');
+      final consumedThing = await wot.consume(parsedTd);
+      final result =
+          await consumedThing.readProperty('status', interactionOptions);
+      final value = await result.value();
+      expect(value, 'HTTPBIN is awesome');
 
-    // status2 expects an integer instead of a String and throws an error if the
-    // same value is provided as an input
-    expect(
-      consumedThing.readProperty('status2', interactionOptions),
-      throwsA(const TypeMatcher<ValidationException>()),
-    );
+      // status2 expects an integer instead of a String and throws an error if
+      // the same value is provided as an input
+      expect(
+        consumedThing.readProperty('status2', interactionOptions),
+        throwsA(const TypeMatcher<ValidationException>()),
+      );
 
-    await servient.shutdown();
-    expect(servient.destroyConsumedThing(parsedTd.identifier), false);
-  });
+      await servient.shutdown();
+      expect(servient.destroyConsumedThing(parsedTd.identifier), false);
+    },
+    skip: true, // TODO: Replace with test with local server
+  );
 }
