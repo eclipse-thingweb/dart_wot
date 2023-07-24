@@ -107,15 +107,17 @@ extension MqttFormExtension on AugmentedForm {
 
   /// Gets the MQTT topic for subscribing from this [Form].
   ///
-  /// Throws an [Exception] if no topic could be retrieved.
+  /// If present, this getter uses the dedicated vocabulary term `filter`.
+  /// Otherwise, the URI query from the `href` field is being used as a
+  /// fallback.
   String get topicFilter {
     final topic = _obtainVocabularyTerm<String>("filter");
 
-    if (topic == null) {
-      throw MqttBindingException("MQTT topic was not defined on form.");
+    if (topic != null) {
+      return topic;
     }
 
-    return topic;
+    return Uri.decodeComponent(href.query.replaceAll("&", "/"));
   }
 
   /// Gets the MQTT `retain` value from this [Form] if present.
