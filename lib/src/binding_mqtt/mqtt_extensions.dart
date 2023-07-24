@@ -9,9 +9,12 @@ import "package:mqtt_client/mqtt_client.dart";
 import "package:mqtt_client/mqtt_server_client.dart";
 import "package:uuid/uuid.dart";
 
-import "../../core.dart";
-import "constants.dart";
-import "mqtt_binding_exception.dart";
+import '../../core.dart';
+import '../definitions/form.dart';
+import '../definitions/security/auto_security_scheme.dart';
+import '../definitions/security/basic_security_scheme.dart';
+import '../definitions/validation/validation_exception.dart';
+import 'constants.dart';
 
 /// [PrefixMapping] for expanding MQTT Vocabulary terms from compact IRIs.
 final mqttPrefixMapping = PrefixMapping(defaultPrefixValue: mqttContextUri);
