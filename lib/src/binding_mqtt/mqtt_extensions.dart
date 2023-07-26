@@ -9,12 +9,8 @@ import "package:mqtt_client/mqtt_client.dart";
 import "package:mqtt_client/mqtt_server_client.dart";
 import "package:uuid/uuid.dart";
 
-import '../../core.dart';
-import '../definitions/form.dart';
-import '../definitions/security/auto_security_scheme.dart';
-import '../definitions/security/basic_security_scheme.dart';
-import '../definitions/validation/validation_exception.dart';
-import 'constants.dart';
+import "../../core.dart";
+import "constants.dart";
 
 /// [PrefixMapping] for expanding MQTT Vocabulary terms from compact IRIs.
 final mqttPrefixMapping = PrefixMapping(defaultPrefixValue: mqttContextUri);
@@ -62,6 +58,16 @@ extension MqttUriExtension on Uri {
 
     throw StateError("MQTT URI scheme $scheme is not supported.");
   }
+
+  String get _mqttTopic {
+    final path = Uri.decodeComponent(this.path);
+
+    if (path.isEmpty) {
+      return path;
+    }
+
+    return path.substring(1);
+  }
 }
 
 /// Additional methods for making MQTT [Form]s easier to work with.
@@ -99,20 +105,13 @@ extension MqttFormExtension on AugmentedForm {
       return topic;
     }
 
-    final path = Uri.decodeComponent(href.path);
-
-    if (path.isEmpty) {
-      return path;
-    }
-
-    return path.substring(1);
+    return href._mqttTopic;
   }
 
   /// Gets the MQTT topic for subscribing from this [Form].
   ///
   /// If present, this getter uses the dedicated vocabulary term `filter`.
-  /// Otherwise, the URI query from the `href` field is being used as a
-  /// fallback.
+  /// Otherwise, the URI path from the `href` field is being used as a fallback.
   String get topicFilter {
     final topic = _obtainVocabularyTerm<String>("filter");
 
@@ -120,7 +119,7 @@ extension MqttFormExtension on AugmentedForm {
       return topic;
     }
 
-    return Uri.decodeComponent(href.query.replaceAll("&", "/"));
+    return href._mqttTopic;
   }
 
   /// Gets the MQTT `retain` value from this [Form] if present.
