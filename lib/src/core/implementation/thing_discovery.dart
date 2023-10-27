@@ -278,13 +278,17 @@ class ThingDiscovery extends Stream<ThingDescription>
     const defaultType = "Thing";
 
     for (final ptrRecord in ptrRecords ?? <RRecord>[]) {
-      final srvRecords =
-          await DnsUtils.lookupRecord(ptrRecord.name, RRecordType.SRV);
+      final srvRecords = await DnsUtils.lookupRecord(
+        ptrRecord.name,
+        RRecordType.SRV,
+        provider: DnsApiProvider.CLOUDFLARE,
+      );
 
       for (final srvRecord in srvRecords ?? <RRecord>[]) {
+        final serviceName = srvRecord.name;
         final srvRecordEntries = srvRecord.data.split(" ");
 
-        final validSrvRecord = srvRecordEntries.length == 7;
+        final validSrvRecord = srvRecordEntries.length == 4;
 
         if (!validSrvRecord) {
           continue;
@@ -298,8 +302,12 @@ class ThingDiscovery extends Stream<ThingDescription>
           continue;
         }
 
-        final txtRecords =
-            await DnsUtils.lookupRecord(srvRecord.name, RRecordType.TXT) ?? [];
+        final txtRecords = await DnsUtils.lookupRecord(
+              serviceName,
+              RRecordType.TXT,
+              provider: DnsApiProvider.CLOUDFLARE,
+            ) ??
+            [];
 
         final txtRecord = txtRecords.firstOrNull;
 
@@ -307,6 +315,7 @@ class ThingDiscovery extends Stream<ThingDescription>
           continue;
         }
 
+        // FIXME: Add parsing of multiple TXT records
         final parsedTxtRecord = _parseTxtRecords(txtRecord.data);
 
         final uri = Uri(
@@ -316,7 +325,7 @@ class ThingDiscovery extends Stream<ThingDescription>
           scheme: parsedTxtRecord["scheme"] ?? defaultScheme,
         );
 
-        final duplicate = discoveredUris.add(uri);
+        final duplicate = !discoveredUris.add(uri);
 
         if (duplicate) {
           continue;
@@ -324,7 +333,6 @@ class ThingDiscovery extends Stream<ThingDescription>
 
         final type = parsedTxtRecord["type"] ?? defaultType;
 
-        print(parsedTxtRecord);
         switch (type) {
           case "Thing":
             yield* _discoverDirectly(uri);
