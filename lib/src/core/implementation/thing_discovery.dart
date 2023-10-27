@@ -6,6 +6,7 @@
 
 import "dart:async";
 
+import "package:basic_utils/basic_utils.dart";
 import "package:coap/coap.dart";
 import "package:collection/collection.dart";
 import "package:multicast_dns/multicast_dns.dart";
@@ -222,7 +223,7 @@ class ThingDiscovery extends Stream<ThingDescription>
     if (dnsName.endsWith("local")) {
       yield* _discoverUsingMdnssd(dnsName);
     } else {
-      throw UnimplementedError("Only mDNS-SD is currently supported!");
+      yield* _discoverUsingDnsSd(dnsName);
     }
   }
 
@@ -242,6 +243,16 @@ class ThingDiscovery extends Stream<ThingDescription>
     );
   }
 
+  Map<String, String> _parseTxtRecords(String txtRecords) {
+    final recordsList = txtRecords
+        .split("\n")
+        .map((property) => property.split("="))
+        .where((list) => list.length > 1)
+        .map((list) => MapEntry(list[0], list[1]));
+
+    return Map.fromEntries(recordsList);
+  }
+
   Future<Map<String, String>?> _lookupTxtRecords(
     MDnsClient client,
     String domainName,
@@ -249,17 +260,80 @@ class ThingDiscovery extends Stream<ThingDescription>
     final txtRecords = await client
         .lookup<TxtResourceRecord>(ResourceRecordQuery.text(domainName))
         .toList();
-    final recordsList = txtRecords.firstOrNull?.text
-        .split("\n")
-        .map((property) => property.split("="))
-        .where((list) => list.length > 1)
-        .map((list) => MapEntry(list[0], list[1]));
 
-    if (recordsList == null) {
+    final firstTxtRecord = txtRecords.firstOrNull?.text;
+
+    if (firstTxtRecord == null) {
       return null;
     }
 
-    return Map.fromEntries(recordsList);
+    return _parseTxtRecords(firstTxtRecord);
+  }
+
+  Stream<ThingDescription> _discoverUsingDnsSd(String name) async* {
+    // TODO: Refactor
+    final ptrRecords = await DnsUtils.lookupRecord(name, RRecordType.PTR);
+    final defaultScheme = _isUdpDiscovery(name) ? "coap" : "http";
+    final discoveredUris = <Uri>{};
+    const defaultType = "Thing";
+
+    for (final ptrRecord in ptrRecords ?? <RRecord>[]) {
+      final srvRecords =
+          await DnsUtils.lookupRecord(ptrRecord.name, RRecordType.SRV);
+
+      for (final srvRecord in srvRecords ?? <RRecord>[]) {
+        final srvRecordEntries = srvRecord.data.split(" ");
+
+        final validSrvRecord = srvRecordEntries.length == 7;
+
+        if (!validSrvRecord) {
+          continue;
+        }
+
+        final target = srvRecordEntries.last;
+        final port =
+            int.tryParse(srvRecordEntries[srvRecordEntries.length - 2]);
+
+        if (port == null) {
+          continue;
+        }
+
+        final txtRecords =
+            await DnsUtils.lookupRecord(srvRecord.name, RRecordType.TXT) ?? [];
+
+        final txtRecord = txtRecords.firstOrNull;
+
+        if (txtRecord == null) {
+          continue;
+        }
+
+        final parsedTxtRecord = _parseTxtRecords(txtRecord.data);
+
+        final uri = Uri(
+          host: target,
+          port: port,
+          path: parsedTxtRecord["td"],
+          scheme: parsedTxtRecord["scheme"] ?? defaultScheme,
+        );
+
+        final duplicate = discoveredUris.add(uri);
+
+        if (duplicate) {
+          continue;
+        }
+
+        final type = parsedTxtRecord["type"] ?? defaultType;
+
+        print(parsedTxtRecord);
+        switch (type) {
+          case "Thing":
+            yield* _discoverDirectly(uri);
+          case "Directory":
+            // TODO(JKRhb): Implement directory discovery.
+            break;
+        }
+      }
+    }
   }
 
   Stream<ThingDescription> _discoverUsingMdnssd(String name) async* {
