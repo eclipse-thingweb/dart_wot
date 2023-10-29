@@ -298,7 +298,7 @@ class ThingDiscovery extends Stream<ThingDescription>
           scheme: txtRecords['scheme'] ?? defaultScheme,
         );
 
-        final duplicate = discoveredUris.add(uri);
+        final duplicate = !discoveredUris.add(uri);
 
         if (duplicate) {
           continue;
