@@ -21,7 +21,7 @@ void main() {
       final wot = await servient.start();
       final Map<String, dynamic> exposedThingInit = <String, dynamic>{
         '@context': 'https://www.w3.org/2022/wot/td/v1.1',
-        'title': 'Test Thing'
+        'title': 'Test Thing',
       };
       final dynamic exposedThing = await wot.produce(exposedThingInit);
       // ignore: avoid_dynamic_calls

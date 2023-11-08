@@ -179,7 +179,7 @@ extension OperationTypeExtension on OperationType {
       OperationType.subscribeevent,
       OperationType.unsubscribeevent,
       OperationType.observeproperty,
-      OperationType.unobserveproperty
+      OperationType.unobserveproperty,
     ].contains(this)) {
       return CoapSubprotocol.observe;
     }

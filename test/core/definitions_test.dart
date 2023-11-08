@@ -47,7 +47,7 @@ void main() {
         'title': 'MyLampThing',
         'security': 'nosec_sc',
         'securityDefinitions': {
-          'nosec_sc': {'scheme': 'nosec'}
+          'nosec_sc': {'scheme': 'nosec'},
         },
         'profile': ['https://example.org/test-profile'],
         'version': {'instance': 'test'},
@@ -161,7 +161,7 @@ void main() {
           'application/json',
           success: false,
           schema: 'hallo',
-        )
+        ),
       ]);
       expect(form3.additionalFields, {'test': 'test'});
 
@@ -258,7 +258,7 @@ void main() {
         'title': 'MyLampThing',
         'security': 'nosec_sc',
         'securityDefinitions': {
-          'nosec_sc': {'scheme': 'nosec'}
+          'nosec_sc': {'scheme': 'nosec'},
         },
         'actions': {
           'action': {
@@ -266,15 +266,15 @@ void main() {
             'idempotent': true,
             'synchronous': true,
             'forms': [
-              {'href': 'https://example.org'}
-            ]
+              {'href': 'https://example.org'},
+            ],
           },
           'actionWithDefaults': {
             'forms': [
-              {'href': 'https://example.org'}
-            ]
-          }
-        }
+              {'href': 'https://example.org'},
+            ],
+          },
+        },
       };
 
       final thingDescription = ThingDescription.fromJson(validThingDescription);
@@ -307,7 +307,7 @@ void main() {
             'description': 'This is a Test',
             'descriptions': {
               'es': 'Esto es una prueba',
-              'en': 'This is a Test'
+              'en': 'This is a Test',
             },
             'writeOnly': true,
             'readOnly': true,
@@ -320,12 +320,12 @@ void main() {
             'contentMediaType': 'test',
             'type': 'string',
             'forms': [
-              {'href': 'https://example.org'}
+              {'href': 'https://example.org'},
             ],
             'format': 'test',
             'pattern': 'test',
             'items': [
-              {'type': 'integer'}
+              {'type': 'integer'},
             ],
             'minLength': 2,
             'maxLength': 5,
@@ -339,13 +339,13 @@ void main() {
           },
           'propertyWithDefaults': {
             'forms': [
-              {'href': 'https://example.org'}
-            ]
+              {'href': 'https://example.org'},
+            ],
           },
           'objectSchemeProperty': {
             'type': 'object',
             'properties': {
-              'test': {'type': 'string'}
+              'test': {'type': 'string'},
             },
             'required': ['test'],
             'forms': [
@@ -358,13 +358,13 @@ void main() {
           'propertyWithOneOf': {
             'oneOf': [
               {'type': 'string'},
-              {'type': 'integer'}
+              {'type': 'integer'},
             ],
             'forms': [
-              {'href': 'https://example.org'}
-            ]
+              {'href': 'https://example.org'},
+            ],
           },
-        }
+        },
       };
 
       final thingDescription = ThingDescription.fromJson(validThingDescription);
@@ -440,7 +440,7 @@ void main() {
         'https://www.w3.org/2022/wot/td/v1.1',
         {
           'ace': 'http://www.example.org/ace-security#',
-          'saref': 'https://w3id.org/saref#'
+          'saref': 'https://w3id.org/saref#',
         }
       ],
       'id': 'urn:uuid:5edfed77-fc4e-46d4-a550-ef7f07592fbd',
@@ -456,14 +456,14 @@ void main() {
             {
               'op': ['readproperty'],
               'href': 'led/status',
-              'contentType': 'application/json'
+              'contentType': 'application/json',
             }
           ],
           'enum': ['On', 'Off'],
           'readOnly': true,
           'writeOnly': false,
-          'type': 'string'
-        }
+          'type': 'string',
+        },
       },
       'actions': {
         'toggle': {
@@ -474,13 +474,13 @@ void main() {
             {
               'op': ['invokeaction'],
               'href': 'led/toggle',
-              'contentType': 'application/json'
+              'contentType': 'application/json',
             }
           ],
           'output': {'readOnly': false, 'writeOnly': false, 'type': 'string'},
           'safe': false,
-          'idempotent': false
-        }
+          'idempotent': false,
+        },
       },
       'security': ['ace_sc'],
       'securityDefinitions': {
@@ -488,9 +488,9 @@ void main() {
           'scheme': 'ace:ACESecurityScheme',
           'ace:as': 'coaps://192.168.42.205:7744/authorize',
           'ace:audience': 'NAMIB_Demonstrator',
-          'ace:scopes': ['led/status', 'led/toggle', 'temperature/value']
-        }
-      }
+          'ace:scopes': ['led/status', 'led/toggle', 'temperature/value'],
+        },
+      },
     };
 
     final thingDescription = ThingDescription.fromJson(rawThingDescription);
@@ -538,7 +538,7 @@ void main() {
       'title': 'Test',
       'security': 'nosec_sc',
       'securityDefinitions': {
-        'nosec_sc': {'scheme': 'nosec'}
+        'nosec_sc': {'scheme': 'nosec'},
       },
     };
 
@@ -555,7 +555,7 @@ void main() {
       'title': 'Test',
       'security': 'nosec_sc',
       'securityDefinitions': {
-        'nosec_sc': {'scheme': 'nosec'}
+        'nosec_sc': {'scheme': 'nosec'},
       },
     };
 
@@ -570,15 +570,15 @@ void main() {
     final invalidThingDescription1 = {
       '@context': [
         'https://www.w3.org/2022/wot/td/v1.1',
-        {'invalid': 1}
+        {'invalid': 1},
       ],
       'title': 'NAMIB WoT Thing',
       'security': ['nosec_sc'],
       'securityDefinitions': {
         'nosec_sc': {
           'scheme': 'nosec',
-        }
-      }
+        },
+      },
     };
 
     expect(

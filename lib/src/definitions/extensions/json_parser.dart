@@ -28,7 +28,7 @@ import '../version_info.dart';
 const _validTdContextValues = [
   'https://www.w3.org/2019/wot/td/v1',
   'https://www.w3.org/2022/wot/td/v1.1',
-  'http://www.w3.org/ns/td'
+  'http://www.w3.org/ns/td',
 ];
 
 /// Extension for parsing fields of JSON objects.
