@@ -33,7 +33,6 @@ jobs:
 
       - uses: codecov/codecov-action@v3
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
           file: coverage/lcov.info
           name: Upload to codecov.io
           verbose: true
