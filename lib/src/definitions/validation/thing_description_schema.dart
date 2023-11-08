@@ -47,47 +47,47 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
     'description': {'type': 'string'},
     'descriptions': {
       'type': 'object',
-      'additionalProperties': {'type': 'string'}
+      'additionalProperties': {'type': 'string'},
     },
     'title': {'type': 'string'},
     'titles': {
       'type': 'object',
-      'additionalProperties': {'type': 'string'}
+      'additionalProperties': {'type': 'string'},
     },
     'security': {
       'oneOf': [
         {
           'type': 'array',
           'items': {'type': 'string'},
-          'minItems': 1
+          'minItems': 1,
         },
-        {'type': 'string'}
-      ]
+        {'type': 'string'},
+      ],
     },
     'scopes': {
       'oneOf': [
         {
           'type': 'array',
-          'items': {'type': 'string'}
+          'items': {'type': 'string'},
         },
-        {'type': 'string'}
-      ]
+        {'type': 'string'},
+      ],
     },
     'subprotocol': {
       'type': 'string',
-      'examples': ['longpoll', 'websub', 'sse']
+      'examples': ['longpoll', 'websub', 'sse'],
     },
     'thing-context-td-uri-v1': {
       'type': 'string',
-      'const': 'https://www.w3.org/2019/wot/td/v1'
+      'const': 'https://www.w3.org/2019/wot/td/v1',
     },
     'thing-context-td-uri-v1.1': {
       'type': 'string',
-      'const': 'https://www.w3.org/2022/wot/td/v1.1'
+      'const': 'https://www.w3.org/2022/wot/td/v1.1',
     },
     'thing-context-td-uri-temp': {
       'type': 'string',
-      'const': 'http://www.w3.org/ns/td'
+      'const': 'http://www.w3.org/ns/td',
     },
     'thing-context': {
       'anyOf': [
@@ -97,19 +97,19 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
                   'old one',
           'type': 'array',
           'items': [
-            {'\$ref': '#/definitions/thing-context-td-uri-v1.1'}
+            {'\$ref': '#/definitions/thing-context-td-uri-v1.1'},
           ],
           'additionalItems': {
             'anyOf': [
               {'\$ref': '#/definitions/anyUri'},
-              {'type': 'object'}
+              {'type': 'object'},
             ],
-            'not': {'\$ref': '#/definitions/thing-context-td-uri-v1'}
-          }
+            'not': {'\$ref': '#/definitions/thing-context-td-uri-v1'},
+          },
         },
         {
           '\$comment': 'Only the new context URI',
-          '\$ref': '#/definitions/thing-context-td-uri-v1.1'
+          '\$ref': '#/definitions/thing-context-td-uri-v1.1',
         },
         {
           '\$comment':
@@ -119,16 +119,16 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
           'type': 'array',
           'prefixItems': [
             {'\$ref': '#/definitions/thing-context-td-uri-v1'},
-            {'\$ref': '#/definitions/thing-context-td-uri-v1.1'}
+            {'\$ref': '#/definitions/thing-context-td-uri-v1.1'},
           ],
           'minItems': 2,
           'contains': {'\$ref': '#/definitions/thing-context-td-uri-v1.1'},
           'additionalItems': {
             'anyOf': [
               {'\$ref': '#/definitions/anyUri'},
-              {'type': 'object'}
-            ]
-          }
+              {'type': 'object'},
+            ],
+          },
         },
         {
           '\$comment':
@@ -137,22 +137,22 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
                   'not say all items should be provided',
           'type': 'array',
           'prefixItems': [
-            {'\$ref': '#/definitions/thing-context-td-uri-v1'}
+            {'\$ref': '#/definitions/thing-context-td-uri-v1'},
           ],
           'minItems': 1,
           'contains': {'\$ref': '#/definitions/thing-context-td-uri-v1'},
           'additionalItems': {
             'anyOf': [
               {'\$ref': '#/definitions/anyUri'},
-              {'type': 'object'}
-            ]
-          }
+              {'type': 'object'},
+            ],
+          },
         },
         {
           '\$comment': 'Only the old context URI',
-          '\$ref': '#/definitions/thing-context-td-uri-v1'
+          '\$ref': '#/definitions/thing-context-td-uri-v1',
         }
-      ]
+      ],
     },
     'bcp47_string': {
       'type': 'string',
@@ -165,22 +165,22 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
               'i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|'
               'i-tay|i-tsu|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)|(art-lojban|'
               'cel-gaulish|no-bok|no-nyn|zh-guoyu|zh-hakka|zh-min|zh-min-nan|'
-              'zh-xiang)))\$'
+              'zh-xiang)))\$',
     },
     'type_declaration': {
       'oneOf': [
         {
           'type': 'string',
-          'not': {'const': 'tm:ThingModel'}
+          'not': {'const': 'tm:ThingModel'},
         },
         {
           'type': 'array',
           'items': {
             'type': 'string',
-            'not': {'const': 'tm:ThingModel'}
-          }
+            'not': {'const': 'tm:ThingModel'},
+          },
         }
-      ]
+      ],
     },
     'dataSchema-type': {
       'type': 'string',
@@ -191,8 +191,8 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'string',
         'object',
         'array',
-        'null'
-      ]
+        'null',
+      ],
     },
     'dataSchema': {
       'type': 'object',
@@ -206,7 +206,7 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'readOnly': {'type': 'boolean'},
         'oneOf': {
           'type': 'array',
-          'items': {'\$ref': '#/definitions/dataSchema'}
+          'items': {'\$ref': '#/definitions/dataSchema'},
         },
         'unit': {'type': 'string'},
         'enum': {'type': 'array', 'minItems': 1, 'uniqueItems': true},
@@ -221,9 +221,9 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
             {'\$ref': '#/definitions/dataSchema'},
             {
               'type': 'array',
-              'items': {'\$ref': '#/definitions/dataSchema'}
+              'items': {'\$ref': '#/definitions/dataSchema'},
             }
-          ]
+          ],
         },
         'maxItems': {'type': 'integer', 'minimum': 0},
         'minItems': {'type': 'integer', 'minimum': 0},
@@ -235,13 +235,13 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'maxLength': {'type': 'integer', 'minimum': 0},
         'multipleOf': {'\$ref': '#/definitions/multipleOfDefinition'},
         'properties': {
-          'additionalProperties': {'\$ref': '#/definitions/dataSchema'}
+          'additionalProperties': {'\$ref': '#/definitions/dataSchema'},
         },
         'required': {
           'type': 'array',
-          'items': {'type': 'string'}
-        }
-      }
+          'items': {'type': 'string'},
+        },
+      },
     },
     'additionalResponsesDefinition': {
       'type': 'array',
@@ -250,20 +250,20 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'properties': {
           'contentType': {'type': 'string'},
           'schema': {'type': 'string'},
-          'success': {'type': 'boolean'}
-        }
-      }
+          'success': {'type': 'boolean'},
+        },
+      },
     },
     'multipleOfDefinition': {
       'type': ['integer', 'number'],
-      'exclusiveMinimum': 0
+      'exclusiveMinimum': 0,
     },
     'expectedResponse': {
       'type': 'object',
       'properties': {
-        'contentType': {'type': 'string'}
+        'contentType': {'type': 'string'},
       },
-      'required': ['contentType']
+      'required': ['contentType'],
     },
     'form_element_base': {
       'type': 'object',
@@ -273,9 +273,9 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
             {'type': 'string'},
             {
               'type': 'array',
-              'items': {'type': 'string'}
+              'items': {'type': 'string'},
             }
-          ]
+          ],
         },
         'href': {'\$ref': '#/definitions/anyUri'},
         'contentType': {'type': 'string'},
@@ -285,15 +285,15 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'scopes': {'\$ref': '#/definitions/scopes'},
         'response': {'\$ref': '#/definitions/expectedResponse'},
         'additionalResponses': {
-          '\$ref': '#/definitions/additionalResponsesDefinition'
-        }
+          '\$ref': '#/definitions/additionalResponsesDefinition',
+        },
       },
       'required': ['href'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'form_element_property': {
       'allOf': [
-        {'\$ref': '#/definitions/form_element_base'}
+        {'\$ref': '#/definitions/form_element_base'},
       ],
       'type': 'object',
       'properties': {
@@ -305,8 +305,8 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
                 'readproperty',
                 'writeproperty',
                 'observeproperty',
-                'unobserveproperty'
-              ]
+                'unobserveproperty',
+              ],
             },
             {
               'type': 'array',
@@ -316,18 +316,18 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
                   'readproperty',
                   'writeproperty',
                   'observeproperty',
-                  'unobserveproperty'
-                ]
-              }
+                  'unobserveproperty',
+                ],
+              },
             }
-          ]
-        }
+          ],
+        },
       },
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'form_element_action': {
       'allOf': [
-        {'\$ref': '#/definitions/form_element_base'}
+        {'\$ref': '#/definitions/form_element_base'},
       ],
       'type': 'object',
       'properties': {
@@ -335,23 +335,23 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
           'oneOf': [
             {
               'type': 'string',
-              'enum': ['invokeaction', 'queryaction', 'cancelaction']
+              'enum': ['invokeaction', 'queryaction', 'cancelaction'],
             },
             {
               'type': 'array',
               'items': {
                 'type': 'string',
-                'enum': ['invokeaction', 'queryaction', 'cancelaction']
-              }
+                'enum': ['invokeaction', 'queryaction', 'cancelaction'],
+              },
             }
-          ]
-        }
+          ],
+        },
       },
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'form_element_event': {
       'allOf': [
-        {'\$ref': '#/definitions/form_element_base'}
+        {'\$ref': '#/definitions/form_element_base'},
       ],
       'type': 'object',
       'properties': {
@@ -359,23 +359,23 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
           'oneOf': [
             {
               'type': 'string',
-              'enum': ['subscribeevent', 'unsubscribeevent']
+              'enum': ['subscribeevent', 'unsubscribeevent'],
             },
             {
               'type': 'array',
               'items': {
                 'type': 'string',
-                'enum': ['subscribeevent', 'unsubscribeevent']
-              }
+                'enum': ['subscribeevent', 'unsubscribeevent'],
+              },
             }
-          ]
-        }
+          ],
+        },
       },
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'form_element_root': {
       'allOf': [
-        {'\$ref': '#/definitions/form_element_base'}
+        {'\$ref': '#/definitions/form_element_base'},
       ],
       'type': 'object',
       'properties': {
@@ -392,8 +392,8 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
                 'unobserveallproperties',
                 'queryallactions',
                 'subscribeallevents',
-                'unsubscribeallevents'
-              ]
+                'unsubscribeallevents',
+              ],
             },
             {
               'type': 'array',
@@ -408,15 +408,15 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
                   'unobserveallproperties',
                   'queryallactions',
                   'subscribeallevents',
-                  'unsubscribeallevents'
-                ]
-              }
+                  'unsubscribeallevents',
+                ],
+              },
             }
-          ]
-        }
+          ],
+        },
       },
       'additionalProperties': true,
-      'required': ['op']
+      'required': ['op'],
     },
     'form': {
       '\$comment':
@@ -425,8 +425,8 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         {'\$ref': '#/definitions/form_element_property'},
         {'\$ref': '#/definitions/form_element_action'},
         {'\$ref': '#/definitions/form_element_event'},
-        {'\$ref': '#/definitions/form_element_root'}
-      ]
+        {'\$ref': '#/definitions/form_element_root'},
+      ],
     },
     'property_element': {
       'type': 'object',
@@ -439,18 +439,18 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'forms': {
           'type': 'array',
           'minItems': 1,
-          'items': {'\$ref': '#/definitions/form_element_property'}
+          'items': {'\$ref': '#/definitions/form_element_property'},
         },
         'uriVariables': {
           'type': 'object',
-          'additionalProperties': {'\$ref': '#/definitions/dataSchema'}
+          'additionalProperties': {'\$ref': '#/definitions/dataSchema'},
         },
         'observable': {'type': 'boolean'},
         'writeOnly': {'type': 'boolean'},
         'readOnly': {'type': 'boolean'},
         'oneOf': {
           'type': 'array',
-          'items': {'\$ref': '#/definitions/dataSchema'}
+          'items': {'\$ref': '#/definitions/dataSchema'},
         },
         'unit': {'type': 'string'},
         'enum': {'type': 'array', 'minItems': 1, 'uniqueItems': true},
@@ -463,9 +463,9 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
             {'\$ref': '#/definitions/dataSchema'},
             {
               'type': 'array',
-              'items': {'\$ref': '#/definitions/dataSchema'}
+              'items': {'\$ref': '#/definitions/dataSchema'},
             }
-          ]
+          ],
         },
         'maxItems': {'type': 'integer', 'minimum': 0},
         'minItems': {'type': 'integer', 'minimum': 0},
@@ -477,15 +477,15 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'maxLength': {'type': 'integer', 'minimum': 0},
         'multipleOf': {'\$ref': '#/definitions/multipleOfDefinition'},
         'properties': {
-          'additionalProperties': {'\$ref': '#/definitions/dataSchema'}
+          'additionalProperties': {'\$ref': '#/definitions/dataSchema'},
         },
         'required': {
           'type': 'array',
-          'items': {'type': 'string'}
-        }
+          'items': {'type': 'string'},
+        },
       },
       'required': ['forms'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'action_element': {
       'type': 'object',
@@ -498,20 +498,20 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'forms': {
           'type': 'array',
           'minItems': 1,
-          'items': {'\$ref': '#/definitions/form_element_action'}
+          'items': {'\$ref': '#/definitions/form_element_action'},
         },
         'uriVariables': {
           'type': 'object',
-          'additionalProperties': {'\$ref': '#/definitions/dataSchema'}
+          'additionalProperties': {'\$ref': '#/definitions/dataSchema'},
         },
         'input': {'\$ref': '#/definitions/dataSchema'},
         'output': {'\$ref': '#/definitions/dataSchema'},
         'safe': {'type': 'boolean'},
         'idempotent': {'type': 'boolean'},
-        'synchronous': {'type': 'boolean'}
+        'synchronous': {'type': 'boolean'},
       },
       'required': ['forms'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'event_element': {
       'type': 'object',
@@ -524,19 +524,19 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'forms': {
           'type': 'array',
           'minItems': 1,
-          'items': {'\$ref': '#/definitions/form_element_event'}
+          'items': {'\$ref': '#/definitions/form_element_event'},
         },
         'uriVariables': {
           'type': 'object',
-          'additionalProperties': {'\$ref': '#/definitions/dataSchema'}
+          'additionalProperties': {'\$ref': '#/definitions/dataSchema'},
         },
         'subscription': {'\$ref': '#/definitions/dataSchema'},
         'data': {'\$ref': '#/definitions/dataSchema'},
         'dataResponse': {'\$ref': '#/definitions/dataSchema'},
-        'cancellation': {'\$ref': '#/definitions/dataSchema'}
+        'cancellation': {'\$ref': '#/definitions/dataSchema'},
       },
       'required': ['forms'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'base_link_element': {
       'type': 'object',
@@ -550,13 +550,13 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
             {'\$ref': '#/definitions/bcp47_string'},
             {
               'type': 'array',
-              'items': {'\$ref': '#/definitions/bcp47_string'}
+              'items': {'\$ref': '#/definitions/bcp47_string'},
             }
-          ]
-        }
+          ],
+        },
       },
       'required': ['href'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'link_element': {
       'allOf': [
@@ -566,8 +566,8 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
             'description': 'A basic link element should not contain sizes',
             'type': 'object',
             'properties': {'sizes': {}},
-            'required': ['sizes']
-          }
+            'required': ['sizes'],
+          },
         },
         {
           'not': {
@@ -575,13 +575,13 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
                 'A basic link element should not contain icon or tm:extends',
             'properties': {
               'rel': {
-                'enum': ['icon', 'tm:extends']
-              }
+                'enum': ['icon', 'tm:extends'],
+              },
             },
-            'required': ['rel']
-          }
+            'required': ['rel'],
+          },
         }
-      ]
+      ],
     },
     'icon_link_element': {
       'allOf': [
@@ -589,11 +589,11 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         {
           'properties': {
             'rel': {'const': 'icon'},
-            'sizes': {'type': 'string', 'pattern': '[0-9]*x[0-9]+'}
+            'sizes': {'type': 'string', 'pattern': '[0-9]*x[0-9]+'},
           },
-          'required': ['rel']
+          'required': ['rel'],
         }
-      ]
+      ],
     },
     'additionalSecurityScheme': {
       'description':
@@ -611,7 +611,7 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
           'ace:as': 'coaps://as.example.com/token',
           'ace:audience': 'coaps://rs.example.com',
           'ace:scopes': ['limited', 'special'],
-          'ace:cnonce': true
+          'ace:cnonce': true,
         }
       ],
       'type': 'object',
@@ -620,10 +620,10 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'description': {'\$ref': '#/definitions/description'},
         'descriptions': {'\$ref': '#/definitions/descriptions'},
         'proxy': {'\$ref': '#/definitions/anyUri'},
-        'scheme': {'type': 'string', 'pattern': '.+:.*'}
+        'scheme': {'type': 'string', 'pattern': '.+:.*'},
       },
       'required': ['scheme'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'noSecurityScheme': {
       'type': 'object',
@@ -634,11 +634,11 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'proxy': {'\$ref': '#/definitions/anyUri'},
         'scheme': {
           'type': 'string',
-          'enum': ['nosec']
-        }
+          'enum': ['nosec'],
+        },
       },
       'required': ['scheme'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'autoSecurityScheme': {
       'type': 'object',
@@ -649,14 +649,14 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'proxy': {'\$ref': '#/definitions/anyUri'},
         'scheme': {
           'type': 'string',
-          'enum': ['auto']
-        }
+          'enum': ['auto'],
+        },
       },
       'not': {
-        'required': ['name']
+        'required': ['name'],
       },
       'required': ['scheme'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'comboSecurityScheme': {
       'oneOf': [
@@ -669,16 +669,16 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
             'proxy': {'\$ref': '#/definitions/anyUri'},
             'scheme': {
               'type': 'string',
-              'enum': ['combo']
+              'enum': ['combo'],
             },
             'oneOf': {
               'type': 'array',
               'minItems': 2,
-              'items': {'type': 'string'}
-            }
+              'items': {'type': 'string'},
+            },
           },
           'required': ['scheme', 'oneOf'],
-          'additionalProperties': true
+          'additionalProperties': true,
         },
         {
           'type': 'object',
@@ -689,18 +689,18 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
             'proxy': {'\$ref': '#/definitions/anyUri'},
             'scheme': {
               'type': 'string',
-              'enum': ['combo']
+              'enum': ['combo'],
             },
             'allOf': {
               'type': 'array',
               'minItems': 2,
-              'items': {'type': 'string'}
-            }
+              'items': {'type': 'string'},
+            },
           },
           'required': ['scheme', 'allOf'],
-          'additionalProperties': true
+          'additionalProperties': true,
         }
-      ]
+      ],
     },
     'basicSecurityScheme': {
       'type': 'object',
@@ -711,16 +711,16 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'proxy': {'\$ref': '#/definitions/anyUri'},
         'scheme': {
           'type': 'string',
-          'enum': ['basic']
+          'enum': ['basic'],
         },
         'in': {
           'type': 'string',
-          'enum': ['header', 'query', 'body', 'cookie', 'auto']
+          'enum': ['header', 'query', 'body', 'cookie', 'auto'],
         },
-        'name': {'type': 'string'}
+        'name': {'type': 'string'},
       },
       'required': ['scheme'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'digestSecurityScheme': {
       'type': 'object',
@@ -731,20 +731,20 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'proxy': {'\$ref': '#/definitions/anyUri'},
         'scheme': {
           'type': 'string',
-          'enum': ['digest']
+          'enum': ['digest'],
         },
         'qop': {
           'type': 'string',
-          'enum': ['auth', 'auth-int']
+          'enum': ['auth', 'auth-int'],
         },
         'in': {
           'type': 'string',
-          'enum': ['header', 'query', 'body', 'cookie', 'auto']
+          'enum': ['header', 'query', 'body', 'cookie', 'auto'],
         },
-        'name': {'type': 'string'}
+        'name': {'type': 'string'},
       },
       'required': ['scheme'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'apiKeySecurityScheme': {
       'type': 'object',
@@ -755,16 +755,16 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'proxy': {'\$ref': '#/definitions/anyUri'},
         'scheme': {
           'type': 'string',
-          'enum': ['apikey']
+          'enum': ['apikey'],
         },
         'in': {
           'type': 'string',
-          'enum': ['header', 'query', 'body', 'cookie', 'uri', 'auto']
+          'enum': ['header', 'query', 'body', 'cookie', 'uri', 'auto'],
         },
-        'name': {'type': 'string'}
+        'name': {'type': 'string'},
       },
       'required': ['scheme'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'bearerSecurityScheme': {
       'type': 'object',
@@ -775,19 +775,19 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'proxy': {'\$ref': '#/definitions/anyUri'},
         'scheme': {
           'type': 'string',
-          'enum': ['bearer']
+          'enum': ['bearer'],
         },
         'authorization': {'\$ref': '#/definitions/anyUri'},
         'alg': {'type': 'string'},
         'format': {'type': 'string'},
         'in': {
           'type': 'string',
-          'enum': ['header', 'query', 'body', 'cookie', 'auto']
+          'enum': ['header', 'query', 'body', 'cookie', 'auto'],
         },
-        'name': {'type': 'string'}
+        'name': {'type': 'string'},
       },
       'required': ['scheme'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'pskSecurityScheme': {
       'type': 'object',
@@ -798,12 +798,12 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'proxy': {'\$ref': '#/definitions/anyUri'},
         'scheme': {
           'type': 'string',
-          'enum': ['psk']
+          'enum': ['psk'],
         },
-        'identity': {'type': 'string'}
+        'identity': {'type': 'string'},
       },
       'required': ['scheme'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'oAuth2SecurityScheme': {
       'type': 'object',
@@ -814,7 +814,7 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         'proxy': {'\$ref': '#/definitions/anyUri'},
         'scheme': {
           'type': 'string',
-          'enum': ['oauth2']
+          'enum': ['oauth2'],
         },
         'authorization': {'\$ref': '#/definitions/anyUri'},
         'token': {'\$ref': '#/definitions/anyUri'},
@@ -823,23 +823,23 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
           'oneOf': [
             {
               'type': 'array',
-              'items': {'type': 'string'}
+              'items': {'type': 'string'},
             },
-            {'type': 'string'}
-          ]
+            {'type': 'string'},
+          ],
         },
         'flow': {
           'anyOf': [
             {'type': 'string'},
             {
               'type': 'string',
-              'enum': ['code', 'client', 'device']
+              'enum': ['code', 'client', 'device'],
             }
-          ]
-        }
+          ],
+        },
       },
       'required': ['scheme'],
-      'additionalProperties': true
+      'additionalProperties': true,
     },
     'securityScheme': {
       'oneOf': [
@@ -852,9 +852,9 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         {'\$ref': '#/definitions/bearerSecurityScheme'},
         {'\$ref': '#/definitions/pskSecurityScheme'},
         {'\$ref': '#/definitions/oAuth2SecurityScheme'},
-        {'\$ref': '#/definitions/additionalSecurityScheme'}
-      ]
-    }
+        {'\$ref': '#/definitions/additionalSecurityScheme'},
+      ],
+    },
   },
   'type': 'object',
   'properties': {
@@ -863,49 +863,49 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
     'titles': {'\$ref': '#/definitions/titles'},
     'properties': {
       'type': 'object',
-      'additionalProperties': {'\$ref': '#/definitions/property_element'}
+      'additionalProperties': {'\$ref': '#/definitions/property_element'},
     },
     'actions': {
       'type': 'object',
-      'additionalProperties': {'\$ref': '#/definitions/action_element'}
+      'additionalProperties': {'\$ref': '#/definitions/action_element'},
     },
     'events': {
       'type': 'object',
-      'additionalProperties': {'\$ref': '#/definitions/event_element'}
+      'additionalProperties': {'\$ref': '#/definitions/event_element'},
     },
     'description': {'\$ref': '#/definitions/description'},
     'descriptions': {'\$ref': '#/definitions/descriptions'},
     'version': {
       'type': 'object',
       'properties': {
-        'instance': {'type': 'string'}
+        'instance': {'type': 'string'},
       },
-      'required': ['instance']
+      'required': ['instance'],
     },
     'links': {
       'type': 'array',
       'items': {
         'oneOf': [
           {'\$ref': '#/definitions/link_element'},
-          {'\$ref': '#/definitions/icon_link_element'}
-        ]
-      }
+          {'\$ref': '#/definitions/icon_link_element'},
+        ],
+      },
     },
     'forms': {
       'type': 'array',
       'minItems': 1,
-      'items': {'\$ref': '#/definitions/form_element_root'}
+      'items': {'\$ref': '#/definitions/form_element_root'},
     },
     'base': {'\$ref': '#/definitions/anyUri'},
     'securityDefinitions': {
       'type': 'object',
       'minProperties': 1,
-      'additionalProperties': {'\$ref': '#/definitions/securityScheme'}
+      'additionalProperties': {'\$ref': '#/definitions/securityScheme'},
     },
     'schemaDefinitions': {
       'type': 'object',
       'minProperties': 1,
-      'additionalProperties': {'\$ref': '#/definitions/dataSchema'}
+      'additionalProperties': {'\$ref': '#/definitions/dataSchema'},
     },
     'support': {'\$ref': '#/definitions/anyUri'},
     'created': {'type': 'string', 'format': 'date-time'},
@@ -916,9 +916,9 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         {
           'type': 'array',
           'minItems': 1,
-          'items': {'\$ref': '#/definitions/anyUri'}
+          'items': {'\$ref': '#/definitions/anyUri'},
         }
-      ]
+      ],
     },
     'security': {
       'oneOf': [
@@ -926,17 +926,17 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
         {
           'type': 'array',
           'minItems': 1,
-          'items': {'type': 'string'}
+          'items': {'type': 'string'},
         }
-      ]
+      ],
     },
     'uriVariables': {
       'type': 'object',
-      'additionalProperties': {'\$ref': '#/definitions/dataSchema'}
+      'additionalProperties': {'\$ref': '#/definitions/dataSchema'},
     },
     '@type': {'\$ref': '#/definitions/type_declaration'},
-    '@context': {'\$ref': '#/definitions/thing-context'}
+    '@context': {'\$ref': '#/definitions/thing-context'},
   },
   'required': ['title', 'security', 'securityDefinitions', '@context'],
-  'additionalProperties': true
+  'additionalProperties': true,
 };

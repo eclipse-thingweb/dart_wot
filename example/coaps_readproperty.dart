@@ -15,7 +15,7 @@ final Map<Uri, PskCredentials> _pskCredentialsStore = {
   Uri(host: 'californium.eclipseprojects.io', scheme: 'coaps'): PskCredentials(
     identity: Uint8List.fromList('Client_identity'.codeUnits),
     preSharedKey: Uint8List.fromList('secretPSK'.codeUnits),
-  )
+  ),
 };
 
 PskCredentials? _pskCredentialsCallback(

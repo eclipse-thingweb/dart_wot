@@ -21,7 +21,7 @@ void main() {
       const thingDescriptionJson = {
         '@context': [
           'https://www.w3.org/2022/wot/td/v1.1',
-          {'cov': 'http://www.example.org/coap-binding#'}
+          {'cov': 'http://www.example.org/coap-binding#'},
         ],
         'title': 'Test Thing',
         'properties': {
@@ -40,7 +40,7 @@ void main() {
                 'response': {
                   'contentType': 'application/cbor',
                   'cov:contentFormat': 60,
-                }
+                },
               },
               {
                 'href': 'coap://example.org',
@@ -49,13 +49,13 @@ void main() {
                   'cov:block2Size': 4096,
                 },
               },
-            ]
-          }
+            ],
+          },
         },
         'securityDefinitions': {
-          'nosec_sc': {'scheme': 'nosec'}
+          'nosec_sc': {'scheme': 'nosec'},
         },
-        'security': ['nosec_sc']
+        'security': ['nosec_sc'],
       };
 
       final thingDescription = ThingDescription.fromJson(thingDescriptionJson);

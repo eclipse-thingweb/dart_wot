@@ -60,7 +60,7 @@ class ContentSerdes {
 
   final Set<String> _offeredMediaTypes = {
     'application/json',
-    'application/cbor'
+    'application/cbor',
   };
 
   /// Parses a [String]-based [mediaType] and adds it to the set of

@@ -9,7 +9,7 @@
 import 'package:dart_wot/dart_wot.dart';
 
 final Map<String, BasicCredentials> basicCredentials = {
-  'urn:test': BasicCredentials('rw', 'readwrite')
+  'urn:test': BasicCredentials('rw', 'readwrite'),
 };
 
 Future<BasicCredentials?> basicCredentialsCallback(
