@@ -1,6 +1,6 @@
 [![pub package](https://img.shields.io/pub/v/dart_wot.svg)](https://pub.dev/packages/dart_wot)
-[![Build](https://github.com/namib-project/dart_wot/actions/workflows/ci.yml/badge.svg)](https://github.com/namib-project/dart_wot/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/namib-project/dart_wot/branch/main/graph/badge.svg?token=76OBNOVL60)](https://codecov.io/gh/namib-project/dart_wot)
+[![Build](https://github.com/eclipse-thingweb/dart_wot/actions/workflows/ci.yml/badge.svg)](https://github.com/eclipse-thingweb/dart_wot/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/eclipse-thingweb/dart_wot/branch/main/graph/badge.svg?token=76OBNOVL60)](https://codecov.io/gh/eclipse-thingweb/dart_wot)
 [![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg)](https://pub.dev/packages/lint)
 
 # dart_wot
