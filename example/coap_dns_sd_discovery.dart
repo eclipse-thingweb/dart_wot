@@ -1,4 +1,4 @@
-// Copyright 2023 The NAMIB Project Developers. All rights reserved.
+// Copyright 2023 Contributors to the Eclipse Foundation. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 //
