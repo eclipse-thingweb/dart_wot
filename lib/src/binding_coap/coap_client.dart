@@ -538,4 +538,12 @@ final class CoapClient implements ProtocolClient {
       yield content;
     }
   }
+
+  @override
+  Future<Content> requestThingDescription(Uri url) async => _sendRequest(
+        url,
+        coap.RequestMethod.get,
+        form: null,
+        accept: coap.CoapMediaType.applicationTdJson,
+      );
 }

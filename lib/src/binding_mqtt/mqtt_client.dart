@@ -251,4 +251,10 @@ final class MqttClient implements ProtocolClient {
     // TODO: implement discoverWithCoreLinkFormat
     throw UnimplementedError();
   }
+
+  @override
+  Future<Content> requestThingDescription(Uri url) {
+    // TODO: implement requestThingDescription
+    throw UnimplementedError();
+  }
 }

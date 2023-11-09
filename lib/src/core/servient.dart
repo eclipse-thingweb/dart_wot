@@ -15,6 +15,7 @@ import 'exposed_thing.dart';
 import 'protocol_interfaces/protocol_client.dart';
 import 'protocol_interfaces/protocol_client_factory.dart';
 import 'protocol_interfaces/protocol_server.dart';
+import 'thing_discovery.dart';
 import 'wot.dart';
 
 /// Exception that is thrown by a [Servient].
@@ -224,5 +225,21 @@ class Servient {
     }
 
     return clientFactory.createClient();
+  }
+
+  /// Requests a [ThingDescription] from a [url].
+  Future<ThingDescription> requestThingDescription(Uri url) async {
+    final client = clientFor(url.scheme);
+    final content = await client.requestThingDescription(url);
+
+    final value = await contentSerdes.contentToValue(content, null);
+
+    if (value is! Map<String, dynamic>) {
+      throw DiscoveryException(
+        'Could not parse Thing Description obtained from $url',
+      );
+    }
+
+    return ThingDescription.fromJson(value);
   }
 }

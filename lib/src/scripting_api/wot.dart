@@ -31,6 +31,9 @@ abstract interface class WoT {
   /// based on the underlying impementation.
   Future<ExposedThing> produce(ExposedThingInit exposedThingInit);
 
+  /// Requests a [ThingDescription] from the given [url].
+  Future<ThingDescription> requestThingDescription(Uri url);
+
   /// Discovers [ThingDescription]s from a given [url] using the specified
   /// [method].
   ///

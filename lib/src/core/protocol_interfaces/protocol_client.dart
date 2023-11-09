@@ -62,4 +62,7 @@ abstract interface class ProtocolClient {
     void Function(Exception error)? error,
     required void Function() complete,
   });
+
+  /// Requests a Thing Description as [Content] from a [url].
+  Future<Content> requestThingDescription(Uri url);
 }

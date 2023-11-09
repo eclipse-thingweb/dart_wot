@@ -332,4 +332,18 @@ final class HttpClient implements ProtocolClient {
 
     yield encodedLinks;
   }
+
+  @override
+  Future<Content> requestThingDescription(Uri url) async {
+    final request = Request(HttpRequestMethod.get.methodName, url);
+    const tdContentType = 'application/td+json';
+    request.headers['Accept'] = tdContentType;
+
+    final response = await _client.send(request);
+
+    return Content(
+      response.headers['Content-Type'] ?? tdContentType,
+      response.stream,
+    );
+  }
 }

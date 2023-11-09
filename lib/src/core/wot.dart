@@ -90,4 +90,9 @@ class WoT implements scripting_api.WoT {
   }) {
     return ThingDiscovery(url, thingFilter, _servient, method: method);
   }
+
+  @override
+  Future<ThingDescription> requestThingDescription(Uri url) {
+    return _servient.requestThingDescription(url);
+  }
 }
