@@ -5,8 +5,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import '../definitions/thing_description.dart';
+import 'interaction_input.dart';
 import 'interaction_output.dart';
-import 'types.dart';
 
 /// A function that is called when an external request for reading a Property is
 /// received and defines what to do with such requests.

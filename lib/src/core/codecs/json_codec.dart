@@ -8,27 +8,38 @@ import 'dart:convert';
 
 import '../../definitions/data_schema.dart';
 
+import '../../scripting_api/data_schema_value.dart';
 import 'content_codec.dart';
 
 /// A [ContentCodec] that encodes and decodes JSON data.
 class JsonCodec extends ContentCodec {
   @override
   List<int> valueToBytes(
-    Object? value,
+    DataSchemaValue? dataSchemaValue,
     DataSchema? dataSchema,
     Map<String, String>? parameters,
   ) {
-    return utf8.encode(jsonEncode(value));
+    if (dataSchemaValue == null) {
+      return [];
+    }
+
+    return utf8.encode(jsonEncode(dataSchemaValue.value));
   }
 
   @override
-  Object? bytesToValue(
+  DataSchemaValue? bytesToValue(
     List<int> bytes,
     DataSchema? dataSchema,
     Map<String, String>? parameters,
   ) {
     // TODO(JKRhb): Use dataSchema for validation
 
-    return jsonDecode(utf8.decoder.convert(bytes));
+    if (bytes.isEmpty) {
+      return null;
+    }
+
+    final decodedJson = jsonDecode(utf8.decoder.convert(bytes));
+
+    return DataSchemaValue.tryParse(decodedJson);
   }
 }

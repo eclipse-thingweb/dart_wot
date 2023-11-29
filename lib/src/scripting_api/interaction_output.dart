@@ -33,7 +33,6 @@ abstract interface class InteractionOutput {
   /// of the [InteractionOutput].
   Future<ByteBuffer> arrayBuffer();
 
-  // TODO(JKRhb): Replace with some kind of DataSchemaValue
   /// The parsed value of the [InteractionOutput].
   Future<Object?> value();
 }

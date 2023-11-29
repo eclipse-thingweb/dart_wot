@@ -13,6 +13,7 @@ import 'package:multicast_dns/multicast_dns.dart';
 import '../../core.dart';
 import '../../scripting_api.dart' as scripting_api;
 import '../definitions/thing_description.dart';
+import '../scripting_api/data_schema_value.dart';
 import '../scripting_api/discovery/discovery_method.dart';
 import 'content.dart';
 
@@ -105,14 +106,15 @@ class ThingDiscovery extends Stream<ThingDescription>
   Future<ThingDescription> _decodeThingDescription(
     DiscoveryContent content,
   ) async {
-    final value = await _servient.contentSerdes.contentToValue(content, null);
-    if (value is! Map<String, dynamic>) {
+    final dataSchemaValue =
+        await _servient.contentSerdes.contentToValue(content, null);
+    if (dataSchemaValue is! DataSchemaValue<Map<String, Object?>>) {
       throw DiscoveryException(
         'Could not parse Thing Description obtained from ${content.sourceUri}',
       );
     }
 
-    return ThingDescription.fromJson(value);
+    return ThingDescription.fromJson(dataSchemaValue.value);
   }
 
   Stream<ThingDescription> _discoverDirectly(Uri uri) async* {
@@ -123,29 +125,28 @@ class ThingDiscovery extends Stream<ThingDescription>
         .asyncMap(_decodeThingDescription);
   }
 
-  Future<List<CoapWebLink>?> _getCoreWebLinks(Content content) async {
-    final value = await _servient.contentSerdes.contentToValue(content, null);
-    if (value is CoapWebLink) {
-      return [value];
-    } else if (value is List<CoapWebLink>) {
-      return value;
+  Future<List<CoapWebLink>> _getCoreWebLinks(
+    Content content,
+    Uri sourceUri,
+  ) async {
+    final dataSchemaValue =
+        await _servient.contentSerdes.contentToValue(content, null);
+
+    if (dataSchemaValue is! DataSchemaValue<String>) {
+      throw DiscoveryException(
+        'Could not parse Thing Description obtained from $sourceUri',
+      );
     }
 
-    return null;
+    return CoapLinkFormat.parse(dataSchemaValue.value).toList();
   }
 
   Future<Iterable<Uri>> _filterCoreWebLinks(
     String resourceType,
     DiscoveryContent coreWebLink,
   ) async {
-    final webLinks = await _getCoreWebLinks(coreWebLink);
     final sourceUri = coreWebLink.sourceUri;
-
-    if (webLinks == null) {
-      throw DiscoveryException(
-        'Discovery from $sourceUri returned no valid CoRE Link-Format Links.',
-      );
-    }
+    final webLinks = await _getCoreWebLinks(coreWebLink, sourceUri);
 
     return webLinks
         .where(

@@ -21,10 +21,16 @@ Future<void> handleThingDescription(
   ThingDescription thingDescription,
 ) async {
   final consumedThing = await wot.consume(thingDescription);
-  await consumedThing.writeProperty(propertyName, 'Hello World!');
+  await consumedThing.writeProperty(
+    propertyName,
+    'Hello World'.asInteractionInput(),
+  );
   var output = await consumedThing.readProperty(propertyName);
   await output.printValue();
-  await consumedThing.writeProperty(propertyName, 'Bye World!');
+  await consumedThing.writeProperty(
+    propertyName,
+    'Bye Value'.asInteractionInput(),
+  );
   output = await consumedThing.readProperty(propertyName);
   await output.printValue();
 }

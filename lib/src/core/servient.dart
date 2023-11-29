@@ -8,6 +8,7 @@ import 'package:uuid/uuid.dart';
 
 import '../definitions/interaction_affordances/interaction_affordance.dart';
 import '../definitions/thing_description.dart';
+import '../scripting_api/data_schema_value.dart';
 import 'consumed_thing.dart';
 import 'content_serdes.dart';
 import 'credentials/callbacks.dart';
@@ -232,14 +233,14 @@ class Servient {
     final client = clientFor(url.scheme);
     final content = await client.requestThingDescription(url);
 
-    final value = await contentSerdes.contentToValue(content, null);
+    final dataSchemaValue = await contentSerdes.contentToValue(content, null);
 
-    if (value is! Map<String, dynamic>) {
+    if (dataSchemaValue is! DataSchemaValue<Map<String, Object?>>) {
       throw DiscoveryException(
         'Could not parse Thing Description obtained from $url',
       );
     }
 
-    return ThingDescription.fromJson(value);
+    return ThingDescription.fromJson(dataSchemaValue.value);
   }
 }
