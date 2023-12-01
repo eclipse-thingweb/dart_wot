@@ -105,12 +105,11 @@ See the `LICENSE` file for more information.
 
     SPDX-License-Identifier: BSD-3-Clause
 
-## Note on Third-Party Code
+## Acknowledgements
 
-This software includes material copied from
-Eclipse Thingweb node-wot (https://github.com/eclipse/thingweb.node-wot).
-Copyright © 2018 Contributors to the Eclipse Foundation.
-See the `LICENSE-THIRD-PARTY` file for more information.
+`dart_wot` was inspired by Eclipse Thingweb
+[node-wot](https://github.com/eclipse/thingweb.node-wot), a W3C Web of Things
+implementation for the Node.js ecosystem.
 
 ## Contribution
 
