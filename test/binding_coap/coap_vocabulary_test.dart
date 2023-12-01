@@ -1,12 +1,8 @@
-// Copyright 2023 Contributors to the Eclipse Foundation
+// Copyright 2023 Contributors to the Eclipse Foundation. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 //
-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
-// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
-// option. This file may not be copied, modified, or distributed
-// except according to those terms.
-//
-// SPDX-License-Identifier: MIT OR Apache-2.0
+// SPDX-License-Identifier: BSD-3-Clause
 
 import 'package:coap/coap.dart';
 import 'package:dart_wot/dart_wot.dart';
