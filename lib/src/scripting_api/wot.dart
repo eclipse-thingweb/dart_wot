@@ -34,6 +34,14 @@ abstract interface class WoT {
   /// Requests a [ThingDescription] from the given [url].
   Future<ThingDescription> requestThingDescription(Uri url);
 
+  /// Starts the discovery process that given a TD Directory [url], will provide
+  /// [ThingDescription] objects for Thing Descriptions that match an optional
+  /// [filter] argument of type [ThingFilter].
+  Future<ThingDiscoveryProcess> exploreDirectory(
+    Uri url, [
+    ThingFilter? filter,
+  ]);
+
   /// Discovers [ThingDescription]s from a given [url] using the specified
   /// [method].
   ///

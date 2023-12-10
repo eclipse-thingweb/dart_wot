@@ -22,3 +22,23 @@ abstract interface class ThingDiscovery implements Stream<ThingDescription> {
   /// Stops the discovery process.
   void stop();
 }
+
+/// Provides the properties and methods controlling the discovery process, and
+/// returning the results.
+abstract interface class ThingDiscoveryProcess
+    implements Stream<ThingDescription> {
+  /// Optional filter that can applied during the discovery process.
+  ThingFilter? get thingFilter;
+
+  /// `true` if the discovery has been stopped or completed with no more results
+  /// to report.
+  bool get done;
+
+  /// Represents the last error that occurred during the discovery process.
+  ///
+  /// Typically used for critical errors that stop discovery.
+  Exception? get error;
+
+  /// Stops the discovery process.
+  Future<void> stop();
+}
