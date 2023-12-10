@@ -318,26 +318,14 @@ class Form {
       return null;
     }
 
-    if (affordanceUriVariables.isEmpty) {
-      throw UriVariableException(
-        'The Form href $href contains URI '
-        'variables but the TD does not provide a uriVariables definition.',
+    if (uriVariables != null) {
+      // Perform additional validation
+      _validateUriVariables(
+        hrefUriVariables,
+        affordanceUriVariables,
+        uriVariables,
       );
     }
-
-    if (uriVariables == null) {
-      throw ValidationException(
-        'The Form href $href contains URI variables '
-        'but no values were provided as InteractionOptions.',
-      );
-    }
-
-    // Perform additional validation
-    _validateUriVariables(
-      hrefUriVariables,
-      affordanceUriVariables,
-      uriVariables,
-    );
 
     // As "{" and "}" are "percent encoded" due to Uri.parse(), we need to
     // revert the encoding first before we can insert the values.
@@ -345,7 +333,8 @@ class Form {
 
     // Everything should be okay at this point, we can simply insert the values
     // and return the result.
-    final newHref = Uri.parse(UriTemplate(decodedHref).expand(uriVariables));
+    final newHref =
+        Uri.parse(UriTemplate(decodedHref).expand(uriVariables ?? {}));
     return _copy(newHref);
   }
 }
