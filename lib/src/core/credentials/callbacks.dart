@@ -1,4 +1,4 @@
-// Copyright 2022 Contributors to the Eclipse Foundation. All rights reserved.
+// Copyright 2023 Contributors to the Eclipse Foundation. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 //
@@ -6,15 +6,10 @@
 
 import 'package:dcaf/dcaf.dart';
 
-import '../definitions/form.dart';
-import 'credentials/ace_credentials.dart';
-import 'credentials/apikey_credentials.dart';
-import 'credentials/basic_credentials.dart';
-import 'credentials/bearer_credentials.dart';
-import 'credentials/credentials.dart';
-import 'credentials/digest_credentials.dart';
-import 'credentials/oauth2_credentials.dart';
-import 'credentials/psk_credentials.dart';
+import '../../definitions/form.dart';
+import 'ace_credentials.dart';
+import 'credentials.dart';
+import 'psk_credentials.dart';
 
 /// Function signature for a synchronous callback for providing client
 /// [PskCredentials] at runtime.
@@ -65,53 +60,6 @@ typedef AceSecurityCallback = Future<AceCredentials?> Function(
 /// implementation limititations, which do not allow for asynchronous callbacks.
 typedef AsyncClientSecurityCallback<T extends Credentials> = Future<T?>
     Function(Uri uri, Form? form, T? invalidCredentials);
-
-/// Class for providing callbacks for client [Credentials] at runtime.
-///
-/// Accepts either an [AsyncClientSecurityCallback] for each supported type of
-/// [Credentials] or – in the case of [PskCredentials] – a (synchronous)
-/// [ClientPskCallback].
-///
-/// Note that not all security schemes are implemented yet, therefore not every
-/// callback might actually be usable in practice.
-class ClientSecurityProvider {
-  /// Constructor.
-  ClientSecurityProvider({
-    this.pskCredentialsCallback,
-    this.basicCredentialsCallback,
-    this.bearerCredentialsCallback,
-    this.digestCredentialsCallback,
-    this.apikeyCredentialsCallback,
-    this.oauth2CredentialsCallback,
-    this.aceCredentialsCallback,
-  });
-
-  /// Asychronous callback for [ApiKeyCredentials].
-  final AsyncClientSecurityCallback<ApiKeyCredentials>?
-      apikeyCredentialsCallback;
-
-  /// Sychronous callback for [PskCredentials].
-  final ClientPskCallback? pskCredentialsCallback;
-
-  /// Asychronous callback for [BasicCredentials].
-  final AsyncClientSecurityCallback<BasicCredentials>? basicCredentialsCallback;
-
-  /// Asychronous callback for [DigestCredentials].
-  final AsyncClientSecurityCallback<DigestCredentials>?
-      digestCredentialsCallback;
-
-  /// Asychronous callback for [BearerCredentials].
-  final AsyncClientSecurityCallback<BearerCredentials>?
-      bearerCredentialsCallback;
-
-  // TODO(JKRhb): Is this callback actually needed?
-  /// Asychronous callback for [OAuth2Credentials].
-  final AsyncClientSecurityCallback<OAuth2Credentials>?
-      oauth2CredentialsCallback;
-
-  /// Asynchronous callback for [AceCredentials].
-  final AceSecurityCallback? aceCredentialsCallback;
-}
 
 /// Function signature for a synchronous callback retrieving server
 /// [Credentials] by Thing [id] at runtime.

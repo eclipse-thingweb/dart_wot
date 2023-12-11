@@ -30,14 +30,12 @@ PskCredentials? _pskCredentialsCallback(
 
 Future<void> main(List<String> args) async {
   final CoapClientFactory coapClientFactory = CoapClientFactory(
-    CoapConfig(
+    coapConfig: const CoapConfig(
       dtlsCiphers: 'PSK-AES128-CCM8',
     ),
+    pskCredentialsCallback: _pskCredentialsCallback,
   );
-  final securityProvider =
-      ClientSecurityProvider(pskCredentialsCallback: _pskCredentialsCallback);
-  final servient = Servient(clientSecurityProvider: securityProvider)
-    ..addClientFactory(coapClientFactory);
+  final servient = Servient()..addClientFactory(coapClientFactory);
 
   final wot = await servient.start();
 

@@ -12,8 +12,8 @@ import 'package:http/http.dart';
 import '../core/content.dart';
 import '../core/credentials/basic_credentials.dart';
 import '../core/credentials/bearer_credentials.dart';
+import '../core/credentials/callbacks.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
-import '../core/security_provider.dart';
 import '../definitions/form.dart';
 import '../definitions/operation_type.dart';
 import '../definitions/security/basic_security_scheme.dart';
@@ -46,11 +46,19 @@ const _authorizationHeader = 'Authorization';
 /// [`ComboSecurityScheme`]: https://w3c.github.io/wot-thing-description/#combosecurityscheme
 final class HttpClient implements ProtocolClient {
   /// Creates a new [HttpClient].
-  HttpClient(this._clientSecurityProvider);
+  HttpClient({
+    AsyncClientSecurityCallback<BasicCredentials>? basicCredentialsCallback,
+    AsyncClientSecurityCallback<BearerCredentials>? bearerCredentialsCallback,
+  })  : _basicCredentialsCallback = basicCredentialsCallback,
+        _bearerCredentialsCallback = bearerCredentialsCallback;
 
   final _client = Client();
 
-  final ClientSecurityProvider? _clientSecurityProvider;
+  final AsyncClientSecurityCallback<BasicCredentials>?
+      _basicCredentialsCallback;
+
+  final AsyncClientSecurityCallback<BearerCredentials>?
+      _bearerCredentialsCallback;
 
   Future<void> _applyCredentialsFromForm(Request request, Form form) async {
     // TODO(JKRhb): Add DigestSecurity back in
@@ -210,8 +218,7 @@ final class HttpClient implements ProtocolClient {
     Form? form, [
     BasicCredentials? invalidCredentials,
   ]) async {
-    return _clientSecurityProvider?.basicCredentialsCallback
-        ?.call(uri, form, invalidCredentials);
+    return _basicCredentialsCallback?.call(uri, form, invalidCredentials);
   }
 
   Future<BearerCredentials?> _getBearerCredentials(
@@ -219,8 +226,7 @@ final class HttpClient implements ProtocolClient {
     Form? form, [
     BearerCredentials? invalidCredentials,
   ]) async {
-    return _clientSecurityProvider?.bearerCredentialsCallback
-        ?.call(uri, form, invalidCredentials);
+    return _bearerCredentialsCallback?.call(uri, form, invalidCredentials);
   }
 
   static Map<String, String> _getHeadersFromForm(Form form) {

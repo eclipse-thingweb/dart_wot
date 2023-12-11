@@ -10,11 +10,11 @@ import '../definitions/interaction_affordances/interaction_affordance.dart';
 import '../definitions/thing_description.dart';
 import 'consumed_thing.dart';
 import 'content_serdes.dart';
+import 'credentials/callbacks.dart';
 import 'exposed_thing.dart';
 import 'protocol_interfaces/protocol_client.dart';
 import 'protocol_interfaces/protocol_client_factory.dart';
 import 'protocol_interfaces/protocol_server.dart';
-import 'security_provider.dart';
 import 'wot.dart';
 
 /// Exception that is thrown by a [Servient].
@@ -40,19 +40,15 @@ class Servient {
   /// A custom [contentSerdes] can be passed that supports other media types
   /// than the default ones.
   Servient({
-    ClientSecurityProvider? clientSecurityProvider,
     ServerSecurityCallback? serverSecurityCallback,
     ContentSerdes? contentSerdes,
   })  : contentSerdes = contentSerdes ?? ContentSerdes(),
-        _clientSecurityProvider = clientSecurityProvider,
         _serverSecurityCallback = serverSecurityCallback;
 
   final List<ProtocolServer> _servers = [];
   final Map<String, ProtocolClientFactory> _clientFactories = {};
   final Map<String, ExposedThing> _things = {};
   final Map<String, ConsumedThing> _consumedThings = {};
-
-  final ClientSecurityProvider? _clientSecurityProvider;
 
   final ServerSecurityCallback? _serverSecurityCallback;
 
@@ -200,12 +196,14 @@ class Servient {
 
   /// Returns the [ProtocolClient] associated with a given [scheme].
   ProtocolClient clientFor(String scheme) {
-    if (hasClientFor(scheme)) {
-      return _clientFactories[scheme]!.createClient(_clientSecurityProvider);
-    } else {
+    final clientFactory = _clientFactories[scheme];
+
+    if (clientFactory == null) {
       throw ServientException(
         'Servient has no ClientFactory for scheme $scheme',
       );
     }
+
+    return clientFactory.createClient();
   }
 }
