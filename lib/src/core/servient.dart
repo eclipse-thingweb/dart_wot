@@ -40,10 +40,15 @@ class Servient {
   /// A custom [contentSerdes] can be passed that supports other media types
   /// than the default ones.
   Servient({
+    List<ProtocolClientFactory>? clientFactories,
     ServerSecurityCallback? serverSecurityCallback,
     ContentSerdes? contentSerdes,
   })  : contentSerdes = contentSerdes ?? ContentSerdes(),
-        _serverSecurityCallback = serverSecurityCallback;
+        _serverSecurityCallback = serverSecurityCallback {
+    for (final clientFactory in clientFactories ?? <ProtocolClientFactory>[]) {
+      addClientFactory(clientFactory);
+    }
+  }
 
   final List<ProtocolServer> _servers = [];
   final Map<String, ProtocolClientFactory> _clientFactories = {};
