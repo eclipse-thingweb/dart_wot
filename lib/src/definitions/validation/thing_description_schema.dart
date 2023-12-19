@@ -34,7 +34,7 @@ class ThingDescriptionValidationException extends ValidationException {
 
 final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
   'title': 'Thing Description',
-  'version': '1.1-23-March-2023',
+  'version': '1.1-09-November-2023',
   'description':
       'JSON Schema for validating TD instances against the TD information '
           'model. TD instances can be with or without terms that have default '
@@ -319,6 +319,7 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
                   'unobserveproperty',
                 ],
               },
+              'minItems': 1,
             }
           ],
         },
@@ -343,6 +344,7 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
                 'type': 'string',
                 'enum': ['invokeaction', 'queryaction', 'cancelaction'],
               },
+              'minItems': 1,
             }
           ],
         },
@@ -367,6 +369,7 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
                 'type': 'string',
                 'enum': ['subscribeevent', 'unsubscribeevent'],
               },
+              'minItems': 1,
             }
           ],
         },
@@ -411,6 +414,7 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
                   'unsubscribeallevents',
                 ],
               },
+              'minItems': 1,
             }
           ],
         },
@@ -833,7 +837,7 @@ final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
             {'type': 'string'},
             {
               'type': 'string',
-              'enum': ['code', 'client', 'device'],
+              'enum': ['code', 'client'],
             }
           ],
         },
