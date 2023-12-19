@@ -195,7 +195,7 @@ class Servient {
   List<String> get clientSchemes =>
       _clientFactories.keys.toList(growable: false);
 
-  /// Adds a new [clientFactory] to this [Servient.]
+  /// Adds a new [clientFactory] to this [Servient].
   void addClientFactory(ProtocolClientFactory clientFactory) {
     for (final scheme in clientFactory.schemes) {
       _clientFactories[scheme] = clientFactory;
