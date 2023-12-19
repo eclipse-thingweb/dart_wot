@@ -37,13 +37,24 @@ class ServientException implements Exception {
 class Servient {
   /// Creates a new [Servient].
   ///
-  /// A custom [contentSerdes] can be passed that supports other media types
-  /// than the default ones.
+  /// The [Servient] can be preconfigured with a [List] of
+  /// [ProtocolClientFactory]s.
+  /// However, it is also possible to dynamically [addClientFactory]s and
+  /// [removeClientFactory]s at runtime.
+  ///
+  /// If you want to support a custom media type not already included in the
+  /// [ContentSerdes] class, a custom [contentSerdes] object can be passed as an
+  /// argument.
   Servient({
+    List<ProtocolClientFactory>? clientFactories,
     ServerSecurityCallback? serverSecurityCallback,
     ContentSerdes? contentSerdes,
   })  : contentSerdes = contentSerdes ?? ContentSerdes(),
-        _serverSecurityCallback = serverSecurityCallback;
+        _serverSecurityCallback = serverSecurityCallback {
+    for (final clientFactory in clientFactories ?? <ProtocolClientFactory>[]) {
+      addClientFactory(clientFactory);
+    }
+  }
 
   final List<ProtocolServer> _servers = [];
   final Map<String, ProtocolClientFactory> _clientFactories = {};
@@ -184,12 +195,20 @@ class Servient {
   List<String> get clientSchemes =>
       _clientFactories.keys.toList(growable: false);
 
-  /// Adds a new [clientFactory] to this [Servient.]
+  /// Adds a new [clientFactory] to this [Servient].
   void addClientFactory(ProtocolClientFactory clientFactory) {
     for (final scheme in clientFactory.schemes) {
       _clientFactories[scheme] = clientFactory;
     }
   }
+
+  /// Removes a [ProtocolClientFactory] matching the given [scheme] from this
+  /// [Servient], if present.
+  ///
+  /// If a [ProtocolClientFactory] was removed, the method returns it, otherwise
+  /// the return value is `null`.
+  ProtocolClientFactory? removeClientFactory(String scheme) =>
+      _clientFactories.remove(scheme);
 
   /// Checks whether a [ProtocolClient] is avaiable for a given [scheme].
   bool hasClientFor(String scheme) => _clientFactories.containsKey(scheme);

@@ -47,7 +47,9 @@ import 'package:dart_wot/dart_wot.dart';
 
 Future<void> main(List<String> args) async {
   final CoapClientFactory coapClientFactory = CoapClientFactory();
-  final servient = Servient()..addClientFactory(coapClientFactory);
+  final servient = Servient(
+    protocolClients: [coapClientFactory]
+  );
   final wot = await servient.start();
 
   final thingDescriptionJson = '''

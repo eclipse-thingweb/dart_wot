@@ -128,13 +128,14 @@ void main() {
         ]) async =>
             bearerCredentialsStore[uri.host];
 
-        final servient = Servient()
-          ..addClientFactory(
+        final servient = Servient(
+          clientFactories: [
             HttpClientFactory(
               basicCredentialsCallback: basicCredentialsCallback,
               bearerCredentialsCallback: bearerCredentialsCallback,
             ),
-          );
+          ],
+        );
         final wot = await servient.start();
 
         final consumedThing = await wot.consume(parsedTd);

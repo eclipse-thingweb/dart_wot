@@ -35,7 +35,12 @@ Future<void> main(List<String> args) async {
     ),
     pskCredentialsCallback: _pskCredentialsCallback,
   );
-  final servient = Servient()..addClientFactory(coapClientFactory);
+
+  final servient = Servient(
+    clientFactories: [
+      coapClientFactory,
+    ],
+  );
 
   final wot = await servient.start();
 

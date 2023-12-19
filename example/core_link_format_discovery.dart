@@ -12,7 +12,7 @@ const propertyName = 'status';
 const actionName = 'toggle';
 
 Future<void> main(List<String> args) async {
-  final servient = Servient()..addClientFactory(CoapClientFactory());
+  final servient = Servient(clientFactories: [CoapClientFactory()]);
 
   final wot = await servient.start();
 
