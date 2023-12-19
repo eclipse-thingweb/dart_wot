@@ -202,6 +202,14 @@ class Servient {
     }
   }
 
+  /// Removes a [ProtocolClientFactory] matching the given [scheme] from this
+  /// [Servient], if present.
+  ///
+  /// If a [ProtocolClientFactory] was removed, the method returns it, otherwise
+  /// the return value is `null`.
+  ProtocolClientFactory? removeClientFactory(String scheme) =>
+      _clientFactories.remove(scheme);
+
   /// Checks whether a [ProtocolClient] is avaiable for a given [scheme].
   bool hasClientFor(String scheme) => _clientFactories.containsKey(scheme);
 
