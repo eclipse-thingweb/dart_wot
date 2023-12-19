@@ -37,8 +37,14 @@ class ServientException implements Exception {
 class Servient {
   /// Creates a new [Servient].
   ///
-  /// A custom [contentSerdes] can be passed that supports other media types
-  /// than the default ones.
+  /// The [Servient] can be preconfigured with a [List] of
+  /// [ProtocolClientFactory]s.
+  /// However, it is also possible to dynamically [addClientFactory]s and
+  /// [removeClientFactory]s at runtime.
+  ///
+  /// If you want to support a custom media type not already included in the
+  /// [ContentSerdes] class, a custom [contentSerdes] object can be passed as an
+  /// argument.
   Servient({
     List<ProtocolClientFactory>? clientFactories,
     ServerSecurityCallback? serverSecurityCallback,
