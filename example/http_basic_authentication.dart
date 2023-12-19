@@ -68,8 +68,9 @@ Future<BasicCredentials?> basicCredentialsCallback(
 /// Illustrates the usage of both the basic and the automatic security scheme,
 /// with a server supporting basic authentication.
 Future<void> main(List<String> args) async {
-  final HttpClientFactory httpClientFactory =
-      HttpClientFactory(basicCredentialsCallback: basicCredentialsCallback);
+  final httpClientFactory = HttpClientFactory(
+    basicCredentialsCallback: basicCredentialsCallback,
+  );
   final servient = Servient(
     clientFactories: [
       httpClientFactory,

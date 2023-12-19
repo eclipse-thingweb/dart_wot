@@ -23,10 +23,10 @@ Future<BasicCredentials?> basicCredentialsCallback(
 }
 
 Future<void> main(List<String> args) async {
-  final CoapClientFactory coapClientFactory = CoapClientFactory();
-  final HttpClientFactory httpClientFactory =
+  final coapClientFactory = CoapClientFactory();
+  final httpClientFactory =
       HttpClientFactory(basicCredentialsCallback: basicCredentialsCallback);
-  final MqttClientFactory mqttClientFactory = MqttClientFactory();
+  final mqttClientFactory = MqttClientFactory();
 
   final servient = Servient(
     clientFactories: [
