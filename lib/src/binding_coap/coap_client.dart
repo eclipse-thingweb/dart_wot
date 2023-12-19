@@ -13,9 +13,9 @@ import 'package:dcaf/dcaf.dart';
 
 import '../core/content.dart';
 import '../core/credentials/ace_credentials.dart';
+import '../core/credentials/callbacks.dart';
 import '../core/credentials/psk_credentials.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
-import '../core/security_provider.dart';
 import '../definitions/form.dart';
 import '../definitions/operation_type.dart';
 import '../scripting_api/subscription.dart';
@@ -52,11 +52,10 @@ class _InternalCoapConfig extends CoapConfigDefault {
 
 coap.PskCredentialsCallback? _createPskCallback(
   Uri uri,
-  Form? form,
-  ClientSecurityProvider? clientSecurityProvider,
-) {
+  Form? form, {
+  ClientPskCallback? pskCredentialsCallback,
+}) {
   final usesPskScheme = form?.usesPskScheme ?? false;
-  final pskCredentialsCallback = clientSecurityProvider?.pskCredentialsCallback;
 
   if (!usesPskScheme || pskCredentialsCallback == null) {
     return null;
@@ -82,11 +81,19 @@ coap.PskCredentialsCallback? _createPskCallback(
 /// A [ProtocolClient] for the Constrained Application Protocol (CoAP).
 final class CoapClient implements ProtocolClient {
   /// Creates a new [CoapClient] based on an optional [CoapConfig].
-  CoapClient([this._coapConfig, this._clientSecurityProvider]);
+  CoapClient({
+    CoapConfig? coapConfig,
+    ClientPskCallback? pskCredentialsCallback,
+    AceSecurityCallback? aceSecurityCallback,
+  })  : _pskCredentialsCallback = pskCredentialsCallback,
+        _aceSecurityCallback = aceSecurityCallback,
+        _coapConfig = coapConfig;
 
   final CoapConfig? _coapConfig;
 
-  final ClientSecurityProvider? _clientSecurityProvider;
+  final ClientPskCallback? _pskCredentialsCallback;
+
+  final AceSecurityCallback? _aceSecurityCallback;
 
   Future<coap.CoapRequest> _createRequest(
     coap.RequestMethod requestMethod,
@@ -153,9 +160,12 @@ final class CoapClient implements ProtocolClient {
   }) async {
     final coapClient = coap.CoapClient(
       uri,
-      config: _InternalCoapConfig(_coapConfig ?? CoapConfig()),
-      pskCredentialsCallback:
-          _createPskCallback(uri, form, _clientSecurityProvider),
+      config: _InternalCoapConfig(_coapConfig ?? const CoapConfig()),
+      pskCredentialsCallback: _createPskCallback(
+        uri,
+        form,
+        pskCredentialsCallback: _pskCredentialsCallback,
+      ),
     );
 
     final request = await _createRequest(
@@ -169,8 +179,7 @@ final class CoapClient implements ProtocolClient {
     );
 
     final creationHint = await _obtainAceCreationHintFromForm(form);
-    final aceCredentialsCallback =
-        _clientSecurityProvider?.aceCredentialsCallback;
+    final aceCredentialsCallback = _aceSecurityCallback;
 
     final coap.CoapResponse response;
 
@@ -236,7 +245,7 @@ final class CoapClient implements ProtocolClient {
 
     final coapClient = coap.CoapClient(
       creationHintUri,
-      config: _InternalCoapConfig(_coapConfig ?? CoapConfig()),
+      config: _InternalCoapConfig(_coapConfig ?? const CoapConfig()),
     );
 
     final response = await coapClient.send(request);
@@ -421,7 +430,7 @@ final class CoapClient implements ProtocolClient {
 
     final coapClient = coap.CoapClient(
       form.resolvedHref,
-      config: _InternalCoapConfig(_coapConfig ?? CoapConfig()),
+      config: _InternalCoapConfig(_coapConfig ?? const CoapConfig()),
     );
 
     if (subprotocol == CoapSubprotocol.observe) {

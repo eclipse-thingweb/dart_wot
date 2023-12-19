@@ -4,22 +4,31 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import '../core/credentials/basic_credentials.dart';
+import '../core/credentials/bearer_credentials.dart';
+import '../core/credentials/callbacks.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../core/protocol_interfaces/protocol_client_factory.dart';
-import '../core/security_provider.dart';
 import 'http_client.dart';
 import 'http_config.dart';
 
 /// A [ProtocolClientFactory] that produces HTTP and HTTPS clients.
 final class HttpClientFactory implements ProtocolClientFactory {
   /// Creates a new [HttpClientFactory] based on an optional [HttpConfig].
-  HttpClientFactory([this.httpConfig]);
+  HttpClientFactory({
+    AsyncClientSecurityCallback<BasicCredentials>? basicCredentialsCallback,
+    AsyncClientSecurityCallback<BearerCredentials>? bearerCredentialsCallback,
+  })  : _basicCredentialsCallback = basicCredentialsCallback,
+        _bearerCredentialsCallback = bearerCredentialsCallback;
+
+  final AsyncClientSecurityCallback<BasicCredentials>?
+      _basicCredentialsCallback;
+
+  final AsyncClientSecurityCallback<BearerCredentials>?
+      _bearerCredentialsCallback;
 
   @override
   Set<String> get schemes => {'http', 'https'};
-
-  /// The [HttpConfig] used to configure new clients.
-  final HttpConfig? httpConfig;
 
   @override
   bool destroy() {
@@ -27,10 +36,10 @@ final class HttpClientFactory implements ProtocolClientFactory {
   }
 
   @override
-  ProtocolClient createClient([
-    ClientSecurityProvider? clientSecurityProvider,
-  ]) =>
-      HttpClient(clientSecurityProvider);
+  ProtocolClient createClient() => HttpClient(
+        basicCredentialsCallback: _basicCredentialsCallback,
+        bearerCredentialsCallback: _bearerCredentialsCallback,
+      );
 
   @override
   bool init() {

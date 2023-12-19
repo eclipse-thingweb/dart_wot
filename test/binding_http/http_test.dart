@@ -109,27 +109,32 @@ void main() {
           'httpbin.org': BasicCredentials(username, password),
         };
 
-        final Map<String, DigestCredentials> digestCredentialsStore = {
-          'httpbin.org': DigestCredentials(username, password),
-        };
-
         final Map<String, BearerCredentials> bearerCredentialsStore = {
           'httpbin.org': BearerCredentials(token),
         };
 
-        final clientSecurityProvider = ClientSecurityProvider(
-          basicCredentialsCallback: (uri, form, [invalidCredentials]) async {
-            return basicCredentialsStore[uri.host];
-          },
-          digestCredentialsCallback: (uri, form, [invalidCredentials]) async =>
-              digestCredentialsStore[uri.host],
-          bearerCredentialsCallback: (uri, form, [invalidCredentials]) async =>
-              bearerCredentialsStore[uri.host],
-        );
+        Future<BasicCredentials?> basicCredentialsCallback(
+          Uri uri,
+          Form? form, [
+          BasicCredentials? invalidCredentials,
+        ]) async {
+          return basicCredentialsStore[uri.host];
+        }
 
-        final servient =
-            Servient(clientSecurityProvider: clientSecurityProvider)
-              ..addClientFactory(HttpClientFactory());
+        Future<BearerCredentials?> bearerCredentialsCallback(
+          Uri uri,
+          Form? form, [
+          BearerCredentials? invalidCredentials,
+        ]) async =>
+            bearerCredentialsStore[uri.host];
+
+        final servient = Servient()
+          ..addClientFactory(
+            HttpClientFactory(
+              basicCredentialsCallback: basicCredentialsCallback,
+              bearerCredentialsCallback: bearerCredentialsCallback,
+            ),
+          );
         final wot = await servient.start();
 
         final consumedThing = await wot.consume(parsedTd);

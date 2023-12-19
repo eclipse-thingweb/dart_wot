@@ -4,22 +4,33 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import '../core/credentials/basic_credentials.dart';
+import '../core/credentials/callbacks.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../core/protocol_interfaces/protocol_client_factory.dart';
-
-import '../core/security_provider.dart';
 import 'constants.dart';
 import 'mqtt_client.dart';
 import 'mqtt_config.dart';
 
 /// [ProtocolClientFactory] for creating [MqttClient]s.
 final class MqttClientFactory implements ProtocolClientFactory {
-  @override
-  ProtocolClient createClient([
-    ClientSecurityProvider? clientSecurityProvider,
+  /// Instatiates a new [MqttClientFactory].
+  MqttClientFactory({
     MqttConfig? mqttConfig,
-  ]) =>
-      MqttClient(clientSecurityProvider, mqttConfig);
+    AsyncClientSecurityCallback<BasicCredentials>? basicCredentialsCallback,
+  })  : _mqttConfig = mqttConfig,
+        _basicCredentialsCallback = basicCredentialsCallback;
+
+  final MqttConfig? _mqttConfig;
+
+  final AsyncClientSecurityCallback<BasicCredentials>?
+      _basicCredentialsCallback;
+
+  @override
+  ProtocolClient createClient() => MqttClient(
+        mqttConfig: _mqttConfig,
+        basicCredentialsCallback: _basicCredentialsCallback,
+      );
 
   @override
   bool destroy() {

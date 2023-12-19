@@ -4,22 +4,31 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import '../core/credentials/callbacks.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
 import '../core/protocol_interfaces/protocol_client_factory.dart';
-import '../core/security_provider.dart';
 import 'coap_client.dart';
 import 'coap_config.dart';
 
 /// A [ProtocolClientFactory] that produces CoAP clients.
 final class CoapClientFactory implements ProtocolClientFactory {
   /// Creates a new [CoapClientFactory] based on an optional [CoapConfig].
-  CoapClientFactory([this.coapConfig]);
-
-  @override
-  Set<String> get schemes => {'coap', 'coaps'};
+  CoapClientFactory({
+    this.coapConfig,
+    ClientPskCallback? pskCredentialsCallback,
+    AceSecurityCallback? aceSecurityCallback,
+  })  : _pskCredentialsCallback = pskCredentialsCallback,
+        _aceSecurityCallback = aceSecurityCallback;
 
   /// The [CoapConfig] used to configure new clients.
   final CoapConfig? coapConfig;
+
+  final ClientPskCallback? _pskCredentialsCallback;
+
+  final AceSecurityCallback? _aceSecurityCallback;
+
+  @override
+  Set<String> get schemes => {'coap', 'coaps'};
 
   @override
   bool destroy() {
@@ -27,10 +36,11 @@ final class CoapClientFactory implements ProtocolClientFactory {
   }
 
   @override
-  ProtocolClient createClient([
-    ClientSecurityProvider? clientSecurityProvider,
-  ]) =>
-      CoapClient(coapConfig, clientSecurityProvider);
+  ProtocolClient createClient() => CoapClient(
+        coapConfig: coapConfig,
+        pskCredentialsCallback: _pskCredentialsCallback,
+        aceSecurityCallback: _aceSecurityCallback,
+      );
 
   @override
   bool init() {

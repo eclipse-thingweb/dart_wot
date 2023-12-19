@@ -35,7 +35,8 @@ void main() {
         throwsA(const TypeMatcher<UnimplementedError>()),
       );
 
-      final customServer = CoapServer(CoapConfig(port: 9001, blocksize: 64));
+      final customServer =
+          CoapServer(const CoapConfig(port: 9001, blocksize: 64));
 
       expect(customServer.port, 9001);
       expect(customServer.preferredBlockSize, 64);
@@ -55,8 +56,9 @@ void main() {
 
       expect(defaultClientFactory.destroy(), true);
 
-      final customClientFactory =
-          CoapClientFactory(CoapConfig(port: 9001, blocksize: 64));
+      final customClientFactory = CoapClientFactory(
+        coapConfig: const CoapConfig(port: 9001, blocksize: 64),
+      );
 
       expect(customClientFactory.coapConfig?.port, 9001);
       expect(customClientFactory.coapConfig?.blocksize, 64);

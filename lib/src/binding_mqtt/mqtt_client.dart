@@ -12,8 +12,8 @@ import 'package:typed_data/typed_buffers.dart';
 
 import '../core/content.dart';
 import '../core/credentials/basic_credentials.dart';
+import '../core/credentials/callbacks.dart';
 import '../core/protocol_interfaces/protocol_client.dart';
-import '../core/security_provider.dart';
 import '../definitions/form.dart';
 import '../scripting_api/subscription.dart' as scripting_api;
 import 'constants.dart';
@@ -27,14 +27,16 @@ import 'mqtt_subscription.dart';
 /// Currently, only MQTT version 3.1.1 is supported.
 final class MqttClient implements ProtocolClient {
   /// Constructor.
-  MqttClient(
-    this._clientSecurityProvider,
+  MqttClient({
     MqttConfig? mqttConfig,
-  ) : _mqttConfig = mqttConfig ?? MqttConfig();
+    AsyncClientSecurityCallback<BasicCredentials>? basicCredentialsCallback,
+  })  : _mqttConfig = mqttConfig ?? MqttConfig(),
+        _basicCredentialsCallback = basicCredentialsCallback;
+
+  final AsyncClientSecurityCallback<BasicCredentials>?
+      _basicCredentialsCallback;
 
   final MqttConfig _mqttConfig;
-
-  final ClientSecurityProvider? _clientSecurityProvider;
 
   Future<BasicCredentials?> _obtainCredentials(
     Uri uri,
@@ -50,8 +52,8 @@ final class MqttClient implements ProtocolClient {
       return null;
     }
 
-    final basicCredentials = _clientSecurityProvider?.basicCredentialsCallback
-        ?.call(uri, form, invalidCredentials);
+    final basicCredentials =
+        _basicCredentialsCallback?.call(uri, form, invalidCredentials);
 
     if (basicCredentials != null) {
       return basicCredentials;

@@ -46,7 +46,7 @@ To do so, a Thing Description JSON string is first parsed and turned into a
 import 'package:dart_wot/dart_wot.dart';
 
 Future<void> main(List<String> args) async {
-  final CoapClientFactory coapClientFactory = CoapClientFactory(null);
+  final CoapClientFactory coapClientFactory = CoapClientFactory();
   final servient = Servient()..addClientFactory(coapClientFactory);
   final wot = await servient.start();
 

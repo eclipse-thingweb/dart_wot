@@ -6,10 +6,13 @@
 
 import 'dart:typed_data';
 
+import 'package:meta/meta.dart';
+
 /// Allows for configuring the behavior of CoAP clients and servers.
+@immutable
 class CoapConfig {
   /// Creates a new [CoapConfig] object.
-  CoapConfig({
+  const CoapConfig({
     this.port = 5683,
     this.securePort = 5684,
     this.blocksize,
