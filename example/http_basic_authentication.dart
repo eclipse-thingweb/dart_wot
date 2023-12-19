@@ -70,7 +70,11 @@ Future<BasicCredentials?> basicCredentialsCallback(
 Future<void> main(List<String> args) async {
   final HttpClientFactory httpClientFactory =
       HttpClientFactory(basicCredentialsCallback: basicCredentialsCallback);
-  final servient = Servient()..addClientFactory(httpClientFactory);
+  final servient = Servient(
+    clientFactories: [
+      httpClientFactory,
+    ],
+  );
   final wot = await servient.start();
 
   final thingDescription = ThingDescription(thingDescriptionJson);

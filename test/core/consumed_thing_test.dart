@@ -284,7 +284,7 @@ void main() {
 
       final parsedTd = ThingDescription(thingDescriptionJson);
 
-      final servient = Servient()..addClientFactory(HttpClientFactory());
+      final servient = Servient(clientFactories: [HttpClientFactory()]);
       final wot = await servient.start();
 
       final uriVariables = {'value': 'SFRUUEJJTiBpcyBhd2Vzb21l'};

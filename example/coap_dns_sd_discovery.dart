@@ -12,7 +12,11 @@ void handleThingDescription(ThingDescription thingDescription) =>
     print('Discovered TD with title "${thingDescription.title}".');
 
 Future<void> main(List<String> args) async {
-  final servient = Servient()..addClientFactory(CoapClientFactory());
+  final servient = Servient(
+    clientFactories: [
+      CoapClientFactory(),
+    ],
+  );
 
   final wot = await servient.start();
   final uri = Uri.parse('_wot._udp.local');

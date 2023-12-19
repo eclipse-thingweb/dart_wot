@@ -30,7 +30,7 @@ Future<void> handleThingDescription(
 }
 
 Future<void> main(List<String> args) async {
-  final servient = Servient()..addClientFactory(CoapClientFactory());
+  final servient = Servient(clientFactories: [CoapClientFactory()]);
 
   final wot = await servient.start();
   final uri = Uri.parse('coap://plugfest.thingweb.io:5683/testthing');

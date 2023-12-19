@@ -112,15 +112,19 @@ Future<BasicCredentials?> basicCredentialsCallback(
 }
 
 Future<void> main() async {
-  const coapConfig = CoapConfig(blocksize: 64);
-  final CoapClientFactory coapClientFactory = CoapClientFactory(
-    coapConfig: coapConfig,
+  final coapClientFactory = CoapClientFactory(
+    coapConfig: const CoapConfig(blocksize: 64),
   );
-  final HttpClientFactory httpClientFactory =
+
+  final httpClientFactory =
       HttpClientFactory(basicCredentialsCallback: basicCredentialsCallback);
-  final servient = Servient()
-    ..addClientFactory(coapClientFactory)
-    ..addClientFactory(httpClientFactory);
+
+  final servient = Servient(
+    clientFactories: [
+      coapClientFactory,
+      httpClientFactory,
+    ],
+  );
   final wot = await servient.start();
 
   final thingDescription = ThingDescription(thingDescriptionJson);
