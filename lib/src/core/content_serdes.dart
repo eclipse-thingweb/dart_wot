@@ -140,12 +140,19 @@ class ContentSerdes {
   }
 
   void _validateValue(Object? value, DataSchema? dataSchema) {
-    final dataSchemaJson = dataSchema?.rawJson;
-    if (dataSchemaJson == null) {
+    // TODO(JKRhb): The process of validating values according to a dataschema
+    //              needs to be reworked.
+    const filteredKeys = ['uriVariables'];
+
+    final filteredDataSchemaJson = dataSchema?.rawJson?.entries
+        .where((element) => !filteredKeys.contains(element.key));
+    if (filteredDataSchemaJson == null) {
       return;
     }
-    final schema =
-        JsonSchema.create(dataSchemaJson, schemaVersion: SchemaVersion.draft7);
+    final schema = JsonSchema.create(
+      Map.fromEntries(filteredDataSchemaJson),
+      schemaVersion: SchemaVersion.draft7,
+    );
     if (!schema.validate(value).isValid) {
       throw ContentSerdesException('JSON Schema validation failed.');
     }
