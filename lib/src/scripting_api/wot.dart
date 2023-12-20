@@ -31,6 +31,9 @@ abstract interface class WoT {
   /// based on the underlying impementation.
   Future<ExposedThing> produce(ExposedThingInit exposedThingInit);
 
+  /// Requests a [ThingDescription] from the given [url].
+  Future<ThingDescription> requestThingDescription(Uri url);
+
   /// Discovers [ThingDescription]s from a given [url] using the specified
   /// [method].
   ///
@@ -49,7 +52,13 @@ abstract interface class WoT {
   /// using the `await for` syntax.
   /// It also allows for stopping the Discovery process prematurely and
   /// for retrieving information about its current state (i.e., whether it is
-  /// still `active`).
+  /// still [ThingDiscovery.active]).
+  @Deprecated(
+    'The discover method is curently in the process of being adjusted to the '
+    'latest Scripting API version and is therefore subject to change. '
+    'For direct and directory discovery, please refer to the '
+    'requestThingDescription and exploreDirectory methods instead.',
+  )
   ThingDiscovery discover(
     Uri url, {
     ThingFilter? thingFilter,
