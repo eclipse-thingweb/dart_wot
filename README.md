@@ -36,54 +36,49 @@ You can then use the package in your project by adding
 
 ## Usage
 
-Below you can find a very basic example for reading a status from a Thing (using the
-`coap.me` test server).
-To do so, a Thing Description JSON string is first parsed and turned into a
-`ThingDescription` object, which is then passed to a WoT runtime created by a
-`Servient` with CoAP support.
+Below you can find a basic example for incrementing and reading the value of a
+counter Thing, which is part of the
+[Thingweb Online Things](https://www.thingweb.io/services).
+
+In the example, we first create a WoT runtime using a `Servient` with CoAP
+support.
+With the runtime, we then retrieve a TD (using the `requestThingDescription()`
+method) and consume it (using the `consume()` method), creating a
+`ConsumedThing` object,
+Afterward, the actual interactions with the counter are performed by calling the
+`invokeAction()` and `readProperty()` methods on the `ConsumedThing`.
 
 ```dart
 import 'package:dart_wot/dart_wot.dart';
 
 Future<void> main(List<String> args) async {
-  final CoapClientFactory coapClientFactory = CoapClientFactory();
   final servient = Servient(
-    protocolClients: [coapClientFactory]
+    clientFactories: [
+      CoapClientFactory(),
+    ],
   );
   final wot = await servient.start();
 
-  final thingDescriptionJson = '''
-  {
-    "@context": "http://www.w3.org/ns/td",
-    "title": "Test Thing",
-    "base": "coap://coap.me",
-    "security": ["nosec_sc"],
-    "securityDefinitions": {
-      "nosec_sc": {
-        "scheme": "nosec"
-      }
-    },
-    "properties": {
-      "status": {
-        "forms": [
-          {
-            "href": "/hello"
-          }
-        ]
-      }
-    }
-  }
-  ''';
+  final url = Uri.parse('coap://plugfest.thingweb.io/counter');
+  print('Requesting TD from $url ...');
+  final thingDescription = await wot.requestThingDescription(url);
 
-  final thingDescription = ThingDescription(thingDescriptionJson);
   final consumedThing = await wot.consume(thingDescription);
-  final status = await consumedThing.readProperty("status");
+  print(
+    'Successfully retrieved and consumed TD with title '
+    '"${thingDescription.title}"!',
+  );
+
+  print('Incrementing counter ...');
+  await consumedThing.invokeAction('increment');
+
+  final status = await consumedThing.readProperty('count');
   final value = await status.value();
-  print(value);
+  print('New counter value: $value');
 }
 ```
 
-A more complex example can be found in the `example` directory.
+More complex examples can be found in the `example` directory.
 
 ## Additional information
 
