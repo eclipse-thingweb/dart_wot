@@ -175,6 +175,7 @@ class ThingDescription {
     final Set<String> parsedFields = {};
 
     context.addAll(json.parseContext(prefixMapping, parsedFields));
+    atType = json.parseArrayField('@type', parsedFields);
     title = json.parseRequiredField<String>('title', parsedFields);
     titles.addAll(json.parseMapField<String>('titles', parsedFields) ?? {});
     description = json.parseField<String>('description', parsedFields);
