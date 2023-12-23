@@ -5,35 +5,42 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import '../definitions/thing_description.dart';
-import 'interaction_options.dart';
 import 'interaction_output.dart';
 import 'types.dart';
 
 /// A function that is called when an external request for reading a Property is
 /// received and defines what to do with such requests.
-typedef PropertyReadHandler = Future<InteractionInput> Function(
-  InteractionOptions? options,
-);
+typedef PropertyReadHandler = Future<InteractionInput> Function({
+  int? formIndex,
+  Map<String, Object>? uriVariables,
+  Object? data,
+});
 
 /// A function that is called when an external request for writing a Property is
 ///  received and defines what to do with such requests.
 typedef PropertyWriteHandler = Future<void> Function(
-  InteractionOutput value,
-  InteractionOptions? options,
-);
+  InteractionOutput value, {
+  int? formIndex,
+  Map<String, Object>? uriVariables,
+  Object? data,
+});
 
 /// A function that is called when an external request for invoking an Action
 /// is received and defines what to do with such requests.
 typedef ActionHandler = Future<void> Function(
-  InteractionOutput params,
-  InteractionOptions? options,
-);
+  InteractionOutput params, {
+  int? formIndex,
+  Map<String, Object>? uriVariables,
+  Object? data,
+});
 
 /// A function that is called when an external request for subscribing to an
 /// Event is received and defines what to do with such requests.
-typedef EventSubscriptionHandler = Future<void> Function(
-  InteractionOptions? options,
-);
+typedef EventSubscriptionHandler = Future<void> Function({
+  int? formIndex,
+  Map<String, Object>? uriVariables,
+  Object? data,
+});
 
 /// A function that is called when an associated Event is triggered and provides
 /// the data to be sent with the Event to subscribers.

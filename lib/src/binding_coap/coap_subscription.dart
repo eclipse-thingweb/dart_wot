@@ -6,7 +6,6 @@
 
 import 'package:coap/coap.dart';
 
-import '../scripting_api/interaction_options.dart';
 import '../scripting_api/subscription.dart';
 
 /// [Subscription] to a CoAP resource, based on the observe option ([RFC 7641]).
@@ -34,7 +33,11 @@ class CoapSubscription implements Subscription {
   final void Function() _complete;
 
   @override
-  Future<void> stop([InteractionOptions? options]) async {
+  Future<void> stop({
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) async {
     if (!_active) {
       return;
     }
