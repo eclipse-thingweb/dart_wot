@@ -4,11 +4,16 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'dart:async';
 import 'dart:convert';
 
-import 'package:dart_wot/dart_wot.dart';
 import 'package:dart_wot/src/core/content.dart';
+import 'package:dart_wot/src/core/protocol_interfaces/protocol_client.dart';
+import 'package:dart_wot/src/core/protocol_interfaces/protocol_client_factory.dart';
+import 'package:dart_wot/src/core/servient.dart';
 import 'package:dart_wot/src/core/thing_discovery.dart';
+import 'package:dart_wot/src/definitions/form.dart';
+import 'package:dart_wot/src/scripting_api/subscription.dart';
 import 'package:test/test.dart';
 
 const testUriScheme = 'test';
@@ -16,12 +21,18 @@ final validTestDiscoveryUri =
     Uri.parse('$testUriScheme://[::1]/.well-known/wot');
 final invalidTestDiscoveryUri =
     Uri.parse('$testUriScheme://[::2]/.well-known/wot');
+final directoryTestUri1 = Uri.parse('$testUriScheme://[::3]/.well-known/wot');
+final directoryTestThingsUri1 = Uri.parse('$testUriScheme://[::3]/things');
+final directoryTestUri2 = Uri.parse('$testUriScheme://[::4]/.well-known/wot');
+final directoryTestThingsUri2 = Uri.parse('$testUriScheme://[::4]/things');
+final directoryTestUri3 = Uri.parse('$testUriScheme://[::5]/.well-known/wot');
+final directoryTestThingsUri3 = Uri.parse('$testUriScheme://[::5]/things');
 
-const validTestTitle = 'Test TD';
+const validTestTitle1 = 'Test TD 1';
 const validTestThingDescription = '''
   {
       "@context": "https://www.w3.org/2022/wot/td/v1.1",
-      "title": "$validTestTitle",
+      "title": "$validTestTitle1",
       "security": "nosec_sc",
       "securityDefinitions": {
         "nosec_sc": {"scheme": "nosec"}
@@ -29,44 +40,85 @@ const validTestThingDescription = '''
   }
 ''';
 
-const invalidTestThingDescription = '"Hi there!"';
-
-void main() {
-  group('Discovery Tests', () {
-    test('Should be able to use the requestThingDescription method', () async {
-      final servient = Servient(
-        clientFactories: [
-          _MockedProtocolClientFactory(),
-        ],
-      );
-
-      final wot = await servient.start();
-      final thingDescription =
-          await wot.requestThingDescription(validTestDiscoveryUri);
-
-      expect(thingDescription.title, validTestTitle);
-    });
-
-    test(
-      'Should throw an exception if an invalid TD results from the '
-      'requestThingDescription method',
-      () async {
-        final servient = Servient(
-          clientFactories: [
-            _MockedProtocolClientFactory(),
-          ],
-        );
-
-        final wot = await servient.start();
-        await expectLater(
-          wot.requestThingDescription(invalidTestDiscoveryUri),
-          // TODO: Refine error handling
-          throwsA(isA<DiscoveryException>()),
-        );
-      },
-    );
-  });
+const validDirectoryTestTitle1 = 'Test TD 2';
+final directoryThingDescription1 = '''
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    "https://www.w3.org/2022/wot/discovery"
+  ],
+  "@type": "ThingDirectory",
+  "title": "$validDirectoryTestTitle1",
+  "security": "nosec_sc",
+  "securityDefinitions": {
+    "nosec_sc": {"scheme": "nosec"}
+  },
+  "properties": {
+    "things": {
+      "forms": [
+        {
+          "href": "$directoryTestThingsUri1"
+        }
+      ]
+    }
+  }
 }
+''';
+
+const validDirectoryTestTitle2 = 'Test TD 3';
+final directoryThingDescription2 = '''
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    "https://www.w3.org/2022/wot/discovery"
+  ],
+  "@type": "ThingDirectory",
+  "title": "$validDirectoryTestTitle2",
+  "security": "nosec_sc",
+  "securityDefinitions": {
+    "nosec_sc": {"scheme": "nosec"}
+  },
+  "properties": {
+    "things": {
+      "forms": [
+        {
+          "href": "$directoryTestThingsUri2"
+        }
+      ]
+    }
+  }
+}
+''';
+
+const validDirectoryTestTitle3 = 'Test TD 2';
+final directoryThingDescription3 = '''
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    "https://www.w3.org/2022/wot/discovery"
+  ],
+  "@type": "ThingDirectory",
+  "title": "$validDirectoryTestTitle3",
+  "security": "nosec_sc",
+  "securityDefinitions": {
+    "nosec_sc": {"scheme": "nosec"}
+  },
+  "properties": {
+    "things": {
+      "forms": [
+        {
+          "href": "$directoryTestThingsUri3"
+        }
+      ]
+    }
+  }
+}
+''';
+
+const invalidTestThingDescription1 = '"Hi there!"';
+const invalidTestThingDescription2 = '''
+  {"foo": "bar"}
+''';
 
 class _MockedProtocolClient implements ProtocolClient {
   @override
@@ -82,9 +134,21 @@ class _MockedProtocolClient implements ProtocolClient {
   }
 
   @override
-  Future<Content> readResource(Form form) {
-    // TODO: implement readResource
-    throw UnimplementedError();
+  Future<Content> readResource(Form form) async {
+    final href = form.href;
+    if (href == directoryTestThingsUri1) {
+      return '[$validTestThingDescription]'.toContent('application/td+json');
+    }
+
+    if (href == directoryTestThingsUri2) {
+      return '[$invalidTestThingDescription2]'.toContent('application/td+json');
+    }
+
+    if (href == directoryTestThingsUri3) {
+      return invalidTestThingDescription2.toContent('application/td+json');
+    }
+
+    throw StateError('Encountered an unknown URI $href.');
   }
 
   @override
@@ -94,7 +158,19 @@ class _MockedProtocolClient implements ProtocolClient {
     }
 
     if (url == invalidTestDiscoveryUri) {
-      return invalidTestThingDescription.toDiscoveryContent(url);
+      return invalidTestThingDescription1.toDiscoveryContent(url);
+    }
+
+    if (url == directoryTestUri1) {
+      return directoryThingDescription1.toDiscoveryContent(url);
+    }
+
+    if (url == directoryTestUri2) {
+      return directoryThingDescription2.toDiscoveryContent(url);
+    }
+
+    if (url == directoryTestUri3) {
+      return directoryThingDescription3.toDiscoveryContent(url);
     }
 
     throw StateError('Encountered invalid URL.');
@@ -158,8 +234,154 @@ class _MockedProtocolClientFactory implements ProtocolClientFactory {
 }
 
 extension _DiscoveryContentCreationExtension on String {
+  Stream<List<int>> get _body => Stream.fromIterable([utf8.encode(this)]);
+
   DiscoveryContent toDiscoveryContent(Uri url) {
-    final body = Stream.fromIterable([utf8.encode(this)]);
-    return DiscoveryContent('application/td+json', body, url);
+    return DiscoveryContent('application/td+json', _body, url);
   }
+
+  Content toContent(String type) {
+    return Content(type, _body);
+  }
+}
+
+void main() {
+  group('requestThingDescription()', () {
+    test('should be able to retrieve a valid TD', () async {
+      final servient = Servient(
+        clientFactories: [
+          _MockedProtocolClientFactory(),
+        ],
+      );
+
+      final wot = await servient.start();
+      final thingDescription =
+          await wot.requestThingDescription(validTestDiscoveryUri);
+
+      expect(thingDescription.title, validTestTitle1);
+    });
+
+    test(
+      'should throw an exception when an invalid TD is retrieved',
+      () async {
+        final servient = Servient(
+          clientFactories: [
+            _MockedProtocolClientFactory(),
+          ],
+        );
+
+        final wot = await servient.start();
+        await expectLater(
+          wot.requestThingDescription(invalidTestDiscoveryUri),
+          // TODO: Refine error handling
+          throwsA(isA<DiscoveryException>()),
+        );
+      },
+    );
+  });
+
+  group('exploreDirectory()', () {
+    test('should be able to discover valid TDs from a TD directory', () async {
+      final servient = Servient(
+        clientFactories: [
+          _MockedProtocolClientFactory(),
+        ],
+      );
+
+      final wot = await servient.start();
+      final thingDiscoveryProcess =
+          await wot.exploreDirectory(directoryTestUri1);
+
+      var counter = 0;
+      await for (final thingDescription in thingDiscoveryProcess) {
+        counter++;
+        expect(thingDescription.title, validTestTitle1);
+      }
+      expect(counter, 1);
+      expect(thingDiscoveryProcess.done, true);
+    });
+
+    test('should reject invalid TDD Thing Descriptions', () async {
+      final servient = Servient(
+        clientFactories: [
+          _MockedProtocolClientFactory(),
+        ],
+      );
+
+      final wot = await servient.start();
+
+      expect(
+        () async => await wot.exploreDirectory(validTestDiscoveryUri),
+        throwsA(isA<DiscoveryException>()),
+      );
+    });
+
+    test('should be able to handle an array of invalid TDs during discovery',
+        () async {
+      final servient = Servient(
+        clientFactories: [
+          _MockedProtocolClientFactory(),
+        ],
+      );
+
+      final wot = await servient.start();
+      final thingDiscoveryProcess =
+          await wot.exploreDirectory(directoryTestUri2);
+
+      var counter = 0;
+
+      final testCompleter = Completer<void>();
+
+      thingDiscoveryProcess.listen(
+        (event) {
+          counter++;
+        },
+        onError: (error, stackTrace) async {},
+        onDone: () {
+          expect(counter, 0);
+          expect(thingDiscoveryProcess.done, true);
+          expect(thingDiscoveryProcess.error, isNotNull);
+          testCompleter.complete();
+        },
+      );
+
+      return testCompleter.future;
+    });
+
+    test(
+        'should be able to handle an invalid non-array output during discovery',
+        () async {
+      final servient = Servient(
+        clientFactories: [
+          _MockedProtocolClientFactory(),
+        ],
+      );
+
+      final wot = await servient.start();
+
+      expect(
+        () async => wot.exploreDirectory(directoryTestUri3),
+        throwsA(isException),
+      );
+    });
+
+    test('should be able to handle premature cancellation', () async {
+      final servient = Servient(
+        clientFactories: [
+          _MockedProtocolClientFactory(),
+        ],
+      );
+
+      final wot = await servient.start();
+      final thingDiscoveryProcess =
+          await wot.exploreDirectory(directoryTestUri1);
+
+      await thingDiscoveryProcess.stop();
+      expect(thingDiscoveryProcess.done, true);
+
+      // Cancelling twice should not change the state
+      await thingDiscoveryProcess.stop();
+      expect(thingDiscoveryProcess.done, true);
+    });
+  });
 }

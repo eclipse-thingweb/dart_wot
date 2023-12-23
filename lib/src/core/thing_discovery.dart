@@ -375,3 +375,72 @@ extension _FlatStreamExtension<T> on Stream<Stream<T>> {
     }
   }
 }
+
+/// Implemention of the [scripting_api.ThingDiscoveryProcess] interface.
+class ThingDiscoveryProcess extends Stream<ThingDescription>
+    implements scripting_api.ThingDiscoveryProcess {
+  /// Constructs a new [ThingDiscoveryProcess].
+  ///
+  /// Accepts a [_thingDescriptionStream], which is filtered by an optional
+  /// [thingFilter].
+  ThingDiscoveryProcess(
+    this._thingDescriptionStream,
+    this.thingFilter,
+  );
+
+  StreamSubscription<ThingDescription>? _streamSubscription;
+
+  final Stream<ThingDescription> _thingDescriptionStream;
+
+  var _done = false;
+
+  @override
+  bool get done => _done;
+
+  Exception? _error;
+
+  @override
+  Exception? get error => _error;
+
+  @override
+  final scripting_api.ThingFilter? thingFilter;
+
+  @override
+  StreamSubscription<ThingDescription> listen(
+    void Function(ThingDescription event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    final streamSubscription = _thingDescriptionStream.listen(
+      onData,
+      onError: (error, stackTrace) {
+        if (error is Exception) {
+          _error = error;
+          // ignore: avoid_dynamic_calls
+          onError?.call(error, stackTrace);
+        }
+      },
+      onDone: () {
+        _done = true;
+        onDone?.call();
+      },
+      cancelOnError: cancelOnError,
+    );
+
+    _streamSubscription = streamSubscription;
+
+    return streamSubscription;
+  }
+
+  @override
+  Future<void> stop() async {
+    if (done) {
+      return;
+    }
+
+    await _streamSubscription?.cancel();
+
+    _done = true;
+  }
+}

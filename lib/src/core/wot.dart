@@ -4,13 +4,16 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'dart:async';
+
 import '../../scripting_api.dart' as scripting_api;
 import '../definitions/thing_description.dart';
 import '../scripting_api/discovery/discovery_method.dart';
 import 'consumed_thing.dart';
 import 'exposed_thing.dart';
 import 'servient.dart';
-import 'thing_discovery.dart' show ThingDiscovery;
+import 'thing_discovery.dart'
+    show DiscoveryException, ThingDiscovery, ThingDiscoveryProcess;
 
 /// This [Exception] is thrown if an error during the consumption of a
 /// [ThingDescription] occurs.
@@ -94,5 +97,94 @@ class WoT implements scripting_api.WoT {
   @override
   Future<ThingDescription> requestThingDescription(Uri url) {
     return _servient.requestThingDescription(url);
+  }
+
+  @override
+  Future<scripting_api.ThingDiscoveryProcess> exploreDirectory(
+    Uri url, [
+    scripting_api.ThingFilter? filter,
+  ]) async {
+    final thingDescription = await requestThingDescription(url);
+
+    if (!thingDescription.isValidDirectoryThingDescription) {
+      throw DiscoveryException(
+        'Encountered an invalid Directory Thing Description',
+      );
+    }
+
+    final consumedDirectoryThing = await consume(thingDescription);
+
+    final interactionOutput =
+        await consumedDirectoryThing.readProperty('things');
+    final rawThingDescriptions = await interactionOutput.value();
+
+    if (rawThingDescriptions is! List<dynamic>) {
+      throw DiscoveryException(
+        'Expected an array of Thing Descriptions but received an '
+        'invalid output instead.',
+      );
+    }
+
+    final thingDescriptionStream = Stream.fromIterable(
+      rawThingDescriptions.whereType<Map<String, dynamic>>(),
+    ).toThingDescriptionStream();
+
+    return ThingDiscoveryProcess(thingDescriptionStream, filter);
+  }
+}
+
+extension _DirectoryValidationExtension on ThingDescription {
+  bool get isValidDirectoryThingDescription {
+    final atTypes = atType;
+
+    if (atTypes == null) {
+      return false;
+    }
+
+    const discoveryContextUri = 'https://www.w3.org/2022/wot/discovery';
+    const type = 'ThingDirectory';
+    const fullIri = '$discoveryContextUri#$type';
+
+    if (atTypes.contains(fullIri)) {
+      return true;
+    }
+
+    return context.contains((value: discoveryContextUri, key: null)) &&
+        atTypes.contains(type);
+  }
+}
+
+extension _DirectoryTdDeserializationExtension on Stream<Map<String, dynamic>> {
+  Stream<ThingDescription> toThingDescriptionStream() {
+    const streamTransformer = StreamTransformer(_transformerMethod);
+
+    return transform(streamTransformer);
+  }
+
+  static StreamSubscription<ThingDescription> _transformerMethod(
+    Stream<Map<String, dynamic>> rawThingDescriptionStream,
+    bool cancelOnError,
+  ) {
+    final streamController = StreamController<ThingDescription>();
+
+    final streamSubscription = rawThingDescriptionStream.listen(
+      (rawThingDescription) {
+        try {
+          streamController.add(ThingDescription.fromJson(rawThingDescription));
+        } on Exception catch (exception) {
+          streamController.addError(exception);
+        }
+      },
+      onDone: streamController.close,
+      onError: streamController.addError,
+      cancelOnError: cancelOnError,
+    );
+
+    streamController
+      ..onPause = streamSubscription.pause
+      ..onResume = streamSubscription.resume
+      ..onCancel = streamSubscription.cancel;
+
+    return streamController.stream.listen(null);
   }
 }
