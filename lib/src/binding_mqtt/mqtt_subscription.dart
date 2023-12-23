@@ -9,7 +9,6 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 
 import '../core/content.dart';
 import '../definitions/form.dart';
-import '../scripting_api/interaction_options.dart';
 import '../scripting_api/subscription.dart' as scripting_api;
 
 /// [scripting_api.Subscription] for the MQTT protocol.
@@ -61,7 +60,11 @@ class MqttSubscription implements scripting_api.Subscription {
   bool get active => _active;
 
   @override
-  Future<void> stop([InteractionOptions? options]) async {
+  Future<void> stop({
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) async {
     _client.disconnect();
     _active = false;
     _complete();

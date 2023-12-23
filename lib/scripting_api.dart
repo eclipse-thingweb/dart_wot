@@ -15,7 +15,6 @@ export 'src/scripting_api/discovery/discovery_method.dart';
 export 'src/scripting_api/discovery/thing_discovery.dart';
 export 'src/scripting_api/discovery/thing_filter.dart';
 export 'src/scripting_api/exposed_thing.dart';
-export 'src/scripting_api/interaction_options.dart';
 export 'src/scripting_api/interaction_output.dart';
 export 'src/scripting_api/subscription.dart';
 export 'src/scripting_api/types.dart';

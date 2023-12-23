@@ -85,13 +85,13 @@ Future<void> main(List<String> args) async {
     },
   );
 
-  await consumedThing.invokeAction('toggle', 'Hello World!');
-  await consumedThing.invokeAction('toggle', 'Hello World!');
-  await consumedThing.invokeAction('toggle', 'Hello World!');
-  await consumedThing.invokeAction('toggle', 'Hello World!');
+  await consumedThing.invokeAction('toggle', input: 'Hello World!');
+  await consumedThing.invokeAction('toggle', input: 'Hello World!');
+  await consumedThing.invokeAction('toggle', input: 'Hello World!');
+  await consumedThing.invokeAction('toggle', input: 'Hello World!');
   await subscription.stop();
 
-  await consumedThing.invokeAction('toggle', 'Bye World!');
+  await consumedThing.invokeAction('toggle', input: 'Bye World!');
   await consumedThing.readAndPrintProperty('status');
   print('Done!');
 }

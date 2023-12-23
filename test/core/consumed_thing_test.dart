@@ -288,18 +288,22 @@ void main() {
       final wot = await servient.start();
 
       final uriVariables = {'value': 'SFRUUEJJTiBpcyBhd2Vzb21l'};
-      final interactionOptions = InteractionOptions(uriVariables: uriVariables);
 
       final consumedThing = await wot.consume(parsedTd);
-      final result =
-          await consumedThing.readProperty('status', interactionOptions);
+      final result = await consumedThing.readProperty(
+        'status',
+        uriVariables: uriVariables,
+      );
       final value = await result.value();
       expect(value, 'HTTPBIN is awesome');
 
       // status2 expects an integer instead of a String and throws an error if
       // the same value is provided as an input
       expect(
-        consumedThing.readProperty('status2', interactionOptions),
+        consumedThing.readProperty(
+          'status2',
+          uriVariables: uriVariables,
+        ),
         throwsA(const TypeMatcher<ValidationException>()),
       );
 

@@ -76,9 +76,10 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     List<Form> forms,
     OperationType operationType,
     _AffordanceType affordanceType,
-    InteractionOptions? options,
-    InteractionAffordance interactionAffordance,
-  ) {
+    InteractionAffordance interactionAffordance, {
+    required int? formIndex,
+    required Map<String, Object>? uriVariables,
+  }) {
     if (forms.isEmpty) {
       throw StateError(
         'ConsumedThing "$title" has no links for this interaction',
@@ -87,8 +88,6 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     final ProtocolClient client;
     final Form foundForm;
-
-    final formIndex = options?.formIndex;
 
     if (formIndex != null) {
       if (formIndex >= 0 && formIndex < forms.length) {
@@ -114,17 +113,18 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       client = servient.clientFor(scheme);
     }
 
-    final form =
-        foundForm.resolveUriVariables(options?.uriVariables) ?? foundForm;
+    final form = foundForm.resolveUriVariables(uriVariables) ?? foundForm;
 
     return (client: client, form: form);
   }
 
   @override
   Future<InteractionOutput> readProperty(
-    String propertyName, [
-    InteractionOptions? options,
-  ]) async {
+    String propertyName, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) async {
     final property = thingDescription.properties[propertyName];
 
     if (property == null) {
@@ -138,8 +138,9 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       property.forms,
       OperationType.readproperty,
       _AffordanceType.property,
-      options,
       property,
+      formIndex: formIndex,
+      uriVariables: uriVariables,
     );
 
     final form = clientAndForm.form;
@@ -152,9 +153,11 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   @override
   Future<void> writeProperty(
     String propertyName,
-    Object? interactionInput, [
-    InteractionOptions? options,
-  ]) async {
+    InteractionInput input, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) async {
     // TODO(JKRhb): Refactor
     final property = thingDescription.properties[propertyName];
 
@@ -169,23 +172,26 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       property.forms,
       OperationType.writeproperty,
       _AffordanceType.property,
-      options,
       property,
+      formIndex: formIndex,
+      uriVariables: uriVariables,
     );
 
     final form = clientAndForm.form;
     final client = clientAndForm.client;
     final content = servient.contentSerdes
-        .valueToContent(interactionInput, property, form.contentType);
+        .valueToContent(input, property, form.contentType);
     await client.writeResource(form, content);
   }
 
   @override
   Future<InteractionOutput> invokeAction(
-    String actionName, [
-    Object? interactionInput,
-    InteractionOptions? options,
-  ]) async {
+    String actionName, {
+    InteractionInput input,
+    Object? data,
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+  }) async {
     // TODO(JKRhb): Refactor
     final action = thingDescription.actions[actionName];
 
@@ -200,26 +206,27 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       action.forms,
       OperationType.invokeaction,
       _AffordanceType.action,
-      options,
       action,
+      uriVariables: uriVariables,
+      formIndex: formIndex,
     );
 
     final form = clientAndForm.form;
     final client = clientAndForm.client;
-    final input = servient.contentSerdes
-        .valueToContent(interactionInput, action.input, form.contentType);
+    final content = servient.contentSerdes
+        .valueToContent(input, action.input, form.contentType);
 
-    final content = await client.invokeResource(form, input);
+    final output = await client.invokeResource(form, content);
 
     final response = form.response;
     if (response != null) {
-      if (content.type != response.contentType) {
+      if (output.type != response.contentType) {
         throw UnexpectedReponseException('Unexpected type in response');
       }
     }
 
     return InteractionOutput(
-      content,
+      output,
       servient.contentSerdes,
       form,
       action.output,
@@ -229,10 +236,12 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   @override
   Future<Subscription> observeProperty(
     String propertyName,
-    scripting_api.InteractionListener listener, [
+    scripting_api.InteractionListener listener, {
     scripting_api.ErrorListener? onError,
-    InteractionOptions? options,
-  ]) async {
+    Object? data,
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+  }) async {
     final property = thingDescription.properties[propertyName];
 
     if (property == null) {
@@ -251,24 +260,26 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     return _createSubscription(
       property,
-      options,
       listener,
       onError,
       propertyName,
       property,
       SubscriptionType.property,
+      formIndex: formIndex,
+      uriVariables: uriVariables,
     );
   }
 
   Future<Subscription> _createSubscription(
     InteractionAffordance affordance,
-    scripting_api.InteractionOptions? options,
     scripting_api.InteractionListener listener,
     scripting_api.ErrorListener? onError,
     String affordanceName,
     DataSchema? dataSchema,
-    SubscriptionType subscriptionType,
-  ) async {
+    SubscriptionType subscriptionType, {
+    required int? formIndex,
+    required Map<String, Object>? uriVariables,
+  }) async {
     final OperationType operationType;
     final _AffordanceType affordanceType;
     final Map<String, Subscription> subscriptions;
@@ -287,8 +298,9 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       affordance.forms,
       operationType,
       affordanceType,
-      options,
       affordance,
+      uriVariables: uriVariables,
+      formIndex: formIndex,
     );
 
     final form = clientAndForm.form;
@@ -318,13 +330,20 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   }
 
   Future<PropertyReadMap> _readProperties(
-    List<String> propertyNames,
-    InteractionOptions? options,
-  ) async {
+    List<String> propertyNames, {
+    Object? data,
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+  }) async {
     final Map<String, Future<InteractionOutput>> outputs = {};
 
     for (final propertyName in propertyNames) {
-      outputs[propertyName] = readProperty(propertyName, options);
+      outputs[propertyName] = readProperty(
+        propertyName,
+        data: data,
+        formIndex: formIndex,
+        uriVariables: uriVariables,
+      );
     }
 
     final outputList = await Future.wait(outputs.values);
@@ -333,28 +352,46 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   }
 
   @override
-  Future<PropertyReadMap> readAllProperties([InteractionOptions? options]) {
+  Future<PropertyReadMap> readAllProperties({
+    Object? data,
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+  }) {
     final propertyNames =
         thingDescription.properties.keys.toList(growable: false);
 
-    return _readProperties(propertyNames, options);
+    return _readProperties(
+      propertyNames,
+      data: data,
+      formIndex: formIndex,
+      uriVariables: uriVariables,
+    );
   }
 
   @override
   Future<PropertyReadMap> readMultipleProperties(
-    List<String> propertyNames, [
-    InteractionOptions? options,
-  ]) {
-    return _readProperties(propertyNames, options);
+    List<String> propertyNames, {
+    Object? data,
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+  }) {
+    return _readProperties(
+      propertyNames,
+      data: data,
+      formIndex: formIndex,
+      uriVariables: uriVariables,
+    );
   }
 
   @override
   Future<Subscription> subscribeEvent(
     String eventName,
-    scripting_api.InteractionListener listener, [
+    scripting_api.InteractionListener listener, {
     scripting_api.ErrorListener? onError,
-    InteractionOptions? options,
-  ]) {
+    Object? data,
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+  }) {
     // TODO(JKRhb): Handle subscription and cancellation data.
     final event = thingDescription.events[eventName];
 
@@ -374,20 +411,23 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     return _createSubscription(
       event,
-      options,
       listener,
       onError,
       eventName,
       event.data,
       SubscriptionType.event,
+      formIndex: formIndex,
+      uriVariables: uriVariables,
     );
   }
 
   @override
   Future<void> writeMultipleProperties(
-    PropertyWriteMap valueMap, [
-    InteractionOptions? options,
-  ]) async {
+    PropertyWriteMap valueMap, {
+    Object? data,
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+  }) async {
     await Future.wait(
       valueMap.keys.map((key) => writeProperty(key, valueMap[key])),
     );

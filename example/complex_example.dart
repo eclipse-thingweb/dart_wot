@@ -139,7 +139,7 @@ Future<void> main() async {
 
   final status3 = await consumedThing.readProperty(
     'anotherStatus',
-    const InteractionOptions(uriVariables: {'test': 'hi'}),
+    uriVariables: {'test': 'hi'},
   );
   final value3 = await status3.value();
   print(value3);

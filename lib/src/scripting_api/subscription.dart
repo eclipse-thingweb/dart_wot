@@ -7,7 +7,6 @@
 import '../definitions/form.dart';
 import '../definitions/interaction_affordances/interaction_affordance.dart';
 import '../definitions/operation_type.dart';
-import 'interaction_options.dart';
 
 /// [Exception] that is thrown when error during the unsubscribe process occurs.
 class UnsubscribeException implements Exception {
@@ -46,8 +45,16 @@ abstract interface class Subscription {
   bool get active;
 
   /// Stops delivering notifications for the subscription.
-  /// It takes an optional parameter [options] and returns a [Future].
-  Future<void> stop([InteractionOptions? options]);
+  ///
+  /// This method accepts optional arguments as [interaction options]
+  /// ([formIndex], [uriVariables], and [data]) and returns a [Future].
+  ///
+  /// [interaction options]: https://www.w3.org/TR/wot-scripting-api/#the-interactionoptions-dictionary
+  Future<void> stop({
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
 }
 
 /// Finds a matching unsubscribe [Form] for a subscription [form].

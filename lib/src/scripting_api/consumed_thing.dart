@@ -5,7 +5,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import '../definitions/thing_description.dart';
-import 'interaction_options.dart';
 import 'interaction_output.dart';
 import 'subscription.dart';
 import 'types.dart';
@@ -31,56 +30,75 @@ abstract interface class ConsumedThing {
 
   /// Reads a property with the given [propertyName].
   Future<InteractionOutput> readProperty(
-    String propertyName, [
-    InteractionOptions? options,
-  ]);
+    String propertyName, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
 
   /// Reads all properties.
-  Future<PropertyReadMap> readAllProperties([InteractionOptions? options]);
+  Future<PropertyReadMap> readAllProperties({
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
 
   /// Reads a number of properties with the given [propertyNames].
   Future<PropertyReadMap> readMultipleProperties(
-    List<String> propertyNames, [
-    InteractionOptions? options,
-  ]);
+    List<String> propertyNames, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
 
-  /// Writes a [value] to a property with the given [propertyName].
+  /// Writes an [input] value to a property with the given
+  /// [propertyName].
   Future<void> writeProperty(
     String propertyName,
-    InteractionInput value, [
-    InteractionOptions? options,
-  ]);
+    InteractionInput input, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
 
   /// Writes multiple values to multiple properties, as described in a
   /// [valueMap].
   Future<void> writeMultipleProperties(
-    PropertyWriteMap valueMap, [
-    InteractionOptions? options,
-  ]);
+    PropertyWriteMap valueMap, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
 
   /// Invokes an action with the given [actionName]. Accepts an optional
   /// [input].
   ///
   /// After (asynchronous )completion, it might return an [InteractionOutput].
   Future<InteractionOutput> invokeAction(
-    String actionName, [
-    InteractionInput input,
-    InteractionOptions? options,
-  ]);
+    String actionName, {
+    InteractionInput? input,
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
 
   /// Observes a property with the given [propertyName].
   Future<Subscription> observeProperty(
     String propertyName,
-    InteractionListener listener, [
+    InteractionListener listener, {
     ErrorListener? onError,
-    InteractionOptions? options,
-  ]);
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
 
   /// Subscribes to an event with the given [eventName].
   Future<Subscription> subscribeEvent(
     String eventName,
-    InteractionListener listener, [
+    InteractionListener listener, {
     ErrorListener? onError,
-    InteractionOptions? options,
-  ]);
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
 }
