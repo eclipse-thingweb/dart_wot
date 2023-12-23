@@ -51,11 +51,11 @@ abstract interface class ConsumedThing {
     Object? data,
   });
 
-  /// Writes an [interactionInput] value to a property with the given
+  /// Writes an [input] value to a property with the given
   /// [propertyName].
   Future<void> writeProperty(
     String propertyName,
-    InteractionInput interactionInput, {
+    InteractionInput input, {
     int? formIndex,
     Map<String, Object>? uriVariables,
     Object? data,
@@ -76,7 +76,7 @@ abstract interface class ConsumedThing {
   /// After (asynchronous )completion, it might return an [InteractionOutput].
   Future<InteractionOutput> invokeAction(
     String actionName, {
-    InteractionInput input,
+    InteractionInput? input,
     int? formIndex,
     Map<String, Object>? uriVariables,
     Object? data,

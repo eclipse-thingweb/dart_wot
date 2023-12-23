@@ -153,7 +153,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   @override
   Future<void> writeProperty(
     String propertyName,
-    InteractionInput interactionInput, {
+    InteractionInput input, {
     int? formIndex,
     Map<String, Object>? uriVariables,
     Object? data,
@@ -180,7 +180,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final form = clientAndForm.form;
     final client = clientAndForm.client;
     final content = servient.contentSerdes
-        .valueToContent(interactionInput, property, form.contentType);
+        .valueToContent(input, property, form.contentType);
     await client.writeResource(form, content);
   }
 
