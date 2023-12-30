@@ -17,8 +17,8 @@ Content _getTestContent(String input) {
 }
 
 void main() {
-  group('Content Serdes Tests', () {
-    test('Content Validation', () async {
+  group('ContentSerdes should', () {
+    test('validate Content', () async {
       final contentSerdes = ContentSerdes();
 
       final testContent1 = _getTestContent('42');
@@ -57,7 +57,7 @@ void main() {
         null,
       );
     });
-    test('Codec Registration', () async {
+    test('support registration of new Codecs', () async {
       final contentSerdes = ContentSerdes();
 
       expect(
@@ -129,6 +129,41 @@ void main() {
         () => contentSerdes.assignCodec('foo', JsonCodec()),
         throwsArgumentError,
       );
+    });
+
+    test('return a Content object with an empty Stream for undefined values',
+        () async {
+      final contentSerdes = ContentSerdes();
+      final content = contentSerdes.valueToContent(null, null);
+
+      expect(await content.body.isEmpty, isTrue);
+    });
+
+    test('reject undefined DataSchemaValues if a DataSchema is given',
+        () async {
+      final contentSerdes = ContentSerdes();
+
+      expect(
+        () => contentSerdes.valueToContent(
+          null,
+          // FIXME(JKRhb): Should not be necessary to use fromJson here
+          DataSchema.fromJson({'type': 'object'}, PrefixMapping()),
+        ),
+        throwsA(isA<ContentSerdesException>()),
+      );
+    });
+
+    test('convert DataSchemaValues to Content', () async {
+      final contentSerdes = ContentSerdes();
+      const inputValue = 'foo';
+
+      final content = contentSerdes.valueToContent(
+        DataSchemaValue.fromString(inputValue),
+        null,
+      );
+
+      expect(await content.toByteList(), [34, 102, 111, 111, 34]);
+      expect(content.type, 'application/json');
     });
   });
 }
