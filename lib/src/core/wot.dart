@@ -118,7 +118,7 @@ class WoT implements scripting_api.WoT {
         await consumedDirectoryThing.readProperty('things');
     final rawThingDescriptions = await interactionOutput.value();
 
-    if (rawThingDescriptions is! List<dynamic>) {
+    if (rawThingDescriptions is! List<Object?>) {
       throw DiscoveryException(
         'Expected an array of Thing Descriptions but received an '
         'invalid output instead.',
@@ -126,7 +126,7 @@ class WoT implements scripting_api.WoT {
     }
 
     final thingDescriptionStream = Stream.fromIterable(
-      rawThingDescriptions.whereType<Map<String, dynamic>>(),
+      rawThingDescriptions.whereType<Map<String, Object?>>(),
     ).toThingDescriptionStream();
 
     return ThingDiscoveryProcess(thingDescriptionStream, filter);
@@ -154,7 +154,7 @@ extension _DirectoryValidationExtension on ThingDescription {
   }
 }
 
-extension _DirectoryTdDeserializationExtension on Stream<Map<String, dynamic>> {
+extension _DirectoryTdDeserializationExtension on Stream<Map<String, Object?>> {
   Stream<ThingDescription> toThingDescriptionStream() {
     const streamTransformer = StreamTransformer(_transformerMethod);
 

@@ -9,6 +9,7 @@ import 'package:dart_wot/src/core/codecs/json_codec.dart';
 import 'package:dart_wot/src/core/content.dart';
 import 'package:dart_wot/src/core/content_serdes.dart';
 import 'package:dart_wot/src/definitions/data_schema.dart';
+import 'package:dart_wot/src/scripting_api/data_schema_value.dart';
 import 'package:test/test.dart';
 
 Content _getTestContent(String input) {
@@ -16,113 +17,153 @@ Content _getTestContent(String input) {
 }
 
 void main() {
-  group('Content Serdes Tests', () {
-    setUp(() {
-      // Additional setup goes here.
+  group('ContentSerdes should', () {
+    test('validate Content', () async {
+      final contentSerdes = ContentSerdes();
+
+      final testContent1 = _getTestContent('42');
+      final successfulSchema = DataSchema.fromJson(
+        <String, dynamic>{'type': 'number'},
+        PrefixMapping(),
+      );
+
+      expect(
+        await contentSerdes.contentToValue(testContent1, successfulSchema),
+        DataSchemaValue.fromInteger(42),
+      );
+
+      final testContent2 = _getTestContent('42');
+      final failingSchema = DataSchema.fromJson(
+        <String, dynamic>{'type': 'string'},
+        PrefixMapping(),
+      );
+
+      expect(
+        contentSerdes.contentToValue(testContent2, failingSchema),
+        throwsA(const TypeMatcher<ContentSerdesException>()),
+      );
+
+      expect(
+        () => contentSerdes.valueToContent(
+          DataSchemaValue.tryParse(42),
+          failingSchema,
+        ),
+        throwsA(const TypeMatcher<ContentSerdesException>()),
+      );
+
+      final testContent3 = _getTestContent('');
+      expect(
+        await contentSerdes.contentToValue(testContent3, null),
+        null,
+      );
     });
-  });
+    test('support registration of new Codecs', () async {
+      final contentSerdes = ContentSerdes();
 
-  test('Content Validation', () async {
-    final contentSerdes = ContentSerdes();
+      expect(
+        contentSerdes.supportedMediaTypes,
+        [
+          'application/json',
+          'application/cbor',
+          'application/link-format',
+          'text/plain',
+        ],
+      );
 
-    final testContent1 = _getTestContent('42');
-    final successfulSchema = DataSchema.fromJson(
-      <String, dynamic>{'type': 'number'},
-      PrefixMapping(),
-    );
+      expect(
+        contentSerdes.offeredMediaTypes,
+        ['application/json', 'application/cbor'],
+      );
 
-    expect(
-      await contentSerdes.contentToValue(testContent1, successfulSchema),
-      42,
-    );
+      expect(
+        () => contentSerdes.addOfferedMediaType('application/xml'),
+        throwsArgumentError,
+      );
 
-    final testContent2 = _getTestContent('42');
-    final failingSchema = DataSchema.fromJson(
-      <String, dynamic>{'type': 'string'},
-      PrefixMapping(),
-    );
+      contentSerdes.addOfferedMediaType('application/td+json; charset=utf-8');
 
-    expect(
-      contentSerdes.contentToValue(testContent2, failingSchema),
-      throwsA(const TypeMatcher<ContentSerdesException>()),
-    );
+      expect(
+        contentSerdes.offeredMediaTypes,
+        [
+          'application/json',
+          'application/cbor',
+          'application/td+json; charset=utf-8',
+        ],
+      );
 
-    expect(
-      () => contentSerdes.valueToContent(42, failingSchema, 'application/json'),
-      throwsA(const TypeMatcher<ContentSerdesException>()),
-    );
+      contentSerdes.removeOfferedMediaType('application/json');
 
-    final testContent3 = _getTestContent('');
-    expect(
-      await contentSerdes.contentToValue(testContent3, null),
-      null,
-    );
-  });
-  test('Codec Registration', () async {
-    final contentSerdes = ContentSerdes();
+      expect(
+        contentSerdes.offeredMediaTypes,
+        [
+          'application/cbor',
+          'application/td+json; charset=utf-8',
+        ],
+      );
 
-    expect(
-      contentSerdes.supportedMediaTypes,
-      ['application/json', 'application/cbor', 'application/link-format'],
-    );
+      contentSerdes
+        ..assignCodec('application/xml', JsonCodec())
+        ..addOfferedMediaType('application/xml');
 
-    expect(
-      contentSerdes.offeredMediaTypes,
-      ['application/json', 'application/cbor'],
-    );
+      expect(
+        contentSerdes.supportedMediaTypes,
+        [
+          'application/json',
+          'application/cbor',
+          'application/link-format',
+          'text/plain',
+          'application/xml',
+        ],
+      );
 
-    expect(
-      () => contentSerdes.addOfferedMediaType('application/xml'),
-      throwsArgumentError,
-    );
+      expect(
+        contentSerdes.offeredMediaTypes,
+        [
+          'application/cbor',
+          'application/td+json; charset=utf-8',
+          'application/xml',
+        ],
+      );
 
-    contentSerdes.addOfferedMediaType('application/td+json; charset=utf-8');
+      expect(
+        () => contentSerdes.assignCodec('foo', JsonCodec()),
+        throwsArgumentError,
+      );
+    });
 
-    expect(
-      contentSerdes.offeredMediaTypes,
-      [
-        'application/json',
-        'application/cbor',
-        'application/td+json; charset=utf-8',
-      ],
-    );
+    test('return a Content object with an empty Stream for undefined values',
+        () async {
+      final contentSerdes = ContentSerdes();
+      final content = contentSerdes.valueToContent(null, null);
 
-    contentSerdes.removeOfferedMediaType('application/json');
+      expect(await content.body.isEmpty, isTrue);
+    });
 
-    expect(
-      contentSerdes.offeredMediaTypes,
-      [
-        'application/cbor',
-        'application/td+json; charset=utf-8',
-      ],
-    );
+    test('reject undefined DataSchemaValues if a DataSchema is given',
+        () async {
+      final contentSerdes = ContentSerdes();
 
-    contentSerdes
-      ..assignCodec('application/xml', JsonCodec())
-      ..addOfferedMediaType('application/xml');
+      expect(
+        () => contentSerdes.valueToContent(
+          null,
+          // FIXME(JKRhb): Should not be necessary to use fromJson here
+          DataSchema.fromJson({'type': 'object'}, PrefixMapping()),
+        ),
+        throwsA(isA<ContentSerdesException>()),
+      );
+    });
 
-    expect(
-      contentSerdes.supportedMediaTypes,
-      [
-        'application/json',
-        'application/cbor',
-        'application/link-format',
-        'application/xml',
-      ],
-    );
+    test('convert DataSchemaValues to Content', () async {
+      final contentSerdes = ContentSerdes();
+      const inputValue = 'foo';
 
-    expect(
-      contentSerdes.offeredMediaTypes,
-      [
-        'application/cbor',
-        'application/td+json; charset=utf-8',
-        'application/xml',
-      ],
-    );
+      final content = contentSerdes.valueToContent(
+        DataSchemaValue.fromString(inputValue),
+        null,
+      );
 
-    expect(
-      () => contentSerdes.assignCodec('foo', JsonCodec()),
-      throwsArgumentError,
-    );
+      expect(await content.toByteList(), [34, 102, 111, 111, 34]);
+      expect(content.type, 'application/json');
+    });
   });
 }

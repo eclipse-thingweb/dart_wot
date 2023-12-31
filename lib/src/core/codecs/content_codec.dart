@@ -5,18 +5,19 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import '../../definitions/data_schema.dart';
+import '../../scripting_api/data_schema_value.dart';
 
 /// Interface for providing a codec for a specific media type.
 abstract class ContentCodec {
   /// Converts an [Object] to its byte representation in the given media type.
   List<int> valueToBytes(
-    Object? value,
+    DataSchemaValue<Object?> value,
     DataSchema? dataSchema,
     Map<String, String>? parameters,
   );
 
   /// Converts a payload of the given media type to an [Object].
-  Object? bytesToValue(
+  DataSchemaValue<Object?>? bytesToValue(
     List<int> bytes,
     DataSchema? dataSchema,
     Map<String, String>? parameters,

@@ -4,18 +4,18 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:http_parser/http_parser.dart';
 import 'package:json_schema/json_schema.dart';
 
 import '../definitions/data_schema.dart';
+import '../scripting_api/data_schema_value.dart';
 import 'codecs/cbor_codec.dart';
 import 'codecs/codec_media_type.dart';
 import 'codecs/content_codec.dart';
 import 'codecs/json_codec.dart';
-import 'codecs/link_format_codec.dart';
+import 'codecs/text_codec.dart';
 import 'content.dart';
 
 /// Defines `application/json` as the default content type.
@@ -23,7 +23,6 @@ const defaultMediaType = 'application/json';
 
 /// Custom [Exception] that is thrown when Serialization or Deserialization
 /// fails.
-// TODO(JKRhb): Add codecs for text-based media types
 // TODO(JKRhb): Add codecs for XML based media types
 // TODO(JKRhb): Add codecs for Base64 media types
 // TODO(JKRhb): Add codec for OctetStream media type
@@ -55,7 +54,8 @@ class ContentSerdes {
   final _codecs = {
     CodecMediaType('application', 'json'): JsonCodec(),
     CodecMediaType('application', 'cbor'): CborCodec(),
-    CodecMediaType('application', 'link-format'): LinkFormatCodec(),
+    CodecMediaType('application', 'link-format'): TextCodec(),
+    CodecMediaType('text', 'plain'): TextCodec(),
   };
 
   final Set<String> _offeredMediaTypes = {
@@ -139,63 +139,76 @@ class ContentSerdes {
     return _codecs[parsedMediaType];
   }
 
-  void _validateValue(Object? value, DataSchema? dataSchema) {
+  void _validateValue(
+    DataSchemaValue<Object?>? dataSchemaValue,
+    DataSchema? dataSchema,
+  ) {
+    if (dataSchema == null) {
+      return;
+    }
+
     // TODO(JKRhb): The process of validating values according to a dataschema
     //              needs to be reworked.
     const filteredKeys = ['uriVariables'];
 
-    final filteredDataSchemaJson = dataSchema?.rawJson?.entries
+    final filteredDataSchemaJson = dataSchema.rawJson?.entries
         .where((element) => !filteredKeys.contains(element.key));
-    if (filteredDataSchemaJson == null) {
+    if (filteredDataSchemaJson == null || filteredDataSchemaJson.isEmpty) {
       return;
     }
+
+    if (dataSchemaValue == null) {
+      throw ContentSerdesException('Expected a defined dataSchemaValue');
+    }
+
     final schema = JsonSchema.create(
       Map.fromEntries(filteredDataSchemaJson),
       schemaVersion: SchemaVersion.draft7,
     );
-    if (!schema.validate(value).isValid) {
+    if (!schema.validate(dataSchemaValue.value).isValid) {
       throw ContentSerdesException('JSON Schema validation failed.');
     }
   }
 
-  /// Converts an [Object] to a byte representation based on its [mediaType].
+  /// Converts a [value] to a byte representation based on its [mediaType].
   ///
-  /// A [dataSchema] can be passed for validating the input [value] before the
-  /// conversion.
+  /// The passed [value] is validated before the conversion in accordance to the
+  /// [dataSchema] that is being passed to the method.
+  /// The [value] might be `null`, indicating that an equivalent of JavaScript's
+  /// `undefined` is being passed to the method.
+  /// In this case, validation fails if a non-empty [dataSchema] is present,
+  /// as some kind of [DataSchemaValue] is expected.
+  ///
+  /// If the indicated [mediaType] is not supported, the method will try to try
+  /// to treat it as a UTF-8 string.
   Content valueToContent(
-    Object? value,
-    DataSchema? dataSchema,
-    String? mediaType,
-  ) {
+    DataSchemaValue<Object?>? value,
+    DataSchema? dataSchema, [
+    String mediaType = defaultMediaType,
+  ]) {
     _validateValue(value, dataSchema);
 
-    final resolvedMediaType = mediaType ?? defaultMediaType;
+    if (value == null) {
+      return Content(mediaType, const Stream.empty());
+    }
 
-    final parsedMediaType = MediaType.parse(resolvedMediaType);
+    final parsedMediaType = MediaType.parse(mediaType);
     final mimeType = parsedMediaType.mimeType;
     final parameters = parsedMediaType.parameters;
 
-    List<int> bytes;
-    final codec = _getCodecFromMediaType(mimeType);
+    // TODO(JKRhb): Reevaluate usage of TextCodec here
+    final codec = _getCodecFromMediaType(mimeType) ?? TextCodec();
 
-    if (codec != null) {
-      bytes = codec.valueToBytes(value, dataSchema, parameters);
-    } else {
-      // Media Type is unsupported. Convert the String representation to bytes
-      // instead.
-      // TODO(JKRhb): Could be moved to a dedicated Value class method.
-      bytes = utf8.encoder.convert(value.toString());
-    }
-
-    return Content(resolvedMediaType, Stream.value(bytes));
+    final bytes = codec.valueToBytes(value, dataSchema, parameters);
+    return Content(mediaType, Stream.value(bytes));
   }
 
   /// Converts a [Content] object to a typed [Object].
   ///
   /// A [dataSchema] can be passed for validating the result. If the media type
-  /// specified in the [content] is not supported, its body is converted to an
-  /// UTF-8 string.
-  Future<Object?> contentToValue(
+  /// specified in the [content] is not supported, the method willl try to
+  /// convert its body to an UTF-8 string.
+  Future<DataSchemaValue<Object?>?> contentToValue(
     Content content,
     DataSchema? dataSchema,
   ) async {
@@ -204,20 +217,14 @@ class ContentSerdes {
     final parameters = parsedMediaType.parameters;
 
     final bytes = await content.toByteList();
+    // TODO(JKRhb): Reevaluate usage of TextCodec here
+    final codec = _getCodecFromMediaType(mimeType) ?? TextCodec();
 
-    // TODO: Should null be returned in this case?
-    if (bytes.isEmpty) {
-      return null;
-    }
+    final value = codec.bytesToValue(bytes, dataSchema, parameters);
 
-    final codec = _getCodecFromMediaType(mimeType);
-    if (codec != null) {
-      final value = codec.bytesToValue(bytes, dataSchema, parameters);
+    if (value != null) {
       _validateValue(value, dataSchema);
-      return value;
-    } else {
-      // TODO(JKRhb): Should unsupported data be returned as a String?
-      return utf8.decode(bytes.toList());
     }
+    return value;
   }
 }

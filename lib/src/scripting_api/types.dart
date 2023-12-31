@@ -4,13 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import 'interaction_input.dart';
 import 'interaction_output.dart';
-
-/// The (optional) input for an interaction.
-///
-/// Can be any type, although only basic types as well as streams can actually
-///  be handled.
-typedef InteractionInput = Object?;
 
 /// Maps multiple [InteractionOutput]s to property names.
 ///

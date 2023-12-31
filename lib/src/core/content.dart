@@ -8,11 +8,44 @@ import 'dart:typed_data';
 
 import 'package:typed_data/typed_data.dart';
 
+import '../definitions/data_schema.dart';
+import '../scripting_api/interaction_input.dart';
+import 'content_serdes.dart';
+
 /// This class contains binary input or output data and indicates the media
 /// type this data is encoded in.
 class Content {
   /// Creates a new [Content] object from a media [type] and a [body].
   Content(this.type, this.body);
+
+  /// Creates a new [Content] object from an [interactionInput].
+  ///
+  /// If the [interactionInput] is not a [StreamInput], it will be converted to
+  /// a [Stream] by the referenced [contentSerdes] if it supports the specified
+  /// [contentType].
+  /// In this case, the optional [dataSchema] will be used for validation before
+  /// the conversion.
+  factory Content.fromInteractionInput(
+    InteractionInput? interactionInput,
+    String contentType,
+    ContentSerdes contentSerdes,
+    DataSchema? dataSchema,
+  ) {
+    if (interactionInput == null) {
+      return Content(contentType, const Stream.empty());
+    }
+
+    switch (interactionInput) {
+      case DataSchemaValueInput():
+        return contentSerdes.valueToContent(
+          interactionInput.dataSchemaValue,
+          dataSchema,
+          contentType,
+        );
+      case StreamInput():
+        return Content(contentType, interactionInput.byteStream);
+    }
+  }
 
   /// The media type corresponding with this [Content] object.
   ///

@@ -34,6 +34,9 @@ class InteractionOutput implements scripting_api.InteractionOutput {
 
   bool _dataUsed = false;
 
+  ({bool read, Object? internalValue}) _value =
+      (read: false, internalValue: null);
+
   @override
   Future<ByteBuffer> arrayBuffer() async {
     _dataUsed = true;
@@ -45,8 +48,21 @@ class InteractionOutput implements scripting_api.InteractionOutput {
 
   @override
   Future<Object?> value() async {
+    if (_value.read) {
+      return _value.internalValue;
+    }
+
+    // TODO(JKRhb): Should a NotReadableError be thrown if schema is null?
+    //              C.f. https://w3c.github.io/wot-scripting-api/#the-value-function
+
+    final value = await _contentSerdes.contentToValue(
+      _content,
+      schema,
+    );
     _dataUsed = true;
-    return _contentSerdes.contentToValue(_content, schema);
+
+    _value = (read: true, internalValue: value?.value);
+    return value?.value;
   }
 
   @override

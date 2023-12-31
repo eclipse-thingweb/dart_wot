@@ -11,6 +11,7 @@ import '../definitions/form.dart';
 import '../definitions/interaction_affordances/interaction_affordance.dart';
 import '../definitions/operation_type.dart';
 import '../definitions/thing_description.dart';
+import 'content.dart';
 import 'interaction_output.dart';
 import 'protocol_interfaces/protocol_client.dart';
 import 'servient.dart';
@@ -153,7 +154,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   @override
   Future<void> writeProperty(
     String propertyName,
-    InteractionInput input, {
+    InteractionInput? input, {
     int? formIndex,
     Map<String, Object>? uriVariables,
     Object? data,
@@ -179,15 +180,21 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     final form = clientAndForm.form;
     final client = clientAndForm.client;
-    final content = servient.contentSerdes
-        .valueToContent(input, property, form.contentType);
+
+    final content = Content.fromInteractionInput(
+      input,
+      form.contentType,
+      servient.contentSerdes,
+      property,
+    );
+
     await client.writeResource(form, content);
   }
 
   @override
   Future<InteractionOutput> invokeAction(
     String actionName, {
-    InteractionInput input,
+    InteractionInput? input,
     Object? data,
     int? formIndex,
     Map<String, Object>? uriVariables,
@@ -213,8 +220,13 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     final form = clientAndForm.form;
     final client = clientAndForm.client;
-    final content = servient.contentSerdes
-        .valueToContent(input, action.input, form.contentType);
+
+    final content = Content.fromInteractionInput(
+      input,
+      form.contentType,
+      servient.contentSerdes,
+      action.input,
+    );
 
     final output = await client.invokeResource(form, content);
 

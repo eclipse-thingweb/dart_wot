@@ -85,13 +85,15 @@ Future<void> main(List<String> args) async {
     },
   );
 
-  await consumedThing.invokeAction('toggle', input: 'Hello World!');
-  await consumedThing.invokeAction('toggle', input: 'Hello World!');
-  await consumedThing.invokeAction('toggle', input: 'Hello World!');
-  await consumedThing.invokeAction('toggle', input: 'Hello World!');
+  final actionInput = 'Hello World'.asInteractionInput();
+
+  await consumedThing.invokeAction('toggle', input: actionInput);
+  await consumedThing.invokeAction('toggle', input: actionInput);
+  await consumedThing.invokeAction('toggle', input: actionInput);
+  await consumedThing.invokeAction('toggle', input: actionInput);
   await subscription.stop();
 
-  await consumedThing.invokeAction('toggle', input: 'Bye World!');
+  await consumedThing.invokeAction('toggle', input: actionInput);
   await consumedThing.readAndPrintProperty('status');
   print('Done!');
 }

@@ -7,26 +7,34 @@
 import 'package:cbor/cbor.dart' as cbor;
 
 import '../../definitions/data_schema.dart';
+import '../../scripting_api/data_schema_value.dart';
 import 'content_codec.dart';
 
 /// A [ContentCodec] that encodes and decodes CBOR data.
 class CborCodec extends ContentCodec {
   @override
   List<int> valueToBytes(
-    Object? value,
+    DataSchemaValue? dataSchemaValue,
     DataSchema? dataSchema,
     Map<String, String>? parameters,
   ) {
-    return cbor.cborEncode(cbor.CborValue(value));
+    if (dataSchemaValue == null) {
+      return [];
+    }
+
+    final cborValue = cbor.CborValue(dataSchemaValue.value);
+
+    return cbor.cborEncode(cborValue);
   }
 
   @override
-  Object? bytesToValue(
+  DataSchemaValue? bytesToValue(
     List<int> bytes,
     DataSchema? dataSchema,
     Map<String, String>? parameters,
   ) {
-    // TODO(JKRhb): Use dataSchema for validation
-    return cbor.cborDecode(bytes).toObject();
+    final cborObject = cbor.cborDecode(bytes).toObject();
+
+    return DataSchemaValue.tryParse(cborObject);
   }
 }
