@@ -6,6 +6,7 @@
 
 import "../../definitions/credentials/callbacks.dart";
 import "../../scripting_api/exposed_thing.dart";
+import "../servient.dart";
 
 /// Base class for a Protocol Server.
 abstract interface class ProtocolServer {

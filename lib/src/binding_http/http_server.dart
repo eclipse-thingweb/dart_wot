@@ -4,11 +4,13 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "dart:io" as io;
+
 import "../../core.dart";
 
 import "http_config.dart";
 
-const _thingsPath = '/things';
+const _thingsPath = "/things";
 
 /// A [ProtocolServer] for the Hypertext Transfer Protocol (HTTP).
 final class HttpServer implements ProtocolServer {
@@ -41,7 +43,7 @@ final class HttpServer implements ProtocolServer {
 
   @override
   Future<void> expose(ExposedThing thing) async {
-    final key = thing.id ?? thing.thingDescription.identifier;
+    final key = thing.thingDescription.identifier;
     _things[key] = thing;
     print(_things);
   }
@@ -49,7 +51,7 @@ final class HttpServer implements ProtocolServer {
   @override
   Future<void> start(Servient servient) async {
     if (_server != null) {
-      throw StateError('Server already started');
+      throw StateError("Server already started");
     }
 
     _server = await io.HttpServer.bind(_bindAddress, port);
@@ -85,37 +87,47 @@ final class HttpServer implements ProtocolServer {
 
   Future<void> _handleThingRequest(io.HttpRequest request) async {
     final response = request.response;
-    if (request.method != 'GET') {
+    if (request.method != "GET") {
       response
         ..statusCode = 405
-        ..write('Method not allowed');
+        ..write("Method not allowed");
       await response.close();
       return;
     }
 
-    final path = request.uri.pathSegments.sublist(1).join('/');
+    final path = request.uri.pathSegments.sublist(1).join("/");
 
     final exposedThing = _things[path];
 
     if (exposedThing == null) {
       response
         ..statusCode = 404
-        ..write('Not found');
+        ..write("Not found");
       await response.close();
       return;
     }
 
     // TODO: Fix content negotiation
-    final acceptHeader = request.headers['Accept']?[0];
-    final contentType = ['*/*', null].contains(acceptHeader)
-        ? 'application/td+json'
+    final acceptHeader = request.headers["Accept"]?[0];
+    final contentType = ["*/*", null].contains(acceptHeader)
+        ? "application/td+json"
         : acceptHeader;
 
     print(exposedThing.thingDescription.forms);
 
+    final DataSchemaValue<String>? blah;
+
+    final blargh = exposedThing.thingDescription.rawThingDescription;
+
+    if (blargh != null) {
+      blah = DataSchemaValue.fromString(blargh);
+    } else {
+      blah = null;
+    }
+
     // FIXME: Thing Description is not generated correctly
     final content = _servient.contentSerdes.valueToContent(
-      exposedThing.thingDescription.rawThingDescription,
+      blah,
       null,
       contentType,
     );
