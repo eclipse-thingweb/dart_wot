@@ -115,19 +115,20 @@ final class HttpServer implements ProtocolServer {
 
     print(exposedThing.thingDescription.forms);
 
-    final DataSchemaValue<String>? blah;
+    final DataSchemaValue<String>? dataSchemaValue;
 
-    final blargh = exposedThing.thingDescription.rawThingDescription;
+    final rawThingDescription =
+        exposedThing.thingDescription.rawThingDescription;
 
-    if (blargh != null) {
-      blah = DataSchemaValue.fromString(blargh);
+    if (rawThingDescription != null) {
+      dataSchemaValue = DataSchemaValue.fromString(rawThingDescription);
     } else {
-      blah = null;
+      dataSchemaValue = null;
     }
 
     // FIXME: Thing Description is not generated correctly
     final content = _servient.contentSerdes.valueToContent(
-      blah,
+      dataSchemaValue,
       null,
       contentType,
     );
