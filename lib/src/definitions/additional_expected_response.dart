@@ -15,13 +15,12 @@ import "extensions/json_parser.dart";
 @immutable
 class AdditionalExpectedResponse {
   /// Constructs a new [AdditionalExpectedResponse] object from a [contentType].
-  AdditionalExpectedResponse(
+  const AdditionalExpectedResponse(
     this.contentType, {
     this.schema,
-    bool? success,
-    Map<String, dynamic>? additionalFields,
-  })  : additionalFields = additionalFields ?? {},
-        success = success ?? false;
+    this.success = false,
+    this.additionalFields,
+  });
 
   /// Creates an [AdditionalExpectedResponse] from a [json] object.
   factory AdditionalExpectedResponse.fromJson(
@@ -33,7 +32,7 @@ class AdditionalExpectedResponse {
 
     final contentType =
         json.parseField<String>("contentType", parsedFields) ?? formContentType;
-    final success = json.parseField<bool>("success", parsedFields);
+    final success = json.parseField<bool>("success", parsedFields) ?? false;
     final schema = json.parseField<String>("schema", parsedFields);
     final additionalFields =
         json.parseAdditionalFields(prefixMapping, parsedFields);

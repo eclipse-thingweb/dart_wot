@@ -5,11 +5,9 @@ import "../additional_expected_response.dart";
 import "../data_schema.dart";
 import "../expected_response.dart";
 import "../form.dart";
-import "../interaction_affordances/action.dart";
-import "../interaction_affordances/event.dart";
 import "../interaction_affordances/interaction_affordance.dart";
-import "../interaction_affordances/property.dart";
 import "../link.dart";
+import "../operation_type.dart";
 import "../security/ace_security_scheme.dart";
 import "../security/apikey_security_scheme.dart";
 import "../security/auto_security_scheme.dart";
@@ -247,16 +245,12 @@ extension ParseField on Map<String, dynamic> {
 
   /// Parses [Form]s contained in this JSON object.
   ///
-  /// Initializes the [Form] with information from the [thingDescription]
-  /// and expands compact URIs using the given [prefixMapping].
-  ///
-  /// Adds the key `forms` to the set of [parsedFields], if defined.
+  /// Epands compact URIs using the given [prefixMapping] and adds the key
+  /// `forms` to the set of [parsedFields], if defined.
   List<Form>? parseForms(
-    ThingDescription thingDescription,
     PrefixMapping prefixMapping,
-    Set<String>? parsedFields, [
-    InteractionAffordance? interactionAffordance,
-  ]) {
+    Set<String>? parsedFields,
+  ) {
     final fieldValue = parseField("forms", parsedFields);
 
     if (fieldValue is! List) {
@@ -269,30 +263,22 @@ extension ParseField on Map<String, dynamic> {
           (e) => Form.fromJson(
             e,
             prefixMapping,
-            thingDescription,
-            interactionAffordance,
           ),
         )
         .toList();
   }
 
-  /// Parses [Form]s contained in this JSON object for an
-  /// [interactionAffordance].
+  /// Parses [Form]s contained in this JSON object.
   ///
-  /// Initializes the [Form] with information from the [interactionAffordance]
-  /// and expands compact URIs using the given [prefixMapping].
-  ///
-  /// Adds the key `forms` to the set of [parsedFields], if defined.
+  /// Expands compact URIs using the given [prefixMapping] and adds the key
+  /// `forms` to the set of [parsedFields], if defined.
   List<Form> parseAffordanceForms(
-    InteractionAffordance interactionAffordance,
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
     final forms = parseForms(
-      interactionAffordance.thingDescription,
       prefixMapping,
       parsedFields,
-      interactionAffordance,
     );
 
     if (forms != null) {
@@ -360,25 +346,25 @@ extension ParseField on Map<String, dynamic> {
     final scheme = parseRequiredField("scheme", parsedFields);
 
     switch (scheme) {
-      case "auto":
+      case autoSecuritySchemeName:
         return AutoSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case "basic":
+      case basicSecuritySchemeName:
         return BasicSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case "bearer":
+      case bearerSecuritySchemeName:
         return BearerSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case "combo":
+      case comboSecuritySchemeName:
         return ComboSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case "nosec":
+      case nosecSecuritySchemeName:
         return NoSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case "psk":
+      case pskSecuritySchemeName:
         return PskSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case "digest":
+      case digestSecuritySchemeName:
         return DigestSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case "apikey":
+      case apiKeySecuritySchemeName:
         return ApiKeySecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case "oauth2":
+      case oAuth2SecuritySchemeName:
         return OAuth2SecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case "ace:ACESecurityScheme":
+      case aceSecuritySchemeName:
         return AceSecurityScheme.fromJson(this, prefixMapping, parsedFields);
     }
 
@@ -389,7 +375,6 @@ extension ParseField on Map<String, dynamic> {
   ///
   /// Adds the key `properties` to the set of [parsedFields], if defined.
   Map<String, Property>? parseProperties(
-    ThingDescription thingDescription,
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
@@ -404,8 +389,7 @@ extension ParseField on Map<String, dynamic> {
     for (final property in fieldValue.entries) {
       final dynamic value = property.value;
       if (value is Map<String, dynamic>) {
-        result[property.key] =
-            Property.fromJson(value, thingDescription, prefixMapping);
+        result[property.key] = Property.fromJson(value, prefixMapping);
       }
     }
 
@@ -416,7 +400,6 @@ extension ParseField on Map<String, dynamic> {
   ///
   /// Adds the key `actions` to the set of [parsedFields], if defined.
   Map<String, Action>? parseActions(
-    ThingDescription thingDescription,
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
@@ -431,8 +414,7 @@ extension ParseField on Map<String, dynamic> {
     for (final property in fieldValue.entries) {
       final dynamic value = property.value;
       if (value is Map<String, dynamic>) {
-        result[property.key] =
-            Action.fromJson(value, thingDescription, prefixMapping);
+        result[property.key] = Action.fromJson(value, prefixMapping);
       }
     }
 
@@ -443,7 +425,6 @@ extension ParseField on Map<String, dynamic> {
   ///
   /// Adds the key `events` to the set of [parsedFields], if defined.
   Map<String, Event>? parseEvents(
-    ThingDescription thingDescription,
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
@@ -458,12 +439,21 @@ extension ParseField on Map<String, dynamic> {
     for (final property in fieldValue.entries) {
       final dynamic value = property.value;
       if (value is Map<String, dynamic>) {
-        result[property.key] =
-            Event.fromJson(value, thingDescription, prefixMapping);
+        result[property.key] = Event.fromJson(value, prefixMapping);
       }
     }
 
     return result;
+  }
+
+  /// Processes this JSON value and tries to generate a [List] of
+  /// [OperationType]s from it.
+  List<OperationType>? parseOperationTypes(
+    Set<String>? parsedFields,
+  ) {
+    final opArray = parseArrayField<String>("op", parsedFields);
+
+    return opArray?.map(OperationType.fromString).toList();
   }
 
   /// Parses [ExpectedResponse]s contained in this JSON object.

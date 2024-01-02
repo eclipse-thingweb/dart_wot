@@ -11,6 +11,7 @@ import "package:coap/coap.dart" as coap;
 import "package:coap/config/coap_config_default.dart";
 import "package:dcaf/dcaf.dart";
 
+import "../core/augmented_form.dart";
 import "../core/content.dart";
 import "../core/credentials/ace_credentials.dart";
 import "../core/credentials/callbacks.dart";
@@ -52,7 +53,7 @@ class _InternalCoapConfig extends CoapConfigDefault {
 
 coap.PskCredentialsCallback? _createPskCallback(
   Uri uri,
-  Form? form, {
+  AugmentedForm? form, {
   ClientPskCallback? pskCredentialsCallback,
 }) {
   final usesPskScheme = form?.usesPskScheme ?? false;
@@ -126,7 +127,7 @@ final class CoapClient implements ProtocolClient {
   }
 
   Future<Content> _sendRequestFromForm(
-    Form form,
+    AugmentedForm form,
     OperationType operationType, [
     Content? content,
   ]) async {
@@ -151,7 +152,7 @@ final class CoapClient implements ProtocolClient {
     Uri uri,
     coap.RequestMethod method, {
     Content? content,
-    required Form? form,
+    required AugmentedForm? form,
     coap.CoapMediaType? format,
     coap.CoapMediaType? accept,
     coap.BlockSize? block1Size,
@@ -207,7 +208,7 @@ final class CoapClient implements ProtocolClient {
     Uri uri,
     coap.RequestMethod method, {
     Content? content,
-    required Form? form,
+    required AugmentedForm? form,
     coap.CoapMediaType? format,
     coap.CoapMediaType? accept,
     coap.BlockSize? block1Size,
@@ -230,7 +231,7 @@ final class CoapClient implements ProtocolClient {
   }
 
   Future<AuthServerRequestCreationHint?> _obtainCreationHintFromResourceServer(
-    Form form,
+    AugmentedForm form,
   ) async {
     final requestMethod = (form.method ?? CoapRequestMethod.get).code;
 
@@ -259,7 +260,7 @@ final class CoapClient implements ProtocolClient {
   ///
   /// Returns `null` if no `ACESecurityScheme` is defined.
   Future<AuthServerRequestCreationHint?> _obtainAceCreationHintFromForm(
-    Form? form,
+    AugmentedForm? form,
   ) async {
     if (form == null) {
       return null;
@@ -301,7 +302,7 @@ final class CoapClient implements ProtocolClient {
     AuthServerRequestCreationHint? creationHint,
     AceSecurityCallback aceCredentialsCallback,
     Uri uri,
-    Form? form, [
+    AugmentedForm? form, [
     AceCredentials? invalidAceCredentials,
   ]) async {
     final aceCredentials = await aceCredentialsCallback(
@@ -339,7 +340,7 @@ final class CoapClient implements ProtocolClient {
     coap.CoapRequest request,
     coap.CoapResponse response,
     Uri uri,
-    Form? form,
+    AugmentedForm? form,
     AceSecurityCallback aceCredentialsCallback, {
     AceCredentials? invalidAceCredentials,
   }) async {
@@ -372,23 +373,23 @@ final class CoapClient implements ProtocolClient {
   }
 
   @override
-  Future<Content> readResource(Form form) async {
+  Future<Content> readResource(AugmentedForm form) async {
     return _sendRequestFromForm(form, OperationType.readproperty);
   }
 
   @override
-  Future<void> writeResource(Form form, Content content) async {
+  Future<void> writeResource(AugmentedForm form, Content content) async {
     await _sendRequestFromForm(form, OperationType.writeproperty, content);
   }
 
   @override
-  Future<Content> invokeResource(Form form, Content content) async {
+  Future<Content> invokeResource(AugmentedForm form, Content content) async {
     return _sendRequestFromForm(form, OperationType.invokeaction, content);
   }
 
   @override
   Future<Subscription> subscribeResource(
-    Form form, {
+    AugmentedForm form, {
     required void Function(Content content) next,
     void Function(Exception error)? error,
     required void Function() complete,
@@ -406,7 +407,7 @@ final class CoapClient implements ProtocolClient {
   }
 
   Future<CoapSubscription> _startObservation(
-    Form form,
+    AugmentedForm form,
     OperationType operationType,
     void Function(Content content) next,
     void Function() complete,

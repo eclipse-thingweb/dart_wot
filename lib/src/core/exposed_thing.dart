@@ -7,9 +7,7 @@
 import "../../definitions.dart";
 import "../../scripting_api.dart" hide ExposedThing;
 import "../../scripting_api.dart" as scripting_api;
-import "../definitions/interaction_affordances/action.dart";
-import "../definitions/interaction_affordances/event.dart";
-import "../definitions/interaction_affordances/property.dart";
+import "../definitions/interaction_affordances/interaction_affordance.dart";
 import "servient.dart";
 
 /// Implemention of the [scripting_api.ExposedThing] interface.
@@ -17,31 +15,13 @@ class ExposedThing implements scripting_api.ExposedThing {
   /// Creates a new [ExposedThing] from a [servient] and an [exposedThingInit].
   ExposedThing(this.servient, ExposedThingInit exposedThingInit)
       : thingDescription =
-            ThingDescription.fromJson(exposedThingInit, validate: false) {
-    title = thingDescription.title;
-    id = thingDescription.id;
-  }
-
-  /// Creates an [ExposedThing] from a [ThingModel].
-  ///
-  // TODO(JKRhb): Additional parameters for bindings etc. might be needed
-  ExposedThing.fromThingModel(this.servient, ThingModel thingModel)
-      : thingDescription = ThingDescription.fromThingModel(thingModel) {
-    title = thingDescription.title;
-    id = thingDescription.id;
-  }
+            ThingDescription.fromJson(exposedThingInit, validate: false);
 
   @override
   final ThingDescription thingDescription;
 
   /// The [Servient] associated with this [ExposedThing].
   final Servient servient;
-
-  /// A unique identifier of this [ExposedThing].
-  String? id;
-
-  /// The title of the Thing.
-  String? title;
 
   /// A [Map] of all the [properties] of this [ExposedThing].
   final Map<String, Property>? properties = {};

@@ -16,56 +16,55 @@ void main() {
       // Additional setup goes here.
     });
 
-    test("Parse incomplete Thing Description", () async {
-      final servient = Servient();
-      final wot = await servient.start();
-      final Map<String, dynamic> exposedThingInit = <String, dynamic>{
-        "@context": "https://www.w3.org/2022/wot/td/v1.1",
-        "title": "Test Thing",
-      };
-      final dynamic exposedThing = await wot.produce(exposedThingInit);
-      // ignore: avoid_dynamic_calls
-      expect(exposedThing.id.startsWith("urn:uuid:"), true);
-    });
+    test(
+      "Parse incomplete Thing Description",
+      () async {
+        final servient = Servient();
+        final wot = await servient.start();
+        final Map<String, dynamic> exposedThingInit = <String, dynamic>{
+          "@context": "https://www.w3.org/2022/wot/td/v1.1",
+          "title": "Test Thing",
+        };
+        final exposedThing = await wot.produce(exposedThingInit);
+        expect(exposedThing.thingDescription.id?.startsWith("urn:uuid:"), true);
+      },
+    );
 
     test("Parse Thing Description", () {
-      const thingDescriptionJson = '''
-      {
-        "@context": ["http://www.w3.org/ns/td", {"@language": "de"}],
+      const thingDescriptionJson = {
+        "@context": [
+          "https://www.w3.org/2022/wot/td/v1.1",
+          {"@language": "de"},
+        ],
         "title": "Test Thing",
         "properties": {
           "status": {
             "forms": [
-              {
-                "href": "coap://example.org"
-              }
-            ]
-          }
+              {"href": "coap://example.org"},
+            ],
+          },
         },
         "links": [
           {
             "href": "https://example.org",
-            "rel": "test",
+            "rel": "icon",
             "anchor": "https://example.org",
             "@type": "test",
-            "sizes": "42",
+            "sizes": "42x42",
             "test": "test",
-            "hreflang": "de"
+            "hreflang": "de",
           },
           {
             "href": "https://example.org",
-            "hreflang": ["de", "en"]
+            "hreflang": ["de", "en"],
           }
         ],
         "securityDefinitions": {
-          "nosec_sc": {
-            "scheme": "nosec"
-          }
+          "nosec_sc": {"scheme": "nosec"},
         },
-        "security": ["nosec_sc"]
-      }
-      ''';
-      final parsedTd = ThingDescription(thingDescriptionJson);
+        "security": ["nosec_sc"],
+      };
+      final parsedTd = ThingDescription.fromJson(thingDescriptionJson);
 
       expect(parsedTd.title, "Test Thing");
 
@@ -73,7 +72,7 @@ void main() {
       final secondContextEntry = parsedTd.context[1];
 
       expect(firstContextEntry.key, null);
-      expect(firstContextEntry.value, "http://www.w3.org/ns/td");
+      expect(firstContextEntry.value, "https://www.w3.org/2022/wot/td/v1.1");
       expect(secondContextEntry.key, "@language");
       expect(secondContextEntry.value, "de");
 
@@ -81,28 +80,28 @@ void main() {
       final securityDefinition = parsedTd.securityDefinitions["nosec_sc"]!;
       expect(securityDefinition.scheme, "nosec");
 
-      final parsedLink = parsedTd.links[0];
-      expect(parsedLink.href, Uri.parse("https://example.org"));
-      expect(parsedLink.rel, "test");
-      expect(parsedLink.anchor, Uri.parse("https://example.org"));
-      expect(parsedLink.type, "test");
-      expect(parsedLink.sizes, "42");
-      expect(parsedLink.hreflang, ["de"]);
-      expect(parsedLink.additionalFields["test"], "test");
+      final parsedLink = parsedTd.links?[0];
+      expect(parsedLink?.href, Uri.parse("https://example.org"));
+      expect(parsedLink?.rel, "icon");
+      expect(parsedLink?.anchor, Uri.parse("https://example.org"));
+      expect(parsedLink?.type, "test");
+      expect(parsedLink?.sizes, "42x42");
+      expect(parsedLink?.hreflang, ["de"]);
+      expect(parsedLink?.additionalFields?["test"], "test");
 
-      final secondParsedLink = parsedTd.links[1];
-      expect(secondParsedLink.hreflang, ["de", "en"]);
+      final secondParsedLink = parsedTd.links?[1];
+      expect(secondParsedLink?.hreflang, ["de", "en"]);
     });
 
     test("Link Tests", () {
       final link = Link(
-        "https://example.org",
+        Uri.parse("https://example.org"),
         type: "test",
         rel: "test",
-        anchor: "https://example.org",
+        anchor: Uri.parse("https://example.org"),
         sizes: "42",
-        additionalFields: <String, dynamic>{"test": "test"},
-        hreflang: ["de"],
+        additionalFields: const <String, dynamic>{"test": "test"},
+        hreflang: const ["de"],
       );
       expect(link.href, Uri.parse("https://example.org"));
       expect(link.rel, "test");
@@ -110,12 +109,12 @@ void main() {
       expect(link.hreflang, ["de"]);
       expect(link.type, "test");
       expect(link.sizes, "42");
-      expect(link.additionalFields["test"], "test");
+      expect(link.additionalFields?["test"], "test");
 
-      final link2 = Link("https://example.org");
+      final link2 = Link(Uri.parse("https://example.org"));
       expect(link2.href, Uri.parse("https://example.org"));
       expect(link2.anchor, null);
-      expect(link2.additionalFields, <String, dynamic>{});
+      expect(link2.additionalFields, isNull);
     });
   });
 }

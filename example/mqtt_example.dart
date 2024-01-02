@@ -8,47 +8,41 @@
 
 import "package:dart_wot/dart_wot.dart";
 
-const thingDescriptionJson = '''
-  {
-    "@context": "https://www.w3.org/2022/wot/td/v1.1",
-    "title": "Test Thing",
-    "id": "urn:test",
-    "base": "coap://coap.me",
-    "security": ["auto_sc"],
-    "securityDefinitions": {
-      "auto_sc": {
-        "scheme": "auto"
-      }
+const thingDescriptionJson = {
+  "@context": "https://www.w3.org/2022/wot/td/v1.1",
+  "title": "Test Thing",
+  "id": "urn:test",
+  "base": "coap://coap.me",
+  "security": ["auto_sc"],
+  "securityDefinitions": {
+    "auto_sc": {"scheme": "auto"},
+  },
+  "properties": {
+    "status": {
+      "observable": true,
+      "forms": [
+        {
+          "href": "mqtt://test.mosquitto.org:1884",
+          "mqv:filter": "test",
+          "op": ["readproperty", "observeproperty"],
+          "contentType": "text/plain",
+        }
+      ],
     },
-    "properties": {
-      "status": {
-        "observable": true,
-        "forms": [
-          {
-            "href": "mqtt://test.mosquitto.org:1884",
-            "mqv:filter": "test",
-            "op": ["readproperty", "observeproperty"],
-            "contentType": "text/plain"
-          }
-        ]
-      }
+  },
+  "actions": {
+    "toggle": {
+      "input": {"type": "string"},
+      "forms": [
+        {
+          "href": "mqtt://test.mosquitto.org:1884",
+          "mqv:topic": "test",
+          "mqv:retain": true,
+        }
+      ],
     },
-    "actions": {
-      "toggle": {
-        "input": {
-          "type": "string"
-        },
-        "forms": [
-          {
-            "href": "mqtt://test.mosquitto.org:1884",
-            "mqv:topic": "test",
-            "mqv:retain": true
-          }
-        ]
-      }
-    }
-  }
-  ''';
+  },
+};
 
 final Map<String, BasicCredentials> basicCredentials = {
   "urn:test": BasicCredentials("rw", "readwrite"),
@@ -56,10 +50,10 @@ final Map<String, BasicCredentials> basicCredentials = {
 
 Future<BasicCredentials?> basicCredentialsCallback(
   Uri uri,
-  Form? form, [
+  AugmentedForm? form, [
   BasicCredentials? invalidCredentials,
 ]) async {
-  final id = form?.thingDescription.identifier;
+  final id = form?.tdIdentifier;
 
   return basicCredentials[id];
 }
@@ -73,7 +67,7 @@ Future<void> main(List<String> args) async {
 
   final wot = await servient.start();
 
-  final thingDescription = ThingDescription(thingDescriptionJson);
+  final thingDescription = ThingDescription.fromJson(thingDescriptionJson);
   final consumedThing = await wot.consume(thingDescription);
   await consumedThing.readAndPrintProperty("status");
 

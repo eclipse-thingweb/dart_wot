@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "thing_description.dart";
+import "extensions/json_parser.dart";
 
 /// Class representing a WoT Thing Model.
 ///
@@ -12,8 +12,32 @@ import "thing_description.dart";
 ///
 /// [spec link]: https://w3c.github.io/wot-thing-description/#thing-model
 class ThingModel {
-  /// Converts this [ThingModel] to a [ThingDescription].
-  ThingDescription toThingDescription() {
-    return ThingDescription.fromThingModel(this);
+  /// Creates a new Thing Model instance.
+  ThingModel({
+    this.title,
+    this.id,
+  });
+
+  /// Creates a new [ThingModel] from a [json] object.
+  factory ThingModel.fromJson(
+    Map<String, dynamic> json, {
+    // ignore: avoid_unused_constructor_parameters
+    bool validate = true,
+  }) {
+    final Set<String> parsedFields = {};
+
+    final title = json.parseField<String>("title", parsedFields);
+    final id = json.parseField<String>("id", parsedFields);
+
+    return ThingModel(
+      title: title,
+      id: id,
+    );
   }
+
+  /// The [title] of this [ThingModel].
+  final String? title;
+
+  /// The [id] of this [ThingModel]. Might be `null`.
+  final String? id;
 }

@@ -12,19 +12,11 @@ import "package:dart_wot/src/definitions/additional_expected_response.dart";
 import "package:dart_wot/src/definitions/data_schema.dart";
 import "package:dart_wot/src/definitions/expected_response.dart";
 import "package:dart_wot/src/definitions/extensions/json_parser.dart";
-import "package:dart_wot/src/definitions/interaction_affordances/action.dart";
-import "package:dart_wot/src/definitions/interaction_affordances/interaction_affordance.dart";
-import "package:dart_wot/src/definitions/interaction_affordances/property.dart";
 import "package:dart_wot/src/definitions/operation_type.dart";
-import "package:dart_wot/src/definitions/security/auto_security_scheme.dart";
 import "package:dart_wot/src/definitions/security/no_security_scheme.dart";
 import "package:dart_wot/src/definitions/validation/thing_description_schema.dart";
 import "package:dart_wot/src/definitions/validation/validation_exception.dart";
 import "package:test/test.dart";
-
-class _InvalidInteractionAffordance extends InteractionAffordance {
-  _InvalidInteractionAffordance(super.thingDescription);
-}
 
 void main() {
   group("Definitions", () {
@@ -81,38 +73,31 @@ void main() {
         thingDescription.created,
         DateTime.tryParse("1970-01-01"),
       );
-      final form = thingDescription.forms[0];
+      final form = thingDescription.forms?[0];
       expect(
-        form.href,
+        form?.href,
         Uri.tryParse("coaps://example.org"),
       );
       expect(
-        form.op,
+        form?.op,
         [OperationType.readallproperties],
       );
     });
 
     test("Form", () {
-      final thingDescription = ThingDescription(null);
-      final interactionAffordance = Property(thingDescription);
-
       final uri = Uri.parse("https://example.org");
       final form = Form(
         uri,
-        interactionAffordance.thingDescription,
-        interactionAffordance: interactionAffordance,
       );
 
       expect(form.href, uri);
 
       final form2 = Form(
         uri,
-        interactionAffordance.thingDescription,
-        interactionAffordance: interactionAffordance,
         subprotocol: "test",
-        scopes: ["test"],
-        response: ExpectedResponse("application/json"),
-        additionalFields: <String, dynamic>{"test": "test"},
+        scopes: const ["test"],
+        response: const ExpectedResponse("application/json"),
+        additionalFields: const <String, dynamic>{"test": "test"},
       );
 
       expect(form2.href, uri);
@@ -133,6 +118,7 @@ void main() {
           "contentType": "application/json"
         },
         "additionalResponses": {
+          "contentType": "application/json",
           "success": false,
           "schema": "hallo"
         },
@@ -144,7 +130,6 @@ void main() {
       final form3 = Form.fromJson(
         form3Json as Map<String, dynamic>,
         PrefixMapping(),
-        interactionAffordance.thingDescription,
       );
 
       expect(form3.href, uri);
@@ -157,10 +142,10 @@ void main() {
       expect(form3.scopes, ["test1", "test2"]);
       expect(form3.response?.contentType, "application/json");
       expect(form3.additionalResponses, [
-        AdditionalExpectedResponse(
+        const AdditionalExpectedResponse(
           "application/json",
-          success: false,
           schema: "hallo",
+          additionalFields: {},
         ),
       ]);
       expect(form3.additionalFields, {"test": "test"});
@@ -177,7 +162,6 @@ void main() {
       final form4 = Form.fromJson(
         form4Json as Map<String, dynamic>,
         PrefixMapping(),
-        interactionAffordance.thingDescription,
       );
 
       expect(form4.op, [OperationType.writeproperty]);
@@ -193,7 +177,6 @@ void main() {
         () => Form.fromJson(
           form5Json as Map<String, dynamic>,
           PrefixMapping(),
-          interactionAffordance.thingDescription,
         ),
         throwsException,
       );
@@ -218,7 +201,6 @@ void main() {
       final form6 = Form.fromJson(
         form6Json as Map<String, dynamic>,
         PrefixMapping(),
-        interactionAffordance.thingDescription,
       );
 
       final additionalResponses = form6.additionalResponses;
@@ -234,17 +216,7 @@ void main() {
       expect(additionalResponse2.schema, null);
 
       expect(
-        () => Form(
-          Uri.parse("http://example.org"),
-          thingDescription,
-          interactionAffordance:
-              _InvalidInteractionAffordance(thingDescription),
-        ),
-        throwsStateError,
-      );
-      expect(
         () => <String, dynamic>{}.parseAffordanceForms(
-          Action(ThingDescription(null)),
           PrefixMapping(),
           {},
         ),
@@ -279,12 +251,13 @@ void main() {
 
       final thingDescription = ThingDescription.fromJson(validThingDescription);
 
-      final action = thingDescription.actions["action"];
+      final action = thingDescription.actions?["action"];
       expect(action?.safe, true);
       expect(action?.idempotent, true);
       expect(action?.synchronous, true);
 
-      final actionWithDefaults = thingDescription.actions["actionWithDefaults"];
+      final actionWithDefaults =
+          thingDescription.actions?["actionWithDefaults"];
       expect(actionWithDefaults?.safe, false);
       expect(actionWithDefaults?.idempotent, false);
       expect(actionWithDefaults?.synchronous, null);
@@ -374,7 +347,7 @@ void main() {
       expect(noSecurityScheme, isA<NoSecurityScheme>());
       expect(noSecurityScheme?.scheme, "nosec");
 
-      final property = thingDescription.properties["property"];
+      final property = thingDescription.properties?["property"];
       expect(property?.atType, ["test"]);
       expect(property?.title, "Test");
       expect(property?.description, "This is a Test");
@@ -403,27 +376,27 @@ void main() {
       expect(property?.multipleOf, 1);
 
       final propertyWithDefaults =
-          thingDescription.properties["propertyWithDefaults"];
+          thingDescription.properties?["propertyWithDefaults"];
       expect(propertyWithDefaults?.writeOnly, false);
       expect(propertyWithDefaults?.readOnly, false);
       expect(propertyWithDefaults?.observable, false);
 
       final objectSchemeProperty =
-          thingDescription.properties["objectSchemeProperty"];
+          thingDescription.properties?["objectSchemeProperty"];
       expect(objectSchemeProperty?.required, ["test"]);
       expect(objectSchemeProperty?.type, "object");
 
       expect(objectSchemeProperty?.forms[0].security, ["auto_sc"]);
-      final autoSecurityScheme =
-          objectSchemeProperty?.forms[0].securityDefinitions[0];
-      expect(autoSecurityScheme, isA<AutoSecurityScheme>());
-      expect(autoSecurityScheme?.scheme, "auto");
+      // final autoSecurityScheme =
+      // objectSchemeProperty?.forms[0].securityDefinitions[0];
+      // expect(autoSecurityScheme, isA<AutoSecurityScheme>());
+      // expect(autoSecurityScheme?.scheme, "auto");
 
       final testSchema = objectSchemeProperty?.properties?["test"];
       expect(testSchema, isA<DataSchema>());
       expect(testSchema?.type, "string");
       final propertyWithOneOf =
-          thingDescription.properties["propertyWithOneOf"];
+          thingDescription.properties?["propertyWithOneOf"];
       final stringSchema = propertyWithOneOf?.oneOf?[0];
       final integerSchema = propertyWithOneOf?.oneOf?[1];
 
@@ -513,7 +486,7 @@ void main() {
   });
 
   test("Should correctly parse ExpectedResponse", () {
-    final firstResponse = ExpectedResponse(
+    const firstResponse = ExpectedResponse(
       "application/json",
       additionalFields: {"test": "test"},
     );

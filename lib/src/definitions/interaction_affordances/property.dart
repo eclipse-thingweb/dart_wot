@@ -4,22 +4,16 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:curie/curie.dart";
-import "package:meta/meta.dart";
-
-import "../data_schema.dart";
-import "../extensions/json_parser.dart";
-import "../thing_description.dart";
-import "interaction_affordance.dart";
+part of "interaction_affordance.dart";
 
 /// Class representing a [Property] Affordance in a Thing Description.
 @immutable
 class Property extends InteractionAffordance implements DataSchema {
   /// Default constructor that creates a [Property] from a [List] of [forms].
-  Property(
-    super.thingDescription, {
-    super.forms,
+  const Property({
+    required super.forms,
     super.uriVariables,
+    super.additionalFields,
     this.dataSchema,
     this.observable = false,
   });
@@ -27,32 +21,28 @@ class Property extends InteractionAffordance implements DataSchema {
   /// Creates a new [Property] from a [json] object.
   factory Property.fromJson(
     Map<String, dynamic> json,
-    ThingDescription thingDescription,
     PrefixMapping prefixMapping,
   ) {
     final Set<String> parsedFields = {};
     final observable =
         json.parseField<bool>("observable", parsedFields) ?? false;
     final uriVariables =
-        json.parseMapField<dynamic>("uriVariables", parsedFields);
+        json.parseMapField<Object>("uriVariables", parsedFields);
     final dataSchema = DataSchema.fromJson(json, prefixMapping, parsedFields);
+    final forms = json.parseAffordanceForms(
+      prefixMapping,
+      parsedFields,
+    );
+
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
 
     final property = Property(
-      thingDescription,
+      forms: forms,
       observable: observable,
       dataSchema: dataSchema,
       uriVariables: uriVariables,
-    );
-
-    property.forms.addAll(
-      json.parseAffordanceForms(
-        property,
-        prefixMapping,
-        parsedFields,
-      ),
-    );
-    property.additionalFields.addAll(
-      json.parseAdditionalFields(prefixMapping, parsedFields),
+      additionalFields: additionalFields,
     );
 
     return property;

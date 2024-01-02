@@ -23,7 +23,7 @@ void main() {
 
       final testContent1 = _getTestContent("42");
       final successfulSchema = DataSchema.fromJson(
-        <String, dynamic>{"type": "number"},
+        const <String, dynamic>{"type": "number"},
         PrefixMapping(),
       );
 
@@ -34,7 +34,7 @@ void main() {
 
       final testContent2 = _getTestContent("42");
       final failingSchema = DataSchema.fromJson(
-        <String, dynamic>{"type": "string"},
+        const <String, dynamic>{"type": "string"},
         PrefixMapping(),
       );
 
@@ -147,7 +147,7 @@ void main() {
         () => contentSerdes.valueToContent(
           null,
           // FIXME(JKRhb): Should not be necessary to use fromJson here
-          DataSchema.fromJson({"type": "object"}, PrefixMapping()),
+          DataSchema.fromJson(const {"type": "object"}, PrefixMapping()),
         ),
         throwsA(isA<ContentSerdesException>()),
       );

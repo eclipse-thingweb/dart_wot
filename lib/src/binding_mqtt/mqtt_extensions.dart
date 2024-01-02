@@ -9,7 +9,8 @@ import "package:mqtt_client/mqtt_client.dart";
 import "package:mqtt_client/mqtt_server_client.dart";
 import "package:uuid/uuid.dart";
 
-import "../../core.dart";
+import "../core/augmented_form.dart";
+import "../core/credentials/basic_credentials.dart";
 import "../definitions/form.dart";
 import "../definitions/security/auto_security_scheme.dart";
 import "../definitions/security/basic_security_scheme.dart";
@@ -66,7 +67,7 @@ extension MqttUriExtension on Uri {
 }
 
 /// Additional methods for making MQTT [Form]s easier to work with.
-extension MqttFormExtension on Form {
+extension MqttFormExtension on AugmentedForm {
   /// Indicates if this [Form] requires basic authentication.
   bool requiresBasicAuthencation(BasicCredentials? credentials) {
     if (_hasBasicSecurityScheme) {
@@ -145,7 +146,7 @@ extension MqttFormExtension on Form {
       throw ValidationException(
         "Encountered unknown QoS value $qosValue. "
         "in form with href $href of Thing Description with Identifier "
-        "${thingDescription.identifier}.",
+        "$tdIdentifier.",
       );
     }
 

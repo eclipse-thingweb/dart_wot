@@ -4,26 +4,20 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:curie/curie.dart";
-import "package:meta/meta.dart";
-
-import "../data_schema.dart";
-import "../extensions/json_parser.dart";
-import "../thing_description.dart";
-import "interaction_affordance.dart";
+part of "interaction_affordance.dart";
 
 /// Class representing an [Action] Affordance in a Thing Description.
 @immutable
-class Action extends InteractionAffordance {
+final class Action extends InteractionAffordance {
   /// Creates a new [Action] from a [List] of [forms].
-  Action(
-    super.thingDescription, {
+  const Action({
+    required super.forms,
     super.title,
     super.titles,
     super.description,
     super.descriptions,
     super.uriVariables,
-    super.forms,
+    super.additionalFields,
     this.safe = false,
     this.idempotent = false,
     this.synchronous,
@@ -34,7 +28,6 @@ class Action extends InteractionAffordance {
   /// Creates a new [Action] from a [json] object.
   factory Action.fromJson(
     Map<String, dynamic> json,
-    ThingDescription thingDescription,
     PrefixMapping prefixMapping,
   ) {
     final Set<String> parsedFields = {};
@@ -45,7 +38,7 @@ class Action extends InteractionAffordance {
     final descriptions =
         json.parseMapField<String>("descriptions", parsedFields);
     final uriVariables =
-        json.parseMapField<dynamic>("uriVariables", parsedFields);
+        json.parseMapField<Object>("uriVariables", parsedFields);
 
     final safe = json.parseField<bool>("safe", parsedFields) ?? false;
     final idempotent =
@@ -56,8 +49,12 @@ class Action extends InteractionAffordance {
     final output =
         json.parseDataSchemaField("output", prefixMapping, parsedFields);
 
+    final forms = json.parseAffordanceForms(prefixMapping, parsedFields);
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
+
     final action = Action(
-      thingDescription,
+      forms: forms,
       title: title,
       titles: titles,
       description: description,
@@ -68,12 +65,8 @@ class Action extends InteractionAffordance {
       synchronous: synchronous,
       input: input,
       output: output,
+      additionalFields: additionalFields,
     );
-
-    action.forms
-        .addAll(json.parseAffordanceForms(action, prefixMapping, parsedFields));
-    action.additionalFields
-        .addAll(json.parseAdditionalFields(prefixMapping, parsedFields));
 
     return action;
   }

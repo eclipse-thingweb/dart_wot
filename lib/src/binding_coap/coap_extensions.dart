@@ -5,6 +5,7 @@ import "package:cbor/cbor.dart";
 import "package:coap/coap.dart";
 import "package:dcaf/dcaf.dart";
 
+import "../core/augmented_form.dart";
 import "../core/content.dart";
 import "../definitions/expected_response.dart";
 import "../definitions/form.dart";
@@ -26,7 +27,7 @@ extension InternetAddressMethods on Uri {
 }
 
 /// CoAP-specific extensions for the [Form] class.
-extension CoapFormExtension on Form {
+extension CoapFormExtension on AugmentedForm {
   T? _obtainVocabularyTerm<T>(String vocabularyTerm) {
     final curieString = coapPrefixMapping.expandCurieString(vocabularyTerm);
     final formDefinition = additionalFields[curieString];

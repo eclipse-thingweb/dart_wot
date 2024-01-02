@@ -4,8 +4,6 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:uuid/uuid.dart";
-
 import "../definitions/interaction_affordances/interaction_affordance.dart";
 import "../definitions/thing_description.dart";
 import "../scripting_api/data_schema_value.dart";
@@ -132,14 +130,12 @@ class Servient {
   /// Returns `false` if the [thing] has already been registered, otherwise
   /// `true`.
   bool addThing(ExposedThing thing) {
-    const uuid = Uuid();
-    thing.id ??= "urn:uuid:${uuid.v4()}";
-
-    if (_things.containsKey(thing.id)) {
+    final id = thing.thingDescription.identifier;
+    if (_things.containsKey(id)) {
       return false;
     }
 
-    _things[thing.id!] = thing;
+    _things[id] = thing;
     return true;
   }
 

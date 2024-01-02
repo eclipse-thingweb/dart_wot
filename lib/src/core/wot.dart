@@ -6,6 +6,8 @@
 
 import "dart:async";
 
+import "package:uuid/uuid.dart";
+
 import "../../scripting_api.dart" as scripting_api;
 import "../definitions/thing_description.dart";
 import "../scripting_api/discovery/discovery_method.dart";
@@ -76,7 +78,14 @@ class WoT implements scripting_api.WoT {
   /// Exposes a Thing based on a (partial) TD.
   @override
   Future<scripting_api.ExposedThing> produce(Map<String, dynamic> init) async {
-    final newThing = ExposedThing(_servient, init);
+    const uuid = Uuid();
+
+    final exposedThingInit = {
+      "id": "urn:uuid:${uuid.v4()}",
+      ...init,
+    };
+
+    final newThing = ExposedThing(_servient, exposedThingInit);
     if (_servient.addThing(newThing)) {
       return newThing;
     } else {

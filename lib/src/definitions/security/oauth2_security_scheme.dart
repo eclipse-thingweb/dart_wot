@@ -9,14 +9,15 @@ import "package:curie/curie.dart";
 import "../extensions/json_parser.dart";
 import "security_scheme.dart";
 
-const _schemeName = "oauth2";
+/// Indicates the `scheme` value for identifying [OAuth2SecurityScheme]s.
+const oAuth2SecuritySchemeName = "oauth2";
 
 /// OAuth 2.0 authentication security configuration for systems conformant with
 /// RFC 6749, RFC 8252 and (for the device flow) RFC 8628, identified by the
 /// Vocabulary Term `oauth2`.
 final class OAuth2SecurityScheme extends SecurityScheme {
   /// Constructor.
-  OAuth2SecurityScheme(
+  const OAuth2SecurityScheme(
     this.flow, {
     this.authorization,
     this.scopes,
@@ -27,19 +28,43 @@ final class OAuth2SecurityScheme extends SecurityScheme {
     super.proxy,
     super.jsonLdType,
     super.additionalFields,
-  }) : super(_schemeName);
+  });
 
   /// Creates a [OAuth2SecurityScheme] from a [json] object.
-  OAuth2SecurityScheme.fromJson(
+  factory OAuth2SecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  )   : authorization = json.parseField<String>("authorization", parsedFields),
-        token = json.parseField<String>("token", parsedFields),
-        refresh = json.parseField<String>("refresh", parsedFields),
-        scopes = json.parseArrayField<String>("scopes", parsedFields),
-        flow = json.parseRequiredField<String>("flow", parsedFields),
-        super.fromJson(_schemeName, json, prefixMapping, parsedFields);
+  ) {
+    final description = json.parseField<String>("description", parsedFields);
+    final descriptions =
+        json.parseMapField<String>("descriptions", parsedFields);
+    final jsonLdType = json.parseArrayField<String>("@type");
+    final proxy = json.parseUriField("proxy", parsedFields);
+
+    final authorization =
+        json.parseField<String>("authorization", parsedFields);
+    final token = json.parseField<String>("token", parsedFields);
+    final refresh = json.parseField<String>("refresh", parsedFields);
+    final scopes = json.parseArrayField<String>("scopes", parsedFields);
+    final flow = json.parseRequiredField<String>("flow", parsedFields);
+
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
+
+    return OAuth2SecurityScheme(
+      flow,
+      description: description,
+      descriptions: descriptions,
+      jsonLdType: jsonLdType,
+      proxy: proxy,
+      authorization: authorization,
+      token: token,
+      refresh: refresh,
+      scopes: scopes,
+      additionalFields: additionalFields,
+    );
+  }
 
   /// URI of the authorization server.
   ///
@@ -63,4 +88,7 @@ final class OAuth2SecurityScheme extends SecurityScheme {
 
   /// Authorization flow.
   final String flow;
+
+  @override
+  String get scheme => oAuth2SecuritySchemeName;
 }

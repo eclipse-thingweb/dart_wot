@@ -10,11 +10,11 @@ import "package:mqtt_client/mqtt_client.dart";
 import "package:mqtt_client/mqtt_server_client.dart";
 import "package:typed_data/typed_buffers.dart";
 
+import "../core/augmented_form.dart";
 import "../core/content.dart";
 import "../core/credentials/basic_credentials.dart";
 import "../core/credentials/callbacks.dart";
 import "../core/protocol_interfaces/protocol_client.dart";
-import "../definitions/form.dart";
 import "../scripting_api/subscription.dart" as scripting_api;
 import "constants.dart";
 import "mqtt_binding_exception.dart";
@@ -40,7 +40,7 @@ final class MqttClient implements ProtocolClient {
 
   Future<BasicCredentials?> _obtainCredentials(
     Uri uri,
-    Form? form, [
+    AugmentedForm? form, [
     BasicCredentials? invalidCredentials,
     bool unauthorized = false,
   ]) async {
@@ -71,10 +71,10 @@ final class MqttClient implements ProtocolClient {
     );
   }
 
-  Future<MqttServerClient> _connectWithForm(Form form) async =>
+  Future<MqttServerClient> _connectWithForm(AugmentedForm form) async =>
       _connect(form.resolvedHref, form);
 
-  Future<MqttServerClient> _connect(Uri brokerUri, Form? form) async {
+  Future<MqttServerClient> _connect(Uri brokerUri, AugmentedForm? form) async {
     final client = brokerUri.createClient(_mqttConfig.keepAlivePeriod);
     final credentials = await _obtainCredentials(brokerUri, form);
 
@@ -99,7 +99,7 @@ final class MqttClient implements ProtocolClient {
   }
 
   @override
-  Future<Content> invokeResource(Form form, Content content) async {
+  Future<Content> invokeResource(AugmentedForm form, Content content) async {
     final client = await _connectWithForm(form);
     final topic = form.topicName;
     final qualityOfService =
@@ -118,7 +118,7 @@ final class MqttClient implements ProtocolClient {
   }
 
   @override
-  Future<Content> readResource(Form form) async {
+  Future<Content> readResource(AugmentedForm form) async {
     final client = await _connectWithForm(form);
     final topic = form.topicFilter;
     final qualityOfService =
@@ -154,7 +154,7 @@ final class MqttClient implements ProtocolClient {
   }
 
   @override
-  Future<void> writeResource(Form form, Content content) async {
+  Future<void> writeResource(AugmentedForm form, Content content) async {
     final client = await _connectWithForm(form);
     final topic = form.topicName;
     final qualityOfService =
@@ -182,7 +182,7 @@ final class MqttClient implements ProtocolClient {
 
   @override
   Future<scripting_api.Subscription> subscribeResource(
-    Form form, {
+    AugmentedForm form, {
     required void Function(Content content) next,
     void Function(Exception error)? error,
     required void Function() complete,

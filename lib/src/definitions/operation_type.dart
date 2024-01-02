@@ -4,6 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "interaction_affordances/interaction_affordance.dart";
 import "validation/validation_exception.dart";
 
 /// Enumeration for the possible WoT operation types.
@@ -60,5 +61,23 @@ enum OperationType {
     }
 
     return operationType;
+  }
+
+  /// Returns the default operation types for the given [interactionAffordance].
+  static List<OperationType> defaultOpValues(
+    InteractionAffordance interactionAffordance,
+  ) {
+    switch (interactionAffordance) {
+      case Property(readOnly: final readOnly, writeOnly: final writeOnly):
+        return [
+          if (!readOnly) OperationType.writeproperty,
+          if (!writeOnly) OperationType.readproperty,
+        ];
+      case Event():
+        return [OperationType.subscribeevent, OperationType.unsubscribeevent];
+
+      case Action():
+        return [OperationType.invokeaction];
+    }
   }
 }

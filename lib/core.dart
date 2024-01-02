@@ -11,6 +11,7 @@ library core;
 
 export "package:dcaf/dcaf.dart";
 
+export "src/core/augmented_form.dart";
 export "src/core/codecs/content_codec.dart";
 export "src/core/content_serdes.dart";
 export "src/core/credentials/ace_credentials.dart";

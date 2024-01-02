@@ -13,13 +13,14 @@ const _defaultInValue = "header";
 const _defaultAlgValue = "ES256";
 const _defaultFormatValue = "jwt";
 
-const _schemeName = "bearer";
+/// Indicates the `scheme` value for identifying [BearerSecurityScheme]s.
+const bearerSecuritySchemeName = "bearer";
 
 /// Bearer Token security configuration identified by the Vocabulary Term
 /// `bearer`.
 final class BearerSecurityScheme extends SecurityScheme {
   /// Constructor.
-  BearerSecurityScheme({
+  const BearerSecurityScheme({
     this.name,
     this.alg = _defaultAlgValue,
     this.format = _defaultFormatValue,
@@ -30,20 +31,45 @@ final class BearerSecurityScheme extends SecurityScheme {
     super.proxy,
     super.jsonLdType,
     super.additionalFields,
-  }) : super(_schemeName);
+  });
 
   /// Creates a [BearerSecurityScheme] from a [json] object.
-  BearerSecurityScheme.fromJson(
+  factory BearerSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  )   : name = json.parseField<String>("name", parsedFields),
-        in_ = json.parseField<String>("in", parsedFields) ?? _defaultInValue,
-        format = json.parseField<String>("format", parsedFields) ??
-            _defaultFormatValue,
-        alg = json.parseField<String>("alg", parsedFields) ?? _defaultAlgValue,
-        authorization = json.parseField<String>("authorization", parsedFields),
-        super.fromJson(_schemeName, json, prefixMapping, parsedFields);
+  ) {
+    final description = json.parseField<String>("description", parsedFields);
+    final descriptions =
+        json.parseMapField<String>("descriptions", parsedFields);
+    final jsonLdType = json.parseArrayField<String>("@type");
+    final proxy = json.parseUriField("proxy", parsedFields);
+
+    final name = json.parseField<String>("name", parsedFields);
+    final in_ = json.parseField<String>("in", parsedFields) ?? _defaultInValue;
+    final format =
+        json.parseField<String>("format", parsedFields) ?? _defaultFormatValue;
+    final alg =
+        json.parseField<String>("alg", parsedFields) ?? _defaultAlgValue;
+    final authorization =
+        json.parseField<String>("authorization", parsedFields);
+
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
+
+    return BearerSecurityScheme(
+      description: description,
+      descriptions: descriptions,
+      jsonLdType: jsonLdType,
+      proxy: proxy,
+      name: name,
+      in_: in_,
+      format: format,
+      alg: alg,
+      authorization: authorization,
+      additionalFields: additionalFields,
+    );
+  }
 
   /// URI of the authorization server.
   final String? authorization;
@@ -59,4 +85,7 @@ final class BearerSecurityScheme extends SecurityScheme {
 
   /// Specifies the location of security authentication information.
   final String in_;
+
+  @override
+  String get scheme => bearerSecuritySchemeName;
 }

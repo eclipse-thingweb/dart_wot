@@ -6,26 +6,48 @@
 
 import "package:curie/curie.dart";
 
+import "../extensions/json_parser.dart";
 import "security_scheme.dart";
 
-const _schemeName = "nosec";
+/// Indicates the `scheme` value for identifying [NoSecurityScheme]s.
+const nosecSecuritySchemeName = "nosec";
 
 /// A security configuration corresponding to identified by the Vocabulary Term
 /// `nosec`.
 final class NoSecurityScheme extends SecurityScheme {
   /// Constructor.
-  NoSecurityScheme({
+  const NoSecurityScheme({
     super.description,
     super.descriptions,
     super.proxy,
     super.jsonLdType,
     super.additionalFields,
-  }) : super(_schemeName);
+  });
 
   /// Creates a [NoSecurityScheme] from a [json] object.
-  NoSecurityScheme.fromJson(
+  factory NoSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  ) : super.fromJson(_schemeName, json, prefixMapping, parsedFields);
+  ) {
+    final description = json.parseField<String>("description", parsedFields);
+    final descriptions =
+        json.parseMapField<String>("descriptions", parsedFields);
+    final jsonLdType = json.parseArrayField<String>("@type");
+    final proxy = json.parseUriField("proxy", parsedFields);
+
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
+
+    return NoSecurityScheme(
+      description: description,
+      descriptions: descriptions,
+      jsonLdType: jsonLdType,
+      proxy: proxy,
+      additionalFields: additionalFields,
+    );
+  }
+
+  @override
+  String get scheme => nosecSecuritySchemeName;
 }

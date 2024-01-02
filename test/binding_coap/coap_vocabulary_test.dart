@@ -55,25 +55,36 @@ void main() {
       };
 
       final thingDescription = ThingDescription.fromJson(thingDescriptionJson);
-      final property = thingDescription.properties["status"];
-      final form = property?.forms[0];
+      final property = thingDescription.properties?["status"];
+      final form = AugmentedForm(
+        property!.forms.first,
+        property,
+        thingDescription,
+        const {},
+      );
 
-      expect(form?.href, Uri.parse("coap://example.org"));
-      expect(form?.method, CoapRequestMethod.ipatch);
-      expect(form?.contentFormat, CoapMediaType.applicationCbor);
-      expect(form?.accept, CoapMediaType.applicationCbor);
-      expect(form?.block1Size, BlockSize.blockSize32);
-      expect(form?.block2Size, BlockSize.blockSize64);
-      expect(form?.response?.contentFormat, CoapMediaType.applicationCbor);
+      expect(form.href, Uri.parse("coap://example.org"));
+      expect(form.method, CoapRequestMethod.ipatch);
+      expect(form.contentFormat, CoapMediaType.applicationCbor);
+      expect(form.accept, CoapMediaType.applicationCbor);
+      expect(form.block1Size, BlockSize.blockSize32);
+      expect(form.block2Size, BlockSize.blockSize64);
+      expect(form.response?.contentFormat, CoapMediaType.applicationCbor);
 
       // TODO(JKRhb): Validation should happen earlier
-      final invalidForm = property?.forms[1];
+
+      final invalidForm = AugmentedForm(
+        property.forms[1],
+        property,
+        thingDescription,
+        const {},
+      );
       expect(
-        () => invalidForm?.block1Size,
+        () => invalidForm.block1Size,
         throwsA(isA<ValidationException>()),
       );
       expect(
-        () => invalidForm?.block2Size,
+        () => invalidForm.block2Size,
         throwsA(isA<ValidationException>()),
       );
     });

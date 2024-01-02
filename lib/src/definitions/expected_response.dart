@@ -5,19 +5,19 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "package:curie/curie.dart";
+import "package:meta/meta.dart";
 
 import "extensions/json_parser.dart";
 
 /// Communication metadata describing the expected response message for the
 /// primary response.
+@immutable
 class ExpectedResponse {
   /// Constructs a new [ExpectedResponse] object from a [contentType].
-  ExpectedResponse(this.contentType, {Map<String, dynamic>? additionalFields})
-      : additionalFields = Map.fromEntries(
-          additionalFields?.entries
-                  .where((element) => element.key != "contentType") ??
-              [],
-        );
+  const ExpectedResponse(
+    this.contentType, {
+    this.additionalFields,
+  });
 
   /// Creates an [ExpectedResponse] from a [json] object.
   factory ExpectedResponse.fromJson(
@@ -35,7 +35,7 @@ class ExpectedResponse {
   }
 
   /// The [contentType] of this [ExpectedResponse] object.
-  String contentType;
+  final String contentType;
 
   /// Any other additional field will be included in this [Map].
   final Map<String, dynamic>? additionalFields;

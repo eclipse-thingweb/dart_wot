@@ -11,16 +11,11 @@ import "../definitions/form.dart";
 import "../definitions/interaction_affordances/interaction_affordance.dart";
 import "../definitions/operation_type.dart";
 import "../definitions/thing_description.dart";
+import "augmented_form.dart";
 import "content.dart";
 import "interaction_output.dart";
 import "protocol_interfaces/protocol_client.dart";
 import "servient.dart";
-
-enum _AffordanceType {
-  action,
-  property,
-  event,
-}
 
 /// This [Exception] is thrown when the body of a response is encoded
 /// differently than expected.
@@ -73,27 +68,30 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   /// [scheme].
   bool hasClientFor(String scheme) => servient.hasClientFor(scheme);
 
-  ({ProtocolClient client, Form form}) _getClientFor(
+  (ProtocolClient client, AugmentedForm form) _getClientFor(
     List<Form> forms,
     OperationType operationType,
-    _AffordanceType affordanceType,
     InteractionAffordance interactionAffordance, {
     required int? formIndex,
     required Map<String, Object>? uriVariables,
   }) {
-    if (forms.isEmpty) {
-      throw StateError(
-        'ConsumedThing "$title" has no links for this interaction',
-      );
-    }
-
+    final augmentedForms = forms
+        .map(
+          (form) => AugmentedForm.new(
+            form,
+            interactionAffordance,
+            thingDescription,
+            uriVariables,
+          ),
+        )
+        .toList();
     final ProtocolClient client;
-    final Form foundForm;
+    final AugmentedForm foundForm;
 
     if (formIndex != null) {
       if (formIndex >= 0 && formIndex < forms.length) {
-        foundForm = forms[formIndex];
-        final scheme = foundForm.resolvedHref.scheme;
+        foundForm = augmentedForms[formIndex];
+        final scheme = foundForm.href.scheme;
         client = servient.clientFor(scheme);
       } else {
         throw ArgumentError(
@@ -103,20 +101,18 @@ class ConsumedThing implements scripting_api.ConsumedThing {
         );
       }
     } else {
-      foundForm = forms.firstWhere(
+      foundForm = augmentedForms.firstWhere(
         (form) =>
-            hasClientFor(form.resolvedHref.scheme) &&
-            _supportsOperationType(form, affordanceType, operationType),
+            hasClientFor(form.href.scheme) &&
+            _supportsOperationType(form, interactionAffordance, operationType),
         // TODO(JKRhb): Add custom Exception
         orElse: () => throw Exception("No matching form found!"),
       );
-      final scheme = foundForm.resolvedHref.scheme;
+      final scheme = foundForm.href.scheme;
       client = servient.clientFor(scheme);
     }
 
-    final form = foundForm.resolveUriVariables(uriVariables) ?? foundForm;
-
-    return (client: client, form: form);
+    return (client, foundForm);
   }
 
   @override
@@ -126,7 +122,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     Map<String, Object>? uriVariables,
     Object? data,
   }) async {
-    final property = thingDescription.properties[propertyName];
+    final property = thingDescription.properties?[propertyName];
 
     if (property == null) {
       throw ArgumentError(
@@ -135,17 +131,13 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       );
     }
 
-    final clientAndForm = _getClientFor(
+    final (ProtocolClient client, AugmentedForm form) = _getClientFor(
       property.forms,
       OperationType.readproperty,
-      _AffordanceType.property,
       property,
       formIndex: formIndex,
       uriVariables: uriVariables,
     );
-
-    final form = clientAndForm.form;
-    final client = clientAndForm.client;
 
     final content = await client.readResource(form);
     return InteractionOutput(content, servient.contentSerdes, form, property);
@@ -159,8 +151,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     Map<String, Object>? uriVariables,
     Object? data,
   }) async {
-    // TODO(JKRhb): Refactor
-    final property = thingDescription.properties[propertyName];
+    final property = thingDescription.properties?[propertyName];
 
     if (property == null) {
       throw ArgumentError(
@@ -169,17 +160,13 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       );
     }
 
-    final clientAndForm = _getClientFor(
+    final (client, form) = _getClientFor(
       property.forms,
       OperationType.writeproperty,
-      _AffordanceType.property,
       property,
       formIndex: formIndex,
       uriVariables: uriVariables,
     );
-
-    final form = clientAndForm.form;
-    final client = clientAndForm.client;
 
     final content = Content.fromInteractionInput(
       input,
@@ -200,7 +187,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     Map<String, Object>? uriVariables,
   }) async {
     // TODO(JKRhb): Refactor
-    final action = thingDescription.actions[actionName];
+    final action = thingDescription.actions?[actionName];
 
     if (action == null) {
       throw ArgumentError(
@@ -209,17 +196,13 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       );
     }
 
-    final clientAndForm = _getClientFor(
+    final (client, form) = _getClientFor(
       action.forms,
       OperationType.invokeaction,
-      _AffordanceType.action,
       action,
       uriVariables: uriVariables,
       formIndex: formIndex,
     );
-
-    final form = clientAndForm.form;
-    final client = clientAndForm.client;
 
     final content = Content.fromInteractionInput(
       input,
@@ -254,7 +237,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     int? formIndex,
     Map<String, Object>? uriVariables,
   }) async {
-    final property = thingDescription.properties[propertyName];
+    final property = thingDescription.properties?[propertyName];
 
     if (property == null) {
       throw ArgumentError(
@@ -293,30 +276,24 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     required Map<String, Object>? uriVariables,
   }) async {
     final OperationType operationType;
-    final _AffordanceType affordanceType;
     final Map<String, Subscription> subscriptions;
 
-    if (subscriptionType == SubscriptionType.property) {
-      operationType = OperationType.observeproperty;
-      affordanceType = _AffordanceType.property;
-      subscriptions = _observedProperties;
-    } else {
-      operationType = OperationType.subscribeevent;
-      affordanceType = _AffordanceType.event;
-      subscriptions = _subscribedEvents;
+    switch (subscriptionType) {
+      case SubscriptionType.property:
+        operationType = OperationType.observeproperty;
+        subscriptions = _observedProperties;
+      case SubscriptionType.event:
+        operationType = OperationType.subscribeevent;
+        subscriptions = _subscribedEvents;
     }
 
-    final clientAndForm = _getClientFor(
+    final (client, form) = _getClientFor(
       affordance.forms,
       operationType,
-      affordanceType,
       affordance,
       uriVariables: uriVariables,
       formIndex: formIndex,
     );
-
-    final form = clientAndForm.form;
-    final client = clientAndForm.client;
 
     final subscription = await client.subscribeResource(
       form,
@@ -330,10 +307,12 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       },
       complete: () => removeSubscription(affordanceName, subscriptionType),
     );
-    if (subscriptionType == SubscriptionType.property) {
-      _observedProperties[affordanceName] = subscription;
-    } else {
-      _subscribedEvents[affordanceName] = subscription;
+
+    switch (subscriptionType) {
+      case SubscriptionType.property:
+        _observedProperties[affordanceName] = subscription;
+      case SubscriptionType.event:
+        _subscribedEvents[affordanceName] = subscription;
     }
 
     subscriptions[affordanceName] = subscription;
@@ -370,7 +349,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     Map<String, Object>? uriVariables,
   }) {
     final propertyNames =
-        thingDescription.properties.keys.toList(growable: false);
+        thingDescription.properties?.keys.toList(growable: false) ?? [];
 
     return _readProperties(
       propertyNames,
@@ -405,7 +384,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     Map<String, Object>? uriVariables,
   }) {
     // TODO(JKRhb): Handle subscription and cancellation data.
-    final event = thingDescription.events[eventName];
+    final event = thingDescription.events?[eventName];
 
     if (event == null) {
       throw ArgumentError(
@@ -457,10 +436,13 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
   static bool _supportsOperationType(
     Form form,
-    _AffordanceType affordanceType,
+    InteractionAffordance interactionAffordance,
     OperationType operationType,
   ) {
-    return form.op.contains(operationType);
+    final opValues =
+        form.op ?? OperationType.defaultOpValues(interactionAffordance);
+
+    return opValues.contains(operationType);
   }
 
   /// Cleans up the resources used by this [ConsumedThing].
