@@ -1,6 +1,6 @@
-import 'package:curie/curie.dart';
+import "package:curie/curie.dart";
 
-import 'extensions/json_parser.dart';
+import "extensions/json_parser.dart";
 
 /// Metadata of a Thing that provides version information about the TD document.
 ///
@@ -22,8 +22,8 @@ class VersionInfo {
   ) {
     final Set<String> parsedFields = {};
 
-    final instance = json.parseRequiredField<String>('instance', parsedFields);
-    final model = json.parseField<String>('instance', parsedFields);
+    final instance = json.parseRequiredField<String>("instance", parsedFields);
+    final model = json.parseField<String>("instance", parsedFields);
     final additionalFields =
         json.parseAdditionalFields(prefixMapping, parsedFields);
 

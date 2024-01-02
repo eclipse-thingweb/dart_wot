@@ -4,20 +4,20 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:convert';
+import "dart:convert";
 
-import 'package:dart_wot/scripting_api.dart';
-import 'package:dart_wot/src/core/codecs/cbor_codec.dart';
-import 'package:dart_wot/src/core/codecs/json_codec.dart' as json_codec;
-import 'package:dart_wot/src/core/codecs/text_codec.dart';
-import 'package:test/test.dart';
+import "package:dart_wot/scripting_api.dart";
+import "package:dart_wot/src/core/codecs/cbor_codec.dart";
+import "package:dart_wot/src/core/codecs/json_codec.dart" as json_codec;
+import "package:dart_wot/src/core/codecs/text_codec.dart";
+import "package:test/test.dart";
 
 void main() {
-  group('TextCodec should', () {
-    test('convert bytes to values and back', () {
+  group("TextCodec should", () {
+    test("convert bytes to values and back", () {
       final textCodec = TextCodec();
 
-      const testValue = 'foo';
+      const testValue = "foo";
       final testInput = utf8.encode(testValue);
 
       final convertedValue = textCodec.bytesToValue(testInput, null, {});
@@ -31,14 +31,14 @@ void main() {
       expect(convertedNullValue, []);
     });
 
-    test('reject unknown charsets', () {
+    test("reject unknown charsets", () {
       final textCodec = TextCodec();
 
-      const charsetParameters = {'charset': 'foobar'};
+      const charsetParameters = {"charset": "foobar"};
 
       expect(
         () =>
-            textCodec.bytesToValue(utf8.encode('foo'), null, charsetParameters),
+            textCodec.bytesToValue(utf8.encode("foo"), null, charsetParameters),
         throwsFormatException,
       );
 
@@ -53,11 +53,11 @@ void main() {
     });
   });
 
-  group('JsonCodec should', () {
-    test('convert bytes to values and back', () {
+  group("JsonCodec should", () {
+    test("convert bytes to values and back", () {
       final jsonCodec = json_codec.JsonCodec();
 
-      const testValue = 'foo';
+      const testValue = "foo";
       final testInput = utf8.encode('"$testValue"');
 
       final convertedValue = jsonCodec.bytesToValue(testInput, null, {});
@@ -72,11 +72,11 @@ void main() {
     });
   });
 
-  group('CborCodec should', () {
-    test('convert bytes to values and back', () {
+  group("CborCodec should", () {
+    test("convert bytes to values and back", () {
       final cborCodec = CborCodec();
       const testValue = {
-        'foo': ['bar', 'baz'],
+        "foo": ["bar", "baz"],
       };
 
       final convertedBytes = cborCodec

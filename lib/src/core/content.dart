@@ -4,13 +4,13 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:typed_data';
+import "dart:typed_data";
 
-import 'package:typed_data/typed_data.dart';
+import "package:typed_data/typed_data.dart";
 
-import '../definitions/data_schema.dart';
-import '../scripting_api/interaction_input.dart';
-import 'content_serdes.dart';
+import "../definitions/data_schema.dart";
+import "../scripting_api/interaction_input.dart";
+import "content_serdes.dart";
 
 /// This class contains binary input or output data and indicates the media
 /// type this data is encoded in.

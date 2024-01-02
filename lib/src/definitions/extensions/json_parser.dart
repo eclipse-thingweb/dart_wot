@@ -1,34 +1,34 @@
-import 'package:collection/collection.dart';
-import 'package:curie/curie.dart';
+import "package:collection/collection.dart";
+import "package:curie/curie.dart";
 
-import '../additional_expected_response.dart';
-import '../data_schema.dart';
-import '../expected_response.dart';
-import '../form.dart';
-import '../interaction_affordances/action.dart';
-import '../interaction_affordances/event.dart';
-import '../interaction_affordances/interaction_affordance.dart';
-import '../interaction_affordances/property.dart';
-import '../link.dart';
-import '../security/ace_security_scheme.dart';
-import '../security/apikey_security_scheme.dart';
-import '../security/auto_security_scheme.dart';
-import '../security/basic_security_scheme.dart';
-import '../security/bearer_security_scheme.dart';
-import '../security/combo_security_scheme.dart';
-import '../security/digest_security_scheme.dart';
-import '../security/no_security_scheme.dart';
-import '../security/oauth2_security_scheme.dart';
-import '../security/psk_security_scheme.dart';
-import '../security/security_scheme.dart';
-import '../thing_description.dart';
-import '../validation/validation_exception.dart';
-import '../version_info.dart';
+import "../additional_expected_response.dart";
+import "../data_schema.dart";
+import "../expected_response.dart";
+import "../form.dart";
+import "../interaction_affordances/action.dart";
+import "../interaction_affordances/event.dart";
+import "../interaction_affordances/interaction_affordance.dart";
+import "../interaction_affordances/property.dart";
+import "../link.dart";
+import "../security/ace_security_scheme.dart";
+import "../security/apikey_security_scheme.dart";
+import "../security/auto_security_scheme.dart";
+import "../security/basic_security_scheme.dart";
+import "../security/bearer_security_scheme.dart";
+import "../security/combo_security_scheme.dart";
+import "../security/digest_security_scheme.dart";
+import "../security/no_security_scheme.dart";
+import "../security/oauth2_security_scheme.dart";
+import "../security/psk_security_scheme.dart";
+import "../security/security_scheme.dart";
+import "../thing_description.dart";
+import "../validation/validation_exception.dart";
+import "../version_info.dart";
 
 const _validTdContextValues = [
-  'https://www.w3.org/2019/wot/td/v1',
-  'https://www.w3.org/2022/wot/td/v1.1',
-  'http://www.w3.org/ns/td',
+  "https://www.w3.org/2019/wot/td/v1",
+  "https://www.w3.org/2022/wot/td/v1.1",
+  "http://www.w3.org/ns/td",
 ];
 
 /// Extension for parsing fields of JSON objects.
@@ -109,8 +109,8 @@ extension ParseField on Map<String, dynamic> {
 
     if (fieldValue is! T) {
       throw ValidationException(
-        'Value for field $name has wrong data type or is missing. '
-        'Expected ${T.runtimeType}, got ${fieldValue.runtimeType}.',
+        "Value for field $name has wrong data type or is missing. "
+        "Expected ${T.runtimeType}, got ${fieldValue.runtimeType}.",
       );
     }
 
@@ -257,7 +257,7 @@ extension ParseField on Map<String, dynamic> {
     Set<String>? parsedFields, [
     InteractionAffordance? interactionAffordance,
   ]) {
-    final fieldValue = parseField('forms', parsedFields);
+    final fieldValue = parseField("forms", parsedFields);
 
     if (fieldValue is! List) {
       return null;
@@ -311,7 +311,7 @@ extension ParseField on Map<String, dynamic> {
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
-    final fieldValue = parseField('links', parsedFields);
+    final fieldValue = parseField("links", parsedFields);
 
     if (fieldValue is! List) {
       return null;
@@ -332,7 +332,7 @@ extension ParseField on Map<String, dynamic> {
     Set<String> parsedFields,
   ) {
     final fieldValue =
-        parseMapField<dynamic>('securityDefinitions', parsedFields);
+        parseMapField<dynamic>("securityDefinitions", parsedFields);
 
     if (fieldValue == null) {
       return null;
@@ -357,28 +357,28 @@ extension ParseField on Map<String, dynamic> {
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
   ) {
-    final scheme = parseRequiredField('scheme', parsedFields);
+    final scheme = parseRequiredField("scheme", parsedFields);
 
     switch (scheme) {
-      case 'auto':
+      case "auto":
         return AutoSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case 'basic':
+      case "basic":
         return BasicSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case 'bearer':
+      case "bearer":
         return BearerSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case 'combo':
+      case "combo":
         return ComboSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case 'nosec':
+      case "nosec":
         return NoSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case 'psk':
+      case "psk":
         return PskSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case 'digest':
+      case "digest":
         return DigestSecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case 'apikey':
+      case "apikey":
         return ApiKeySecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case 'oauth2':
+      case "oauth2":
         return OAuth2SecurityScheme.fromJson(this, prefixMapping, parsedFields);
-      case 'ace:ACESecurityScheme':
+      case "ace:ACESecurityScheme":
         return AceSecurityScheme.fromJson(this, prefixMapping, parsedFields);
     }
 
@@ -393,7 +393,7 @@ extension ParseField on Map<String, dynamic> {
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
-    final fieldValue = parseMapField<dynamic>('properties', parsedFields);
+    final fieldValue = parseMapField<dynamic>("properties", parsedFields);
 
     if (fieldValue == null) {
       return null;
@@ -420,7 +420,7 @@ extension ParseField on Map<String, dynamic> {
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
-    final fieldValue = parseMapField<dynamic>('actions', parsedFields);
+    final fieldValue = parseMapField<dynamic>("actions", parsedFields);
 
     if (fieldValue == null) {
       return null;
@@ -447,7 +447,7 @@ extension ParseField on Map<String, dynamic> {
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
-    final fieldValue = parseMapField<dynamic>('events', parsedFields);
+    final fieldValue = parseMapField<dynamic>("events", parsedFields);
 
     if (fieldValue == null) {
       return null;
@@ -473,7 +473,7 @@ extension ParseField on Map<String, dynamic> {
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
-    final fieldValue = parseMapField<dynamic>('response', parsedFields);
+    final fieldValue = parseMapField<dynamic>("response", parsedFields);
 
     if (fieldValue == null) {
       return null;
@@ -492,7 +492,7 @@ extension ParseField on Map<String, dynamic> {
     Set<String>? parsedFields,
   ) {
     final fieldValue = parseArrayField<Map<String, dynamic>>(
-      'additionalResponses',
+      "additionalResponses",
       parsedFields,
     );
 
@@ -518,7 +518,7 @@ extension ParseField on Map<String, dynamic> {
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
-    final fieldValue = parseMapField<dynamic>('version', parsedFields);
+    final fieldValue = parseMapField<dynamic>("version", parsedFields);
 
     if (fieldValue == null) {
       return null;
@@ -565,8 +565,8 @@ extension ParseField on Map<String, dynamic> {
   }
 
   static String _expandCurieKey(String key, PrefixMapping prefixMapping) {
-    if (key.contains(':')) {
-      final prefix = key.split(':')[0];
+    if (key.contains(":")) {
+      final prefix = key.split(":")[0];
       if (prefixMapping.getPrefixValue(prefix) != null) {
         return prefixMapping.expandCurieString(key);
       }
@@ -575,8 +575,8 @@ extension ParseField on Map<String, dynamic> {
   }
 
   static dynamic _expandCurieValue(dynamic value, PrefixMapping prefixMapping) {
-    if (value is String && value.contains(':')) {
-      final prefix = value.split(':')[0];
+    if (value is String && value.contains(":")) {
+      final prefix = value.split(":")[0];
       if (prefixMapping.getPrefixValue(prefix) != null) {
         return prefixMapping.expandCurieString(value);
       }
@@ -598,7 +598,7 @@ extension ParseField on Map<String, dynamic> {
     Set<String>? parsedFields, {
     bool firstEntry = true,
   }) {
-    final fieldValue = parseField('@context', parsedFields);
+    final fieldValue = parseField("@context", parsedFields);
 
     return _parseContext(fieldValue, prefixMapping);
   }
@@ -646,7 +646,7 @@ List<ContextEntry> _parseContext(
             throw ContextValidationException(value.runtimeType);
           }
 
-          if (!key.startsWith('@') && Uri.tryParse(value) != null) {
+          if (!key.startsWith("@") && Uri.tryParse(value) != null) {
             prefixMapping.addPrefix(key, value);
           }
           return (key: key, value: value);
@@ -663,7 +663,7 @@ class ContextValidationException extends ValidationException {
   /// [runtimeType].
   ContextValidationException(Type runtimeType)
       : super(
-          'Excepted either a String or a Map<String, String> '
-          'as @context entry, got $runtimeType instead.',
+          "Excepted either a String or a Map<String, String> "
+          "as @context entry, got $runtimeType instead.",
         );
 }

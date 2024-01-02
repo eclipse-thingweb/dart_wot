@@ -4,8 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:collection/collection.dart';
-import 'package:meta/meta.dart';
+import "package:collection/collection.dart";
+import "package:meta/meta.dart";
 
 /// Value corresponding to a WoT DataSchema as specified in [section 7.1]
 /// of the [WoT Scripting API] specification.

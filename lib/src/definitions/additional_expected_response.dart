@@ -4,11 +4,11 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:collection/collection.dart';
-import 'package:curie/curie.dart';
-import 'package:meta/meta.dart';
+import "package:collection/collection.dart";
+import "package:curie/curie.dart";
+import "package:meta/meta.dart";
 
-import 'extensions/json_parser.dart';
+import "extensions/json_parser.dart";
 
 /// Communication metadata describing the expected response message for the
 /// primary response.
@@ -32,9 +32,9 @@ class AdditionalExpectedResponse {
     final Set<String> parsedFields = {};
 
     final contentType =
-        json.parseField<String>('contentType', parsedFields) ?? formContentType;
-    final success = json.parseField<bool>('success', parsedFields);
-    final schema = json.parseField<String>('schema', parsedFields);
+        json.parseField<String>("contentType", parsedFields) ?? formContentType;
+    final success = json.parseField<bool>("success", parsedFields);
+    final schema = json.parseField<String>("schema", parsedFields);
     final additionalFields =
         json.parseAdditionalFields(prefixMapping, parsedFields);
 

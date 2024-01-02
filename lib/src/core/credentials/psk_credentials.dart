@@ -4,10 +4,10 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:typed_data';
+import "dart:typed_data";
 
-import '../../definitions/security/psk_security_scheme.dart';
-import 'credentials.dart';
+import "../../definitions/security/psk_security_scheme.dart";
+import "credentials.dart";
 
 /// [Credentials] used for the [PskSecurityScheme].
 final class PskCredentials extends Credentials {

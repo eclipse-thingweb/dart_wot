@@ -4,21 +4,21 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
-import 'package:json_schema/json_schema.dart';
-import 'package:uri/uri.dart';
+import "package:curie/curie.dart";
+import "package:json_schema/json_schema.dart";
+import "package:uri/uri.dart";
 
-import '../../dart_wot.dart';
-import 'additional_expected_response.dart';
-import 'expected_response.dart';
-import 'extensions/json_parser.dart';
-import 'interaction_affordances/action.dart';
-import 'interaction_affordances/event.dart';
-import 'interaction_affordances/interaction_affordance.dart';
-import 'interaction_affordances/property.dart';
-import 'operation_type.dart';
-import 'security/security_scheme.dart';
-import 'validation/validation_exception.dart';
+import "../../dart_wot.dart";
+import "additional_expected_response.dart";
+import "expected_response.dart";
+import "extensions/json_parser.dart";
+import "interaction_affordances/action.dart";
+import "interaction_affordances/event.dart";
+import "interaction_affordances/interaction_affordance.dart";
+import "interaction_affordances/property.dart";
+import "operation_type.dart";
+import "security/security_scheme.dart";
+import "validation/validation_exception.dart";
 
 /// Contains the information needed for performing interactions with a Thing.
 class Form {
@@ -29,7 +29,7 @@ class Form {
     this.href,
     this.thingDescription, {
     this.interactionAffordance,
-    this.contentType = 'application/json',
+    this.contentType = "application/json",
     this.contentCoding,
     this.subprotocol,
     this.security,
@@ -55,20 +55,20 @@ class Form {
     InteractionAffordance? interactionAffordance,
   ]) {
     final Set<String> parsedFields = {};
-    final href = json.parseRequiredUriField('href', parsedFields);
+    final href = json.parseRequiredUriField("href", parsedFields);
 
-    final subprotocol = json.parseField<String>('subprotocol', parsedFields);
+    final subprotocol = json.parseField<String>("subprotocol", parsedFields);
 
-    final List<String>? op = json.parseArrayField<String>('op', parsedFields);
+    final List<String>? op = json.parseArrayField<String>("op", parsedFields);
 
-    final contentType = json.parseField<String>('contentType', parsedFields) ??
-        'application/json';
+    final contentType = json.parseField<String>("contentType", parsedFields) ??
+        "application/json";
 
     final contentCoding =
-        json.parseField<String>('contentCoding', parsedFields);
+        json.parseField<String>("contentCoding", parsedFields);
 
-    final security = json.parseArrayField<String>('security', parsedFields);
-    final scopes = json.parseArrayField<String>('scopes', parsedFields);
+    final security = json.parseArrayField<String>("security", parsedFields);
+    final scopes = json.parseArrayField<String>("scopes", parsedFields);
     final response = json.parseExpectedResponse(prefixMapping, parsedFields);
 
     final additionalResponses = json.parseAdditionalExpectedResponse(
@@ -123,7 +123,7 @@ class Form {
   final List<OperationType> op;
 
   /// The [contentType] supported by this [Form].
-  String contentType = 'application/json';
+  String contentType = "application/json";
 
   /// The content coding supported by this [Form].
   ///
@@ -167,9 +167,9 @@ class Form {
 
       if (securityDefinition == null) {
         throw ValidationException(
-          'Form requires a security definition with '
-          'key $securityKey, but the Thing Description does not define a '
-          'security definition with such a key!',
+          "Form requires a security definition with "
+          "key $securityKey, but the Thing Description does not define a "
+          "security definition with such a key!",
         );
       }
 
@@ -189,7 +189,7 @@ class Form {
     } else {
       throw ValidationException(
         "The form's $href is not an absolute URI, "
-        'but the Thing Description does not provide a base field!',
+        "but the Thing Description does not provide a base field!",
       );
     }
   }
@@ -222,8 +222,8 @@ class Form {
     }
 
     throw StateError(
-      'Encountered unknown InteractionAffordance '
-      '${interactionAffordance.runtimeType}.',
+      "Encountered unknown InteractionAffordance "
+      "${interactionAffordance.runtimeType}.",
     );
   }
 
@@ -255,8 +255,8 @@ class Form {
 
     if (missingTdDefinitions.isNotEmpty) {
       throw UriVariableException(
-        '$missingTdDefinitions do not have defined '
-        'uriVariables in the TD',
+        "$missingTdDefinitions do not have defined "
+        "uriVariables in the TD",
       );
     }
 
@@ -265,8 +265,8 @@ class Form {
 
     if (missingUserInput.isNotEmpty) {
       throw UriVariableException(
-        '$missingUserInput did not have defined '
-        'Values in the provided InteractionOptions.',
+        "$missingUserInput did not have defined "
+        "Values in the provided InteractionOptions.",
       );
     }
 
@@ -277,20 +277,20 @@ class Form {
       final value = affordanceUriVariable.value;
 
       if (value == null) {
-        throw ValidationException('Missing schema for URI variable $key');
+        throw ValidationException("Missing schema for URI variable $key");
       }
 
       final schema = JsonSchema.create(value);
       final result = schema.validate(uriVariables[key]);
 
       if (!result.isValid) {
-        throw ValidationException('Invalid type for URI variable $key');
+        throw ValidationException("Invalid type for URI variable $key");
       }
     }
   }
 
   List<String> _filterUriVariables(Uri href) {
-    final regex = RegExp('{[?+#./;&]?([^}]*)}');
+    final regex = RegExp("{[?+#./;&]?([^}]*)}");
     final decodedUri = Uri.decodeFull(href.toString());
     return regex
         .allMatches(decodedUri)
@@ -352,6 +352,6 @@ class UriVariableException implements Exception {
 
   @override
   String toString() {
-    return 'UriVariableException: $message';
+    return "UriVariableException: $message";
   }
 }

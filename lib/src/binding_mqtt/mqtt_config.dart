@@ -4,10 +4,10 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:meta/meta.dart';
-import 'package:mqtt_client/mqtt_client.dart';
+import "package:meta/meta.dart";
+import "package:mqtt_client/mqtt_client.dart";
 
-import 'constants.dart';
+import "constants.dart";
 
 /// Allows for configuring the behavior of MQTT clients and servers.
 ///

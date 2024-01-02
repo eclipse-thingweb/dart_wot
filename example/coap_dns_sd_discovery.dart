@@ -6,7 +6,7 @@
 
 // ignore_for_file: avoid_print
 
-import 'package:dart_wot/dart_wot.dart';
+import "package:dart_wot/dart_wot.dart";
 
 void handleThingDescription(ThingDescription thingDescription) =>
     print('Discovered TD with title "${thingDescription.title}".');
@@ -19,7 +19,7 @@ Future<void> main(List<String> args) async {
   );
 
   final wot = await servient.start();
-  final uri = Uri.parse('_wot._udp.local');
+  final uri = Uri.parse("_wot._udp.local");
 
   // Example using for-await-loop
   try {
@@ -38,7 +38,7 @@ Future<void> main(List<String> args) async {
   // to the handleThingDescription function.
   wot.discover(uri, method: DiscoveryMethod.dnsServiceDiscovery).listen(
         handleThingDescription,
-        onError: (error) => print('Encountered an error: $error'),
+        onError: (error) => print("Encountered an error: $error"),
         onDone: () => print('Discovery with "listen" has finished.'),
       );
 }

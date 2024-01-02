@@ -10,8 +10,8 @@
 /// [spec link]: https://www.w3.org/TR/wot-thing-description11/
 library definitions;
 
-export 'src/definitions/form.dart';
-export 'src/definitions/thing_description.dart';
-export 'src/definitions/thing_model.dart';
-export 'src/definitions/validation/thing_description_schema.dart'
+export "src/definitions/form.dart";
+export "src/definitions/thing_description.dart";
+export "src/definitions/thing_model.dart";
+export "src/definitions/validation/thing_description_schema.dart"
     show thingDescriptionSchema;

@@ -12,5 +12,5 @@ class MqttBindingException implements Exception {
   final String _message;
 
   @override
-  String toString() => 'MqttBindingException: $_message';
+  String toString() => "MqttBindingException: $_message";
 }

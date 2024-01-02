@@ -6,10 +6,10 @@
 
 // ignore_for_file: avoid_print
 
-import 'package:dart_wot/dart_wot.dart';
+import "package:dart_wot/dart_wot.dart";
 
-const username = 'username';
-const password = 'password';
+const username = "username";
+const password = "password";
 const thingDescriptionJson = '''
       {
         "@context": ["http://www.w3.org/ns/td"],
@@ -45,10 +45,10 @@ const thingDescriptionJson = '''
       }
       ''';
 
-final basicCredentials = BasicCredentials('username', 'password');
+final basicCredentials = BasicCredentials("username", "password");
 
 final Map<String, BasicCredentials> basicCredentialsMap = {
-  'urn:test': basicCredentials,
+  "urn:test": basicCredentials,
 };
 
 Future<BasicCredentials?> basicCredentialsCallback(
@@ -80,11 +80,11 @@ Future<void> main(List<String> args) async {
 
   final thingDescription = ThingDescription(thingDescriptionJson);
   final consumedThing = await wot.consume(thingDescription);
-  final status = await consumedThing.readProperty('status');
+  final status = await consumedThing.readProperty("status");
 
   print(await status.value());
 
-  final status2 = await consumedThing.readProperty('status2');
+  final status2 = await consumedThing.readProperty("status2");
 
   print(await status2.value());
 }

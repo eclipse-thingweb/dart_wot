@@ -4,11 +4,11 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../definitions/thing_description.dart';
-import 'interaction_input.dart';
-import 'interaction_output.dart';
-import 'subscription.dart';
-import 'types.dart';
+import "../definitions/thing_description.dart";
+import "interaction_input.dart";
+import "interaction_output.dart";
+import "subscription.dart";
+import "types.dart";
 
 /// User provided callback that is given an argument of type [InteractionOutput]
 /// and is used for observing Property changes and handling Event notifications.

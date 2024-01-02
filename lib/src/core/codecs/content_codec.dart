@@ -4,8 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../../definitions/data_schema.dart';
-import '../../scripting_api/data_schema_value.dart';
+import "../../definitions/data_schema.dart";
+import "../../scripting_api/data_schema_value.dart";
 
 /// Interface for providing a codec for a specific media type.
 abstract class ContentCodec {

@@ -4,13 +4,13 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../../definitions.dart';
-import '../../scripting_api.dart' hide ExposedThing;
-import '../../scripting_api.dart' as scripting_api;
-import '../definitions/interaction_affordances/action.dart';
-import '../definitions/interaction_affordances/event.dart';
-import '../definitions/interaction_affordances/property.dart';
-import 'servient.dart';
+import "../../definitions.dart";
+import "../../scripting_api.dart" hide ExposedThing;
+import "../../scripting_api.dart" as scripting_api;
+import "../definitions/interaction_affordances/action.dart";
+import "../definitions/interaction_affordances/event.dart";
+import "../definitions/interaction_affordances/property.dart";
+import "servient.dart";
 
 /// Implemention of the [scripting_api.ExposedThing] interface.
 class ExposedThing implements scripting_api.ExposedThing {

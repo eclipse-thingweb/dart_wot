@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'validation/validation_exception.dart';
+import "validation/validation_exception.dart";
 
 /// Enumeration for the possible WoT operation types.
 ///
@@ -55,7 +55,7 @@ enum OperationType {
 
     if (operationType == null) {
       throw ValidationException(
-        'Encountered unknown OperationType $stringValue.',
+        "Encountered unknown OperationType $stringValue.",
       );
     }
 

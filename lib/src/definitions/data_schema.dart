@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
+import "package:curie/curie.dart";
 
-import 'extensions/json_parser.dart';
+import "extensions/json_parser.dart";
 
 /// Metadata that describes the data format used. It can be used for validation.
 ///
@@ -59,43 +59,43 @@ class DataSchema {
     Set<String>? parsedFields,
   ]) {
     parsedFields = parsedFields ?? {};
-    final atType = json.parseArrayField<String>('@type', parsedFields);
-    final title = json.parseField<String>('title', parsedFields);
-    final titles = json.parseMapField<String>('titles', parsedFields);
-    final description = json.parseField<String>('description', parsedFields);
+    final atType = json.parseArrayField<String>("@type", parsedFields);
+    final title = json.parseField<String>("title", parsedFields);
+    final titles = json.parseMapField<String>("titles", parsedFields);
+    final description = json.parseField<String>("description", parsedFields);
     final descriptions =
-        json.parseMapField<String>('descriptions', parsedFields);
-    final constant = json.parseField<Object>('constant', parsedFields);
-    final defaultValue = json.parseField<Object>('default', parsedFields);
-    final enumeration = json.parseField<List<Object>>('enum', parsedFields);
-    final readOnly = json.parseField<bool>('readOnly', parsedFields);
-    final writeOnly = json.parseField<bool>('writeOnly', parsedFields);
-    final format = json.parseField<String>('format', parsedFields);
-    final unit = json.parseField<String>('unit', parsedFields);
-    final type = json.parseField<String>('type', parsedFields);
-    final minimum = json.parseField<num>('minimum', parsedFields);
+        json.parseMapField<String>("descriptions", parsedFields);
+    final constant = json.parseField<Object>("constant", parsedFields);
+    final defaultValue = json.parseField<Object>("default", parsedFields);
+    final enumeration = json.parseField<List<Object>>("enum", parsedFields);
+    final readOnly = json.parseField<bool>("readOnly", parsedFields);
+    final writeOnly = json.parseField<bool>("writeOnly", parsedFields);
+    final format = json.parseField<String>("format", parsedFields);
+    final unit = json.parseField<String>("unit", parsedFields);
+    final type = json.parseField<String>("type", parsedFields);
+    final minimum = json.parseField<num>("minimum", parsedFields);
     final exclusiveMinimum =
-        json.parseField<num>('exclusiveMinimum', parsedFields);
-    final maximum = json.parseField<num>('minimum', parsedFields);
+        json.parseField<num>("exclusiveMinimum", parsedFields);
+    final maximum = json.parseField<num>("minimum", parsedFields);
     final exclusiveMaximum =
-        json.parseField<num>('exclusiveMaximum', parsedFields);
-    final multipleOf = json.parseField<num>('multipleOf', parsedFields);
+        json.parseField<num>("exclusiveMaximum", parsedFields);
+    final multipleOf = json.parseField<num>("multipleOf", parsedFields);
     final items =
-        json.parseDataSchemaArrayField('items', prefixMapping, parsedFields);
-    final minItems = json.parseField<int>('minItems', parsedFields);
-    final maxItems = json.parseField<int>('maxItems', parsedFields);
-    final required = json.parseField<List<String>>('required', parsedFields);
-    final minLength = json.parseField<int>('minLength', parsedFields);
-    final maxLength = json.parseField<int>('maxLength', parsedFields);
-    final pattern = json.parseField<String>('pattern', parsedFields);
+        json.parseDataSchemaArrayField("items", prefixMapping, parsedFields);
+    final minItems = json.parseField<int>("minItems", parsedFields);
+    final maxItems = json.parseField<int>("maxItems", parsedFields);
+    final required = json.parseField<List<String>>("required", parsedFields);
+    final minLength = json.parseField<int>("minLength", parsedFields);
+    final maxLength = json.parseField<int>("maxLength", parsedFields);
+    final pattern = json.parseField<String>("pattern", parsedFields);
     final contentEncoding =
-        json.parseField<String>('contentEncoding', parsedFields);
+        json.parseField<String>("contentEncoding", parsedFields);
     final contentMediaType =
-        json.parseField<String>('contentMediaType', parsedFields);
+        json.parseField<String>("contentMediaType", parsedFields);
     final oneOf =
-        json.parseDataSchemaArrayField('oneOf', prefixMapping, parsedFields);
+        json.parseDataSchemaArrayField("oneOf", prefixMapping, parsedFields);
     final properties =
-        json.parseDataSchemaMapField('properties', prefixMapping, parsedFields);
+        json.parseDataSchemaMapField("properties", prefixMapping, parsedFields);
     final additionalFields =
         json.parseAdditionalFields(prefixMapping, parsedFields);
 

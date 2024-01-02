@@ -1,11 +1,11 @@
-import '../definitions/form.dart';
-import '../definitions/operation_type.dart';
+import "../definitions/form.dart";
+import "../definitions/operation_type.dart";
 
-const _getString = 'GET';
-const _putString = 'PUT';
-const _postString = 'POST';
-const _deleteString = 'DELETE';
-const _patchString = 'PATCH';
+const _getString = "GET";
+const _putString = "PUT";
+const _postString = "POST";
+const _deleteString = "DELETE";
+const _patchString = "PATCH";
 
 /// Defines the available HTTP request methods.
 enum HttpRequestMethod {
@@ -72,7 +72,7 @@ enum HttpRequestMethod {
     Form form,
     OperationType operationType,
   ) {
-    final dynamic formDefinition = form.additionalFields['htv:methodName'];
+    final dynamic formDefinition = form.additionalFields["htv:methodName"];
     if (formDefinition is String) {
       final requestMethod = _requestMethodFromString(formDefinition);
       if (requestMethod != null) {

@@ -4,14 +4,14 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
+import "package:curie/curie.dart";
 
-import '../extensions/json_parser.dart';
-import 'security_scheme.dart';
+import "../extensions/json_parser.dart";
+import "security_scheme.dart";
 
-const _defaultInValue = 'header';
+const _defaultInValue = "header";
 
-const _defaultQoPValue = 'auth';
+const _defaultQoPValue = "auth";
 
 /// Digest Access Authentication security configuration identified by the
 /// Vocabulary Term `digest`.
@@ -26,17 +26,17 @@ final class DigestSecurityScheme extends SecurityScheme {
     super.proxy,
     super.jsonLdType,
     super.additionalFields,
-  }) : super('digest');
+  }) : super("digest");
 
   /// Creates a [DigestSecurityScheme] from a [json] object.
   DigestSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  )   : name = json.parseField<String>('name', parsedFields),
-        in_ = json.parseField<String>('in', parsedFields) ?? _defaultInValue,
-        qop = json.parseField<String>('qop', parsedFields) ?? _defaultInValue,
-        super.fromJson('digest', json, prefixMapping, parsedFields);
+  )   : name = json.parseField<String>("name", parsedFields),
+        in_ = json.parseField<String>("in", parsedFields) ?? _defaultInValue,
+        qop = json.parseField<String>("qop", parsedFields) ?? _defaultInValue,
+        super.fromJson("digest", json, prefixMapping, parsedFields);
 
   /// Name for query, header, cookie, or uri parameters.
   final String? name;

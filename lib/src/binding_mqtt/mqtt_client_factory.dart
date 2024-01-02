@@ -4,13 +4,13 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../core/credentials/basic_credentials.dart';
-import '../core/credentials/callbacks.dart';
-import '../core/protocol_interfaces/protocol_client.dart';
-import '../core/protocol_interfaces/protocol_client_factory.dart';
-import 'constants.dart';
-import 'mqtt_client.dart';
-import 'mqtt_config.dart';
+import "../core/credentials/basic_credentials.dart";
+import "../core/credentials/callbacks.dart";
+import "../core/protocol_interfaces/protocol_client.dart";
+import "../core/protocol_interfaces/protocol_client_factory.dart";
+import "constants.dart";
+import "mqtt_client.dart";
+import "mqtt_config.dart";
 
 /// [ProtocolClientFactory] for creating [MqttClient]s.
 final class MqttClientFactory implements ProtocolClientFactory {

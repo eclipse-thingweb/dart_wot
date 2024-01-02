@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:typed_data';
+import "dart:typed_data";
 
-import 'package:meta/meta.dart';
+import "package:meta/meta.dart";
 
 /// Allows for configuring the behavior of CoAP clients and servers.
 @immutable

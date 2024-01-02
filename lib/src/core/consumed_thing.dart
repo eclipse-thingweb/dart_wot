@@ -4,17 +4,17 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../../scripting_api.dart' as scripting_api;
-import '../../scripting_api.dart' hide ConsumedThing, InteractionOutput;
-import '../definitions/data_schema.dart';
-import '../definitions/form.dart';
-import '../definitions/interaction_affordances/interaction_affordance.dart';
-import '../definitions/operation_type.dart';
-import '../definitions/thing_description.dart';
-import 'content.dart';
-import 'interaction_output.dart';
-import 'protocol_interfaces/protocol_client.dart';
-import 'servient.dart';
+import "../../scripting_api.dart" as scripting_api;
+import "../../scripting_api.dart" hide ConsumedThing, InteractionOutput;
+import "../definitions/data_schema.dart";
+import "../definitions/form.dart";
+import "../definitions/interaction_affordances/interaction_affordance.dart";
+import "../definitions/operation_type.dart";
+import "../definitions/thing_description.dart";
+import "content.dart";
+import "interaction_output.dart";
+import "protocol_interfaces/protocol_client.dart";
+import "servient.dart";
 
 enum _AffordanceType {
   action,
@@ -32,7 +32,7 @@ class UnexpectedReponseException implements Exception {
   final String message;
 
   @override
-  String toString() => 'UnexpectedReponseException: $message';
+  String toString() => "UnexpectedReponseException: $message";
 }
 
 /// This Exception is thrown when
@@ -44,7 +44,7 @@ class SubscriptionException implements Exception {
   final String message;
 
   @override
-  String toString() => 'SubscriptionException: $message';
+  String toString() => "SubscriptionException: $message";
 }
 
 /// Implementation of the [scripting_api.ConsumedThing] interface.
@@ -99,7 +99,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
         throw ArgumentError(
           'ConsumedThing "$title" missing formIndex for '
               '$formIndex"',
-          'options.formIndex',
+          "options.formIndex",
         );
       }
     } else {
@@ -108,7 +108,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
             hasClientFor(form.resolvedHref.scheme) &&
             _supportsOperationType(form, affordanceType, operationType),
         // TODO(JKRhb): Add custom Exception
-        orElse: () => throw Exception('No matching form found!'),
+        orElse: () => throw Exception("No matching form found!"),
       );
       final scheme = foundForm.resolvedHref.scheme;
       client = servient.clientFor(scheme);
@@ -130,8 +130,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     if (property == null) {
       throw ArgumentError(
-        'ConsumedThing $title does not have property $propertyName',
-        'propertyName',
+        "ConsumedThing $title does not have property $propertyName",
+        "propertyName",
       );
     }
 
@@ -164,8 +164,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     if (property == null) {
       throw ArgumentError(
-        'ConsumedThing $title does not have property $propertyName',
-        'propertyName',
+        "ConsumedThing $title does not have property $propertyName",
+        "propertyName",
       );
     }
 
@@ -204,8 +204,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     if (action == null) {
       throw ArgumentError(
-        'ConsumedThing $title does not have action $actionName',
-        'actionName',
+        "ConsumedThing $title does not have action $actionName",
+        "actionName",
       );
     }
 
@@ -233,7 +233,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     final response = form.response;
     if (response != null) {
       if (output.type != response.contentType) {
-        throw UnexpectedReponseException('Unexpected type in response');
+        throw UnexpectedReponseException("Unexpected type in response");
       }
     }
 
@@ -258,15 +258,15 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     if (property == null) {
       throw ArgumentError(
-        'ConsumedThing $title does not have property $propertyName',
-        'propertyName',
+        "ConsumedThing $title does not have property $propertyName",
+        "propertyName",
       );
     }
 
     if (_observedProperties.containsKey(propertyName)) {
       throw StateError(
         "ConsumedThing '$title' already has a function "
-        'subscribed to $propertyName. You can only observe once',
+        "subscribed to $propertyName. You can only observe once",
       );
     }
 
@@ -409,15 +409,15 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     if (event == null) {
       throw ArgumentError(
-        'ConsumedThing $title does not have event $eventName',
-        'eventName',
+        "ConsumedThing $title does not have event $eventName",
+        "eventName",
       );
     }
 
     if (_subscribedEvents.containsKey(eventName)) {
       throw SubscriptionException(
         "ConsumedThing '$title' already has a function "
-        'subscribed to $eventName. You can only subscribe once.',
+        "subscribed to $eventName. You can only subscribe once.",
       );
     }
 

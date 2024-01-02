@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../definitions/form.dart';
-import '../definitions/interaction_affordances/interaction_affordance.dart';
-import '../definitions/operation_type.dart';
+import "../definitions/form.dart";
+import "../definitions/interaction_affordances/interaction_affordance.dart";
+import "../definitions/operation_type.dart";
 
 /// [Exception] that is thrown when error during the unsubscribe process occurs.
 class UnsubscribeException implements Exception {
@@ -16,7 +16,7 @@ class UnsubscribeException implements Exception {
   final String _message;
 
   @override
-  String toString() => 'UnsubscribeException: $_message';
+  String toString() => "UnsubscribeException: $_message";
 }
 
 /// Indicates the type of the subscription.
@@ -83,7 +83,7 @@ Form findUnsubscribeForm(
   final unsubscribeForm = _findFormByScoring(interaction, form, operationType);
 
   if (unsubscribeForm == null) {
-    throw UnsubscribeException('Could not find matching form for unsubscribe');
+    throw UnsubscribeException("Could not find matching form for unsubscribe");
   }
 
   return unsubscribeForm;

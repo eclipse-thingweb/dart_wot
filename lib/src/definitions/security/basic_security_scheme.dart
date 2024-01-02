@@ -4,14 +4,14 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
+import "package:curie/curie.dart";
 
-import '../extensions/json_parser.dart';
-import 'security_scheme.dart';
+import "../extensions/json_parser.dart";
+import "security_scheme.dart";
 
-const _defaultInValue = 'header';
+const _defaultInValue = "header";
 
-const _schemeName = 'basic';
+const _schemeName = "basic";
 
 /// Basic Authentication security configuration identified by the Vocabulary
 /// Term `basic`.
@@ -32,8 +32,8 @@ final class BasicSecurityScheme extends SecurityScheme {
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  )   : name = json.parseField<String>('name', parsedFields),
-        in_ = json.parseField<String>('in', parsedFields) ?? _defaultInValue,
+  )   : name = json.parseField<String>("name", parsedFields),
+        in_ = json.parseField<String>("in", parsedFields) ?? _defaultInValue,
         super.fromJson(_schemeName, json, prefixMapping, parsedFields);
 
   /// Name for query, header, cookie, or uri parameters.

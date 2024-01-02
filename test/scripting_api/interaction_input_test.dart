@@ -4,13 +4,13 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:dart_wot/scripting_api.dart';
-import 'package:test/test.dart';
+import "package:dart_wot/scripting_api.dart";
+import "package:test/test.dart";
 
 void main() {
-  group('InteractionInput', () {
-    group('should be able to be instantiated from', () {
-      test('null', () {
+  group("InteractionInput", () {
+    group("should be able to be instantiated from", () {
+      test("null", () {
         final interactionInput = InteractionInput.fromNull();
 
         expect(interactionInput, isA<DataSchemaValueInput>());
@@ -25,8 +25,8 @@ void main() {
         expect(interactionInput.hashCode, alternativeInteractionInput.hashCode);
       });
 
-      test('a String', () {
-        const testValue = 'foo';
+      test("a String", () {
+        const testValue = "foo";
         final interactionInput = InteractionInput.fromString(testValue);
 
         expect(interactionInput, isA<DataSchemaValueInput>());
@@ -46,7 +46,7 @@ void main() {
         expect(interactionInput.hashCode, alternativeInteractionInput.hashCode);
       });
 
-      test('an Integer', () {
+      test("an Integer", () {
         const testValue = 42;
         final interactionInput = InteractionInput.fromInteger(testValue);
 
@@ -67,7 +67,7 @@ void main() {
         expect(interactionInput.hashCode, alternativeInteractionInput.hashCode);
       });
 
-      test('a Number', () {
+      test("a Number", () {
         const testValue = 42.0;
         final interactionInput = InteractionInput.fromNumber(testValue);
 
@@ -88,7 +88,7 @@ void main() {
         expect(interactionInput.hashCode, alternativeInteractionInput.hashCode);
       });
 
-      test('a Boolean', () {
+      test("a Boolean", () {
         const testValue = true;
         final interactionInput = InteractionInput.fromBoolean(testValue);
 
@@ -109,8 +109,8 @@ void main() {
         expect(interactionInput.hashCode, alternativeInteractionInput.hashCode);
       });
 
-      test('an Array', () {
-        const testValue = [true, 42, 'foo'];
+      test("an Array", () {
+        const testValue = [true, 42, "foo"];
         final interactionInput = InteractionInput.fromArray(testValue);
 
         expect(interactionInput, isA<DataSchemaValueInput>());
@@ -135,16 +135,16 @@ void main() {
         expect(interactionInput.hashCode, alternativeInteractionInput.hashCode);
       });
 
-      test('an Object', () {
+      test("an Object", () {
         const testValue = <String, Object?>{
-          'bool': true,
-          'int': 42,
-          'string': 'foo',
-          'number': 42.0,
-          'null': null,
-          'array': [true, 'bar', 42],
-          'object': {
-            'string': 'baz',
+          "bool": true,
+          "int": 42,
+          "string": "foo",
+          "number": 42.0,
+          "null": null,
+          "array": [true, "bar", 42],
+          "object": {
+            "string": "baz",
           },
         };
         final interactionInput = InteractionInput.fromObject(testValue);
@@ -171,7 +171,7 @@ void main() {
         expect(interactionInput.hashCode, alternativeInteractionInput.hashCode);
       });
 
-      test('a byte stream', () {
+      test("a byte stream", () {
         final testValue = Stream.fromIterable([
           [0, 1, 2],
           [3, 4, 5],

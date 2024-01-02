@@ -4,8 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../../definitions/thing_description.dart';
-import 'thing_filter.dart';
+import "../../definitions/thing_description.dart";
+import "thing_filter.dart";
 
 /// Provides the properties and methods controlling the discovery process.
 ///

@@ -4,14 +4,14 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:convert';
+import "dart:convert";
 
-import '../../definitions/data_schema.dart';
+import "../../definitions/data_schema.dart";
 
-import '../../scripting_api/data_schema_value.dart';
-import 'content_codec.dart';
+import "../../scripting_api/data_schema_value.dart";
+import "content_codec.dart";
 
-const _utf8Coding = 'utf-8';
+const _utf8Coding = "utf-8";
 
 /// A [ContentCodec] that encodes and decodes plain text data.
 class TextCodec extends ContentCodec {
@@ -33,7 +33,7 @@ class TextCodec extends ContentCodec {
       case _utf8Coding:
         return utf8.encode(rawValue);
       default:
-        throw FormatException('Encountered unsupported text coding $coding');
+        throw FormatException("Encountered unsupported text coding $coding");
     }
   }
 
@@ -53,11 +53,11 @@ class TextCodec extends ContentCodec {
       case _utf8Coding:
         return DataSchemaValue.fromString(utf8.decoder.convert(bytes));
       default:
-        throw FormatException('Encountered unsupported text coding $coding');
+        throw FormatException("Encountered unsupported text coding $coding");
     }
   }
 }
 
 extension _ParametersExtension on Map<String, String>? {
-  String get coding => this?['charset']?.toLowerCase() ?? _utf8Coding;
+  String get coding => this?["charset"]?.toLowerCase() ?? _utf8Coding;
 }

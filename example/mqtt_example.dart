@@ -6,7 +6,7 @@
 
 // ignore_for_file: avoid_print
 
-import 'package:dart_wot/dart_wot.dart';
+import "package:dart_wot/dart_wot.dart";
 
 const thingDescriptionJson = '''
   {
@@ -51,7 +51,7 @@ const thingDescriptionJson = '''
   ''';
 
 final Map<String, BasicCredentials> basicCredentials = {
-  'urn:test': BasicCredentials('rw', 'readwrite'),
+  "urn:test": BasicCredentials("rw", "readwrite"),
 };
 
 Future<BasicCredentials?> basicCredentialsCallback(
@@ -75,27 +75,27 @@ Future<void> main(List<String> args) async {
 
   final thingDescription = ThingDescription(thingDescriptionJson);
   final consumedThing = await wot.consume(thingDescription);
-  await consumedThing.readAndPrintProperty('status');
+  await consumedThing.readAndPrintProperty("status");
 
   final subscription = await consumedThing.observeProperty(
-    'status',
+    "status",
     (data) async {
       final value = await data.value();
       print(value);
     },
   );
 
-  final actionInput = 'Hello World'.asInteractionInput();
+  final actionInput = "Hello World".asInteractionInput();
 
-  await consumedThing.invokeAction('toggle', input: actionInput);
-  await consumedThing.invokeAction('toggle', input: actionInput);
-  await consumedThing.invokeAction('toggle', input: actionInput);
-  await consumedThing.invokeAction('toggle', input: actionInput);
+  await consumedThing.invokeAction("toggle", input: actionInput);
+  await consumedThing.invokeAction("toggle", input: actionInput);
+  await consumedThing.invokeAction("toggle", input: actionInput);
+  await consumedThing.invokeAction("toggle", input: actionInput);
   await subscription.stop();
 
-  await consumedThing.invokeAction('toggle', input: actionInput);
-  await consumedThing.readAndPrintProperty('status');
-  print('Done!');
+  await consumedThing.invokeAction("toggle", input: actionInput);
+  await consumedThing.readAndPrintProperty("status");
+  print("Done!");
 }
 
 extension ReadAndPrintExtension on ConsumedThing {

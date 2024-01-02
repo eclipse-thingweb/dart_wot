@@ -4,13 +4,13 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
-import 'package:meta/meta.dart';
+import "package:curie/curie.dart";
+import "package:meta/meta.dart";
 
-import '../data_schema.dart';
-import '../extensions/json_parser.dart';
-import '../thing_description.dart';
-import 'interaction_affordance.dart';
+import "../data_schema.dart";
+import "../extensions/json_parser.dart";
+import "../thing_description.dart";
+import "interaction_affordance.dart";
 
 /// Class representing a [Property] Affordance in a Thing Description.
 @immutable
@@ -32,9 +32,9 @@ class Property extends InteractionAffordance implements DataSchema {
   ) {
     final Set<String> parsedFields = {};
     final observable =
-        json.parseField<bool>('observable', parsedFields) ?? false;
+        json.parseField<bool>("observable", parsedFields) ?? false;
     final uriVariables =
-        json.parseMapField<dynamic>('uriVariables', parsedFields);
+        json.parseMapField<dynamic>("uriVariables", parsedFields);
     final dataSchema = DataSchema.fromJson(json, prefixMapping, parsedFields);
 
     final property = Property(

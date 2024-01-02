@@ -4,18 +4,18 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
-import 'package:uuid/uuid.dart';
+import "package:curie/curie.dart";
+import "package:mqtt_client/mqtt_client.dart";
+import "package:mqtt_client/mqtt_server_client.dart";
+import "package:uuid/uuid.dart";
 
-import '../../core.dart';
-import '../definitions/form.dart';
-import '../definitions/security/auto_security_scheme.dart';
-import '../definitions/security/basic_security_scheme.dart';
-import '../definitions/validation/validation_exception.dart';
-import 'constants.dart';
-import 'mqtt_binding_exception.dart';
+import "../../core.dart";
+import "../definitions/form.dart";
+import "../definitions/security/auto_security_scheme.dart";
+import "../definitions/security/basic_security_scheme.dart";
+import "../definitions/validation/validation_exception.dart";
+import "constants.dart";
+import "mqtt_binding_exception.dart";
 
 /// [PrefixMapping] for expanding MQTT Vocabulary terms from compact IRIs.
 final mqttPrefixMapping = PrefixMapping(defaultPrefixValue: mqttContextUri);
@@ -61,7 +61,7 @@ extension MqttUriExtension on Uri {
         return defaultMqttSecurePort;
     }
 
-    throw StateError('MQTT URI scheme $scheme is not supported.');
+    throw StateError("MQTT URI scheme $scheme is not supported.");
   }
 }
 
@@ -80,7 +80,7 @@ extension MqttFormExtension on Form {
     final curieString = mqttPrefixMapping.expandCurie(Curie(reference: term));
 
     final value = additionalFields[curieString] ??
-        additionalFields['$defaultMqttPrefix:$term'];
+        additionalFields["$defaultMqttPrefix:$term"];
 
     if (value is T) {
       return value;
@@ -93,10 +93,10 @@ extension MqttFormExtension on Form {
   ///
   /// Throws an [Exception] if no topic could be retrieved.
   String get topicName {
-    final topic = _obtainVocabularyTerm<String>('topic');
+    final topic = _obtainVocabularyTerm<String>("topic");
 
     if (topic == null) {
-      throw MqttBindingException('MQTT topic was not defined on form.');
+      throw MqttBindingException("MQTT topic was not defined on form.");
     }
 
     return topic;
@@ -106,10 +106,10 @@ extension MqttFormExtension on Form {
   ///
   /// Throws an [Exception] if no topic could be retrieved.
   String get topicFilter {
-    final topic = _obtainVocabularyTerm<String>('filter');
+    final topic = _obtainVocabularyTerm<String>("filter");
 
     if (topic == null) {
-      throw MqttBindingException('MQTT topic was not defined on form.');
+      throw MqttBindingException("MQTT topic was not defined on form.");
     }
 
     return topic;
@@ -118,7 +118,7 @@ extension MqttFormExtension on Form {
   /// Gets the MQTT `retain` value from this [Form] if present.
   ///
   /// Returns `null` otherwise.
-  bool? get retain => _obtainVocabularyTerm<bool>('retain');
+  bool? get retain => _obtainVocabularyTerm<bool>("retain");
 
   bool get _hasBasicSecurityScheme =>
       securityDefinitions.whereType<BasicSecurityScheme>().isNotEmpty;
@@ -130,22 +130,22 @@ extension MqttFormExtension on Form {
   ///
   /// Returns `null` otherwise.
   MqttQos? get qualityOfService {
-    final qosValue = _obtainVocabularyTerm<String>('qos');
+    final qosValue = _obtainVocabularyTerm<String>("qos");
     switch (qosValue) {
-      case 'quality:0':
+      case "quality:0":
         return MqttQos.atMostOnce;
-      case 'quality:1':
+      case "quality:1":
         return MqttQos.atLeastOnce;
-      case 'quality:2':
+      case "quality:2":
         return MqttQos.exactlyOnce;
     }
 
     // TODO: This validation should maybe already happen ealier.
     if (qosValue != null) {
       throw ValidationException(
-        'Encountered unknown QoS value $qosValue. '
-        'in form with href $href of Thing Description with Identifier '
-        '${thingDescription.identifier}.',
+        "Encountered unknown QoS value $qosValue. "
+        "in form with href $href of Thing Description with Identifier "
+        "${thingDescription.identifier}.",
       );
     }
 

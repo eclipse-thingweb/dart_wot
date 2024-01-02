@@ -4,14 +4,14 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:collection';
+import "dart:collection";
 
-import 'package:coap/coap.dart';
-import 'package:curie/curie.dart';
+import "package:coap/coap.dart";
+import "package:curie/curie.dart";
 
 /// [PrefixMapping] for expanding CoAP Vocabulary terms from compact IRIs.
 final coapPrefixMapping =
-    PrefixMapping(defaultPrefixValue: 'http://www.example.org/coap-binding#');
+    PrefixMapping(defaultPrefixValue: "http://www.example.org/coap-binding#");
 
 /// Defines the available CoAP request methods.
 enum CoapRequestMethod {

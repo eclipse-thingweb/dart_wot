@@ -4,11 +4,11 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../core/credentials/callbacks.dart';
-import '../core/protocol_interfaces/protocol_client.dart';
-import '../core/protocol_interfaces/protocol_client_factory.dart';
-import 'coap_client.dart';
-import 'coap_config.dart';
+import "../core/credentials/callbacks.dart";
+import "../core/protocol_interfaces/protocol_client.dart";
+import "../core/protocol_interfaces/protocol_client_factory.dart";
+import "coap_client.dart";
+import "coap_config.dart";
 
 /// A [ProtocolClientFactory] that produces CoAP clients.
 final class CoapClientFactory implements ProtocolClientFactory {
@@ -28,7 +28,7 @@ final class CoapClientFactory implements ProtocolClientFactory {
   final AceSecurityCallback? _aceSecurityCallback;
 
   @override
-  Set<String> get schemes => {'coap', 'coaps'};
+  Set<String> get schemes => {"coap", "coaps"};
 
   @override
   bool destroy() {

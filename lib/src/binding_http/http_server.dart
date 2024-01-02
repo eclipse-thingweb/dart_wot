@@ -4,17 +4,17 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../core/credentials/callbacks.dart';
-import '../core/protocol_interfaces/protocol_server.dart';
-import '../scripting_api/exposed_thing.dart';
-import 'http_config.dart';
+import "../core/credentials/callbacks.dart";
+import "../core/protocol_interfaces/protocol_server.dart";
+import "../scripting_api/exposed_thing.dart";
+import "http_config.dart";
 
 /// A [ProtocolServer] for the Hypertext Transfer Protocol (HTTP).
 final class HttpServer implements ProtocolServer {
   /// Create a new [HttpServer] from an optional [HttpConfig].
   HttpServer(HttpConfig? httpConfig)
       // TODO(JKRhb): Check if the scheme should be determined differently.
-      : scheme = httpConfig?.secure ?? false ? 'https' : 'http',
+      : scheme = httpConfig?.secure ?? false ? "https" : "http",
         port = _portFromConfig(httpConfig);
 
   @override
