@@ -15,6 +15,6 @@ class HttpSecurityException implements Exception {
 
   @override
   String toString() {
-    return 'HttpSecurityException: $message';
+    return "HttpSecurityException: $message";
   }
 }

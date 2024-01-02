@@ -8,7 +8,7 @@
 ///
 /// Note that this scheme is not standardized yet, as there is an ongoing debate
 /// about URI schemes in the context of MQTT.
-const mqttUriScheme = 'mqtt';
+const mqttUriScheme = "mqtt";
 
 /// The default port number used for the [mqttUriScheme].
 const defaultMqttPort = 1883;
@@ -17,7 +17,7 @@ const defaultMqttPort = 1883;
 ///
 /// Note that this scheme is not standardized yet, as there is an ongoing debate
 /// about URI schemes in the context of MQTT.
-const mqttSecureUriScheme = 'mqtts';
+const mqttSecureUriScheme = "mqtts";
 
 /// The default port number used for the [mqttSecureUriScheme].
 const defaultMqttSecurePort = 8883;
@@ -27,10 +27,10 @@ const defaultMqttSecurePort = 8883;
 /// Used for resolving MQTT-related compact URIs (CURIEs) in TDs. Note that
 /// the MQTT vocabulary is not standardized yet, so this URI will change in
 /// future versions of this library.
-const mqttContextUri = 'http://www.example.org/mqtt-binding#';
+const mqttContextUri = "http://www.example.org/mqtt-binding#";
 
 /// The default prefix used in MQTT-related compact URIs (CURIEs) in TDs.
-const defaultMqttPrefix = 'mqv';
+const defaultMqttPrefix = "mqv";
 
 /// Default timeout length used for reading properties and discovering TDs.
 const defaultTimeout = Duration(seconds: 10);
@@ -42,10 +42,10 @@ const defaultKeepAlivePeriod = 20;
 /// binding.
 ///
 /// Evaluates to `'application/octet-stream'.
-const defaultContentType = 'application/octet-stream';
+const defaultContentType = "application/octet-stream";
 
 /// Content type used for the Content objects returned by discovery using MQTT.
 ///
 /// Evaluates to `application/td+json`.
 // TODO: Should probably be redefined globally
-const discoveryContentType = 'application/td+json';
+const discoveryContentType = "application/td+json";

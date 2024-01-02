@@ -4,31 +4,31 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:async';
-import 'dart:convert';
+import "dart:async";
+import "dart:convert";
 
-import 'package:dart_wot/src/core/content.dart';
-import 'package:dart_wot/src/core/protocol_interfaces/protocol_client.dart';
-import 'package:dart_wot/src/core/protocol_interfaces/protocol_client_factory.dart';
-import 'package:dart_wot/src/core/servient.dart';
-import 'package:dart_wot/src/core/thing_discovery.dart';
-import 'package:dart_wot/src/definitions/form.dart';
-import 'package:dart_wot/src/scripting_api/subscription.dart';
-import 'package:test/test.dart';
+import "package:dart_wot/src/core/content.dart";
+import "package:dart_wot/src/core/protocol_interfaces/protocol_client.dart";
+import "package:dart_wot/src/core/protocol_interfaces/protocol_client_factory.dart";
+import "package:dart_wot/src/core/servient.dart";
+import "package:dart_wot/src/core/thing_discovery.dart";
+import "package:dart_wot/src/definitions/form.dart";
+import "package:dart_wot/src/scripting_api/subscription.dart";
+import "package:test/test.dart";
 
-const testUriScheme = 'test';
+const testUriScheme = "test";
 final validTestDiscoveryUri =
-    Uri.parse('$testUriScheme://[::1]/.well-known/wot');
+    Uri.parse("$testUriScheme://[::1]/.well-known/wot");
 final invalidTestDiscoveryUri =
-    Uri.parse('$testUriScheme://[::2]/.well-known/wot');
-final directoryTestUri1 = Uri.parse('$testUriScheme://[::3]/.well-known/wot');
-final directoryTestThingsUri1 = Uri.parse('$testUriScheme://[::3]/things');
-final directoryTestUri2 = Uri.parse('$testUriScheme://[::4]/.well-known/wot');
-final directoryTestThingsUri2 = Uri.parse('$testUriScheme://[::4]/things');
-final directoryTestUri3 = Uri.parse('$testUriScheme://[::5]/.well-known/wot');
-final directoryTestThingsUri3 = Uri.parse('$testUriScheme://[::5]/things');
+    Uri.parse("$testUriScheme://[::2]/.well-known/wot");
+final directoryTestUri1 = Uri.parse("$testUriScheme://[::3]/.well-known/wot");
+final directoryTestThingsUri1 = Uri.parse("$testUriScheme://[::3]/things");
+final directoryTestUri2 = Uri.parse("$testUriScheme://[::4]/.well-known/wot");
+final directoryTestThingsUri2 = Uri.parse("$testUriScheme://[::4]/things");
+final directoryTestUri3 = Uri.parse("$testUriScheme://[::5]/.well-known/wot");
+final directoryTestThingsUri3 = Uri.parse("$testUriScheme://[::5]/things");
 
-const validTestTitle1 = 'Test TD 1';
+const validTestTitle1 = "Test TD 1";
 const validTestThingDescription = '''
   {
       "@context": "https://www.w3.org/2022/wot/td/v1.1",
@@ -40,7 +40,7 @@ const validTestThingDescription = '''
   }
 ''';
 
-const validDirectoryTestTitle1 = 'Test TD 2';
+const validDirectoryTestTitle1 = "Test TD 2";
 final directoryThingDescription1 = '''
 {
   "@context": [
@@ -65,7 +65,7 @@ final directoryThingDescription1 = '''
 }
 ''';
 
-const validDirectoryTestTitle2 = 'Test TD 3';
+const validDirectoryTestTitle2 = "Test TD 3";
 final directoryThingDescription2 = '''
 {
   "@context": [
@@ -90,7 +90,7 @@ final directoryThingDescription2 = '''
 }
 ''';
 
-const validDirectoryTestTitle3 = 'Test TD 2';
+const validDirectoryTestTitle3 = "Test TD 2";
 final directoryThingDescription3 = '''
 {
   "@context": [
@@ -137,18 +137,18 @@ class _MockedProtocolClient implements ProtocolClient {
   Future<Content> readResource(Form form) async {
     final href = form.href;
     if (href == directoryTestThingsUri1) {
-      return '[$validTestThingDescription]'.toContent('application/td+json');
+      return "[$validTestThingDescription]".toContent("application/td+json");
     }
 
     if (href == directoryTestThingsUri2) {
-      return '[$invalidTestThingDescription2]'.toContent('application/td+json');
+      return "[$invalidTestThingDescription2]".toContent("application/td+json");
     }
 
     if (href == directoryTestThingsUri3) {
-      return invalidTestThingDescription2.toContent('application/td+json');
+      return invalidTestThingDescription2.toContent("application/td+json");
     }
 
-    throw StateError('Encountered an unknown URI $href.');
+    throw StateError("Encountered an unknown URI $href.");
   }
 
   @override
@@ -173,7 +173,7 @@ class _MockedProtocolClient implements ProtocolClient {
       return directoryThingDescription3.toDiscoveryContent(url);
     }
 
-    throw StateError('Encountered invalid URL.');
+    throw StateError("Encountered invalid URL.");
   }
 
   @override
@@ -237,7 +237,7 @@ extension _DiscoveryContentCreationExtension on String {
   Stream<List<int>> get _body => Stream.fromIterable([utf8.encode(this)]);
 
   DiscoveryContent toDiscoveryContent(Uri url) {
-    return DiscoveryContent('application/td+json', _body, url);
+    return DiscoveryContent("application/td+json", _body, url);
   }
 
   Content toContent(String type) {
@@ -246,8 +246,8 @@ extension _DiscoveryContentCreationExtension on String {
 }
 
 void main() {
-  group('requestThingDescription()', () {
-    test('should be able to retrieve a valid TD', () async {
+  group("requestThingDescription()", () {
+    test("should be able to retrieve a valid TD", () async {
       final servient = Servient(
         clientFactories: [
           _MockedProtocolClientFactory(),
@@ -262,7 +262,7 @@ void main() {
     });
 
     test(
-      'should throw an exception when an invalid TD is retrieved',
+      "should throw an exception when an invalid TD is retrieved",
       () async {
         final servient = Servient(
           clientFactories: [
@@ -280,8 +280,8 @@ void main() {
     );
   });
 
-  group('exploreDirectory()', () {
-    test('should be able to discover valid TDs from a TD directory', () async {
+  group("exploreDirectory()", () {
+    test("should be able to discover valid TDs from a TD directory", () async {
       final servient = Servient(
         clientFactories: [
           _MockedProtocolClientFactory(),
@@ -301,7 +301,7 @@ void main() {
       expect(thingDiscoveryProcess.done, true);
     });
 
-    test('should reject invalid TDD Thing Descriptions', () async {
+    test("should reject invalid TDD Thing Descriptions", () async {
       final servient = Servient(
         clientFactories: [
           _MockedProtocolClientFactory(),
@@ -316,7 +316,7 @@ void main() {
       );
     });
 
-    test('should be able to handle an array of invalid TDs during discovery',
+    test("should be able to handle an array of invalid TDs during discovery",
         () async {
       final servient = Servient(
         clientFactories: [
@@ -349,7 +349,7 @@ void main() {
     });
 
     test(
-        'should be able to handle an invalid non-array output during discovery',
+        "should be able to handle an invalid non-array output during discovery",
         () async {
       final servient = Servient(
         clientFactories: [
@@ -365,7 +365,7 @@ void main() {
       );
     });
 
-    test('should be able to handle premature cancellation', () async {
+    test("should be able to handle premature cancellation", () async {
       final servient = Servient(
         clientFactories: [
           _MockedProtocolClientFactory(),

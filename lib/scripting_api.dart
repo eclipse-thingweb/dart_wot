@@ -10,14 +10,14 @@
 /// [spec link]: https://www.w3.org/TR/wot-scripting-api/
 library scripting_api;
 
-export 'src/scripting_api/consumed_thing.dart';
-export 'src/scripting_api/data_schema_value.dart';
-export 'src/scripting_api/discovery/discovery_method.dart';
-export 'src/scripting_api/discovery/thing_discovery.dart';
-export 'src/scripting_api/discovery/thing_filter.dart';
-export 'src/scripting_api/exposed_thing.dart';
-export 'src/scripting_api/interaction_input.dart';
-export 'src/scripting_api/interaction_output.dart';
-export 'src/scripting_api/subscription.dart';
-export 'src/scripting_api/types.dart';
-export 'src/scripting_api/wot.dart';
+export "src/scripting_api/consumed_thing.dart";
+export "src/scripting_api/data_schema_value.dart";
+export "src/scripting_api/discovery/discovery_method.dart";
+export "src/scripting_api/discovery/thing_discovery.dart";
+export "src/scripting_api/discovery/thing_filter.dart";
+export "src/scripting_api/exposed_thing.dart";
+export "src/scripting_api/interaction_input.dart";
+export "src/scripting_api/interaction_output.dart";
+export "src/scripting_api/subscription.dart";
+export "src/scripting_api/types.dart";
+export "src/scripting_api/wot.dart";

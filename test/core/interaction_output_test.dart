@@ -4,22 +4,22 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:convert';
+import "dart:convert";
 
-import 'package:dart_wot/src/core/content.dart';
-import 'package:dart_wot/src/core/content_serdes.dart';
-import 'package:dart_wot/src/core/interaction_output.dart';
-import 'package:test/test.dart';
+import "package:dart_wot/src/core/content.dart";
+import "package:dart_wot/src/core/content_serdes.dart";
+import "package:dart_wot/src/core/interaction_output.dart";
+import "package:test/test.dart";
 
 void main() {
-  group('InteractionOutput should', () {
-    test('output the correct value', () async {
-      const inputValue = 'foo';
+  group("InteractionOutput should", () {
+    test("output the correct value", () async {
+      const inputValue = "foo";
       final input = utf8.encode(inputValue);
 
       final contentSerdes = ContentSerdes();
       final content = Content(
-        'text/plain',
+        "text/plain",
         Stream.fromIterable([
           input,
         ]),
@@ -35,13 +35,13 @@ void main() {
       expect(value2, inputValue);
     });
 
-    test('output the same value when calling value() twice', () async {
-      const inputValue = 'bar';
+    test("output the same value when calling value() twice", () async {
+      const inputValue = "bar";
       final input = utf8.encode(inputValue);
 
       final contentSerdes = ContentSerdes();
       final content = Content(
-        'text/plain',
+        "text/plain",
         Stream.fromIterable([
           input,
         ]),

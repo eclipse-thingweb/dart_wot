@@ -49,7 +49,7 @@ Afterward, the actual interactions with the counter are performed by calling the
 `invokeAction()` and `readProperty()` methods on the `ConsumedThing`.
 
 ```dart
-import 'package:dart_wot/dart_wot.dart';
+import "package:dart_wot/dart_wot.dart";
 
 Future<void> main(List<String> args) async {
   final servient = Servient(
@@ -59,22 +59,22 @@ Future<void> main(List<String> args) async {
   );
   final wot = await servient.start();
 
-  final url = Uri.parse('coap://plugfest.thingweb.io/counter');
-  print('Requesting TD from $url ...');
+  final url = Uri.parse("coap://plugfest.thingweb.io/counter");
+  print("Requesting TD from $url ...");
   final thingDescription = await wot.requestThingDescription(url);
 
   final consumedThing = await wot.consume(thingDescription);
   print(
-    'Successfully retrieved and consumed TD with title '
+    "Successfully retrieved and consumed TD with title "
     '"${thingDescription.title}"!',
   );
 
-  print('Incrementing counter ...');
-  await consumedThing.invokeAction('increment');
+  print("Incrementing counter ...");
+  await consumedThing.invokeAction("increment");
 
-  final status = await consumedThing.readProperty('count');
+  final status = await consumedThing.readProperty("count");
   final value = await status.value();
-  print('New counter value: $value');
+  print("New counter value: $value");
 }
 ```
 

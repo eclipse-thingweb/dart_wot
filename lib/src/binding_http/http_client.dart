@@ -4,25 +4,25 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:convert';
-import 'dart:io';
+import "dart:convert";
+import "dart:io";
 
-import 'package:http/http.dart';
+import "package:http/http.dart";
 
-import '../core/content.dart';
-import '../core/credentials/basic_credentials.dart';
-import '../core/credentials/bearer_credentials.dart';
-import '../core/credentials/callbacks.dart';
-import '../core/protocol_interfaces/protocol_client.dart';
-import '../definitions/form.dart';
-import '../definitions/operation_type.dart';
-import '../definitions/security/basic_security_scheme.dart';
-import '../definitions/security/bearer_security_scheme.dart';
-import '../scripting_api/subscription.dart';
-import 'http_request_method.dart';
-import 'http_security_exception.dart';
+import "../core/content.dart";
+import "../core/credentials/basic_credentials.dart";
+import "../core/credentials/bearer_credentials.dart";
+import "../core/credentials/callbacks.dart";
+import "../core/protocol_interfaces/protocol_client.dart";
+import "../definitions/form.dart";
+import "../definitions/operation_type.dart";
+import "../definitions/security/basic_security_scheme.dart";
+import "../definitions/security/bearer_security_scheme.dart";
+import "../scripting_api/subscription.dart";
+import "http_request_method.dart";
+import "http_security_exception.dart";
 
-const _authorizationHeader = 'Authorization';
+const _authorizationHeader = "Authorization";
 
 /// A [ProtocolClient] for the Hypertext Transfer Protocol (HTTP).
 ///
@@ -121,16 +121,16 @@ final class HttpClient implements ProtocolClient {
     final username = credentials.username;
     final password = credentials.password;
 
-    final bytes = utf8.encode('$username:$password');
+    final bytes = utf8.encode("$username:$password");
     final base64Credentials = base64.encode(bytes);
-    request.headers[_authorizationHeader] = 'Basic $base64Credentials';
+    request.headers[_authorizationHeader] = "Basic $base64Credentials";
   }
 
   void _applyBearerCredentials(
     BearerCredentials credentials,
     Request request,
   ) {
-    request.headers[_authorizationHeader] = 'Bearer ${credentials.token}';
+    request.headers[_authorizationHeader] = "Bearer ${credentials.token}";
   }
 
   Request _copyRequest(Request request) {
@@ -147,7 +147,7 @@ final class HttpClient implements ProtocolClient {
     final basicCredentials = await _getBasicCredentials(request.url, form);
 
     if (basicCredentials == null) {
-      throw HttpSecurityException('No BasicCredentials have been provided.');
+      throw HttpSecurityException("No BasicCredentials have been provided.");
     }
 
     _applyBasicCredentials(basicCredentials, request);
@@ -163,7 +163,7 @@ final class HttpClient implements ProtocolClient {
     final bearerCredentials = await _getBearerCredentials(request.url, form);
 
     if (bearerCredentials == null) {
-      throw HttpSecurityException('No BearerCredentials have been provided.');
+      throw HttpSecurityException("No BearerCredentials have been provided.");
     }
 
     _applyBearerCredentials(bearerCredentials, request);
@@ -177,14 +177,14 @@ final class HttpClient implements ProtocolClient {
     Form? form,
   ]) async {
     if (response.statusCode == HttpStatus.unauthorized) {
-      final authenticate = response.headers['www-authenticate'];
+      final authenticate = response.headers["www-authenticate"];
 
       if (authenticate != null) {
-        final method = authenticate.split(' ')[0];
+        final method = authenticate.split(" ")[0];
         switch (method) {
-          case 'Basic':
+          case "Basic":
             return _createBasicAuthRequest(originalRequest, form);
-          case 'Bearer':
+          case "Bearer":
             return _createBearerAuthRequest(originalRequest, form);
         }
       }
@@ -230,13 +230,13 @@ final class HttpClient implements ProtocolClient {
   }
 
   static Map<String, String> _getHeadersFromForm(Form form) {
-    final Map<String, String> headers = {'Content-Type': form.contentType};
+    final Map<String, String> headers = {"Content-Type": form.contentType};
 
-    final dynamic formHeaders = form.additionalFields['htv:headers'];
+    final dynamic formHeaders = form.additionalFields["htv:headers"];
     if (formHeaders is List<Map<String, String>>) {
       for (final formHeader in formHeaders) {
-        final key = formHeader['htv:fieldName'];
-        final value = formHeader['htv:fieldValue'];
+        final key = formHeader["htv:fieldName"];
+        final value = formHeader["htv:fieldValue"];
 
         if (key != null && value != null) {
           headers[key] = value;
@@ -248,7 +248,7 @@ final class HttpClient implements ProtocolClient {
   }
 
   Content _contentFromResponse(Form form, StreamedResponse response) {
-    final type = response.headers['Content-Type'] ?? form.contentType;
+    final type = response.headers["Content-Type"] ?? form.contentType;
     final responseStream = response.stream.asBroadcastStream()
       ..listen(null, onDone: stop);
     return Content(type, responseStream);
@@ -298,11 +298,11 @@ final class HttpClient implements ProtocolClient {
     Request request, {
     required String acceptHeaderValue,
   }) async {
-    request.headers['Accept'] = acceptHeaderValue;
+    request.headers["Accept"] = acceptHeaderValue;
     final response = await _client.send(request);
     final finalResponse = await _handleResponse(request, response);
     return DiscoveryContent(
-      response.headers['Content-Type'] ?? acceptHeaderValue,
+      response.headers["Content-Type"] ?? acceptHeaderValue,
       finalResponse.stream,
       request.url,
     );
@@ -317,7 +317,7 @@ final class HttpClient implements ProtocolClient {
 
     yield await _sendDiscoveryRequest(
       request,
-      acceptHeaderValue: 'application/td+json',
+      acceptHeaderValue: "application/td+json",
     );
   }
 
@@ -327,7 +327,7 @@ final class HttpClient implements ProtocolClient {
 
     final encodedLinks = await _sendDiscoveryRequest(
       request,
-      acceptHeaderValue: 'application/link-format',
+      acceptHeaderValue: "application/link-format",
     );
 
     yield encodedLinks;
@@ -336,13 +336,13 @@ final class HttpClient implements ProtocolClient {
   @override
   Future<Content> requestThingDescription(Uri url) async {
     final request = Request(HttpRequestMethod.get.methodName, url);
-    const tdContentType = 'application/td+json';
-    request.headers['Accept'] = tdContentType;
+    const tdContentType = "application/td+json";
+    request.headers["Accept"] = tdContentType;
 
     final response = await _client.send(request);
 
     return Content(
-      response.headers['Content-Type'] ?? tdContentType,
+      response.headers["Content-Type"] ?? tdContentType,
       response.stream,
     );
   }

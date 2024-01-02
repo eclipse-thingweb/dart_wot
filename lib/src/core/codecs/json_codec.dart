@@ -4,12 +4,12 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:convert';
+import "dart:convert";
 
-import '../../definitions/data_schema.dart';
+import "../../definitions/data_schema.dart";
 
-import '../../scripting_api/data_schema_value.dart';
-import 'content_codec.dart';
+import "../../scripting_api/data_schema_value.dart";
+import "content_codec.dart";
 
 /// A [ContentCodec] that encodes and decodes JSON data.
 class JsonCodec extends ContentCodec {

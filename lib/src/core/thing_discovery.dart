@@ -4,18 +4,18 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:async';
+import "dart:async";
 
-import 'package:coap/coap.dart';
-import 'package:collection/collection.dart';
-import 'package:multicast_dns/multicast_dns.dart';
+import "package:coap/coap.dart";
+import "package:collection/collection.dart";
+import "package:multicast_dns/multicast_dns.dart";
 
-import '../../core.dart';
-import '../../scripting_api.dart' as scripting_api;
-import '../definitions/thing_description.dart';
-import '../scripting_api/data_schema_value.dart';
-import '../scripting_api/discovery/discovery_method.dart';
-import 'content.dart';
+import "../../core.dart";
+import "../../scripting_api.dart" as scripting_api;
+import "../definitions/thing_description.dart";
+import "../scripting_api/data_schema_value.dart";
+import "../scripting_api/discovery/discovery_method.dart";
+import "content.dart";
 
 /// Custom [Exception] that is thrown when the discovery process fails.
 class DiscoveryException implements Exception {
@@ -27,7 +27,7 @@ class DiscoveryException implements Exception {
 
   @override
   String toString() {
-    return 'DiscoveryException: $message';
+    return "DiscoveryException: $message";
   }
 }
 
@@ -110,7 +110,7 @@ class ThingDiscovery extends Stream<ThingDescription>
         await _servient.contentSerdes.contentToValue(content, null);
     if (dataSchemaValue is! DataSchemaValue<Map<String, Object?>>) {
       throw DiscoveryException(
-        'Could not parse Thing Description obtained from ${content.sourceUri}',
+        "Could not parse Thing Description obtained from ${content.sourceUri}",
       );
     }
 
@@ -134,7 +134,7 @@ class ThingDiscovery extends Stream<ThingDescription>
 
     if (dataSchemaValue is! DataSchemaValue<String>) {
       throw DiscoveryException(
-        'Could not parse Thing Description obtained from $sourceUri',
+        "Could not parse Thing Description obtained from $sourceUri",
       );
     }
 
@@ -229,26 +229,26 @@ class ThingDiscovery extends Stream<ThingDescription>
   Stream<ThingDescription> _discoverUsingDnsServiceDiscovery(Uri url) async* {
     final dnsName = url.toString();
 
-    if (dnsName.endsWith('local')) {
+    if (dnsName.endsWith("local")) {
       yield* _discoverUsingMdnssd(dnsName);
     } else {
-      throw UnimplementedError('Only mDNS-SD is currently supported!');
+      throw UnimplementedError("Only mDNS-SD is currently supported!");
     }
   }
 
   // TODO(JKRhb): Should be handled in a more robust way
   bool _isUdpDiscovery(String name) {
-    if (name.contains('_udp')) {
+    if (name.contains("_udp")) {
       return true;
     }
 
-    if (name.contains('_tcp')) {
+    if (name.contains("_tcp")) {
       return false;
     }
 
     // TODO(JKRhb): Check if this error message is correct.
     throw DiscoveryException(
-      'Service name $name neither includes _udp nor _tcp',
+      "Service name $name neither includes _udp nor _tcp",
     );
   }
 
@@ -260,8 +260,8 @@ class ThingDiscovery extends Stream<ThingDescription>
         .lookup<TxtResourceRecord>(ResourceRecordQuery.text(domainName))
         .toList();
     final recordsList = txtRecords.firstOrNull?.text
-        .split('\n')
-        .map((property) => property.split('='))
+        .split("\n")
+        .map((property) => property.split("="))
         .where((list) => list.length > 1)
         .map((list) => MapEntry(list[0], list[1]));
 
@@ -277,8 +277,8 @@ class ThingDiscovery extends Stream<ThingDescription>
     await client.start();
 
     final discoveredUris = <Uri>{};
-    final defaultScheme = _isUdpDiscovery(name) ? 'coap' : 'http';
-    const defaultType = 'Thing';
+    final defaultScheme = _isUdpDiscovery(name) ? "coap" : "http";
+    const defaultType = "Thing";
 
     await for (final PtrResourceRecord ptr in client
         .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
@@ -295,8 +295,8 @@ class ThingDiscovery extends Stream<ThingDescription>
         final uri = Uri(
           host: srv.target,
           port: srv.port,
-          path: txtRecords['td'],
-          scheme: txtRecords['scheme'] ?? defaultScheme,
+          path: txtRecords["td"],
+          scheme: txtRecords["scheme"] ?? defaultScheme,
         );
 
         final duplicate = !discoveredUris.add(uri);
@@ -305,12 +305,12 @@ class ThingDiscovery extends Stream<ThingDescription>
           continue;
         }
 
-        final type = txtRecords['type'] ?? defaultType;
+        final type = txtRecords["type"] ?? defaultType;
 
         switch (type) {
-          case 'Thing':
+          case "Thing":
             yield* _discoverDirectly(uri);
-          case 'Directory':
+          case "Directory":
             // TODO(JKRhb): Implement directory discovery.
             break;
         }
@@ -340,13 +340,13 @@ extension _UriExtension on Uri {
   /// the parameter name `rt`. If this name should already be in use, it will
   /// not be overridden.
   Uri toLinkFormatDiscoveryUri(String resourceType) {
-    final Map<String, dynamic> newQueryParameters = {'rt': resourceType};
+    final Map<String, dynamic> newQueryParameters = {"rt": resourceType};
     if (queryParameters.isNotEmpty) {
       newQueryParameters.addAll(queryParameters);
     }
 
     return replace(
-      path: _pathOrNull ?? '/.well-known/core',
+      path: _pathOrNull ?? "/.well-known/core",
       queryParameters: newQueryParameters,
     );
   }

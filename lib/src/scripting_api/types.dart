@@ -4,8 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'interaction_input.dart';
-import 'interaction_output.dart';
+import "interaction_input.dart";
+import "interaction_output.dart";
 
 /// Maps multiple [InteractionOutput]s to property names.
 ///

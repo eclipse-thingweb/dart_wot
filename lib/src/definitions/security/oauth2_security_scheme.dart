@@ -4,12 +4,12 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
+import "package:curie/curie.dart";
 
-import '../extensions/json_parser.dart';
-import 'security_scheme.dart';
+import "../extensions/json_parser.dart";
+import "security_scheme.dart";
 
-const _schemeName = 'oauth2';
+const _schemeName = "oauth2";
 
 /// OAuth 2.0 authentication security configuration for systems conformant with
 /// RFC 6749, RFC 8252 and (for the device flow) RFC 8628, identified by the
@@ -34,11 +34,11 @@ final class OAuth2SecurityScheme extends SecurityScheme {
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  )   : authorization = json.parseField<String>('authorization', parsedFields),
-        token = json.parseField<String>('token', parsedFields),
-        refresh = json.parseField<String>('refresh', parsedFields),
-        scopes = json.parseArrayField<String>('scopes', parsedFields),
-        flow = json.parseRequiredField<String>('flow', parsedFields),
+  )   : authorization = json.parseField<String>("authorization", parsedFields),
+        token = json.parseField<String>("token", parsedFields),
+        refresh = json.parseField<String>("refresh", parsedFields),
+        scopes = json.parseArrayField<String>("scopes", parsedFields),
+        flow = json.parseRequiredField<String>("flow", parsedFields),
         super.fromJson(_schemeName, json, prefixMapping, parsedFields);
 
   /// URI of the authorization server.

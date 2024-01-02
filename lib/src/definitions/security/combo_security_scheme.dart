@@ -4,12 +4,12 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
+import "package:curie/curie.dart";
 
-import '../extensions/json_parser.dart';
-import 'security_scheme.dart';
+import "../extensions/json_parser.dart";
+import "security_scheme.dart";
 
-const _schemeName = 'combo';
+const _schemeName = "combo";
 
 /// A combination of other security schemes identified by the Vocabulary Term
 /// `combo` (i.e., "scheme": "combo").
@@ -30,8 +30,8 @@ final class ComboSecurityScheme extends SecurityScheme {
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  )   : oneOf = json.parseArrayField<String>('oneOf', parsedFields),
-        allOf = json.parseArrayField<String>('allOf', parsedFields),
+  )   : oneOf = json.parseArrayField<String>("oneOf", parsedFields),
+        allOf = json.parseArrayField<String>("allOf", parsedFields),
         super.fromJson(_schemeName, json, prefixMapping, parsedFields);
 
   /// Array of two or more strings identifying other named security scheme

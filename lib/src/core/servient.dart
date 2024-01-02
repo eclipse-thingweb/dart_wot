@@ -4,20 +4,20 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:uuid/uuid.dart';
+import "package:uuid/uuid.dart";
 
-import '../definitions/interaction_affordances/interaction_affordance.dart';
-import '../definitions/thing_description.dart';
-import '../scripting_api/data_schema_value.dart';
-import 'consumed_thing.dart';
-import 'content_serdes.dart';
-import 'credentials/callbacks.dart';
-import 'exposed_thing.dart';
-import 'protocol_interfaces/protocol_client.dart';
-import 'protocol_interfaces/protocol_client_factory.dart';
-import 'protocol_interfaces/protocol_server.dart';
-import 'thing_discovery.dart';
-import 'wot.dart';
+import "../definitions/interaction_affordances/interaction_affordance.dart";
+import "../definitions/thing_description.dart";
+import "../scripting_api/data_schema_value.dart";
+import "consumed_thing.dart";
+import "content_serdes.dart";
+import "credentials/callbacks.dart";
+import "exposed_thing.dart";
+import "protocol_interfaces/protocol_client.dart";
+import "protocol_interfaces/protocol_client_factory.dart";
+import "protocol_interfaces/protocol_server.dart";
+import "thing_discovery.dart";
+import "wot.dart";
 
 /// Exception that is thrown by a [Servient].
 class ServientException implements Exception {
@@ -27,7 +27,7 @@ class ServientException implements Exception {
   final String _message;
 
   @override
-  String toString() => 'ServientException: $_message';
+  String toString() => "ServientException: $_message";
 }
 
 // TODO(JKRhb): Documentation should be improved.
@@ -133,7 +133,7 @@ class Servient {
   /// `true`.
   bool addThing(ExposedThing thing) {
     const uuid = Uuid();
-    thing.id ??= 'urn:uuid:${uuid.v4()}';
+    thing.id ??= "urn:uuid:${uuid.v4()}";
 
     if (_things.containsKey(thing.id)) {
       return false;
@@ -221,7 +221,7 @@ class Servient {
 
     if (clientFactory == null) {
       throw ServientException(
-        'Servient has no ClientFactory for scheme $scheme',
+        "Servient has no ClientFactory for scheme $scheme",
       );
     }
 
@@ -237,7 +237,7 @@ class Servient {
 
     if (dataSchemaValue is! DataSchemaValue<Map<String, Object?>>) {
       throw DiscoveryException(
-        'Could not parse Thing Description obtained from $url',
+        "Could not parse Thing Description obtained from $url",
       );
     }
 

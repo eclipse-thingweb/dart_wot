@@ -4,10 +4,10 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:typed_data';
+import "dart:typed_data";
 
-import '../definitions/data_schema.dart';
-import '../definitions/form.dart';
+import "../definitions/data_schema.dart";
+import "../definitions/form.dart";
 
 /// Exposes the data obtained by Thing interactions.
 ///

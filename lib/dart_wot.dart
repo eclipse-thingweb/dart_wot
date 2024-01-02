@@ -7,9 +7,9 @@
 /// A W3C Web of Things implementation written in Dart.
 library dart_wot;
 
-export 'binding_coap.dart';
-export 'binding_http.dart';
-export 'binding_mqtt.dart';
-export 'core.dart';
-export 'definitions.dart';
-export 'scripting_api.dart';
+export "binding_coap.dart";
+export "binding_http.dart";
+export "binding_mqtt.dart";
+export "core.dart";
+export "definitions.dart";
+export "scripting_api.dart";

@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
+import "package:curie/curie.dart";
 
-import '../extensions/json_parser.dart';
+import "../extensions/json_parser.dart";
 
 /// Class that contains metadata describing the configuration of a security
 /// mechanism.
@@ -27,10 +27,10 @@ base class SecurityScheme {
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  )   : proxy = json.parseUriField('proxy', parsedFields),
-        description = json.parseField<String>('description', parsedFields),
-        descriptions = json.parseMapField<String>('descriptions', parsedFields),
-        jsonLdType = json.parseArrayField<String>('@type'),
+  )   : proxy = json.parseUriField("proxy", parsedFields),
+        description = json.parseField<String>("description", parsedFields),
+        descriptions = json.parseMapField<String>("descriptions", parsedFields),
+        jsonLdType = json.parseArrayField<String>("@type"),
         additionalFields =
             json.parseAdditionalFields(prefixMapping, parsedFields);
 

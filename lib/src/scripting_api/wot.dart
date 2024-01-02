@@ -4,13 +4,13 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../definitions/thing_description.dart';
-import 'consumed_thing.dart';
-import 'discovery/discovery_method.dart';
-import 'discovery/thing_discovery.dart';
-import 'discovery/thing_filter.dart';
-import 'exposed_thing.dart';
-import 'types.dart';
+import "../definitions/thing_description.dart";
+import "consumed_thing.dart";
+import "discovery/discovery_method.dart";
+import "discovery/thing_discovery.dart";
+import "discovery/thing_filter.dart";
+import "exposed_thing.dart";
+import "types.dart";
 
 /// Interface for a [WoT] runtime.
 ///
@@ -62,10 +62,10 @@ abstract interface class WoT {
   /// for retrieving information about its current state (i.e., whether it is
   /// still [ThingDiscovery.active]).
   @Deprecated(
-    'The discover method is curently in the process of being adjusted to the '
-    'latest Scripting API version and is therefore subject to change. '
-    'For direct and directory discovery, please refer to the '
-    'requestThingDescription and exploreDirectory methods instead.',
+    "The discover method is curently in the process of being adjusted to the "
+    "latest Scripting API version and is therefore subject to change. "
+    "For direct and directory discovery, please refer to the "
+    "requestThingDescription and exploreDirectory methods instead.",
   )
   ThingDiscovery discover(
     Uri url, {

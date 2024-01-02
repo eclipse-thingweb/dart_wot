@@ -4,23 +4,23 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:dart_wot/dart_wot.dart';
-import 'package:mockito/annotations.dart';
-import 'package:test/test.dart';
-import 'binding_coap_test.mocks.dart';
+import "package:dart_wot/dart_wot.dart";
+import "package:mockito/annotations.dart";
+import "package:test/test.dart";
+import "binding_coap_test.mocks.dart";
 
 @GenerateMocks([ExposedThing])
 void main() {
-  group('CoAP Binding Tests', () {
+  group("CoAP Binding Tests", () {
     setUp(() {
       // Additional setup goes here.
     });
 
-    test('Server tests', () {
+    test("Server tests", () {
       final defaultServer = CoapServer();
 
       expect(defaultServer.port, 5683);
-      expect(defaultServer.scheme, 'coap');
+      expect(defaultServer.scheme, "coap");
 
       expect(
         () async => defaultServer.start(),
@@ -42,7 +42,7 @@ void main() {
       expect(customServer.preferredBlockSize, 64);
     });
 
-    test('ClientFactory tests', () async {
+    test("ClientFactory tests", () async {
       final defaultClientFactory = CoapClientFactory();
 
       expect(defaultClientFactory.coapConfig, null);

@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:meta/meta.dart';
+import "package:meta/meta.dart";
 
-import 'data_schema_value.dart';
+import "data_schema_value.dart";
 
 /// The (optional) input for an interaction.
 ///
@@ -34,7 +34,7 @@ sealed class InteractionInput {
     final dataSchemaValue = ArrayValue.tryParse(value);
 
     if (dataSchemaValue == null) {
-      throw const FormatException('Input contained invalid array element.');
+      throw const FormatException("Input contained invalid array element.");
     }
 
     return DataSchemaValueInput(dataSchemaValue);
@@ -44,7 +44,7 @@ sealed class InteractionInput {
     final dataSchemaValue = ObjectValue.tryParse(value);
 
     if (dataSchemaValue == null) {
-      throw const FormatException('Input contained invalid map entry.');
+      throw const FormatException("Input contained invalid map entry.");
     }
 
     return DataSchemaValueInput(dataSchemaValue);

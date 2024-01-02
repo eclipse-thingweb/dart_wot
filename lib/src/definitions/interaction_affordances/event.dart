@@ -4,13 +4,13 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
-import 'package:meta/meta.dart';
+import "package:curie/curie.dart";
+import "package:meta/meta.dart";
 
-import '../data_schema.dart';
-import '../extensions/json_parser.dart';
-import '../thing_description.dart';
-import 'interaction_affordance.dart';
+import "../data_schema.dart";
+import "../extensions/json_parser.dart";
+import "../thing_description.dart";
+import "interaction_affordance.dart";
 
 /// Class representing an [Event] Affordance in a Thing Description.
 @immutable
@@ -37,19 +37,19 @@ class Event extends InteractionAffordance {
   ) {
     final Set<String> parsedFields = {};
 
-    final title = json.parseField<String>('title', parsedFields);
-    final titles = json.parseMapField<String>('titles', parsedFields);
-    final description = json.parseField<String>('description', parsedFields);
+    final title = json.parseField<String>("title", parsedFields);
+    final titles = json.parseMapField<String>("titles", parsedFields);
+    final description = json.parseField<String>("description", parsedFields);
     final descriptions =
-        json.parseMapField<String>('descriptions', parsedFields);
+        json.parseMapField<String>("descriptions", parsedFields);
     final uriVariables =
-        json.parseMapField<dynamic>('uriVariables', parsedFields);
+        json.parseMapField<dynamic>("uriVariables", parsedFields);
 
     final subscription =
-        json.parseDataSchemaField('subscription', prefixMapping, parsedFields);
-    final data = json.parseDataSchemaField('data', prefixMapping, parsedFields);
+        json.parseDataSchemaField("subscription", prefixMapping, parsedFields);
+    final data = json.parseDataSchemaField("data", prefixMapping, parsedFields);
     final cancellation =
-        json.parseDataSchemaField('cancellation', prefixMapping, parsedFields);
+        json.parseDataSchemaField("cancellation", prefixMapping, parsedFields);
 
     final event = Event(
       thingDescription,

@@ -33,7 +33,7 @@ class CodecMediaType {
   /// `application/json`). The same holds true for parameters like
   /// `charset=utf-8`.
   static CodecMediaType? parse(String mediaType) {
-    final splitMediaType = mediaType.split('/');
+    final splitMediaType = mediaType.split("/");
 
     if (splitMediaType.length < 2) {
       return null;
@@ -45,7 +45,7 @@ class CodecMediaType {
       return null;
     }
 
-    final suffix = splitMediaType[1].split(';').first.split('+').last;
+    final suffix = splitMediaType[1].split(";").first.split("+").last;
 
     if (suffix.isEmpty) {
       return null;

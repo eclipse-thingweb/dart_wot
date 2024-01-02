@@ -4,15 +4,15 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:async';
+import "dart:async";
 
-import '../../scripting_api.dart' as scripting_api;
-import '../definitions/thing_description.dart';
-import '../scripting_api/discovery/discovery_method.dart';
-import 'consumed_thing.dart';
-import 'exposed_thing.dart';
-import 'servient.dart';
-import 'thing_discovery.dart'
+import "../../scripting_api.dart" as scripting_api;
+import "../definitions/thing_description.dart";
+import "../scripting_api/discovery/discovery_method.dart";
+import "consumed_thing.dart";
+import "exposed_thing.dart";
+import "servient.dart";
+import "thing_discovery.dart"
     show DiscoveryException, ThingDiscovery, ThingDiscoveryProcess;
 
 /// This [Exception] is thrown if an error during the consumption of a
@@ -26,8 +26,8 @@ class ThingConsumptionException implements Exception {
 
   @override
   String toString() {
-    return 'ThingConsumptionException: A ConsumedThing with identifier '
-        '$identifier already exists.';
+    return "ThingConsumptionException: A ConsumedThing with identifier "
+        "$identifier already exists.";
   }
 }
 
@@ -42,8 +42,8 @@ class ThingProductionException implements Exception {
 
   @override
   String toString() {
-    return 'ThingProductionException: An ExposedThing with identifier '
-        '$identifier already exists.';
+    return "ThingProductionException: An ExposedThing with identifier "
+        "$identifier already exists.";
   }
 }
 
@@ -108,20 +108,20 @@ class WoT implements scripting_api.WoT {
 
     if (!thingDescription.isValidDirectoryThingDescription) {
       throw DiscoveryException(
-        'Encountered an invalid Directory Thing Description',
+        "Encountered an invalid Directory Thing Description",
       );
     }
 
     final consumedDirectoryThing = await consume(thingDescription);
 
     final interactionOutput =
-        await consumedDirectoryThing.readProperty('things');
+        await consumedDirectoryThing.readProperty("things");
     final rawThingDescriptions = await interactionOutput.value();
 
     if (rawThingDescriptions is! List<Object?>) {
       throw DiscoveryException(
-        'Expected an array of Thing Descriptions but received an '
-        'invalid output instead.',
+        "Expected an array of Thing Descriptions but received an "
+        "invalid output instead.",
       );
     }
 
@@ -141,9 +141,9 @@ extension _DirectoryValidationExtension on ThingDescription {
       return false;
     }
 
-    const discoveryContextUri = 'https://www.w3.org/2022/wot/discovery';
-    const type = 'ThingDirectory';
-    const fullIri = '$discoveryContextUri#$type';
+    const discoveryContextUri = "https://www.w3.org/2022/wot/discovery";
+    const type = "ThingDirectory";
+    const fullIri = "$discoveryContextUri#$type";
 
     if (atTypes.contains(fullIri)) {
       return true;

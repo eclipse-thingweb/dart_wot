@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../../definitions/security/apikey_security_scheme.dart';
+import "../../definitions/security/apikey_security_scheme.dart";
 
-import 'credentials.dart';
+import "credentials.dart";
 
 /// [Credentials] used for the [ApiKeySecurityScheme].
 final class ApiKeyCredentials extends Credentials {

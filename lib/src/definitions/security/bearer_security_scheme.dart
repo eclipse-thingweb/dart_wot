@@ -4,16 +4,16 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
+import "package:curie/curie.dart";
 
-import '../extensions/json_parser.dart';
-import 'security_scheme.dart';
+import "../extensions/json_parser.dart";
+import "security_scheme.dart";
 
-const _defaultInValue = 'header';
-const _defaultAlgValue = 'ES256';
-const _defaultFormatValue = 'jwt';
+const _defaultInValue = "header";
+const _defaultAlgValue = "ES256";
+const _defaultFormatValue = "jwt";
 
-const _schemeName = 'bearer';
+const _schemeName = "bearer";
 
 /// Bearer Token security configuration identified by the Vocabulary Term
 /// `bearer`.
@@ -37,12 +37,12 @@ final class BearerSecurityScheme extends SecurityScheme {
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  )   : name = json.parseField<String>('name', parsedFields),
-        in_ = json.parseField<String>('in', parsedFields) ?? _defaultInValue,
-        format = json.parseField<String>('format', parsedFields) ??
+  )   : name = json.parseField<String>("name", parsedFields),
+        in_ = json.parseField<String>("in", parsedFields) ?? _defaultInValue,
+        format = json.parseField<String>("format", parsedFields) ??
             _defaultFormatValue,
-        alg = json.parseField<String>('alg', parsedFields) ?? _defaultAlgValue,
-        authorization = json.parseField<String>('authorization', parsedFields),
+        alg = json.parseField<String>("alg", parsedFields) ?? _defaultAlgValue,
+        authorization = json.parseField<String>("authorization", parsedFields),
         super.fromJson(_schemeName, json, prefixMapping, parsedFields);
 
   /// URI of the authorization server.

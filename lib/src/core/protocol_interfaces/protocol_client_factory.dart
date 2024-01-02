@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'protocol_client.dart';
+import "protocol_client.dart";
 
 /// Base class for a factory that produces [ProtocolClient]s.
 abstract interface class ProtocolClientFactory {

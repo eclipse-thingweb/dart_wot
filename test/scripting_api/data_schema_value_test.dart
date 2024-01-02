@@ -4,12 +4,12 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:dart_wot/scripting_api.dart';
-import 'package:test/test.dart';
+import "package:dart_wot/scripting_api.dart";
+import "package:test/test.dart";
 
 void main() {
-  group('DataSchemaValue', () {
-    test('should use the wrapped value for toString()', () {
+  group("DataSchemaValue", () {
+    test("should use the wrapped value for toString()", () {
       const inputValue = 42;
       final dataSchemaValue = DataSchemaValue.fromNumber(inputValue);
 

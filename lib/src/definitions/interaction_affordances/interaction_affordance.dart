@@ -4,10 +4,10 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:meta/meta.dart';
+import "package:meta/meta.dart";
 
-import '../form.dart';
-import '../thing_description.dart';
+import "../form.dart";
+import "../thing_description.dart";
 
 /// Base class for Interaction Affordances (Properties, Actions, and Events).
 @immutable

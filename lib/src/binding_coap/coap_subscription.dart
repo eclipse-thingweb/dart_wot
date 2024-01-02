@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:coap/coap.dart';
+import "package:coap/coap.dart";
 
-import '../scripting_api/subscription.dart';
+import "../scripting_api/subscription.dart";
 
 /// [Subscription] to a CoAP resource, based on the observe option ([RFC 7641]).
 ///

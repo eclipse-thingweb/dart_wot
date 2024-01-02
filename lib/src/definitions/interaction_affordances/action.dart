@@ -4,13 +4,13 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
-import 'package:meta/meta.dart';
+import "package:curie/curie.dart";
+import "package:meta/meta.dart";
 
-import '../data_schema.dart';
-import '../extensions/json_parser.dart';
-import '../thing_description.dart';
-import 'interaction_affordance.dart';
+import "../data_schema.dart";
+import "../extensions/json_parser.dart";
+import "../thing_description.dart";
+import "interaction_affordance.dart";
 
 /// Class representing an [Action] Affordance in a Thing Description.
 @immutable
@@ -39,22 +39,22 @@ class Action extends InteractionAffordance {
   ) {
     final Set<String> parsedFields = {};
 
-    final title = json.parseField<String>('title', parsedFields);
-    final titles = json.parseMapField<String>('titles', parsedFields);
-    final description = json.parseField<String>('description', parsedFields);
+    final title = json.parseField<String>("title", parsedFields);
+    final titles = json.parseMapField<String>("titles", parsedFields);
+    final description = json.parseField<String>("description", parsedFields);
     final descriptions =
-        json.parseMapField<String>('descriptions', parsedFields);
+        json.parseMapField<String>("descriptions", parsedFields);
     final uriVariables =
-        json.parseMapField<dynamic>('uriVariables', parsedFields);
+        json.parseMapField<dynamic>("uriVariables", parsedFields);
 
-    final safe = json.parseField<bool>('safe', parsedFields) ?? false;
+    final safe = json.parseField<bool>("safe", parsedFields) ?? false;
     final idempotent =
-        json.parseField<bool>('idempotent', parsedFields) ?? false;
-    final synchronous = json.parseField<bool>('synchronous', parsedFields);
+        json.parseField<bool>("idempotent", parsedFields) ?? false;
+    final synchronous = json.parseField<bool>("synchronous", parsedFields);
     final input =
-        json.parseDataSchemaField('input', prefixMapping, parsedFields);
+        json.parseDataSchemaField("input", prefixMapping, parsedFields);
     final output =
-        json.parseDataSchemaField('output', prefixMapping, parsedFields);
+        json.parseDataSchemaField("output", prefixMapping, parsedFields);
 
     final action = Action(
       thingDescription,

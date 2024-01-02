@@ -14,6 +14,6 @@ class ValidationException implements Exception {
 
   @override
   String toString() {
-    return 'ValidationException: $message';
+    return "ValidationException: $message";
   }
 }

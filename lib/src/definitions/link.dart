@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
+import "package:curie/curie.dart";
 
-import 'extensions/json_parser.dart';
+import "extensions/json_parser.dart";
 
 /// Represents an element of the `links` array in a Thing Description.
 ///
@@ -34,13 +34,13 @@ class Link {
   Link.fromJson(Map<String, dynamic> json, PrefixMapping prefixMapping) {
     final Set<String> parsedFields = {};
 
-    href = json.parseRequiredUriField('href', parsedFields);
-    type = json.parseField<String>('@type', parsedFields);
-    rel = json.parseField<String>('rel', parsedFields);
+    href = json.parseRequiredUriField("href", parsedFields);
+    type = json.parseField<String>("@type", parsedFields);
+    rel = json.parseField<String>("rel", parsedFields);
     anchor =
-        Uri.tryParse(json.parseField<String>('anchor', parsedFields) ?? '');
-    sizes = json.parseField<String>('sizes', parsedFields);
-    hreflang = json.parseArrayField<String>('hreflang', parsedFields);
+        Uri.tryParse(json.parseField<String>("anchor", parsedFields) ?? "");
+    sizes = json.parseField<String>("sizes", parsedFields);
+    hreflang = json.parseArrayField<String>("hreflang", parsedFields);
 
     additionalFields
         .addAll(json.parseAdditionalFields(prefixMapping, parsedFields));

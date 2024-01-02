@@ -1,20 +1,20 @@
-import 'dart:io';
-import 'dart:typed_data';
+import "dart:io";
+import "dart:typed_data";
 
-import 'package:cbor/cbor.dart';
-import 'package:coap/coap.dart';
-import 'package:dcaf/dcaf.dart';
+import "package:cbor/cbor.dart";
+import "package:coap/coap.dart";
+import "package:dcaf/dcaf.dart";
 
-import '../core/content.dart';
-import '../definitions/expected_response.dart';
-import '../definitions/form.dart';
-import '../definitions/operation_type.dart';
-import '../definitions/security/ace_security_scheme.dart';
-import '../definitions/security/auto_security_scheme.dart';
-import '../definitions/security/psk_security_scheme.dart';
-import '../definitions/validation/validation_exception.dart';
-import 'coap_binding_exception.dart';
-import 'coap_definitions.dart';
+import "../core/content.dart";
+import "../definitions/expected_response.dart";
+import "../definitions/form.dart";
+import "../definitions/operation_type.dart";
+import "../definitions/security/ace_security_scheme.dart";
+import "../definitions/security/auto_security_scheme.dart";
+import "../definitions/security/psk_security_scheme.dart";
+import "../definitions/validation/validation_exception.dart";
+import "coap_binding_exception.dart";
+import "coap_definitions.dart";
 
 /// Extension which makes it easier to handle [Uri]s containing
 /// [InternetAddress]es.
@@ -48,7 +48,7 @@ extension CoapFormExtension on Form {
 
   /// Get the [CoapSubprotocol] for this [Form], if one is set.
   CoapSubprotocol? get coapSubprotocol {
-    if (subprotocol == coapPrefixMapping.expandCurieString('observe')) {
+    if (subprotocol == coapPrefixMapping.expandCurieString("observe")) {
       return CoapSubprotocol.observe;
     }
 
@@ -57,7 +57,7 @@ extension CoapFormExtension on Form {
 
   /// The Content-Format for CoAP request and response payloads.
   CoapMediaType get contentFormat {
-    final formDefinition = _obtainVocabularyTerm<int>('contentFormat');
+    final formDefinition = _obtainVocabularyTerm<int>("contentFormat");
     final contentFormat = CoapMediaType.fromIntValue(formDefinition ?? -1);
 
     return contentFormat ??
@@ -68,13 +68,13 @@ extension CoapFormExtension on Form {
   /// The Content-Format for the Accept option CoAP request and response
   /// payloads.
   CoapMediaType? get accept {
-    final formDefinition = _obtainVocabularyTerm<int>('accept');
+    final formDefinition = _obtainVocabularyTerm<int>("accept");
     return CoapMediaType.fromIntValue(formDefinition ?? -1);
   }
 
   BlockSize? _determineBlockSize(String fieldName) {
     final blockwiseParameters =
-        _obtainVocabularyTerm<Map<String, dynamic>>('blockwise');
+        _obtainVocabularyTerm<Map<String, dynamic>>("blockwise");
 
     if (blockwiseParameters == null) {
       return null;
@@ -94,21 +94,21 @@ extension CoapFormExtension on Form {
       // ignore: avoid_catching_errors
     } on ArgumentError {
       throw ValidationException(
-        'Encountered invalid blocksize $value in CoAP form',
+        "Encountered invalid blocksize $value in CoAP form",
       );
     }
   }
 
   /// Indicates the Block2 size preferred by a server.
-  BlockSize? get block2Size => _determineBlockSize('block2Size');
+  BlockSize? get block2Size => _determineBlockSize("block2Size");
 
   /// Indicates the Block1 size preferred by a server.
-  BlockSize? get block1Size => _determineBlockSize('block1Size');
+  BlockSize? get block1Size => _determineBlockSize("block1Size");
 
   // TODO: Consider default method
   /// Indicates the [CoapRequestMethod] contained in this [Form].
   CoapRequestMethod? get method {
-    final methodDefinition = _obtainVocabularyTerm<String>('method');
+    final methodDefinition = _obtainVocabularyTerm<String>("method");
 
     if (methodDefinition == null) {
       return null;
@@ -137,7 +137,7 @@ extension CoapExpectedResponseExtension on ExpectedResponse {
 
   /// The Content-Format for CoAP request and response payloads.
   CoapMediaType get contentFormat {
-    final formDefinition = _obtainVocabularyTerm<int>('contentFormat');
+    final formDefinition = _obtainVocabularyTerm<int>("contentFormat");
     final contentFormat = CoapMediaType.fromIntValue(formDefinition ?? -1);
 
     return contentFormat ??
@@ -193,7 +193,7 @@ extension ResponseExtension on CoapResponse {
   Stream<List<int>> get _payloadStream => Stream.value(payload);
 
   String get _contentType =>
-      contentFormat?.contentType.toString() ?? 'application/json';
+      contentFormat?.contentType.toString() ?? "application/json";
 
   /// Extract the [Content] of this [CoapResponse].
   Content get content {
@@ -248,7 +248,7 @@ extension PskExtension on AccessTokenResponse {
     final aceProfile = this.aceProfile;
     if (aceProfile != null && aceProfile != AceProfile.coapDtls) {
       throw CoapBindingException(
-        'ACE-OAuth Profile $aceProfile is not supported.',
+        "ACE-OAuth Profile $aceProfile is not supported.",
       );
     }
   }
@@ -263,8 +263,8 @@ extension PskExtension on AccessTokenResponse {
     final cnf = this.cnf;
     if (cnf is! PlainCoseKey) {
       throw CoapBindingException(
-        'Proof of Possession Key for establishing a DTLS connection must be '
-        'symmetric',
+        "Proof of Possession Key for establishing a DTLS connection must be "
+        "symmetric",
       );
     }
     final key = cnf.key.parameters[-1];
@@ -273,8 +273,8 @@ extension PskExtension on AccessTokenResponse {
       preSharedKey = Uint8List.fromList(key.bytes);
     } else {
       throw CoapBindingException(
-        'Proof of Possession Key for establishing a DTLS connection must be '
-        'bytes',
+        "Proof of Possession Key for establishing a DTLS connection must be "
+        "bytes",
       );
     }
 

@@ -4,12 +4,12 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
+import "package:mqtt_client/mqtt_client.dart";
+import "package:mqtt_client/mqtt_server_client.dart";
 
-import '../core/content.dart';
-import '../definitions/form.dart';
-import '../scripting_api/subscription.dart' as scripting_api;
+import "../core/content.dart";
+import "../definitions/form.dart";
+import "../scripting_api/subscription.dart" as scripting_api;
 
 /// [scripting_api.Subscription] for the MQTT protocol.
 class MqttSubscription implements scripting_api.Subscription {
@@ -24,7 +24,7 @@ class MqttSubscription implements scripting_api.Subscription {
     final updates = _client.updates;
 
     if (updates == null) {
-      throw ArgumentError.notNull('client.updates');
+      throw ArgumentError.notNull("client.updates");
     }
 
     // TODO: Check if this needs to be cleaned up somehow

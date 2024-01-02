@@ -4,13 +4,13 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:typed_data';
+import "dart:typed_data";
 
-import '../../scripting_api.dart' as scripting_api;
-import '../definitions/data_schema.dart';
-import '../definitions/form.dart';
-import 'content.dart';
-import 'content_serdes.dart';
+import "../../scripting_api.dart" as scripting_api;
+import "../definitions/data_schema.dart";
+import "../definitions/form.dart";
+import "content.dart";
+import "content_serdes.dart";
 
 /// Implementation of the [scripting_api.InteractionOutput] interface.
 class InteractionOutput implements scripting_api.InteractionOutput {

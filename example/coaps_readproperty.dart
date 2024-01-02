@@ -6,15 +6,15 @@
 
 // ignore_for_file: avoid_print
 
-import 'dart:typed_data';
+import "dart:typed_data";
 
-import 'package:dart_wot/dart_wot.dart';
+import "package:dart_wot/dart_wot.dart";
 
 /// Matches [PskCredentials] by hostname and URI scheme.
 final Map<Uri, PskCredentials> _pskCredentialsStore = {
-  Uri(host: 'californium.eclipseprojects.io', scheme: 'coaps'): PskCredentials(
-    identity: Uint8List.fromList('Client_identity'.codeUnits),
-    preSharedKey: Uint8List.fromList('secretPSK'.codeUnits),
+  Uri(host: "californium.eclipseprojects.io", scheme: "coaps"): PskCredentials(
+    identity: Uint8List.fromList("Client_identity".codeUnits),
+    preSharedKey: Uint8List.fromList("secretPSK".codeUnits),
   ),
 };
 
@@ -31,7 +31,7 @@ PskCredentials? _pskCredentialsCallback(
 Future<void> main(List<String> args) async {
   final CoapClientFactory coapClientFactory = CoapClientFactory(
     coapConfig: const CoapConfig(
-      dtlsCiphers: 'PSK-AES128-CCM8',
+      dtlsCiphers: "PSK-AES128-CCM8",
     ),
     pskCredentialsCallback: _pskCredentialsCallback,
   );
@@ -70,7 +70,7 @@ Future<void> main(List<String> args) async {
 
   final thingDescription = ThingDescription(thingDescriptionJson);
   final consumedThing = await wot.consume(thingDescription);
-  final status = await consumedThing.readProperty('status');
+  final status = await consumedThing.readProperty("status");
   final value = await status.value();
   print(value);
 }

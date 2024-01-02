@@ -4,23 +4,23 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:async';
+import "dart:async";
 
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
-import 'package:typed_data/typed_buffers.dart';
+import "package:mqtt_client/mqtt_client.dart";
+import "package:mqtt_client/mqtt_server_client.dart";
+import "package:typed_data/typed_buffers.dart";
 
-import '../core/content.dart';
-import '../core/credentials/basic_credentials.dart';
-import '../core/credentials/callbacks.dart';
-import '../core/protocol_interfaces/protocol_client.dart';
-import '../definitions/form.dart';
-import '../scripting_api/subscription.dart' as scripting_api;
-import 'constants.dart';
-import 'mqtt_binding_exception.dart';
-import 'mqtt_config.dart';
-import 'mqtt_extensions.dart';
-import 'mqtt_subscription.dart';
+import "../core/content.dart";
+import "../core/credentials/basic_credentials.dart";
+import "../core/credentials/callbacks.dart";
+import "../core/protocol_interfaces/protocol_client.dart";
+import "../definitions/form.dart";
+import "../scripting_api/subscription.dart" as scripting_api;
+import "constants.dart";
+import "mqtt_binding_exception.dart";
+import "mqtt_config.dart";
+import "mqtt_extensions.dart";
+import "mqtt_subscription.dart";
 
 /// [ProtocolClient] for supporting the MQTT protocol.
 ///
@@ -61,13 +61,13 @@ final class MqttClient implements ProtocolClient {
 
     if (form != null) {
       throw MqttBindingException(
-        'Form requires basic authentication but no credentials were provided.',
+        "Form requires basic authentication but no credentials were provided.",
       );
     }
 
     throw MqttBindingException(
-      'Discovery requires basic authentication but no credentials were '
-      'provided.',
+      "Discovery requires basic authentication but no credentials were "
+      "provided.",
     );
   }
 
@@ -92,7 +92,7 @@ final class MqttClient implements ProtocolClient {
     }
 
     if (status?.state != MqttConnectionState.connected) {
-      throw MqttBindingException('Connecting failed');
+      throw MqttBindingException("Connecting failed");
     }
 
     return client;
@@ -129,13 +129,13 @@ final class MqttClient implements ProtocolClient {
     final timer = Timer(
       _mqttConfig.readTimeout,
       () => completer.completeError(
-        TimeoutException('Reading resource $topic failed'),
+        TimeoutException("Reading resource $topic failed"),
       ),
     );
 
     // TODO: Revisit QoS value and subscription check
     if (client.subscribe(topic, qualityOfService) == null) {
-      throw MqttBindingException('Subscription to topic $topic failed');
+      throw MqttBindingException("Subscription to topic $topic failed");
     }
 
     client.updates?.listen((messages) {
@@ -194,7 +194,7 @@ final class MqttClient implements ProtocolClient {
 
     // TODO: Revisit QoS value and subscription check
     if (client.subscribe(topic, qualityOfService) == null) {
-      throw MqttBindingException('Subscription to topic $topic failed');
+      throw MqttBindingException("Subscription to topic $topic failed");
     }
 
     return MqttSubscription(form, client, complete, next: next, error: error);
@@ -206,7 +206,7 @@ final class MqttClient implements ProtocolClient {
     bool disableMulticast = false,
   }) async* {
     final client = await _connect(uri, null);
-    const discoveryTopic = 'wot/td/#';
+    const discoveryTopic = "wot/td/#";
 
     final streamController = StreamController<DiscoveryContent>();
 
@@ -221,7 +221,7 @@ final class MqttClient implements ProtocolClient {
     // TODO: Revisit QoS value and subscription check
     if (client.subscribe(discoveryTopic, MqttQos.atLeastOnce) == null) {
       throw MqttBindingException(
-        'Subscription to topic $discoveryTopic failed',
+        "Subscription to topic $discoveryTopic failed",
       );
     }
 

@@ -4,11 +4,11 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
+import "package:curie/curie.dart";
 
-import 'security_scheme.dart';
+import "security_scheme.dart";
 
-const _schemeName = 'nosec';
+const _schemeName = "nosec";
 
 /// A security configuration corresponding to identified by the Vocabulary Term
 /// `nosec`.

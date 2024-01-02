@@ -6,9 +6,9 @@
 
 // ignore_for_file: avoid_print
 
-import 'package:dart_wot/dart_wot.dart';
+import "package:dart_wot/dart_wot.dart";
 
-const propertyName = 'string';
+const propertyName = "string";
 
 extension PrintExtension on InteractionOutput {
   Future<void> printValue() async {
@@ -23,13 +23,13 @@ Future<void> handleThingDescription(
   final consumedThing = await wot.consume(thingDescription);
   await consumedThing.writeProperty(
     propertyName,
-    'Hello World'.asInteractionInput(),
+    "Hello World".asInteractionInput(),
   );
   var output = await consumedThing.readProperty(propertyName);
   await output.printValue();
   await consumedThing.writeProperty(
     propertyName,
-    'Bye Value'.asInteractionInput(),
+    "Bye Value".asInteractionInput(),
   );
   output = await consumedThing.readProperty(propertyName);
   await output.printValue();
@@ -39,7 +39,7 @@ Future<void> main(List<String> args) async {
   final servient = Servient(clientFactories: [CoapClientFactory()]);
 
   final wot = await servient.start();
-  final uri = Uri.parse('coap://plugfest.thingweb.io:5683/testthing');
+  final uri = Uri.parse("coap://plugfest.thingweb.io:5683/testthing");
 
   // Example using for-await-loop
   try {
@@ -59,7 +59,7 @@ Future<void> main(List<String> args) async {
     (thingDescription) async {
       await handleThingDescription(wot, thingDescription);
     },
-    onError: (error) => print('Encountered an error: $error'),
+    onError: (error) => print("Encountered an error: $error"),
     onDone: () => print('Discovery with "listen" has finished.'),
   );
 }

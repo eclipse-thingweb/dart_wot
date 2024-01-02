@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'thing_description.dart';
+import "thing_description.dart";
 
 /// Class representing a WoT Thing Model.
 ///

@@ -4,15 +4,15 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:dart_wot/dart_wot.dart';
-import 'package:test/test.dart';
+import "package:dart_wot/dart_wot.dart";
+import "package:test/test.dart";
 
-const testUriScheme = 'test';
+const testUriScheme = "test";
 
 class MockedProtocolClientFactory implements ProtocolClientFactory {
   @override
   ProtocolClient createClient() {
-    throw UnimplementedError('Instantiating a client is not supported yet.');
+    throw UnimplementedError("Instantiating a client is not supported yet.");
   }
 
   @override
@@ -30,8 +30,8 @@ class MockedProtocolClientFactory implements ProtocolClientFactory {
 }
 
 void main() {
-  group('Servient Tests', () {
-    test('Should accept a ProtocolClientFactory list as constructor argument',
+  group("Servient Tests", () {
+    test("Should accept a ProtocolClientFactory list as constructor argument",
         () {
       final servient = Servient(
         clientFactories: [
@@ -44,7 +44,7 @@ void main() {
     });
 
     test(
-      'Should allow for adding and removing a ProtocolClientFactory at runtime',
+      "Should allow for adding and removing a ProtocolClientFactory at runtime",
       () {
         final servient = Servient()
           ..addClientFactory(MockedProtocolClientFactory());

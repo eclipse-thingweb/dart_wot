@@ -4,26 +4,26 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:async';
-import 'dart:typed_data';
+import "dart:async";
+import "dart:typed_data";
 
-import 'package:coap/coap.dart' as coap;
-import 'package:coap/config/coap_config_default.dart';
-import 'package:dcaf/dcaf.dart';
+import "package:coap/coap.dart" as coap;
+import "package:coap/config/coap_config_default.dart";
+import "package:dcaf/dcaf.dart";
 
-import '../core/content.dart';
-import '../core/credentials/ace_credentials.dart';
-import '../core/credentials/callbacks.dart';
-import '../core/credentials/psk_credentials.dart';
-import '../core/protocol_interfaces/protocol_client.dart';
-import '../definitions/form.dart';
-import '../definitions/operation_type.dart';
-import '../scripting_api/subscription.dart';
-import 'coap_binding_exception.dart';
-import 'coap_config.dart';
-import 'coap_definitions.dart';
-import 'coap_extensions.dart';
-import 'coap_subscription.dart';
+import "../core/content.dart";
+import "../core/credentials/ace_credentials.dart";
+import "../core/credentials/callbacks.dart";
+import "../core/credentials/psk_credentials.dart";
+import "../core/protocol_interfaces/protocol_client.dart";
+import "../definitions/form.dart";
+import "../definitions/operation_type.dart";
+import "../scripting_api/subscription.dart";
+import "coap_binding_exception.dart";
+import "coap_config.dart";
+import "coap_definitions.dart";
+import "coap_extensions.dart";
+import "coap_subscription.dart";
 
 class _InternalCoapConfig extends CoapConfigDefault {
   _InternalCoapConfig(CoapConfig coapConfig)
@@ -67,7 +67,7 @@ coap.PskCredentialsCallback? _createPskCallback(
 
     if (pskCredentials == null) {
       throw CoapBindingException(
-        'Missing PSK credentials for CoAPS request!',
+        "Missing PSK credentials for CoAPS request!",
       );
     }
 
@@ -234,7 +234,7 @@ final class CoapClient implements ProtocolClient {
   ) async {
     final requestMethod = (form.method ?? CoapRequestMethod.get).code;
 
-    final creationHintUri = form.resolvedHref.replace(scheme: 'coap');
+    final creationHintUri = form.resolvedHref.replace(scheme: "coap");
 
     final request = await _createRequest(
       requestMethod,
@@ -279,7 +279,7 @@ final class CoapClient implements ProtocolClient {
       creationHint = await _obtainCreationHintFromResourceServer(form);
     }
 
-    final textScopes = aceSecurityScheme.scopes?.join(' ');
+    final textScopes = aceSecurityScheme.scopes?.join(" ");
     // TODO: Do the scopes defined for a form need to be considered here as
     //       well?
     TextScope? scope;
@@ -312,13 +312,13 @@ final class CoapClient implements ProtocolClient {
     );
 
     if (aceCredentials == null) {
-      throw CoapBindingException('Missing ACE-OAuth Credentials');
+      throw CoapBindingException("Missing ACE-OAuth Credentials");
     }
 
     final pskCredentials = aceCredentials.accessToken.pskCredentials;
 
     final client = coap.CoapClient(
-      request.uri.replace(scheme: 'coaps'),
+      request.uri.replace(scheme: "coaps"),
       pskCredentialsCallback: (identityHint) => pskCredentials,
     );
 

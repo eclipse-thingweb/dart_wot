@@ -4,10 +4,10 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import '../core/credentials/callbacks.dart';
-import '../core/protocol_interfaces/protocol_server.dart';
-import '../scripting_api/exposed_thing.dart';
-import 'coap_config.dart';
+import "../core/credentials/callbacks.dart";
+import "../core/protocol_interfaces/protocol_server.dart";
+import "../scripting_api/exposed_thing.dart";
+import "coap_config.dart";
 
 /// A [ProtocolServer] for the Constrained Application Protocol (CoAP).
 final class CoapServer implements ProtocolServer {
@@ -18,7 +18,7 @@ final class CoapServer implements ProtocolServer {
 
   // TODO(JKRhb): Consider other protocol schemes.
   @override
-  final String scheme = 'coap';
+  final String scheme = "coap";
 
   @override
   final int port;

@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'package:curie/curie.dart';
+import "package:curie/curie.dart";
 
-import 'extensions/json_parser.dart';
+import "extensions/json_parser.dart";
 
 /// Communication metadata describing the expected response message for the
 /// primary response.
@@ -15,7 +15,7 @@ class ExpectedResponse {
   ExpectedResponse(this.contentType, {Map<String, dynamic>? additionalFields})
       : additionalFields = Map.fromEntries(
           additionalFields?.entries
-                  .where((element) => element.key != 'contentType') ??
+                  .where((element) => element.key != "contentType") ??
               [],
         );
 
@@ -27,7 +27,7 @@ class ExpectedResponse {
     final Set<String> parsedFields = {};
 
     final contentType =
-        json.parseRequiredField<String>('contentType', parsedFields);
+        json.parseRequiredField<String>("contentType", parsedFields);
     final additionalFields =
         json.parseAdditionalFields(prefixMapping, parsedFields);
 

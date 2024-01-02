@@ -4,22 +4,22 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import 'dart:convert';
+import "dart:convert";
 
-import 'package:curie/curie.dart';
+import "package:curie/curie.dart";
 
-import 'additional_expected_response.dart';
-import 'data_schema.dart';
-import 'extensions/json_parser.dart';
-import 'form.dart';
-import 'interaction_affordances/action.dart';
-import 'interaction_affordances/event.dart';
-import 'interaction_affordances/property.dart';
-import 'link.dart';
-import 'security/security_scheme.dart';
-import 'thing_model.dart';
-import 'validation/thing_description_schema.dart';
-import 'version_info.dart';
+import "additional_expected_response.dart";
+import "data_schema.dart";
+import "extensions/json_parser.dart";
+import "form.dart";
+import "interaction_affordances/action.dart";
+import "interaction_affordances/event.dart";
+import "interaction_affordances/property.dart";
+import "link.dart";
+import "security/security_scheme.dart";
+import "thing_model.dart";
+import "validation/thing_description_schema.dart";
+import "version_info.dart";
 
 /// Type definition for a JSON-LD @context entry.
 typedef ContextEntry = ({String? key, String value});
@@ -175,21 +175,21 @@ class ThingDescription {
     final Set<String> parsedFields = {};
 
     context.addAll(json.parseContext(prefixMapping, parsedFields));
-    atType = json.parseArrayField('@type', parsedFields);
-    title = json.parseRequiredField<String>('title', parsedFields);
-    titles.addAll(json.parseMapField<String>('titles', parsedFields) ?? {});
-    description = json.parseField<String>('description', parsedFields);
+    atType = json.parseArrayField("@type", parsedFields);
+    title = json.parseRequiredField<String>("title", parsedFields);
+    titles.addAll(json.parseMapField<String>("titles", parsedFields) ?? {});
+    description = json.parseField<String>("description", parsedFields);
     descriptions
-        .addAll(json.parseMapField<String>('descriptions', parsedFields) ?? {});
+        .addAll(json.parseMapField<String>("descriptions", parsedFields) ?? {});
     version = json.parseVersionInfo(prefixMapping, parsedFields);
-    created = json.parseDateTime('created', parsedFields);
-    modified = json.parseDateTime('modified', parsedFields);
-    support = json.parseUriField('support', parsedFields);
-    base = json.parseUriField('base', parsedFields);
-    id = json.parseField<String>('id', parsedFields);
+    created = json.parseDateTime("created", parsedFields);
+    modified = json.parseDateTime("modified", parsedFields);
+    support = json.parseUriField("support", parsedFields);
+    base = json.parseUriField("base", parsedFields);
+    id = json.parseField<String>("id", parsedFields);
 
     security
-        .addAll(json.parseArrayField<String>('security', parsedFields) ?? []);
+        .addAll(json.parseArrayField<String>("security", parsedFields) ?? []);
 
     securityDefinitions.addAll(
       json.parseSecurityDefinitions(prefixMapping, parsedFields) ?? {},
@@ -203,16 +203,16 @@ class ThingDescription {
 
     links.addAll(json.parseLinks(prefixMapping, parsedFields) ?? []);
 
-    profile.addAll(json.parseUriArrayField('profile', parsedFields) ?? []);
+    profile.addAll(json.parseUriArrayField("profile", parsedFields) ?? []);
     schemaDefinitions.addAll(
       json.parseDataSchemaMapField(
-            'schemaDefinitions',
+            "schemaDefinitions",
             prefixMapping,
             parsedFields,
           ) ??
           {},
     );
-    uriVariables = json.parseMapField<dynamic>('uriVariables', parsedFields);
+    uriVariables = json.parseMapField<dynamic>("uriVariables", parsedFields);
     additionalFields
         .addAll(json.parseAdditionalFields(prefixMapping, parsedFields));
   }
