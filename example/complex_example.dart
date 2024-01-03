@@ -10,7 +10,7 @@ import "package:dart_wot/dart_wot.dart";
 
 const thingDescriptionJson = {
   "@context": [
-    "http://www.w3.org/ns/td",
+    "https://www.w3.org/2022/wot/td/v1.1",
     {"@language": "de", "coap": "http://www.example.org/coap-binding#"},
   ],
   "title": "Test Thing",

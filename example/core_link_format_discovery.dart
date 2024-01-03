@@ -8,30 +8,35 @@
 
 import "package:dart_wot/dart_wot.dart";
 
-const propertyName = "status";
-const actionName = "toggle";
-
 Future<void> main(List<String> args) async {
   final servient = Servient(clientFactories: [CoapClientFactory()]);
 
   final wot = await servient.start();
 
-  // TODO(JKRhb): Replace with an endpoint providing CoRE Format Links pointing
-  //              to TDs. At the moment, this URI is just for illustrative
-  //              purpose and will not return actual Thing Description links.
-  final discoveryUri = Uri.parse("coap://coap.me/.well-known/core");
+  final discoveryUri =
+      Uri.parse("coap://plugfest.thingweb.io/.well-known/core");
 
   await for (final thingDescription
       in wot.discover(discoveryUri, method: DiscoveryMethod.coreLinkFormat)) {
+    print(thingDescription.title);
+
+    if (thingDescription.title != "Smart-Coffee-Machine") {
+      continue;
+    }
+
     final consumedThing = await wot.consume(thingDescription);
 
     try {
-      final statusBefore = await consumedThing.readProperty(propertyName);
+      final statusBefore =
+          await consumedThing.readProperty("allAvailableResources");
       print(await statusBefore.value());
 
-      await consumedThing.invokeAction(actionName);
+      final result = await consumedThing.invokeAction("makeDrink");
 
-      final statusAfter = await consumedThing.readProperty(propertyName);
+      print(await result.value());
+
+      final statusAfter =
+          await consumedThing.readProperty("allAvailableResources");
       print(await statusAfter.value());
     } on Exception catch (e) {
       print(e);

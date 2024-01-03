@@ -11,7 +11,7 @@ import "package:dart_wot/dart_wot.dart";
 const username = "username";
 const password = "password";
 const thingDescriptionJson = {
-  "@context": ["http://www.w3.org/ns/td"],
+  "@context": "https://www.w3.org/2022/wot/td/v1.1",
   "title": "Test Thing",
   "id": "urn:test",
   "base": "https://httpbin.org",

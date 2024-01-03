@@ -45,7 +45,7 @@ Future<void> main(List<String> args) async {
   final wot = await servient.start();
 
   const thingDescriptionJson = {
-    "@context": "http://www.w3.org/ns/td",
+    "@context": "https://www.w3.org/2022/wot/td/v1.1",
     "title": "Test Thing",
     "base": "coaps://californium.eclipseprojects.io",
     "security": ["psk_sc"],

@@ -87,7 +87,9 @@ Future<void> main(List<String> args) async {
   await consumedThing.invokeAction("toggle", input: actionInput);
   await subscription.stop();
 
-  await consumedThing.invokeAction("toggle", input: actionInput);
+  final actionInput2 = "Bye World".asInteractionInput();
+
+  await consumedThing.invokeAction("toggle", input: actionInput2);
   await consumedThing.readAndPrintProperty("status");
   print("Done!");
 }
