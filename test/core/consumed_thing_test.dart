@@ -18,12 +18,8 @@ import "package:dart_wot/src/definitions/validation/validation_exception.dart";
 import "package:test/test.dart";
 
 void main() {
-  group("Consumed Thing Tests", () {
-    setUp(() {
-      // Additional setup goes here.
-    });
-
-    test("Parse Interaction Affordances", () async {
+  group("ConsumedThing should", () {
+    test("parse Interaction Affordances", () async {
       const thingDescriptionJson = {
         "@context": [
           "https://www.w3.org/2022/wot/td/v1.1",
@@ -219,7 +215,7 @@ void main() {
   });
 
   test(
-    "Use of URI Template Variables",
+    "use URI Template Variables",
     () async {
       const thingDescriptionJson = {
         "@context": ["http://www.w3.org/ns/td"],
@@ -279,4 +275,50 @@ void main() {
     },
     skip: true, // TODO: Replace with test with local server
   );
+
+  test("throw ArgumentErrors for missing Affordances", () async {
+    const thingDescriptionJson = {
+      "@context": "https://www.w3.org/2022/wot/td/v1.1",
+      "title": "Test Thing",
+      "securityDefinitions": {
+        "nosec_sc": {"scheme": "nosec"},
+      },
+      "security": "nosec_sc",
+    };
+
+    final parsedTd = ThingDescription.fromJson(thingDescriptionJson);
+
+    final servient = Servient();
+    final wot = await servient.start();
+
+    final consumedThing = await wot.consume(parsedTd);
+
+    expect(
+      () async => await consumedThing.readProperty("test"),
+      throwsArgumentError,
+    );
+
+    expect(
+      () async => await consumedThing.writeProperty(
+        "test",
+        null.asInteractionInput(),
+      ),
+      throwsArgumentError,
+    );
+
+    expect(
+      () async => await consumedThing.observeProperty("test", (_) => ()),
+      throwsArgumentError,
+    );
+
+    expect(
+      () async => await consumedThing.invokeAction("test"),
+      throwsArgumentError,
+    );
+
+    expect(
+      () async => await consumedThing.subscribeEvent("test", (_) => ()),
+      throwsArgumentError,
+    );
+  });
 }
