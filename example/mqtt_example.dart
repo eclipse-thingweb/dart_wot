@@ -67,7 +67,7 @@ Future<void> main(List<String> args) async {
 
   final wot = await servient.start();
 
-  final thingDescription = ThingDescription.fromJson(thingDescriptionJson);
+  final thingDescription = thingDescriptionJson.toThingDescription();
   final consumedThing = await wot.consume(thingDescription);
   await consumedThing.readAndPrintProperty("status");
 

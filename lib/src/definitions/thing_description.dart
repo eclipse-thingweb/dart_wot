@@ -252,3 +252,11 @@ class ThingDescription {
     return id ?? base?.toString() ?? title;
   }
 }
+
+/// Extension for generating [ThingDescription]s from [Map]s more easily.
+extension ToThingDescription on Map<String, dynamic> {
+  /// Tries to generate a [ThingDescription] from this [Map] object.
+  ThingDescription toThingDescription() {
+    return ThingDescription.fromJson(this);
+  }
+}

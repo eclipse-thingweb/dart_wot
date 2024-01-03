@@ -136,7 +136,7 @@ class WoT implements scripting_api.WoT {
 
     final thingDescriptionStream = Stream.fromIterable(
       rawThingDescriptions.whereType<Map<String, Object?>>(),
-    ).toThingDescriptionStream();
+    ).map((rawThingDescription) => rawThingDescription.toThingDescription());
 
     return ThingDiscoveryProcess(thingDescriptionStream, filter);
   }
@@ -160,40 +160,5 @@ extension _DirectoryValidationExtension on ThingDescription {
 
     return context.contains((value: discoveryContextUri, key: null)) &&
         atTypes.contains(type);
-  }
-}
-
-extension _DirectoryTdDeserializationExtension on Stream<Map<String, Object?>> {
-  Stream<ThingDescription> toThingDescriptionStream() {
-    const streamTransformer = StreamTransformer(_transformerMethod);
-
-    return transform(streamTransformer);
-  }
-
-  static StreamSubscription<ThingDescription> _transformerMethod(
-    Stream<Map<String, dynamic>> rawThingDescriptionStream,
-    bool cancelOnError,
-  ) {
-    final streamController = StreamController<ThingDescription>();
-
-    final streamSubscription = rawThingDescriptionStream.listen(
-      (rawThingDescription) {
-        try {
-          streamController.add(ThingDescription.fromJson(rawThingDescription));
-        } on Exception catch (exception) {
-          streamController.addError(exception);
-        }
-      },
-      onDone: streamController.close,
-      onError: streamController.addError,
-      cancelOnError: cancelOnError,
-    );
-
-    streamController
-      ..onPause = streamSubscription.pause
-      ..onResume = streamSubscription.resume
-      ..onCancel = streamSubscription.cancel;
-
-    return streamController.stream.listen(null);
   }
 }
