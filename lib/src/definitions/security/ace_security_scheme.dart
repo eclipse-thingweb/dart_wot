@@ -10,12 +10,13 @@ import "../extensions/json_parser.dart";
 
 import "security_scheme.dart";
 
-const _schemeName = "ace:ACESecurityScheme";
+/// Indicates the `scheme` value for identifying [AceSecurityScheme]s.
+const aceSecuritySchemeName = "ace:ACESecurityScheme";
 
 /// Experimental ACE Security Scheme.
 final class AceSecurityScheme extends SecurityScheme {
   /// Constructor.
-  AceSecurityScheme({
+  const AceSecurityScheme({
     this.as,
     this.audience,
     this.scopes,
@@ -25,23 +26,43 @@ final class AceSecurityScheme extends SecurityScheme {
     super.proxy,
     super.jsonLdType,
     super.additionalFields,
-  }) : super(_schemeName);
+  });
 
   /// Creates an [AceSecurityScheme] from a [json] object.
-  AceSecurityScheme.fromJson(
+  factory AceSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  )   : as = json.parseField<String>("ace:as", parsedFields),
-        cnonce = json.parseField<bool>("ace:cnonce", parsedFields),
-        audience = json.parseField<String>("ace:audience", parsedFields),
-        scopes = json.parseArrayField<String>("ace:scopes", parsedFields),
-        super.fromJson(
-          _schemeName,
-          json,
-          prefixMapping,
-          parsedFields,
-        );
+  ) {
+    final description = json.parseField<String>("description", parsedFields);
+    final descriptions =
+        json.parseMapField<String>("descriptions", parsedFields);
+    final jsonLdType = json.parseArrayField<String>("@type");
+    final proxy = json.parseUriField("proxy", parsedFields);
+
+    final as = json.parseField<String>("ace:as", parsedFields);
+    final cnonce = json.parseField<bool>("ace:cnonce", parsedFields);
+    final audience = json.parseField<String>("ace:audience", parsedFields);
+    final scopes = json.parseArrayField<String>("ace:scopes", parsedFields);
+
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
+
+    return AceSecurityScheme(
+      description: description,
+      descriptions: descriptions,
+      jsonLdType: jsonLdType,
+      proxy: proxy,
+      as: as,
+      cnonce: cnonce,
+      audience: audience,
+      scopes: scopes,
+      additionalFields: additionalFields,
+    );
+  }
+
+  @override
+  String get scheme => aceSecuritySchemeName;
 
   /// URI of the authorization server.
   final String? as;

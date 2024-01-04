@@ -7,6 +7,7 @@
 import "package:dcaf/dcaf.dart";
 
 import "../../definitions/form.dart";
+import "../augmented_form.dart";
 import "ace_credentials.dart";
 import "credentials.dart";
 import "psk_credentials.dart";
@@ -59,7 +60,7 @@ typedef AceSecurityCallback = Future<AceCredentials?> Function(
 /// This callback signature is currently only used for [PskCredentials] due to
 /// implementation limititations, which do not allow for asynchronous callbacks.
 typedef AsyncClientSecurityCallback<T extends Credentials> = Future<T?>
-    Function(Uri uri, Form? form, T? invalidCredentials);
+    Function(Uri uri, AugmentedForm? form, T? invalidCredentials);
 
 /// Function signature for a synchronous callback retrieving server
 /// [Credentials] by Thing [id] at runtime.

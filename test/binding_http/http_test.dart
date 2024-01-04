@@ -57,53 +57,40 @@ void main() {
         //              automatically by http_auth instead)
         const qop = "auth-int";
 
-        const thingDescriptionJson = '''
-      {
-        "@context": ["http://www.w3.org/ns/td"],
-        "title": "Test Thing",
-        "base": "https://httpbin.org",
-        "securityDefinitions": {
-          "basic_sc": {
-            "scheme": "basic"
+        const thingDescriptionJson = {
+          "@context": ["http://www.w3.org/ns/td"],
+          "title": "Test Thing",
+          "base": "https://httpbin.org",
+          "securityDefinitions": {
+            "basic_sc": {"scheme": "basic"},
+            "digest_sc": {"scheme": "digest"},
+            "bearer_sc": {"scheme": "bearer"},
           },
-          "digest_sc": {
-            "scheme": "digest"
+          "security": "basic_sc",
+          "properties": {
+            "status": {
+              "forms": [
+                {"href": "/basic-auth/$username/$password"},
+              ],
+            },
+            "status2": {
+              "forms": [
+                {
+                  "href": "/digest-auth/$qop/$username/$password",
+                  "security": "digest_sc",
+                  "qop": qop,
+                }
+              ],
+            },
+            "status3": {
+              "forms": [
+                {"href": "/bearer", "security": "bearer_sc"},
+              ],
+            },
           },
-          "bearer_sc": {
-            "scheme": "bearer"
-          }
-        },
-        "security": "basic_sc",
-        "properties": {
-          "status": {
-            "forms": [
-              {
-                "href": "/basic-auth/$username/$password"
-              }
-            ]
-          },
-          "status2": {
-            "forms": [
-              {
-                "href": "/digest-auth/$qop/$username/$password",
-                "security": "digest_sc",
-                "qop": "$qop"
-              }
-            ]
-          },
-          "status3": {
-            "forms": [
-              {
-                "href": "/bearer",
-                "security": "bearer_sc"
-              }
-            ]
-          }
-        }
-      }
-      ''';
+        };
 
-        final parsedTd = ThingDescription(thingDescriptionJson);
+        final parsedTd = ThingDescription.fromJson(thingDescriptionJson);
 
         final Map<String, BasicCredentials> basicCredentialsStore = {
           "httpbin.org": BasicCredentials(username, password),

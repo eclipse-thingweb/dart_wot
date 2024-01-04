@@ -10,40 +10,29 @@ import "package:dart_wot/dart_wot.dart";
 
 const username = "username";
 const password = "password";
-const thingDescriptionJson = '''
-      {
-        "@context": ["http://www.w3.org/ns/td"],
-        "title": "Test Thing",
-        "id": "urn:test",
-        "base": "https://httpbin.org",
-        "securityDefinitions": {
-          "auto_sc": {
-            "scheme": "auto"
-          },
-          "basic_sc": {
-            "scheme": "basic"
-          }
-        },
-        "security": "auto_sc",
-        "properties": {
-          "status": {
-            "forms": [
-              {
-                "href": "/basic-auth/$username/$password"
-              }
-            ]
-          },
-          "status2": {
-            "forms": [
-              {
-                "href": "/basic-auth/$username/$password",
-                "security": "basic_sc"
-              }
-            ]
-          }
-        }
-      }
-      ''';
+const thingDescriptionJson = {
+  "@context": "https://www.w3.org/2022/wot/td/v1.1",
+  "title": "Test Thing",
+  "id": "urn:test",
+  "base": "https://httpbin.org",
+  "securityDefinitions": {
+    "auto_sc": {"scheme": "auto"},
+    "basic_sc": {"scheme": "basic"},
+  },
+  "security": "auto_sc",
+  "properties": {
+    "status": {
+      "forms": [
+        {"href": "/basic-auth/$username/$password"},
+      ],
+    },
+    "status2": {
+      "forms": [
+        {"href": "/basic-auth/$username/$password", "security": "basic_sc"},
+      ],
+    },
+  },
+};
 
 final basicCredentials = BasicCredentials("username", "password");
 
@@ -53,14 +42,14 @@ final Map<String, BasicCredentials> basicCredentialsMap = {
 
 Future<BasicCredentials?> basicCredentialsCallback(
   Uri uri,
-  Form? form,
+  AugmentedForm? form,
   BasicCredentials? invalidCredentials,
 ) async {
   if (form == null) {
     return basicCredentials;
   }
 
-  final id = form.thingDescription.identifier;
+  final id = form.tdIdentifier;
 
   return basicCredentialsMap[id];
 }
@@ -78,7 +67,7 @@ Future<void> main(List<String> args) async {
   );
   final wot = await servient.start();
 
-  final thingDescription = ThingDescription(thingDescriptionJson);
+  final thingDescription = thingDescriptionJson.toThingDescription();
   final consumedThing = await wot.consume(thingDescription);
   final status = await consumedThing.readProperty("status");
 

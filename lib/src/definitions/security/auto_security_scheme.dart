@@ -6,26 +6,48 @@
 
 import "package:curie/curie.dart";
 
+import "../extensions/json_parser.dart";
 import "security_scheme.dart";
 
-const _schemeName = "auto";
+/// Indicates the `scheme` value for identifying [AutoSecurityScheme]s.
+const autoSecuritySchemeName = "auto";
 
 /// An automatic security configuration identified by the
 /// vocabulary term `auto`.
 final class AutoSecurityScheme extends SecurityScheme {
   /// Constructor.
-  AutoSecurityScheme({
+  const AutoSecurityScheme({
     super.description,
     super.descriptions,
     super.proxy,
     super.jsonLdType,
     super.additionalFields,
-  }) : super(_schemeName);
+  });
 
   /// Creates an [AutoSecurityScheme] from a [json] object.
-  AutoSecurityScheme.fromJson(
+  factory AutoSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  ) : super.fromJson(_schemeName, json, prefixMapping, parsedFields);
+  ) {
+    final description = json.parseField<String>("description", parsedFields);
+    final descriptions =
+        json.parseMapField<String>("descriptions", parsedFields);
+    final jsonLdType = json.parseArrayField<String>("@type");
+    final proxy = json.parseUriField("proxy", parsedFields);
+
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
+
+    return AutoSecurityScheme(
+      description: description,
+      descriptions: descriptions,
+      jsonLdType: jsonLdType,
+      proxy: proxy,
+      additionalFields: additionalFields,
+    );
+  }
+
+  @override
+  String get scheme => autoSecuritySchemeName;
 }

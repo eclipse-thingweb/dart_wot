@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "package:curie/curie.dart";
+import "package:meta/meta.dart";
 
 import "extensions/json_parser.dart";
 
@@ -13,9 +14,10 @@ import "extensions/json_parser.dart";
 /// See W3C WoT Thing Description specification, [section 5.3.2.1][spec link].
 ///
 /// [spec link]: https://w3c.github.io/wot-thing-description/#dataschema
+@immutable
 class DataSchema {
   /// Constructor
-  DataSchema({
+  const DataSchema({
     this.atType,
     this.title,
     this.titles,

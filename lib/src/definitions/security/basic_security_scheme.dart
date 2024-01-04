@@ -11,13 +11,14 @@ import "security_scheme.dart";
 
 const _defaultInValue = "header";
 
-const _schemeName = "basic";
+/// Indicates the `scheme` value for identifying [BasicSecurityScheme]s.
+const basicSecuritySchemeName = "basic";
 
 /// Basic Authentication security configuration identified by the Vocabulary
 /// Term `basic`.
 final class BasicSecurityScheme extends SecurityScheme {
   /// Constructor.
-  BasicSecurityScheme({
+  const BasicSecurityScheme({
     this.name,
     this.in_ = _defaultInValue,
     super.description,
@@ -25,20 +26,43 @@ final class BasicSecurityScheme extends SecurityScheme {
     super.proxy,
     super.jsonLdType,
     super.additionalFields,
-  }) : super(_schemeName);
+  });
 
   /// Creates a [BasicSecurityScheme] from a [json] object.
-  BasicSecurityScheme.fromJson(
+  factory BasicSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  )   : name = json.parseField<String>("name", parsedFields),
-        in_ = json.parseField<String>("in", parsedFields) ?? _defaultInValue,
-        super.fromJson(_schemeName, json, prefixMapping, parsedFields);
+  ) {
+    final description = json.parseField<String>("description", parsedFields);
+    final descriptions =
+        json.parseMapField<String>("descriptions", parsedFields);
+    final jsonLdType = json.parseArrayField<String>("@type");
+    final proxy = json.parseUriField("proxy", parsedFields);
+
+    final name = json.parseField<String>("name", parsedFields);
+    final in_ = json.parseField<String>("in", parsedFields) ?? _defaultInValue;
+
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
+
+    return BasicSecurityScheme(
+      description: description,
+      descriptions: descriptions,
+      jsonLdType: jsonLdType,
+      proxy: proxy,
+      name: name,
+      in_: in_,
+      additionalFields: additionalFields,
+    );
+  }
 
   /// Name for query, header, cookie, or uri parameters.
   final String? name;
 
   /// Specifies the location of security authentication information.
   final String in_;
+
+  @override
+  String get scheme => basicSecuritySchemeName;
 }

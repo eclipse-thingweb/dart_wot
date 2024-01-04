@@ -4,16 +4,14 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:curie/curie.dart";
-
-import "../extensions/json_parser.dart";
+import "package:meta/meta.dart";
 
 /// Class that contains metadata describing the configuration of a security
 /// mechanism.
-base class SecurityScheme {
+@immutable
+abstract base class SecurityScheme {
   /// Constructor.
-  SecurityScheme(
-    this.scheme, {
+  const SecurityScheme({
     this.jsonLdType,
     this.description,
     this.proxy,
@@ -21,24 +19,11 @@ base class SecurityScheme {
     this.additionalFields,
   });
 
-  /// Creates a [SecurityScheme] from a [json] object.
-  SecurityScheme.fromJson(
-    this.scheme,
-    Map<String, dynamic> json,
-    PrefixMapping prefixMapping,
-    Set<String> parsedFields,
-  )   : proxy = json.parseUriField("proxy", parsedFields),
-        description = json.parseField<String>("description", parsedFields),
-        descriptions = json.parseMapField<String>("descriptions", parsedFields),
-        jsonLdType = json.parseArrayField<String>("@type"),
-        additionalFields =
-            json.parseAdditionalFields(prefixMapping, parsedFields);
-
   /// The actual security [scheme] identifier.
   ///
   /// Can be one of `nosec`, `combo`, `basic`, `digest`, `bearer`, `psk`,
   /// `oauth2`, or `apikey`.
-  final String scheme;
+  String get scheme;
 
   /// The default [description] of this [SecurityScheme].
   final String? description;

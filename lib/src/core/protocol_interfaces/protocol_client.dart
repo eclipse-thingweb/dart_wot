@@ -4,8 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "../../definitions/form.dart";
 import "../../scripting_api/subscription.dart";
+import "../augmented_form.dart";
 import "../content.dart";
 
 /// Base class for a Protocol Client.
@@ -44,20 +44,20 @@ abstract interface class ProtocolClient {
   Stream<DiscoveryContent> discoverWithCoreLinkFormat(Uri uri);
 
   /// Requests the client to perform a `readproperty` operation on a [form].
-  Future<Content> readResource(Form form);
+  Future<Content> readResource(AugmentedForm form);
 
   /// Requests the client to perform a `writeproperty` operation on a [form]
   /// using the given [content].
-  Future<void> writeResource(Form form, Content content);
+  Future<void> writeResource(AugmentedForm form, Content content);
 
   /// Requests the client to perform an `invokeaction` operation on a [form]
   /// using the given [content].
-  Future<Content> invokeResource(Form form, Content content);
+  Future<Content> invokeResource(AugmentedForm form, Content content);
 
   /// Requests the client to perform a `subscribeproperty` operation on a
   /// [form].
   Future<Subscription> subscribeResource(
-    Form form, {
+    AugmentedForm form, {
     required void Function(Content content) next,
     void Function(Exception error)? error,
     required void Function() complete,

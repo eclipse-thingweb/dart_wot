@@ -4,35 +4,27 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:curie/curie.dart";
-import "package:meta/meta.dart";
-
-import "../data_schema.dart";
-import "../extensions/json_parser.dart";
-import "../thing_description.dart";
-import "interaction_affordance.dart";
+part of "interaction_affordance.dart";
 
 /// Class representing an [Event] Affordance in a Thing Description.
-@immutable
 class Event extends InteractionAffordance {
   /// Creates a new [Event] from a [List] of [forms].
-  Event(
-    super.thingDescription, {
+  const Event({
     super.title,
     super.titles,
     super.description,
     super.descriptions,
     super.uriVariables,
-    super.forms,
+    required super.forms,
     this.subscription,
     this.data,
     this.cancellation,
+    super.additionalFields,
   });
 
   /// Creates a new [Event] from a [json] object.
   factory Event.fromJson(
     Map<String, dynamic> json,
-    ThingDescription thingDescription,
     PrefixMapping prefixMapping,
   ) {
     final Set<String> parsedFields = {};
@@ -43,7 +35,7 @@ class Event extends InteractionAffordance {
     final descriptions =
         json.parseMapField<String>("descriptions", parsedFields);
     final uriVariables =
-        json.parseMapField<dynamic>("uriVariables", parsedFields);
+        json.parseMapField<Object>("uriVariables", parsedFields);
 
     final subscription =
         json.parseDataSchemaField("subscription", prefixMapping, parsedFields);
@@ -51,8 +43,12 @@ class Event extends InteractionAffordance {
     final cancellation =
         json.parseDataSchemaField("cancellation", prefixMapping, parsedFields);
 
+    final forms = json.parseAffordanceForms(prefixMapping, parsedFields);
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
+
     final event = Event(
-      thingDescription,
+      forms: forms,
       title: title,
       titles: titles,
       description: description,
@@ -61,12 +57,7 @@ class Event extends InteractionAffordance {
       subscription: subscription,
       data: data,
       cancellation: cancellation,
-    );
-
-    event.forms
-        .addAll(json.parseAffordanceForms(event, prefixMapping, parsedFields));
-    event.additionalFields.addAll(
-      json.parseAdditionalFields(prefixMapping, parsedFields),
+      additionalFields: additionalFields,
     );
 
     return event;

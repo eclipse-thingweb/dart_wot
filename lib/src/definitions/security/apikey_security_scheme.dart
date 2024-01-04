@@ -10,13 +10,15 @@ import "../extensions/json_parser.dart";
 import "security_scheme.dart";
 
 const _defaultInValue = "query";
-const _schemeName = "apikey";
+
+/// Indicates the `scheme` value for identifying [ApiKeySecurityScheme]s.
+const apiKeySecuritySchemeName = "apikey";
 
 /// API key authentication security configuration identified by the Vocabulary
 /// Term `apikey`.
 final class ApiKeySecurityScheme extends SecurityScheme {
   /// Constructor.
-  ApiKeySecurityScheme({
+  const ApiKeySecurityScheme({
     this.name,
     this.in_ = _defaultInValue,
     super.description,
@@ -24,26 +26,43 @@ final class ApiKeySecurityScheme extends SecurityScheme {
     super.proxy,
     super.jsonLdType,
     super.additionalFields,
-  }) : super(_schemeName);
+  });
 
   /// Creates a [ApiKeySecurityScheme] from a [json] object.
-
-  ApiKeySecurityScheme.fromJson(
+  factory ApiKeySecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  )   : name = json.parseField<String>("name", parsedFields),
-        in_ = json.parseField<String>("in", parsedFields) ?? _defaultInValue,
-        super.fromJson(
-          _schemeName,
-          json,
-          prefixMapping,
-          parsedFields,
-        );
+  ) {
+    final description = json.parseField<String>("description", parsedFields);
+    final descriptions =
+        json.parseMapField<String>("descriptions", parsedFields);
+    final jsonLdType = json.parseArrayField<String>("@type");
+    final proxy = json.parseUriField("proxy", parsedFields);
+
+    final name = json.parseField<String>("name", parsedFields);
+    final in_ = json.parseField<String>("in", parsedFields) ?? _defaultInValue;
+
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
+
+    return ApiKeySecurityScheme(
+      description: description,
+      descriptions: descriptions,
+      jsonLdType: jsonLdType,
+      proxy: proxy,
+      name: name,
+      in_: in_,
+      additionalFields: additionalFields,
+    );
+  }
 
   /// Name for query, header, cookie, or uri parameters.
-  String? name;
+  final String? name;
 
   /// Specifies the location of security authentication information.
   final String in_;
+
+  @override
+  String get scheme => apiKeySecuritySchemeName;
 }

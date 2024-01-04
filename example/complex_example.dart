@@ -8,14 +8,10 @@
 
 import "package:dart_wot/dart_wot.dart";
 
-const thingDescriptionJson = '''
-{
+const thingDescriptionJson = {
   "@context": [
-    "http://www.w3.org/ns/td",
-    {
-      "@language": "de",
-      "coap": "http://www.example.org/coap-binding#"
-    }
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {"@language": "de", "coap": "http://www.example.org/coap-binding#"},
   ],
   "title": "Test Thing",
   "id": "urn:test",
@@ -23,79 +19,59 @@ const thingDescriptionJson = '''
   "securityDefinitions": {
     "nosec_sc": {
       "scheme": "nosec",
-      "descriptions": {
-        "de": "Keine Sicherheit",
-        "en": "No Security"
-      }
+      "descriptions": {"de": "Keine Sicherheit", "en": "No Security"},
     },
-    "basic_sc": {
-      "scheme": "basic",
-      "description": "Test"
-    }
+    "basic_sc": {"scheme": "basic", "description": "Test"},
   },
   "security": "nosec_sc",
   "properties": {
     "status": {
       "observable": true,
       "forms": [
-        {
-          "href": "/.well-known/core"
-        },
+        {"href": "/.well-known/core"},
         {
           "href": "coap://californium.eclipseprojects.io/obs",
-          "op": ["observeproperty", "unobserveproperty"]
+          "op": ["observeproperty", "unobserveproperty"],
         }
-      ]
+      ],
     },
     "differentStatus": {
       "forms": [
-        {
-          "href": "coap://coap.me",
-          "coap:method": "GET"
-        }
-      ]
+        {"href": "coap://coap.me", "coap:method": "GET"},
+      ],
     },
     "anotherStatus": {
-            "uriVariables": {
-              "test": {
-                "type": "string"
-              }
-            },
+      "uriVariables": {
+        "test": {"type": "string"},
+      },
       "forms": [
-        {
-          "href": "coap://coap.me/query{?test}"
-        }
-      ]
+        {"href": "coap://coap.me/query{?test}"},
+      ],
     },
     "test": {
       "forms": [
         {
           "href": "http://example.org",
-          "security": ["basic_sc"]
+          "security": ["basic_sc"],
         }
-      ]
-    }
+      ],
+    },
   },
   "actions": {
     "toggle": {
       "forms": [
-        {
-          "href": "coap://coap.me/large-create"
-        }
-      ]
-    }
+        {"href": "coap://coap.me/large-create"},
+      ],
+    },
   },
   "events": {
     "overheating": {
       "forms": [
-        {
-          "href": "coap://coap.me"
-        }
-      ]
-    }
-  }
-}
-''';
+        {"href": "coap://coap.me"},
+      ],
+    },
+  },
+};
 
 final Map<String, BasicCredentials> basicCredentials = {
   "urn:test": BasicCredentials("username", "password"),
@@ -103,10 +79,10 @@ final Map<String, BasicCredentials> basicCredentials = {
 
 Future<BasicCredentials?> basicCredentialsCallback(
   Uri uri,
-  Form? form, [
+  AugmentedForm? form, [
   BasicCredentials? invalidCredentials,
 ]) async {
-  final id = form?.thingDescription.identifier;
+  final id = form?.tdIdentifier;
 
   return basicCredentials[id];
 }
@@ -127,7 +103,7 @@ Future<void> main() async {
   );
   final wot = await servient.start();
 
-  final thingDescription = ThingDescription(thingDescriptionJson);
+  final thingDescription = thingDescriptionJson.toThingDescription();
   final consumedThing = await wot.consume(thingDescription);
   final status = await consumedThing.readProperty("status");
   final value1 = await status.value();

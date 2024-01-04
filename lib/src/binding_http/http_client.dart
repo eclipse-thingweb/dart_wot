@@ -9,6 +9,7 @@ import "dart:io";
 
 import "package:http/http.dart";
 
+import "../core/augmented_form.dart";
 import "../core/content.dart";
 import "../core/credentials/basic_credentials.dart";
 import "../core/credentials/bearer_credentials.dart";
@@ -60,7 +61,10 @@ final class HttpClient implements ProtocolClient {
   final AsyncClientSecurityCallback<BearerCredentials>?
       _bearerCredentialsCallback;
 
-  Future<void> _applyCredentialsFromForm(Request request, Form form) async {
+  Future<void> _applyCredentialsFromForm(
+    Request request,
+    AugmentedForm form,
+  ) async {
     // TODO(JKRhb): Add DigestSecurity back in
     if (await _applyBearerCredentialsFromForm(request, form)) {
       return;
@@ -73,7 +77,7 @@ final class HttpClient implements ProtocolClient {
 
   Future<bool> _applyBasicCredentialsFromForm(
     Request request,
-    Form form,
+    AugmentedForm form,
   ) async {
     final basicSecuritySchemes =
         form.securityDefinitions.whereType<BasicSecurityScheme>();
@@ -96,7 +100,7 @@ final class HttpClient implements ProtocolClient {
 
   Future<bool> _applyBearerCredentialsFromForm(
     Request request,
-    Form form,
+    AugmentedForm form,
   ) async {
     final bearerSecuritySchemes =
         form.securityDefinitions.whereType<BearerSecurityScheme>();
@@ -141,7 +145,7 @@ final class HttpClient implements ProtocolClient {
 
   Future<StreamedResponse> _createBasicAuthRequest(
     Request originalRequest,
-    Form? form,
+    AugmentedForm? form,
   ) async {
     final request = _copyRequest(originalRequest);
     final basicCredentials = await _getBasicCredentials(request.url, form);
@@ -157,7 +161,7 @@ final class HttpClient implements ProtocolClient {
 
   Future<StreamedResponse> _createBearerAuthRequest(
     Request originalRequest,
-    Form? form,
+    AugmentedForm? form,
   ) async {
     final request = _copyRequest(originalRequest);
     final bearerCredentials = await _getBearerCredentials(request.url, form);
@@ -174,7 +178,7 @@ final class HttpClient implements ProtocolClient {
   Future<StreamedResponse> _handleResponse(
     Request originalRequest,
     StreamedResponse response, [
-    Form? form,
+    AugmentedForm? form,
   ]) async {
     if (response.statusCode == HttpStatus.unauthorized) {
       final authenticate = response.headers["www-authenticate"];
@@ -194,7 +198,7 @@ final class HttpClient implements ProtocolClient {
   }
 
   Future<StreamedResponse> _createRequest(
-    Form form,
+    AugmentedForm form,
     OperationType operationType,
     Content? content,
   ) async {
@@ -215,7 +219,7 @@ final class HttpClient implements ProtocolClient {
 
   Future<BasicCredentials?> _getBasicCredentials(
     Uri uri,
-    Form? form, [
+    AugmentedForm? form, [
     BasicCredentials? invalidCredentials,
   ]) async {
     return _basicCredentialsCallback?.call(uri, form, invalidCredentials);
@@ -223,7 +227,7 @@ final class HttpClient implements ProtocolClient {
 
   Future<BearerCredentials?> _getBearerCredentials(
     Uri uri,
-    Form? form, [
+    AugmentedForm? form, [
     BearerCredentials? invalidCredentials,
   ]) async {
     return _bearerCredentialsCallback?.call(uri, form, invalidCredentials);
@@ -255,14 +259,14 @@ final class HttpClient implements ProtocolClient {
   }
 
   @override
-  Future<Content> invokeResource(Form form, Content content) async {
+  Future<Content> invokeResource(AugmentedForm form, Content content) async {
     final response =
         await _createRequest(form, OperationType.invokeaction, content);
     return _contentFromResponse(form, response);
   }
 
   @override
-  Future<Content> readResource(Form form) async {
+  Future<Content> readResource(AugmentedForm form) async {
     final response =
         await _createRequest(form, OperationType.readproperty, null);
     return _contentFromResponse(form, response);
@@ -279,7 +283,7 @@ final class HttpClient implements ProtocolClient {
   }
 
   @override
-  Future<void> writeResource(Form form, Content content) async {
+  Future<void> writeResource(AugmentedForm form, Content content) async {
     await _createRequest(form, OperationType.writeproperty, content);
   }
 

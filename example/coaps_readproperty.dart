@@ -44,31 +44,24 @@ Future<void> main(List<String> args) async {
 
   final wot = await servient.start();
 
-  const thingDescriptionJson = '''
-  {
-    "@context": "http://www.w3.org/ns/td",
+  const thingDescriptionJson = {
+    "@context": "https://www.w3.org/2022/wot/td/v1.1",
     "title": "Test Thing",
     "base": "coaps://californium.eclipseprojects.io",
     "security": ["psk_sc"],
     "securityDefinitions": {
-      "psk_sc": {
-        "scheme": "psk",
-        "identity": "Client_identity"
-      }
+      "psk_sc": {"scheme": "psk", "identity": "Client_identity"},
     },
     "properties": {
       "status": {
         "forms": [
-          {
-            "href": "/test"
-          }
-        ]
-      }
-    }
-  }
-  ''';
+          {"href": "/test"},
+        ],
+      },
+    },
+  };
 
-  final thingDescription = ThingDescription(thingDescriptionJson);
+  final thingDescription = thingDescriptionJson.toThingDescription();
   final consumedThing = await wot.consume(thingDescription);
   final status = await consumedThing.readProperty("status");
   final value = await status.value();

@@ -9,13 +9,14 @@ import "package:curie/curie.dart";
 import "../extensions/json_parser.dart";
 import "security_scheme.dart";
 
-const _schemeName = "combo";
+/// Indicates the `scheme` value for identifying [ComboSecurityScheme]s.
+const comboSecuritySchemeName = "combo";
 
 /// A combination of other security schemes identified by the Vocabulary Term
 /// `combo` (i.e., "scheme": "combo").
 final class ComboSecurityScheme extends SecurityScheme {
   /// Constructor.
-  ComboSecurityScheme({
+  const ComboSecurityScheme({
     this.allOf,
     this.oneOf,
     super.description,
@@ -23,16 +24,36 @@ final class ComboSecurityScheme extends SecurityScheme {
     super.proxy,
     super.jsonLdType,
     super.additionalFields,
-  }) : super(_schemeName);
+  });
 
   /// Creates a [ComboSecurityScheme] from a [json] object.
-  ComboSecurityScheme.fromJson(
+  factory ComboSecurityScheme.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
-  )   : oneOf = json.parseArrayField<String>("oneOf", parsedFields),
-        allOf = json.parseArrayField<String>("allOf", parsedFields),
-        super.fromJson(_schemeName, json, prefixMapping, parsedFields);
+  ) {
+    final description = json.parseField<String>("description", parsedFields);
+    final descriptions =
+        json.parseMapField<String>("descriptions", parsedFields);
+    final jsonLdType = json.parseArrayField<String>("@type");
+    final proxy = json.parseUriField("proxy", parsedFields);
+
+    final oneOf = json.parseArrayField<String>("oneOf", parsedFields);
+    final allOf = json.parseArrayField<String>("allOf", parsedFields);
+
+    final additionalFields =
+        json.parseAdditionalFields(prefixMapping, parsedFields);
+
+    return ComboSecurityScheme(
+      description: description,
+      descriptions: descriptions,
+      jsonLdType: jsonLdType,
+      proxy: proxy,
+      oneOf: oneOf,
+      allOf: allOf,
+      additionalFields: additionalFields,
+    );
+  }
 
   /// Array of two or more strings identifying other named security scheme
   /// definitions, any one of which, when satisfied, will allow access.
@@ -43,4 +64,7 @@ final class ComboSecurityScheme extends SecurityScheme {
   /// Array of two or more strings identifying other named security scheme
   /// definitions, all of which must be satisfied for access.
   final List<String>? allOf;
+
+  @override
+  String get scheme => comboSecuritySchemeName;
 }
