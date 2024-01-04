@@ -8,7 +8,8 @@
 
 import "dart:typed_data";
 
-import "package:dart_wot/dart_wot.dart";
+import "package:dart_wot/binding_coap.dart";
+import "package:dart_wot/core.dart";
 
 /// Matches [PskCredentials] by hostname and URI scheme.
 final Map<Uri, PskCredentials> _pskCredentialsStore = {

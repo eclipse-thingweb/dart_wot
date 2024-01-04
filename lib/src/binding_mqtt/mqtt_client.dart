@@ -6,16 +6,12 @@
 
 import "dart:async";
 
-import "package:mqtt_client/mqtt_client.dart";
+import "package:mqtt_client/mqtt_client.dart" hide Subscription;
 import "package:mqtt_client/mqtt_server_client.dart";
 import "package:typed_data/typed_buffers.dart";
 
-import "../core/augmented_form.dart";
-import "../core/content.dart";
-import "../core/credentials/basic_credentials.dart";
-import "../core/credentials/callbacks.dart";
-import "../core/protocol_interfaces/protocol_client.dart";
-import "../scripting_api/subscription.dart" as scripting_api;
+import "../../core.dart";
+
 import "constants.dart";
 import "mqtt_binding_exception.dart";
 import "mqtt_config.dart";
@@ -181,7 +177,7 @@ final class MqttClient implements ProtocolClient {
   }
 
   @override
-  Future<scripting_api.Subscription> subscribeResource(
+  Future<Subscription> subscribeResource(
     AugmentedForm form, {
     required void Function(Content content) next,
     void Function(Exception error)? error,

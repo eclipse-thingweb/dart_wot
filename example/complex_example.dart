@@ -6,7 +6,9 @@
 
 // ignore_for_file: avoid_print
 
-import "package:dart_wot/dart_wot.dart";
+import "package:dart_wot/binding_coap.dart";
+import "package:dart_wot/binding_http.dart";
+import "package:dart_wot/core.dart";
 
 const thingDescriptionJson = {
   "@context": [

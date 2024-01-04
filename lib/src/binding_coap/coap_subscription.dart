@@ -6,7 +6,7 @@
 
 import "package:coap/coap.dart";
 
-import "../scripting_api/subscription.dart";
+import "../../core.dart";
 
 /// [Subscription] to a CoAP resource, based on the observe option ([RFC 7641]).
 ///

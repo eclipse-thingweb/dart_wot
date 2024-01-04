@@ -4,17 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:dart_wot/dart_wot.dart";
-import "package:dart_wot/src/definitions/security/apikey_security_scheme.dart";
-import "package:dart_wot/src/definitions/security/auto_security_scheme.dart";
-import "package:dart_wot/src/definitions/security/basic_security_scheme.dart";
-import "package:dart_wot/src/definitions/security/bearer_security_scheme.dart";
-import "package:dart_wot/src/definitions/security/combo_security_scheme.dart";
-import "package:dart_wot/src/definitions/security/digest_security_scheme.dart";
-import "package:dart_wot/src/definitions/security/no_security_scheme.dart";
-import "package:dart_wot/src/definitions/security/oauth2_security_scheme.dart";
-import "package:dart_wot/src/definitions/security/psk_security_scheme.dart";
-import "package:dart_wot/src/definitions/validation/validation_exception.dart";
+import "package:dart_wot/binding_http.dart";
+import "package:dart_wot/core.dart";
 import "package:test/test.dart";
 
 void main() {

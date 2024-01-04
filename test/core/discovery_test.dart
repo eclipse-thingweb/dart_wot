@@ -7,13 +7,7 @@
 import "dart:async";
 import "dart:convert";
 
-import "package:dart_wot/src/core/content.dart";
-import "package:dart_wot/src/core/protocol_interfaces/protocol_client.dart";
-import "package:dart_wot/src/core/protocol_interfaces/protocol_client_factory.dart";
-import "package:dart_wot/src/core/servient.dart";
-import "package:dart_wot/src/core/thing_discovery.dart";
-import "package:dart_wot/src/definitions/form.dart";
-import "package:dart_wot/src/scripting_api/subscription.dart";
+import "package:dart_wot/core.dart";
 import "package:test/test.dart";
 
 const testUriScheme = "test";

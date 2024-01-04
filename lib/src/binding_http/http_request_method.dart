@@ -4,8 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "../definitions/form.dart";
-import "../definitions/operation_type.dart";
+import "../../core.dart";
 
 const _getString = "GET";
 const _putString = "PUT";

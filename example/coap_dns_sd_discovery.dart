@@ -6,7 +6,8 @@
 
 // ignore_for_file: avoid_print
 
-import "package:dart_wot/dart_wot.dart";
+import "package:dart_wot/binding_coap.dart";
+import "package:dart_wot/core.dart";
 
 void handleThingDescription(ThingDescription thingDescription) =>
     print('Discovered TD with title "${thingDescription.title}".');

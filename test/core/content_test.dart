@@ -6,8 +6,7 @@
 
 import "dart:convert";
 
-import "package:dart_wot/dart_wot.dart";
-import "package:dart_wot/src/core/content.dart";
+import "package:dart_wot/core.dart";
 import "package:test/test.dart";
 
 void main() {
