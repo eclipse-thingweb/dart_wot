@@ -111,9 +111,17 @@ class WoT implements scripting_api.WoT {
 
   @override
   Future<scripting_api.ThingDiscoveryProcess> exploreDirectory(
-    Uri url, [
+    Uri url, {
     scripting_api.ThingFilter? filter,
-  ]) async {
+    int? offset,
+    int? limit,
+    scripting_api.DirectoryPayloadFormat? format,
+  }) async {
+    // TODO(JKRhb): Add support for the collection format.
+    if (format == scripting_api.DirectoryPayloadFormat.collection) {
+      throw ArgumentError('Format "$format" is currently not supported.');
+    }
+
     final thingDescription = await requestThingDescription(url);
 
     if (!thingDescription.isValidDirectoryThingDescription) {
@@ -124,8 +132,14 @@ class WoT implements scripting_api.WoT {
 
     final consumedDirectoryThing = await consume(thingDescription);
 
-    final interactionOutput =
-        await consumedDirectoryThing.readProperty("things");
+    final interactionOutput = await consumedDirectoryThing.readProperty(
+      "things",
+      uriVariables: {
+        if (offset != null) "offset": offset,
+        if (limit != null) "limit": limit,
+        if (format != null) "format": format.toString(),
+      },
+    );
     final rawThingDescriptions = await interactionOutput.value();
 
     if (rawThingDescriptions is! List<Object?>) {
