@@ -10,13 +10,16 @@ import "credentials.dart";
 /// [Credentials] used for the [OAuth2SecurityScheme].
 final class OAuth2Credentials extends Credentials {
   /// Constructor.
-  OAuth2Credentials([this.secret]);
+  const OAuth2Credentials({
+    this.secret,
+    this.credentialsJson,
+  });
 
   /// The optional secret for these [OAuth2Credentials].
-  String? secret;
+  final String? secret;
 
   /// A JSON string representation of OAuth2 credentials.
   ///
   /// Used to store obtained credentials from an authorization server.
-  String? credentialsJson;
+  final String? credentialsJson;
 }

@@ -10,11 +10,11 @@ import "credentials.dart";
 /// [Credentials] used for the [DigestSecurityScheme].
 final class DigestCredentials extends Credentials {
   /// Constructor.
-  DigestCredentials(this.username, this.password);
+  const DigestCredentials(this.username, this.password);
 
   /// The [username] associated with these [DigestCredentials].
-  String username;
+  final String username;
 
   /// The [password] associated with these [DigestCredentials].
-  String password;
+  final String password;
 }

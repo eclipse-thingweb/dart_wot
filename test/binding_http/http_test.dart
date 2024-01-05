@@ -93,11 +93,11 @@ void main() {
         final parsedTd = ThingDescription.fromJson(thingDescriptionJson);
 
         final Map<String, BasicCredentials> basicCredentialsStore = {
-          "httpbin.org": BasicCredentials(username, password),
+          "httpbin.org": const BasicCredentials(username, password),
         };
 
         final Map<String, BearerCredentials> bearerCredentialsStore = {
-          "httpbin.org": BearerCredentials(token),
+          "httpbin.org": const BearerCredentials(token),
         };
 
         Future<BasicCredentials?> basicCredentialsCallback(

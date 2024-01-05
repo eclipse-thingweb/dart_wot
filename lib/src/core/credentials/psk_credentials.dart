@@ -12,7 +12,7 @@ import "credentials.dart";
 /// [Credentials] used for the [PskSecurityScheme].
 final class PskCredentials extends Credentials {
   /// Constructor.
-  PskCredentials({required this.preSharedKey, required this.identity});
+  const PskCredentials({required this.preSharedKey, required this.identity});
 
   /// The [identity] associated with these [PskCredentials].
   ///

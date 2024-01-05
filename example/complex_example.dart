@@ -74,7 +74,7 @@ const thingDescriptionJson = {
 };
 
 final Map<String, BasicCredentials> basicCredentials = {
-  "urn:test": BasicCredentials("username", "password"),
+  "urn:test": const BasicCredentials("username", "password"),
 };
 
 Future<BasicCredentials?> basicCredentialsCallback(

@@ -13,11 +13,11 @@ import "credentials.dart";
 /// Provides an unencrypted [username] and [password] combination.
 final class BasicCredentials extends Credentials {
   /// Constructor.
-  BasicCredentials(this.username, this.password);
+  const BasicCredentials(this.username, this.password);
 
   /// The [username] associated with these [BasicCredentials].
-  String username;
+  final String username;
 
   /// The [password] associated with these [BasicCredentials].
-  String password;
+  final String password;
 }
