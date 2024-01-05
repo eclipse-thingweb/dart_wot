@@ -164,8 +164,8 @@ void main() {
       );
 
       expect(
-        () => augmentedForm2.resolvedHref,
-        throwsA(isA<UriVariableException>()),
+        augmentedForm2.resolvedHref,
+        Uri.parse("http://example.org/weather/?lat=5"),
       );
 
       final augmentedForm3 = AugmentedForm(
@@ -178,18 +178,8 @@ void main() {
       );
 
       expect(
-        () => augmentedForm3.resolvedHref,
-        throwsA(
-          predicate(
-            (exception) =>
-                exception is UriVariableException &&
-                exception.toString() ==
-                    "UriVariableException: The following URI template "
-                        "variables defined at the TD level are not covered by "
-                        "the values provided by the user: lat. Values for the "
-                        "following variables were received: long.",
-          ),
-        ),
+        augmentedForm3.resolvedHref,
+        Uri.parse("http://example.org/weather/?long=10"),
       );
 
       final augmentedForm4 = AugmentedForm(

@@ -145,29 +145,20 @@ final class AugmentedForm implements Form {
           "level: ${uncoveredHrefUriVariables.join(", ")}.");
     }
 
-    final missingTdLevelUserInput = uriVariablesInHref.where(
-      (uriVariableName) =>
-          !userProvidedUriVariables.containsKey(uriVariableName),
-    );
-
-    if (missingTdLevelUserInput.isNotEmpty) {
-      throw UriVariableException(
-        "The following URI template variables defined at the TD level are not "
-        "covered by the values provided by the user: "
-        "${missingTdLevelUserInput.join(", ")}. "
-        "Values for the following variables were received: "
-        "${userProvidedUriVariables.keys.join(", ")}.",
-      );
-    }
-
     // We now assert that all user provided values comply to the Schema
     // definition in the TD.
     for (final affordanceUriVariable in affordanceUriVariables.entries) {
       final key = affordanceUriVariable.key;
-      final value = affordanceUriVariable.value;
 
-      final schema = JsonSchema.create(value);
-      final result = schema.validate(userProvidedUriVariables[key]);
+      final userProvidedValue = userProvidedUriVariables[key];
+
+      if (userProvidedValue == null) {
+        continue;
+      }
+
+      final schemaValue = affordanceUriVariable.value;
+      final schema = JsonSchema.create(schemaValue);
+      final result = schema.validate(userProvidedValue);
 
       if (!result.isValid) {
         throw ValidationException("Invalid type for URI variable $key");
