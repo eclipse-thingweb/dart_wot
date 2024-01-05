@@ -11,8 +11,8 @@ import "credentials.dart";
 /// [Credentials] used for the [ApiKeySecurityScheme].
 final class ApiKeyCredentials extends Credentials {
   /// Constructor.
-  ApiKeyCredentials(this.apiKey);
+  const ApiKeyCredentials(this.apiKey);
 
   /// The [apiKey] associated with these [ApiKeyCredentials].
-  String apiKey;
+  final String apiKey;
 }

@@ -11,8 +11,8 @@ import "credentials.dart";
 /// [Credentials] used for the [BearerSecurityScheme].
 final class BearerCredentials extends Credentials {
   /// Constructor.
-  BearerCredentials(this.token);
+  const BearerCredentials(this.token);
 
   /// The [token] associated with these [BearerCredentials].
-  String token;
+  final String token;
 }

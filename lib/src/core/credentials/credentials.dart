@@ -4,5 +4,11 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "package:meta/meta.dart";
+
 /// Base class used for defining credentials for Thing Interactions.
-abstract base class Credentials {}
+@immutable
+abstract base class Credentials {
+  /// Default constructor for credentials objects.
+  const Credentials();
+}

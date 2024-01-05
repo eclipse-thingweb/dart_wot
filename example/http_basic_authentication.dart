@@ -34,7 +34,7 @@ const thingDescriptionJson = {
   },
 };
 
-final basicCredentials = BasicCredentials("username", "password");
+const basicCredentials = BasicCredentials("username", "password");
 
 final Map<String, BasicCredentials> basicCredentialsMap = {
   "urn:test": basicCredentials,
