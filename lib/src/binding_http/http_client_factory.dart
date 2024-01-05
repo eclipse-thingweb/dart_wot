@@ -4,11 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "../core/credentials/basic_credentials.dart";
-import "../core/credentials/bearer_credentials.dart";
-import "../core/credentials/callbacks.dart";
-import "../core/protocol_interfaces/protocol_client.dart";
-import "../core/protocol_interfaces/protocol_client_factory.dart";
+import "../../core.dart";
+
 import "http_client.dart";
 import "http_config.dart";
 

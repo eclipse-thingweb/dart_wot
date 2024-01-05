@@ -49,7 +49,8 @@ Afterward, the actual interactions with the counter are performed by calling the
 `invokeAction()` and `readProperty()` methods on the `ConsumedThing`.
 
 ```dart
-import "package:dart_wot/dart_wot.dart";
+import "package:dart_wot/binding_coap.dart";
+import "package:dart_wot/core.dart";
 
 Future<void> main(List<String> args) async {
   final servient = Servient(

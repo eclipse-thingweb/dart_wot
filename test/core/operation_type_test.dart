@@ -4,9 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:dart_wot/src/definitions/data_schema.dart";
-import "package:dart_wot/src/definitions/interaction_affordances/interaction_affordance.dart";
-import "package:dart_wot/src/definitions/operation_type.dart";
+import "package:dart_wot/core.dart";
 import "package:test/test.dart";
 
 void main() {

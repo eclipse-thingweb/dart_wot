@@ -11,15 +11,8 @@ import "package:cbor/cbor.dart";
 import "package:coap/coap.dart";
 import "package:dcaf/dcaf.dart";
 
-import "../core/augmented_form.dart";
-import "../core/content.dart";
-import "../definitions/expected_response.dart";
-import "../definitions/form.dart";
-import "../definitions/operation_type.dart";
-import "../definitions/security/ace_security_scheme.dart";
-import "../definitions/security/auto_security_scheme.dart";
-import "../definitions/security/psk_security_scheme.dart";
-import "../definitions/validation/validation_exception.dart";
+import "../../core.dart" hide PskCredentials;
+
 import "coap_binding_exception.dart";
 import "coap_definitions.dart";
 
@@ -32,7 +25,7 @@ extension InternetAddressMethods on Uri {
   }
 }
 
-/// CoAP-specific extensions for the [Form] class.
+/// CoAP-specific extensions for the [AugmentedForm] class.
 extension CoapFormExtension on AugmentedForm {
   T? _obtainVocabularyTerm<T>(String vocabularyTerm) {
     final curieString = coapPrefixMapping.expandCurieString(vocabularyTerm);
@@ -45,15 +38,15 @@ extension CoapFormExtension on AugmentedForm {
     return null;
   }
 
-  /// Determines if this [Form] supports the [PskSecurityScheme].
+  /// Determines if this [AugmentedForm] supports the [PskSecurityScheme].
   bool get usesPskScheme =>
       securityDefinitions.whereType<PskSecurityScheme>().isNotEmpty;
 
-  /// Determines if this [Form] supports the [AutoSecurityScheme].
+  /// Determines if this [AugmentedForm] supports the [AutoSecurityScheme].
   bool get usesAutoScheme =>
       securityDefinitions.whereType<AutoSecurityScheme>().isNotEmpty;
 
-  /// Get the [CoapSubprotocol] for this [Form], if one is set.
+  /// Get the [CoapSubprotocol] for this [AugmentedForm], if one is set.
   CoapSubprotocol? get coapSubprotocol {
     if (subprotocol == coapPrefixMapping.expandCurieString("observe")) {
       return CoapSubprotocol.observe;
@@ -113,7 +106,7 @@ extension CoapFormExtension on AugmentedForm {
   BlockSize? get block1Size => _determineBlockSize("block1Size");
 
   // TODO: Consider default method
-  /// Indicates the [CoapRequestMethod] contained in this [Form].
+  /// Indicates the [CoapRequestMethod] contained in this [AugmentedForm].
   CoapRequestMethod? get method {
     final methodDefinition = _obtainVocabularyTerm<String>("method");
 

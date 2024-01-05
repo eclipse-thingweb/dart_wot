@@ -4,7 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:dart_wot/dart_wot.dart";
+import "package:dart_wot/binding_http.dart";
+import "package:dart_wot/core.dart";
 import "package:mockito/annotations.dart";
 import "package:test/test.dart";
 import "http_test.mocks.dart";

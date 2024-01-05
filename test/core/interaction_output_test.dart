@@ -6,9 +6,8 @@
 
 import "dart:convert";
 
-import "package:dart_wot/src/core/content.dart";
-import "package:dart_wot/src/core/content_serdes.dart";
-import "package:dart_wot/src/core/interaction_output.dart";
+import "package:dart_wot/core.dart" hide InteractionOutput;
+import "package:dart_wot/src/core/implementation/interaction_output.dart";
 import "package:test/test.dart";
 
 void main() {

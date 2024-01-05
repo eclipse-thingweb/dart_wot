@@ -5,11 +5,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "package:curie/curie.dart";
-import "package:dart_wot/src/core/codecs/json_codec.dart";
-import "package:dart_wot/src/core/content.dart";
-import "package:dart_wot/src/core/content_serdes.dart";
-import "package:dart_wot/src/definitions/data_schema.dart";
-import "package:dart_wot/src/scripting_api/data_schema_value.dart";
+import "package:dart_wot/src/core/definitions/data_schema.dart";
+import "package:dart_wot/src/core/implementation/codecs/json_codec.dart";
+import "package:dart_wot/src/core/implementation/content.dart";
+import "package:dart_wot/src/core/implementation/content_serdes.dart";
+import "package:dart_wot/src/core/scripting_api/data_schema_value.dart";
 import "package:test/test.dart";
 
 Content _getTestContent(String input) {

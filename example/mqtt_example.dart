@@ -6,7 +6,8 @@
 
 // ignore_for_file: avoid_print
 
-import "package:dart_wot/dart_wot.dart";
+import "package:dart_wot/binding_mqtt.dart";
+import "package:dart_wot/core.dart";
 
 const thingDescriptionJson = {
   "@context": "https://www.w3.org/2022/wot/td/v1.1",

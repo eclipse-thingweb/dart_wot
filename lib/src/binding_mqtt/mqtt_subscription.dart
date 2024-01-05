@@ -4,15 +4,13 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:mqtt_client/mqtt_client.dart";
+import "package:mqtt_client/mqtt_client.dart" hide Subscription;
 import "package:mqtt_client/mqtt_server_client.dart";
 
-import "../core/content.dart";
-import "../definitions/form.dart";
-import "../scripting_api/subscription.dart" as scripting_api;
+import "../../core.dart";
 
-/// [scripting_api.Subscription] for the MQTT protocol.
-class MqttSubscription implements scripting_api.Subscription {
+/// [Subscription] for the MQTT protocol.
+class MqttSubscription implements Subscription {
   /// Constructor.
   MqttSubscription(
     this._form,

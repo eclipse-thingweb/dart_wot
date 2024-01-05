@@ -11,15 +11,8 @@ import "package:coap/coap.dart" as coap;
 import "package:coap/config/coap_config_default.dart";
 import "package:dcaf/dcaf.dart";
 
-import "../core/augmented_form.dart";
-import "../core/content.dart";
-import "../core/credentials/ace_credentials.dart";
-import "../core/credentials/callbacks.dart";
-import "../core/credentials/psk_credentials.dart";
-import "../core/protocol_interfaces/protocol_client.dart";
-import "../definitions/form.dart";
-import "../definitions/operation_type.dart";
-import "../scripting_api/subscription.dart";
+import "../../core.dart";
+
 import "coap_binding_exception.dart";
 import "coap_config.dart";
 import "coap_definitions.dart";
@@ -256,7 +249,7 @@ final class CoapClient implements ProtocolClient {
   }
 
   /// Obtains an ACE creation hint serialized as a [List] of [int] from a
-  /// [Form].
+  /// [form].
   ///
   /// Returns `null` if no `ACESecurityScheme` is defined.
   Future<AuthServerRequestCreationHint?> _obtainAceCreationHintFromForm(

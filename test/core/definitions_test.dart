@@ -7,15 +7,8 @@
 import "dart:convert";
 
 import "package:curie/curie.dart";
-import "package:dart_wot/dart_wot.dart";
-import "package:dart_wot/src/definitions/additional_expected_response.dart";
-import "package:dart_wot/src/definitions/data_schema.dart";
-import "package:dart_wot/src/definitions/expected_response.dart";
-import "package:dart_wot/src/definitions/extensions/json_parser.dart";
-import "package:dart_wot/src/definitions/operation_type.dart";
-import "package:dart_wot/src/definitions/security/no_security_scheme.dart";
-import "package:dart_wot/src/definitions/validation/thing_description_schema.dart";
-import "package:dart_wot/src/definitions/validation/validation_exception.dart";
+import "package:dart_wot/core.dart";
+import "package:dart_wot/src/core/definitions/extensions/json_parser.dart";
 import "package:test/test.dart";
 
 void main() {

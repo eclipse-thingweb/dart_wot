@@ -4,9 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:dart_wot/dart_wot.dart";
+import "package:dart_wot/core.dart";
 import "package:dart_wot/src/binding_mqtt/mqtt_extensions.dart";
-import "package:dart_wot/src/definitions/validation/validation_exception.dart";
 import "package:test/test.dart";
 
 void main() {

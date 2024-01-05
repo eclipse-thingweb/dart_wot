@@ -9,17 +9,8 @@ import "dart:io";
 
 import "package:http/http.dart";
 
-import "../core/augmented_form.dart";
-import "../core/content.dart";
-import "../core/credentials/basic_credentials.dart";
-import "../core/credentials/bearer_credentials.dart";
-import "../core/credentials/callbacks.dart";
-import "../core/protocol_interfaces/protocol_client.dart";
-import "../definitions/form.dart";
-import "../definitions/operation_type.dart";
-import "../definitions/security/basic_security_scheme.dart";
-import "../definitions/security/bearer_security_scheme.dart";
-import "../scripting_api/subscription.dart";
+import "../../core.dart";
+
 import "http_request_method.dart";
 import "http_security_exception.dart";
 

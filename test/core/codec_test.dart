@@ -6,10 +6,11 @@
 
 import "dart:convert";
 
-import "package:dart_wot/scripting_api.dart";
-import "package:dart_wot/src/core/codecs/cbor_codec.dart";
-import "package:dart_wot/src/core/codecs/json_codec.dart" as json_codec;
-import "package:dart_wot/src/core/codecs/text_codec.dart";
+import "package:dart_wot/core.dart";
+import "package:dart_wot/src/core/implementation/codecs/cbor_codec.dart";
+import "package:dart_wot/src/core/implementation/codecs/json_codec.dart"
+    as json_codec;
+import "package:dart_wot/src/core/implementation/codecs/text_codec.dart";
 import "package:test/test.dart";
 
 void main() {
