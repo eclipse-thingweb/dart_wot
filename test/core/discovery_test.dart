@@ -21,6 +21,10 @@ final directoryTestUri2 = Uri.parse("$testUriScheme://[::4]/.well-known/wot");
 final directoryTestThingsUri2 = Uri.parse("$testUriScheme://[::4]/things");
 final directoryTestUri3 = Uri.parse("$testUriScheme://[::5]/.well-known/wot");
 final directoryTestThingsUri3 = Uri.parse("$testUriScheme://[::5]/things");
+final directoryTestUri4 = Uri.parse("$testUriScheme://[::6]/.well-known/wot");
+final directoryTestThingsUri4 = Uri.parse(
+  "$testUriScheme://[::3]/things?offset=2&limit=3&format=array",
+);
 
 const validTestTitle1 = "Test TD 1";
 const validTestThingDescription = '''
@@ -49,6 +53,26 @@ final directoryThingDescription1 = '''
   },
   "properties": {
     "things": {
+      "uriVariables": {
+        "offset": {
+          "title": "Number of TDs to skip before the page",
+          "type": "number",
+          "default": 0
+        },
+        "limit": {
+          "title": "Number of TDs in a page",
+          "type": "number"
+        },
+        "format": {
+          "title": "Payload format",
+          "type": "string",
+          "enum": [
+            "array",
+            "collection"
+          ],
+          "default": "array"
+        }
+      },
       "forms": [
         {
           "href": "$directoryTestThingsUri1"
@@ -128,8 +152,9 @@ class _MockedProtocolClient implements ProtocolClient {
   }
 
   @override
-  Future<Content> readResource(Form form) async {
-    final href = form.href;
+  Future<Content> readResource(AugmentedForm form) async {
+    final href = form.resolvedHref;
+
     if (href == directoryTestThingsUri1) {
       return "[$validTestThingDescription]".toContent("application/td+json");
     }
@@ -140,6 +165,10 @@ class _MockedProtocolClient implements ProtocolClient {
 
     if (href == directoryTestThingsUri3) {
       return invalidTestThingDescription2.toContent("application/td+json");
+    }
+
+    if (href == directoryTestThingsUri4) {
+      return "[$validTestThingDescription]".toContent("application/ld+json");
     }
 
     throw StateError("Encountered an unknown URI $href.");
@@ -165,6 +194,10 @@ class _MockedProtocolClient implements ProtocolClient {
 
     if (url == directoryTestUri3) {
       return directoryThingDescription3.toDiscoveryContent(url);
+    }
+
+    if (url == directoryTestUri4) {
+      return directoryThingDescription1.toDiscoveryContent(url);
     }
 
     throw StateError("Encountered invalid URL.");
@@ -376,6 +409,45 @@ void main() {
       // Cancelling twice should not change the state
       await thingDiscoveryProcess.stop();
       expect(thingDiscoveryProcess.done, true);
+    });
+
+    test("should support the experimental query parameters API", () async {
+      final servient = Servient(
+        clientFactories: [
+          _MockedProtocolClientFactory(),
+        ],
+      );
+
+      final wot = await servient.start();
+      final thingDiscoveryProcess = await wot.exploreDirectory(
+        directoryTestUri4,
+        offset: 2,
+        limit: 3,
+        format: DirectoryPayloadFormat.array,
+      );
+
+      var counter = 0;
+      await for (final thingDescription in thingDiscoveryProcess) {
+        counter++;
+        expect(thingDescription.title, validTestTitle1);
+      }
+      expect(counter, 1);
+      expect(thingDiscoveryProcess.done, true);
+    });
+
+    test(
+        'should currently not support the "collection" format when using the '
+        "experimental query parameters API", () async {
+      final servient = Servient();
+      final wot = await servient.start();
+
+      expect(
+        () async => await wot.exploreDirectory(
+          directoryTestUri4,
+          format: DirectoryPayloadFormat.collection,
+        ),
+        throwsArgumentError,
+      );
     });
   });
 }
