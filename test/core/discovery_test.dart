@@ -258,6 +258,10 @@ class _MockedProtocolClientFactory implements ProtocolClientFactory {
 
   @override
   Set<String> get schemes => {testUriScheme};
+
+  @override
+  bool supportsOperation(OperationType operationType, String? subprotocol) =>
+      true;
 }
 
 extension _DiscoveryContentCreationExtension on String {
