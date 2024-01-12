@@ -7,12 +7,14 @@
 // ignore_for_file: avoid_print
 
 import "package:dart_wot/binding_coap.dart";
+import "package:dart_wot/binding_http.dart";
 import "package:dart_wot/core.dart";
 
 Future<void> main(List<String> args) async {
   final servient = Servient(
     clientFactories: [
       CoapClientFactory(),
+      HttpClientFactory(),
     ],
   );
   final wot = await servient.start();
