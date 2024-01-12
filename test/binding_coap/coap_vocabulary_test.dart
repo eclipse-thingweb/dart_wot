@@ -11,8 +11,8 @@ import "package:dart_wot/src/binding_coap/coap_extensions.dart";
 import "package:test/test.dart";
 
 void main() {
-  group("CoAP Vocabulary Tests", () {
-    test("Should deserialize CoAP Forms", () async {
+  group("CoAP definitions", () {
+    test("should deserialize CoAP Forms", () async {
       const thingDescriptionJson = {
         "@context": [
           "https://www.w3.org/2022/wot/td/v1.1",
