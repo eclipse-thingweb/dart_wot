@@ -29,6 +29,9 @@ Future<void> main(List<String> args) async {
     '"${thingDescription.title}"!',
   );
 
+  print(consumedThing.thingDescription.events);
+  await consumedThing.subscribeEvent("change", print);
+
   print("Incrementing counter ...");
   await consumedThing.invokeAction("increment");
 
