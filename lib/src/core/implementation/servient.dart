@@ -208,9 +208,6 @@ class Servient {
   ProtocolClientFactory? removeClientFactory(String scheme) =>
       _clientFactories.remove(scheme);
 
-  /// Checks whether a [ProtocolClient] is avaiable for a given [scheme].
-  bool hasClientFor(String scheme) => _clientFactories.containsKey(scheme);
-
   /// Returns the [ProtocolClient] associated with a given [scheme].
   ProtocolClient clientFor(String scheme) {
     final clientFactory = _clientFactories[scheme];

@@ -59,10 +59,6 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   /// Determines the id of this [ConsumedThing].
   String get identifier => thingDescription.identifier;
 
-  /// Checks if the [Servient] of this [ConsumedThing] supports a protocol
-  /// [scheme].
-  bool hasClientFor(String scheme) => servient.hasClientFor(scheme);
-
   (ProtocolClient client, AugmentedForm form) _getClientFor(
     List<Form> forms,
     OperationType operationType,
