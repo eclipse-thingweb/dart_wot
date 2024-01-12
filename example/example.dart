@@ -29,10 +29,15 @@ Future<void> main(List<String> args) async {
     '"${thingDescription.title}"!',
   );
 
+  print(consumedThing.thingDescription.events);
+  final subscription = await consumedThing.subscribeEvent("change", print);
+
   print("Incrementing counter ...");
   await consumedThing.invokeAction("increment");
 
   final status = await consumedThing.readProperty("count");
   final value = await status.value();
   print("New counter value: $value");
+
+  await subscription.stop();
 }
