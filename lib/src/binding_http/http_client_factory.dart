@@ -42,4 +42,24 @@ final class HttpClientFactory implements ProtocolClientFactory {
   bool init() {
     return true;
   }
+
+  @override
+  bool supportsOperation(OperationType operationType, String? subprotocol) {
+    const unsupportedOperations = [
+      OperationType.observeproperty,
+      OperationType.unobserveproperty,
+      OperationType.subscribeevent,
+      OperationType.unsubscribeevent,
+    ];
+
+    if (unsupportedOperations.contains(operationType)) {
+      return false;
+    }
+
+    if (subprotocol != null) {
+      return false;
+    }
+
+    return true;
+  }
 }

@@ -4,6 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "package:meta/meta.dart";
+
+import "../../definitions.dart";
 import "protocol_client.dart";
 
 /// Base class for a factory that produces [ProtocolClient]s.
@@ -24,4 +27,9 @@ abstract interface class ProtocolClientFactory {
   /// Creates a new [ProtocolClient] with that supports one or more of the given
   /// [schemes].
   ProtocolClient createClient();
+
+  /// Indicates whether this [ProtocolClientFactory] supports a given
+  /// [operationType] and subprotocol.
+  @experimental
+  bool supportsOperation(OperationType operationType, String? subprotocol);
 }

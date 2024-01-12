@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "package:meta/meta.dart";
+
 import "../definitions.dart";
 import "../scripting_api.dart" as scripting_api;
 import "consumed_thing.dart";
@@ -220,6 +222,26 @@ class Servient {
     }
 
     return clientFactory.createClient();
+  }
+
+  /// Indicates whether there is a registered [ProtocolClientFactory] supporting
+  /// the given [operationType] and [subprotocol].
+  ///
+  /// Also returns `false` if there is no [ProtocolClientFactory] registered for
+  /// the given [scheme].
+  @experimental
+  bool supportsOperation(
+    String scheme,
+    OperationType operationType,
+    String? subprotocol,
+  ) {
+    final protocolClient = _clientFactories[scheme];
+
+    if (protocolClient == null) {
+      return false;
+    }
+
+    return protocolClient.supportsOperation(operationType, subprotocol);
   }
 
   /// Requests a [ThingDescription] from a [url].

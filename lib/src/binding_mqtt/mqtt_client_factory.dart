@@ -42,4 +42,10 @@ final class MqttClientFactory implements ProtocolClientFactory {
 
   @override
   Set<String> get schemes => {mqttUriScheme, mqttSecureUriScheme};
+
+  @override
+  bool supportsOperation(OperationType operationType, String? subprotocol) {
+    // MQTT client does not support any subprotocols
+    return subprotocol == null;
+  }
 }

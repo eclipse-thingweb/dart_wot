@@ -97,9 +97,19 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       }
     } else {
       foundForm = augmentedForms.firstWhere(
-        (form) =>
-            hasClientFor(form.href.scheme) &&
-            _supportsOperationType(form, interactionAffordance, operationType),
+        (form) {
+          final opValues = form.op;
+
+          if (!opValues.contains(operationType)) {
+            return false;
+          }
+
+          return servient.supportsOperation(
+            form.resolvedHref.scheme,
+            operationType,
+            form.subprotocol,
+          );
+        },
         // TODO(JKRhb): Add custom Exception
         orElse: () => throw Exception("No matching form found!"),
       );
@@ -427,17 +437,6 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       case scripting_api.SubscriptionType.event:
         _subscribedEvents.remove(key);
     }
-  }
-
-  static bool _supportsOperationType(
-    Form form,
-    InteractionAffordance interactionAffordance,
-    OperationType operationType,
-  ) {
-    final opValues =
-        form.op ?? OperationType.defaultOpValues(interactionAffordance);
-
-    return opValues.contains(operationType);
   }
 
   /// Cleans up the resources used by this [ConsumedThing].

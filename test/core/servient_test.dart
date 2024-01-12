@@ -27,6 +27,10 @@ class MockedProtocolClientFactory implements ProtocolClientFactory {
 
   @override
   Set<String> get schemes => {testUriScheme};
+
+  @override
+  bool supportsOperation(OperationType operationType, String? subprotocol) =>
+      true;
 }
 
 void main() {
