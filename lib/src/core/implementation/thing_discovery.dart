@@ -71,14 +71,15 @@ class ThingDiscovery extends Stream<ThingDescription>
 
   ProtocolClient _clientForUriScheme(Uri uri) {
     final uriScheme = uri.scheme;
-    var client = _clients[uriScheme];
+    final existingClient = _clients[uriScheme];
 
-    if (client == null) {
-      client = _servient.clientFor(uriScheme);
-      _clients[uriScheme] = client;
+    if (existingClient != null) {
+      return existingClient;
     }
 
-    return client;
+    final newClient = _servient.clientFor(uriScheme);
+    _clients[uriScheme] = newClient;
+    return newClient;
   }
 
   @override
