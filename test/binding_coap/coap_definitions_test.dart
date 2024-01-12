@@ -11,8 +11,8 @@ import "package:dart_wot/src/binding_coap/coap_extensions.dart";
 import "package:test/test.dart";
 
 void main() {
-  group("CoAP definitions", () {
-    test("should deserialize CoAP Forms", () async {
+  group("CoAP definitions should", () {
+    test("deserialize CoAP Forms", () async {
       const thingDescriptionJson = {
         "@context": [
           "https://www.w3.org/2022/wot/td/v1.1",
@@ -87,5 +87,13 @@ void main() {
         throwsA(isA<ValidationException>()),
       );
     });
+  });
+
+  test("parse CoAP subprotocols", () async {
+    final observeSubprotocol = CoapSubprotocol.tryParse("cov:observe");
+    expect(observeSubprotocol == CoapSubprotocol.observe, isTrue);
+
+    final unknownSubprotocol = CoapSubprotocol.tryParse("foobar");
+    expect(unknownSubprotocol, isNull);
   });
 }
