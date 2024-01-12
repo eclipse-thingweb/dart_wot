@@ -44,7 +44,6 @@ void main() {
       );
 
       expect(servient.clientSchemes, [testUriScheme]);
-      expect(servient.hasClientFor(testUriScheme), true);
     });
 
     test(
@@ -53,11 +52,11 @@ void main() {
         final servient = Servient()
           ..addClientFactory(MockedProtocolClientFactory());
 
-        expect(servient.hasClientFor(testUriScheme), true);
+        expect(servient.clientSchemes.contains(testUriScheme), true);
 
         servient.removeClientFactory(testUriScheme);
 
-        expect(servient.hasClientFor(testUriScheme), false);
+        expect(servient.clientSchemes.contains(testUriScheme), false);
         expect(servient.clientSchemes.length, 0);
       },
     );
