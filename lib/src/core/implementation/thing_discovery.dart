@@ -149,19 +149,33 @@ class ThingDiscovery extends Stream<ThingDescription>
 
   Stream<ThingDescription> _discoverWithCoreLinkFormat(Uri uri) async* {
     // TODO: Remove additional quotes once fixed in CoAP library
-    yield* _performCoreLinkFormatDiscovery('"wot.thing"', uri)
-        .map(_discoverDirectly)
-        .flatten();
+    yield* _performCoreLinkFormatDiscovery('"wot.thing"', uri).transform(
+      StreamTransformer.fromBind(
+        (stream) async* {
+          await for (final uris in stream) {
+            final futures = uris.map(_servient.requestThingDescription);
+            yield* Stream.fromFutures(futures);
+          }
+        },
+      ),
+    );
   }
 
   Stream<ThingDescription> _discoverfromCoreResourceDirectory(Uri uri) async* {
     // TODO: Remove additional quotes once fixed in CoAP library
     yield* _performCoreLinkFormatDiscovery('"core.rd-lookup-res"', uri)
-        .map(_discoverWithCoreLinkFormat)
-        .flatten();
+        .transform(
+      StreamTransformer.fromBind((stream) async* {
+        await for (final uris in stream) {
+          for (final uri in uris) {
+            yield* _discoverWithCoreLinkFormat(uri);
+          }
+        }
+      }),
+    );
   }
 
-  Stream<Uri> _performCoreLinkFormatDiscovery(
+  Stream<Iterable<Uri>> _performCoreLinkFormatDiscovery(
     String resourceType,
     Uri uri,
   ) async* {
@@ -171,23 +185,12 @@ class ThingDiscovery extends Stream<ThingDescription>
 
     await for (final coreWebLink
         in client.discoverWithCoreLinkFormat(discoveryUri)) {
-      final Iterable<Uri> parsedUris;
-
       try {
-        parsedUris = await _filterCoreWebLinks(resourceType, coreWebLink);
+        final parsedUris = await _filterCoreWebLinks(resourceType, coreWebLink);
+        yield parsedUris.where(discoveredUris.add);
       } on Exception catch (exception) {
         yield* Stream.error(exception);
         continue;
-      }
-
-      for (final parsedUri in parsedUris) {
-        final uriAdded = discoveredUris.add(parsedUri);
-
-        if (!uriAdded) {
-          continue;
-        }
-
-        yield parsedUri;
       }
     }
   }
