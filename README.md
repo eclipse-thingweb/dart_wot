@@ -3,6 +3,12 @@
 [![codecov](https://codecov.io/gh/eclipse-thingweb/dart_wot/branch/main/graph/badge.svg?token=76OBNOVL60)](https://codecov.io/gh/eclipse-thingweb/dart_wot)
 [![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg)](https://pub.dev/packages/lint)
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/eclipse-thingweb/thingweb/main/brand/logos/dart_wot_for_dark_bg.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/eclipse-thingweb/thingweb/main/brand/logos/dart_wot.svg">
+  <img title="Thingweb dart_wot " alt="Thingweb dart_wot logo" src="https://raw.githubusercontent.com/eclipse-thingweb/thingweb/main/brand/logos/dart_wot.svg" width="300">
+</picture>
+
 # dart_wot
 
 dart_wot is an implementation of the
