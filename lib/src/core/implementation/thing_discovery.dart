@@ -139,7 +139,9 @@ class ThingDiscovery extends Stream<ThingDescription>
     return webLinks
         .where(
           (element) =>
-              element.attributes.getResourceTypes()?.contains(resourceType) ??
+              element.attributes
+                  .getResourceTypes()
+                  ?.contains(resourceType.asCoreLinkFormatAttributeValue()) ??
               false,
         )
         .map((weblink) => Uri.tryParse(weblink.uri))
@@ -148,8 +150,7 @@ class ThingDiscovery extends Stream<ThingDescription>
   }
 
   Stream<ThingDescription> _discoverWithCoreLinkFormat(Uri uri) async* {
-    // TODO: Remove additional quotes once fixed in CoAP library
-    yield* _performCoreLinkFormatDiscovery('"wot.thing"', uri).transform(
+    yield* _performCoreLinkFormatDiscovery("wot.thing", uri).transform(
       StreamTransformer.fromBind(
         (stream) async* {
           await for (final uris in stream) {
@@ -162,9 +163,7 @@ class ThingDiscovery extends Stream<ThingDescription>
   }
 
   Stream<ThingDescription> _discoverfromCoreResourceDirectory(Uri uri) async* {
-    // TODO: Remove additional quotes once fixed in CoAP library
-    yield* _performCoreLinkFormatDiscovery('"core.rd-lookup-res"', uri)
-        .transform(
+    yield* _performCoreLinkFormatDiscovery("core.rd-lookup-res", uri).transform(
       StreamTransformer.fromBind((stream) async* {
         await for (final uris in stream) {
           for (final uri in uris) {
@@ -312,6 +311,12 @@ class ThingDiscovery extends Stream<ThingDescription>
   }
 }
 
+extension _CoreLinkFormatExtension on String {
+  /// Formats this string as an attribute value for the CoRE Link-Format.
+  // TODO: Remove additional quotes once fixed in CoAP library
+  String asCoreLinkFormatAttributeValue() => '"$this"';
+}
+
 extension _UriExtension on Uri {
   /// Returns the [path] if it is not empty, otherwise `null`.
   String? get _pathOrNull {
@@ -331,7 +336,9 @@ extension _UriExtension on Uri {
   /// the parameter name `rt`. If this name should already be in use, it will
   /// not be overridden.
   Uri toLinkFormatDiscoveryUri(String resourceType) {
-    final Map<String, dynamic> newQueryParameters = {"rt": resourceType};
+    final Map<String, dynamic> newQueryParameters = {
+      "rt": resourceType.asCoreLinkFormatAttributeValue(),
+    };
     if (queryParameters.isNotEmpty) {
       newQueryParameters.addAll(queryParameters);
     }
