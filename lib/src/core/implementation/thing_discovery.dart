@@ -358,16 +358,6 @@ extension _UriExtension on Uri {
   }
 }
 
-/// Extension to simplify the handling of nested [Stream]s.
-extension _FlatStreamExtension<T> on Stream<Stream<T>> {
-  /// Flattens a nested [Stream] of [Stream]s into a single [Stream].
-  Stream<T> flatten() async* {
-    await for (final stream in this) {
-      yield* stream;
-    }
-  }
-}
-
 /// Implemention of the [scripting_api.ThingDiscoveryProcess] interface.
 class ThingDiscoveryProcess extends Stream<ThingDescription>
     implements scripting_api.ThingDiscoveryProcess {
