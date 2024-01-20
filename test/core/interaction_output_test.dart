@@ -27,7 +27,7 @@ void main() {
       final interactionOutput = InteractionOutput(
         content,
         contentSerdes,
-        null,
+        Form(Uri.parse("http://example.org")),
         const DataSchema(),
       );
 
@@ -54,7 +54,7 @@ void main() {
       final interactionOutput = InteractionOutput(
         content,
         contentSerdes,
-        null,
+        Form(Uri.parse("http://example.org")),
         const DataSchema(),
       );
 

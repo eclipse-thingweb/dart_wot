@@ -21,13 +21,13 @@ class InteractionOutput implements scripting_api.InteractionOutput {
   /// payload contained in the [Content] object.
   InteractionOutput(
     this._content,
-    this._contentSerdes, [
+    this._contentSerdes,
     this._form,
     this._schema,
-  ]) : _data = _content.body;
+  ) : _data = _content.body;
 
   final Content _content;
-  final Form? _form;
+  final Form _form;
   final DataSchema? _schema;
   final Stream<List<int>> _data;
 
@@ -80,5 +80,5 @@ class InteractionOutput implements scripting_api.InteractionOutput {
   DataSchema? get schema => _schema;
 
   @override
-  Form? get form => _form;
+  Form get form => _form;
 }
