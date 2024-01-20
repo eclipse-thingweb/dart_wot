@@ -17,8 +17,15 @@ import "content_serdes.dart";
 class InteractionOutput implements scripting_api.InteractionOutput {
   /// Creates a new [InteractionOutput] based on a [Content] object.
   ///
-  /// A [ContentSerdes] object has to be passed for decoding the raw
-  /// payload contained in the [Content] object.
+  /// A [_contentSerdes] object has to be passed for decoding the raw
+  /// payload contained in the [_content] object.
+  ///
+  /// In contrast to the interface definition in the
+  /// [Scripting API specification], [_form] is defined as non-nullable here,
+  /// since other parts of the code never pass a `null` value as an argument for
+  /// this parameter.
+  ///
+  /// [Scripting API specification]: https://w3c.github.io/wot-scripting-api/#the-interactionoutput-interface
   InteractionOutput(
     this._content,
     this._contentSerdes,
