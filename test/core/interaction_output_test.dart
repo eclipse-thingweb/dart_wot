@@ -24,7 +24,12 @@ void main() {
         ]),
       );
 
-      final interactionOutput = InteractionOutput(content, contentSerdes);
+      final interactionOutput = InteractionOutput(
+        content,
+        contentSerdes,
+        null,
+        const DataSchema(),
+      );
 
       final value1 = await interactionOutput.value();
       expect(value1, inputValue);
@@ -46,7 +51,12 @@ void main() {
         ]),
       );
 
-      final interactionOutput = InteractionOutput(content, contentSerdes);
+      final interactionOutput = InteractionOutput(
+        content,
+        contentSerdes,
+        null,
+        const DataSchema(),
+      );
 
       final value1 = await interactionOutput.value();
       expect(value1, inputValue);
