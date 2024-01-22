@@ -243,7 +243,7 @@ class ThingDiscovery extends Stream<ThingDescription>
     );
   }
 
-  Map<String, String> _parseTxtRecords(String txtRecords) {
+  Map<String, String> _parseMdnsTxtRecords(String txtRecords) {
     final recordsList = txtRecords
         .split("\n")
         .map((property) => property.split("="))
@@ -251,6 +251,29 @@ class ThingDiscovery extends Stream<ThingDescription>
         .map((list) => MapEntry(list[0], list[1]));
 
     return Map.fromEntries(recordsList);
+  }
+
+  static String _trimTxtRecord(String txtRecord) {
+    final startIndex = txtRecord.startsWith('"') ? 1 : 0;
+
+    final length = txtRecord.length;
+    final endIndex = txtRecord.endsWith('"') ? length - 1 : length;
+
+    return txtRecord.substring(startIndex, endIndex);
+  }
+
+  Map<String, String> _parseTxtRecords(List<RRecord>? txtRecords) {
+    final entries = txtRecords
+            ?.map((txtRecord) => txtRecord.data)
+            .map(_trimTxtRecord)
+            .map((e) => e.split("="))
+            .where((element) => element.length == 2)
+            .map((txtRecord) {
+          return MapEntry(txtRecord[0], txtRecord[1]);
+        }) ??
+        [];
+
+    return Map.fromEntries(entries);
   }
 
   Future<Map<String, String>?> _lookupTxtRecords(
@@ -267,7 +290,7 @@ class ThingDiscovery extends Stream<ThingDescription>
       return null;
     }
 
-    return _parseTxtRecords(firstTxtRecord);
+    return _parseMdnsTxtRecords(firstTxtRecord);
   }
 
   Stream<ThingDescription> _discoverUsingDnsSd(String name) async* {
@@ -309,20 +332,13 @@ class ThingDiscovery extends Stream<ThingDescription>
             ) ??
             [];
 
-        final txtRecord = txtRecords.firstOrNull;
-
-        if (txtRecord == null) {
-          continue;
-        }
-
-        // FIXME: Add parsing of multiple TXT records
-        final parsedTxtRecord = _parseTxtRecords(txtRecord.data);
+        final parsedTxtRecords = _parseTxtRecords(txtRecords);
 
         final uri = Uri(
           host: target,
           port: port,
-          path: parsedTxtRecord["td"],
-          scheme: parsedTxtRecord["scheme"] ?? defaultScheme,
+          path: parsedTxtRecords["td"],
+          scheme: parsedTxtRecords["scheme"] ?? defaultScheme,
         );
 
         final duplicate = !discoveredUris.add(uri);
@@ -331,7 +347,7 @@ class ThingDiscovery extends Stream<ThingDescription>
           continue;
         }
 
-        final type = parsedTxtRecord["type"] ?? defaultType;
+        final type = parsedTxtRecords["type"] ?? defaultType;
 
         switch (type) {
           case "Thing":
