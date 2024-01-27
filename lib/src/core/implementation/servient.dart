@@ -162,7 +162,7 @@ class Servient {
   /// `true`.
   bool addConsumedThing(ConsumedThing thing) {
     final id = thing.identifier;
-    if (_things.containsKey(id)) {
+    if (_consumedThings.containsKey(id)) {
       return false;
     }
 
