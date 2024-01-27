@@ -29,6 +29,11 @@ void main() {
         DiscoveryException("test").toString(),
         "DiscoveryException: test",
       );
+
+      expect(
+        NotReadableException("test").toString(),
+        "NotReadableException: test",
+      );
     });
   });
 }

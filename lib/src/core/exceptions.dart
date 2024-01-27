@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+export "exceptions/web_idl.dart";
+
 /// Base class for custom exceptions defined in `dart_wot`.
 base class DartWotException implements Exception {
   /// Constructor.
