@@ -6,31 +6,8 @@
 
 import "package:json_schema/json_schema.dart";
 
-import "validation_exception.dart";
-
 /// JSON Schema definition used for validating Thing Descriptions.
 final thingDescriptionSchema = JsonSchema.create(_rawThingDescriptionSchema);
-
-/// [Exception] that is thrown when a Thing Description is identified as being
-/// invalid.
-class ThingDescriptionValidationException extends ValidationException {
-  /// Constructor.
-  ThingDescriptionValidationException(
-    this.rawThingDescription,
-    this._validationErrors,
-  ) : super("Validation of Thing Description failed");
-
-  final List<ValidationError> _validationErrors;
-
-  /// The raw Thing Description that is invalid.
-  Map<String, dynamic> rawThingDescription;
-
-  @override
-  String toString() {
-    return "ThingDescriptionValidationException: $message.\n\n"
-        'Errors:\n\n ${_validationErrors.join("\n")}';
-  }
-}
 
 final Map<String, dynamic> _rawThingDescriptionSchema = <String, dynamic>{
   "title": "Thing Description",

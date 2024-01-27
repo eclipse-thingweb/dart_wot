@@ -9,44 +9,12 @@ import "dart:async";
 import "package:uuid/uuid.dart";
 
 import "../definitions.dart";
+import "../exceptions.dart";
 import "../scripting_api.dart" as scripting_api;
 import "consumed_thing.dart";
-import "discovery_exception.dart";
 import "exposed_thing.dart";
 import "servient.dart";
 import "thing_discovery.dart";
-
-/// This [Exception] is thrown if an error during the consumption of a
-/// [ThingDescription] occurs.
-class ThingConsumptionException implements Exception {
-  /// Constructor
-  ThingConsumptionException(this.identifier);
-
-  /// The identifier of the [ThingDescription] that triggered this [Exception].
-  final String identifier;
-
-  @override
-  String toString() {
-    return "ThingConsumptionException: A ConsumedThing with identifier "
-        "$identifier already exists.";
-  }
-}
-
-/// This [Exception] is thrown if an error during the production of a
-/// [ThingDescription] occurs.
-class ThingProductionException implements Exception {
-  /// Constructor
-  ThingProductionException(this.identifier);
-
-  /// The identifier of the [ThingDescription] that triggered this [Exception].
-  final String identifier;
-
-  @override
-  String toString() {
-    return "ThingProductionException: An ExposedThing with identifier "
-        "$identifier already exists.";
-  }
-}
 
 /// Implementation of the [scripting_api.WoT] runtime interface.
 class WoT implements scripting_api.WoT {
@@ -70,7 +38,7 @@ class WoT implements scripting_api.WoT {
       return newThing;
     } else {
       final id = thingDescription.identifier;
-      throw ThingConsumptionException(id);
+      throw DartWotException(id);
     }
   }
 
@@ -91,7 +59,9 @@ class WoT implements scripting_api.WoT {
       return newThing;
     } else {
       final id = newThing.thingDescription.identifier;
-      throw ThingProductionException(id);
+      throw DartWotException(
+        "A ConsumedThing with identifier $id already exists.",
+      );
     }
   }
 

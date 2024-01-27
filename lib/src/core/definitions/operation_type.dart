@@ -4,8 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "../exceptions.dart";
 import "interaction_affordances/interaction_affordance.dart";
-import "validation/validation_exception.dart";
 
 /// Enumeration for the possible WoT operation types.
 ///

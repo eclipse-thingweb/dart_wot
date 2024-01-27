@@ -22,7 +22,7 @@ void main() {
 
       expect(
         () => ThingDescription.fromJson(illegalThingDescription),
-        throwsA(isA<ThingDescriptionValidationException>()),
+        throwsA(isA<ValidationException>()),
       );
     });
 
@@ -549,7 +549,7 @@ void main() {
 
     expect(
       () => ThingDescription.fromJson(invalidThingDescription1),
-      throwsA(isA<ContextValidationException>()),
+      throwsA(isA<ValidationException>()),
     );
   });
 }

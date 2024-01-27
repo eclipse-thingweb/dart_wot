@@ -11,9 +11,9 @@ import "package:collection/collection.dart";
 import "package:multicast_dns/multicast_dns.dart";
 
 import "../definitions.dart";
+import "../exceptions.dart";
 import "../scripting_api.dart" as scripting_api;
 import "content.dart";
-import "discovery_exception.dart";
 import "protocol_interfaces/protocol_client.dart";
 import "servient.dart";
 

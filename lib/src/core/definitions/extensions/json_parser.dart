@@ -7,6 +7,7 @@
 import "package:collection/collection.dart";
 import "package:curie/curie.dart";
 
+import "../../exceptions.dart";
 import "../additional_expected_response.dart";
 import "../data_schema.dart";
 import "../expected_response.dart";
@@ -26,7 +27,6 @@ import "../security/oauth2_security_scheme.dart";
 import "../security/psk_security_scheme.dart";
 import "../security/security_scheme.dart";
 import "../thing_description.dart";
-import "../validation/validation_exception.dart";
 import "../version_info.dart";
 
 const _validTdContextValues = [
@@ -638,7 +638,9 @@ List<ContextEntry> _parseContext(
           final value = entry.value;
 
           if (value is! String) {
-            throw ContextValidationException(value.runtimeType);
+            throw ValidationException(
+                "Excepted either a String or a Map<String, String> "
+                "as @context entry, got ${value.runtimeType} instead.");
           }
 
           if (!key.startsWith("@") && Uri.tryParse(value) != null) {
@@ -649,16 +651,6 @@ List<ContextEntry> _parseContext(
       }
   }
 
-  throw ContextValidationException(json.runtimeType);
-}
-
-/// Custom [ValidationException] that is thrown for an invalid [ContextEntry].
-class ContextValidationException extends ValidationException {
-  /// Creates a new [ContextValidationException] indicating the invalid
-  /// [runtimeType].
-  ContextValidationException(Type runtimeType)
-      : super(
-          "Excepted either a String or a Map<String, String> "
-          "as @context entry, got $runtimeType instead.",
-        );
+  throw ValidationException("Excepted either a String or a Map<String, String> "
+      "as @context entry, got ${json.runtimeType} instead.");
 }

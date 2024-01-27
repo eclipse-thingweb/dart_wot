@@ -10,6 +10,7 @@ import "package:http_parser/http_parser.dart";
 import "package:json_schema/json_schema.dart";
 
 import "../definitions/data_schema.dart";
+import "../exceptions.dart";
 import "../scripting_api/data_schema_value.dart";
 import "codecs/cbor_codec.dart";
 import "codecs/codec_media_type.dart";
@@ -21,23 +22,9 @@ import "content.dart";
 /// Defines `application/json` as the default content type.
 const defaultMediaType = "application/json";
 
-/// Custom [Exception] that is thrown when Serialization or Deserialization
-/// fails.
 // TODO(JKRhb): Add codecs for XML based media types
 // TODO(JKRhb): Add codecs for Base64 media types
 // TODO(JKRhb): Add codec for OctetStream media type
-class ContentSerdesException implements Exception {
-  /// Constructor.
-  ContentSerdesException(this.message);
-
-  /// The error message of this [ContentSerdesException].
-  String? message;
-
-  @override
-  String toString() {
-    return "ContentSerdesException: $message";
-  }
-}
 
 /// Class providing serializing and deserializing capabilities.
 ///
@@ -158,7 +145,7 @@ class ContentSerdes {
     }
 
     if (dataSchemaValue == null) {
-      throw ContentSerdesException("Expected a defined dataSchemaValue");
+      throw ValidationException("Expected a defined dataSchemaValue");
     }
 
     final schema = JsonSchema.create(
@@ -166,7 +153,7 @@ class ContentSerdes {
       schemaVersion: SchemaVersion.draft7,
     );
     if (!schema.validate(dataSchemaValue.value).isValid) {
-      throw ContentSerdesException("JSON Schema validation failed.");
+      throw ValidationException("JSON Schema validation failed.");
     }
   }
 

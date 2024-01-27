@@ -5,37 +5,13 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "../definitions.dart";
+import "../exceptions.dart";
 import "../scripting_api.dart" as scripting_api;
 import "augmented_form.dart";
 import "content.dart";
 import "interaction_output.dart";
 import "protocol_interfaces/protocol_client.dart";
 import "servient.dart";
-
-/// This [Exception] is thrown when the body of a response is encoded
-/// differently than expected.
-class UnexpectedReponseException implements Exception {
-  /// Creates a new [UnexpectedReponseException] from an error [message].
-  UnexpectedReponseException(this.message);
-
-  /// The error [message].
-  final String message;
-
-  @override
-  String toString() => "UnexpectedReponseException: $message";
-}
-
-/// This Exception is thrown when
-class SubscriptionException implements Exception {
-  /// Creates a new [SubscriptionException] from an error [message].
-  SubscriptionException(this.message);
-
-  /// The error [message].
-  final String message;
-
-  @override
-  String toString() => "SubscriptionException: $message";
-}
 
 /// Implementation of the [scripting_api.ConsumedThing] interface.
 class ConsumedThing implements scripting_api.ConsumedThing {
@@ -216,8 +192,13 @@ class ConsumedThing implements scripting_api.ConsumedThing {
 
     final response = form.response;
     if (response != null) {
+      final outputType = output.type;
+      final responseType = response.contentType;
       if (output.type != response.contentType) {
-        throw UnexpectedReponseException("Unexpected type in response");
+        throw DartWotException(
+          "Unexpected output type $outputType in response, "
+          "expected $responseType.",
+        );
       }
     }
 
@@ -395,7 +376,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     }
 
     if (_subscribedEvents.containsKey(eventName)) {
-      throw SubscriptionException(
+      throw DartWotException(
         "ConsumedThing '$title' already has a function "
         "subscribed to $eventName. You can only subscribe once.",
       );
