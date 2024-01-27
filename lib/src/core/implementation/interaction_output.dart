@@ -47,7 +47,7 @@ class InteractionOutput implements scripting_api.InteractionOutput {
   @override
   Future<ByteBuffer> arrayBuffer() async {
     if (dataUsed) {
-      throw NotReadableException("Data has already been read");
+      throw const NotReadableException("Data has already been read");
     }
 
     _dataUsed = true;
@@ -65,7 +65,7 @@ class InteractionOutput implements scripting_api.InteractionOutput {
     }
 
     if (schema == null) {
-      throw NotReadableException(
+      throw const NotReadableException(
         "Can't convert data to a value because no DataSchema is present.",
       );
     }

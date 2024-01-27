@@ -13,7 +13,7 @@ import "../exceptions.dart";
 /// [NotReadableError]: https://webidl.spec.whatwg.org/#notreadableerror
 final class NotReadableException extends DartWotException {
   /// Instantiates a new [NotReadableException] with the given [message].
-  NotReadableException(super.message);
+  const NotReadableException(super.message);
 
   @override
   String get exceptionType => "NotReadableException";
