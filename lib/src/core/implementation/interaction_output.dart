@@ -8,6 +8,7 @@ import "dart:typed_data";
 
 import "../definitions/data_schema.dart";
 import "../definitions/form.dart";
+import "../exceptions.dart";
 import "../scripting_api.dart" as scripting_api;
 import "content.dart";
 import "content_serdes.dart";
@@ -16,17 +17,24 @@ import "content_serdes.dart";
 class InteractionOutput implements scripting_api.InteractionOutput {
   /// Creates a new [InteractionOutput] based on a [Content] object.
   ///
-  /// A [ContentSerdes] object has to be passed for decoding the raw
-  /// payload contained in the [Content] object.
+  /// A [_contentSerdes] object has to be passed for decoding the raw
+  /// payload contained in the [_content] object.
+  ///
+  /// In contrast to the interface definition in the
+  /// [Scripting API specification], [_form] is defined as non-nullable here,
+  /// since other parts of the code never pass a `null` value as an argument for
+  /// this parameter.
+  ///
+  /// [Scripting API specification]: https://w3c.github.io/wot-scripting-api/#the-interactionoutput-interface
   InteractionOutput(
     this._content,
-    this._contentSerdes, [
+    this._contentSerdes,
     this._form,
     this._schema,
-  ]) : _data = _content.body;
+  ) : _data = _content.body;
 
   final Content _content;
-  final Form? _form;
+  final Form _form;
   final DataSchema? _schema;
   final Stream<List<int>> _data;
 
@@ -38,6 +46,10 @@ class InteractionOutput implements scripting_api.InteractionOutput {
 
   @override
   Future<ByteBuffer> arrayBuffer() async {
+    if (dataUsed) {
+      throw NotReadableException("Data has already been read");
+    }
+
     _dataUsed = true;
     return _content.byteBuffer;
   }
@@ -52,8 +64,11 @@ class InteractionOutput implements scripting_api.InteractionOutput {
       return existingValue.value;
     }
 
-    // TODO(JKRhb): Should a NotReadableError be thrown if schema is null?
-    //              C.f. https://w3c.github.io/wot-scripting-api/#the-value-function
+    if (schema == null) {
+      throw NotReadableException(
+        "Can't convert data to a value because no DataSchema is present.",
+      );
+    }
 
     final value = await _contentSerdes.contentToValue(
       _content,
@@ -72,5 +87,5 @@ class InteractionOutput implements scripting_api.InteractionOutput {
   DataSchema? get schema => _schema;
 
   @override
-  Form? get form => _form;
+  Form get form => _form;
 }
