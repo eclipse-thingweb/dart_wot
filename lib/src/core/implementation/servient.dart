@@ -68,9 +68,9 @@ class Servient {
 
   /// Starts this [Servient] and returns a [WoT] runtime object.
   ///
-  /// The [WoT] runtime can be used for consuming, procuding, and discovering
-  /// Things.
-  Future<WoT> start() async {
+  /// The [scripting_api.WoT] runtime can be used for consuming, procuding, and
+  /// discovering Things.
+  Future<scripting_api.WoT> start() async {
     final serverStatuses = _servers
         .map((server) => server.start(_serverSecurityCallback))
         .toList(growable: false);
