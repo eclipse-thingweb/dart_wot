@@ -7,26 +7,15 @@
 import "package:meta/meta.dart";
 
 import "../definitions.dart";
+import "../exceptions.dart";
 import "../scripting_api.dart" as scripting_api;
 import "consumed_thing.dart";
 import "content_serdes.dart";
-import "discovery_exception.dart";
 import "exposed_thing.dart";
 import "protocol_interfaces/protocol_client.dart";
 import "protocol_interfaces/protocol_client_factory.dart";
 import "protocol_interfaces/protocol_server.dart";
 import "wot.dart";
-
-/// Exception that is thrown by a [Servient].
-class ServientException implements Exception {
-  /// Constructor
-  ServientException(this._message);
-
-  final String _message;
-
-  @override
-  String toString() => "ServientException: $_message";
-}
 
 // TODO(JKRhb): Documentation should be improved.
 /// A software stack that implements the WoT building blocks.
@@ -213,7 +202,7 @@ class Servient {
     final clientFactory = _clientFactories[scheme];
 
     if (clientFactory == null) {
-      throw ServientException(
+      throw DartWotException(
         "Servient has no ClientFactory for scheme $scheme",
       );
     }

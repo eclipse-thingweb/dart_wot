@@ -7,6 +7,7 @@
 import "package:curie/curie.dart";
 import "package:meta/meta.dart";
 
+import "../exceptions.dart";
 import "additional_expected_response.dart";
 import "data_schema.dart";
 import "extensions/json_parser.dart";
@@ -61,8 +62,8 @@ class ThingDescription {
     if (validate) {
       final validationResult = thingDescriptionSchema.validate(json);
       if (!validationResult.isValid) {
-        throw ThingDescriptionValidationException(
-          json,
+        throw ValidationException(
+          "Validation of Thing Description failed.",
           validationResult.errors,
         );
       }

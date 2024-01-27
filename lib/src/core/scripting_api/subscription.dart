@@ -6,17 +6,6 @@
 
 import "../definitions.dart";
 
-/// [Exception] that is thrown when error during the unsubscribe process occurs.
-class UnsubscribeException implements Exception {
-  /// Constructor.
-  UnsubscribeException(this._message);
-
-  final String _message;
-
-  @override
-  String toString() => "UnsubscribeException: $_message";
-}
-
 /// Indicates the type of the subscription.
 enum SubscriptionType {
   /// The subscription is the observation of a property.

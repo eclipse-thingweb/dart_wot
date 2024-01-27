@@ -6,6 +6,7 @@
 
 import "package:curie/curie.dart";
 import "package:dart_wot/src/core/definitions/data_schema.dart";
+import "package:dart_wot/src/core/exceptions.dart";
 import "package:dart_wot/src/core/implementation/codecs/json_codec.dart";
 import "package:dart_wot/src/core/implementation/content.dart";
 import "package:dart_wot/src/core/implementation/content_serdes.dart";
@@ -40,7 +41,7 @@ void main() {
 
       expect(
         contentSerdes.contentToValue(testContent2, failingSchema),
-        throwsA(const TypeMatcher<ContentSerdesException>()),
+        throwsA(const TypeMatcher<ValidationException>()),
       );
 
       expect(
@@ -48,7 +49,7 @@ void main() {
           DataSchemaValue.tryParse(42),
           failingSchema,
         ),
-        throwsA(const TypeMatcher<ContentSerdesException>()),
+        throwsA(const TypeMatcher<ValidationException>()),
       );
 
       final testContent3 = _getTestContent("");
@@ -149,7 +150,7 @@ void main() {
           // FIXME(JKRhb): Should not be necessary to use fromJson here
           DataSchema.fromJson(const {"type": "object"}, PrefixMapping()),
         ),
-        throwsA(isA<ContentSerdesException>()),
+        throwsA(isA<ValidationException>()),
       );
     });
 

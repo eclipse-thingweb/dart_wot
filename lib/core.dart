@@ -10,5 +10,6 @@
 library core;
 
 export "src/core/definitions.dart";
+export "src/core/exceptions.dart";
 export "src/core/implementation.dart";
 export "src/core/scripting_api.dart";

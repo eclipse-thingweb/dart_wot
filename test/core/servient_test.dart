@@ -34,8 +34,8 @@ class MockedProtocolClientFactory implements ProtocolClientFactory {
 }
 
 void main() {
-  group("Servient Tests", () {
-    test("Should accept a ProtocolClientFactory list as constructor argument",
+  group("Servient", () {
+    test("should accept a ProtocolClientFactory list as constructor argument",
         () {
       final servient = Servient(
         clientFactories: [
@@ -47,7 +47,7 @@ void main() {
     });
 
     test(
-      "Should allow for adding and removing a ProtocolClientFactory at runtime",
+      "should allow for adding and removing a ProtocolClientFactory at runtime",
       () {
         final servient = Servient()
           ..addClientFactory(MockedProtocolClientFactory());
@@ -61,4 +61,17 @@ void main() {
       },
     );
   });
+
+  test(
+    "should throw a DartWotException when a "
+    "ProtocolClientFactory is not registered",
+    () {
+      final servient = Servient();
+
+      expect(
+        () => servient.clientFor(testUriScheme),
+        throwsA(isA<DartWotException>()),
+      );
+    },
+  );
 }

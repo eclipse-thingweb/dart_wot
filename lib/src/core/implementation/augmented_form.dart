@@ -10,6 +10,7 @@ import "package:meta/meta.dart";
 import "package:uri/uri.dart";
 
 import "../definitions.dart";
+import "../exceptions.dart";
 
 /// A [Form] augmented with information from its asscociated [_thingDescription]
 /// and [_interactionAffordance].
@@ -164,22 +165,5 @@ final class AugmentedForm implements Form {
         throw ValidationException("Invalid type for URI variable $key");
       }
     }
-  }
-}
-
-/// This [Exception] is thrown when [URI variables] are being used in the [Form]
-/// of a TD but no (valid) values were provided.
-///
-/// [URI variables]: https://www.w3.org/TR/wot-thing-description11/#form-uriVariables
-class UriVariableException implements Exception {
-  /// Constructor.
-  UriVariableException(this.message);
-
-  /// The error [message].
-  final String message;
-
-  @override
-  String toString() {
-    return "UriVariableException: $message";
   }
 }
