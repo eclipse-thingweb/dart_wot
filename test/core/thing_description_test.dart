@@ -43,4 +43,22 @@ void main() {
       throwsUnimplementedError,
     );
   });
+
+  test("should throw a ValidationException when it is invalid during parsing",
+      () {
+    const thingDescriptionJson = {
+      "@context": [
+        "https://www.w3.org/2022/wot/td/v1.1",
+      ],
+      "title": "Invalid TD with missing security field.",
+      "securityDefinitions": {
+        "nosec_sc": {"scheme": "nosec"},
+      },
+    };
+
+    expect(
+      () => ThingDescription.fromJson(thingDescriptionJson),
+      throwsA(isA<ValidationException>()),
+    );
+  });
 }

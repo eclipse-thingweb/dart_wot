@@ -61,4 +61,17 @@ void main() {
       },
     );
   });
+
+  test(
+    "should throw a DartWotException when a "
+    "ProtocolClientFactory is not registered",
+    () {
+      final servient = Servient();
+
+      expect(
+        () => servient.clientFor(testUriScheme),
+        throwsA(isA<DartWotException>()),
+      );
+    },
+  );
 }
