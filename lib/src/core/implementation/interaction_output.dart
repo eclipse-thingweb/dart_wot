@@ -34,8 +34,7 @@ class InteractionOutput implements scripting_api.InteractionOutput {
 
   bool _dataUsed = false;
 
-  ({bool read, Object? internalValue}) _value =
-      (read: false, internalValue: null);
+  scripting_api.DataSchemaValue? _value;
 
   @override
   Future<ByteBuffer> arrayBuffer() async {
@@ -48,8 +47,9 @@ class InteractionOutput implements scripting_api.InteractionOutput {
 
   @override
   Future<Object?> value() async {
-    if (_value.read) {
-      return _value.internalValue;
+    final existingValue = _value;
+    if (existingValue != null) {
+      return existingValue.value;
     }
 
     // TODO(JKRhb): Should a NotReadableError be thrown if schema is null?
@@ -61,7 +61,7 @@ class InteractionOutput implements scripting_api.InteractionOutput {
     );
     _dataUsed = true;
 
-    _value = (read: true, internalValue: value?.value);
+    _value = value;
     return value?.value;
   }
 
