@@ -30,8 +30,19 @@ abstract interface class InteractionOutput {
 
   /// Asyncronously creates a [ByteBuffer] representation of the value of
   /// of the [InteractionOutput].
+  ///
+  /// Follows the algorithm defined for the `arrayBuffer()` function in the
+  /// Scripting API specification.
+  ///
+  /// [algorithm]: https://w3c.github.io/wot-scripting-api/#the-arraybuffer-function
   Future<ByteBuffer> arrayBuffer();
 
   /// The parsed value of the [InteractionOutput].
+  ///
+  ///
+  /// Follows the algorithm defined for the `arrayBuffer()` function in the
+  /// Scripting API specification.
+  ///
+  /// [algorithm]: https://w3c.github.io/wot-scripting-api/#the-value-function
   Future<Object?> value();
 }
