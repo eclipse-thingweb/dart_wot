@@ -64,5 +64,76 @@ void main() {
       final value2 = await interactionOutput.value();
       expect(value1, value2);
     });
+
+    test(
+        "throw a NotReadableException when calling the arrayBuffer() method "
+        "twice", () async {
+      final contentSerdes = ContentSerdes();
+      final content = Content(
+        "text/plain",
+        const Stream.empty(),
+      );
+
+      final interactionOutput = InteractionOutput(
+        content,
+        contentSerdes,
+        Form(Uri.parse("http://example.org")),
+        const DataSchema(),
+      );
+
+      await interactionOutput.arrayBuffer();
+
+      final result = interactionOutput.arrayBuffer();
+      await expectLater(
+        result,
+        throwsA(
+          isA<NotReadableException>(),
+        ),
+      );
+    });
+  });
+
+  test(
+      "throw a NotReadableException in the value() method when no schema is "
+      "defined", () async {
+    final contentSerdes = ContentSerdes();
+    final content = Content(
+      "text/plain",
+      const Stream.empty(),
+    );
+
+    final interactionOutput = InteractionOutput(
+      content,
+      contentSerdes,
+      Form(Uri.parse("http://example.org")),
+      null,
+    );
+
+    final result = interactionOutput.value();
+    await expectLater(
+      result,
+      throwsA(
+        isA<NotReadableException>(),
+      ),
+    );
+  });
+
+  test("allow accessing the form field", () async {
+    final contentSerdes = ContentSerdes();
+    final content = Content(
+      "text/plain",
+      const Stream.empty(),
+    );
+
+    final uri = Uri.parse("http://example.org");
+
+    final interactionOutput = InteractionOutput(
+      content,
+      contentSerdes,
+      Form(uri),
+      const DataSchema(),
+    );
+
+    expect(interactionOutput.form.href, uri);
   });
 }
