@@ -145,7 +145,7 @@ class ContentSerdes {
     }
 
     if (dataSchemaValue == null) {
-      throw ValidationException("Expected a defined dataSchemaValue");
+      throw const ValidationException("Expected a defined dataSchemaValue");
     }
 
     final schema = JsonSchema.create(
@@ -153,7 +153,7 @@ class ContentSerdes {
       schemaVersion: SchemaVersion.draft7,
     );
     if (!schema.validate(dataSchemaValue.value).isValid) {
-      throw ValidationException("JSON Schema validation failed.");
+      throw const ValidationException("JSON Schema validation failed.");
     }
   }
 

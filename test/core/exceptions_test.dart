@@ -11,27 +11,27 @@ void main() {
   group("DartWotException should", () {
     test("be indicate the respective name in its toString() method", () {
       expect(
-        DartWotException("test").toString(),
+        const DartWotException("test").toString(),
         "DartWotException: test",
       );
 
       expect(
-        ValidationException("test").toString(),
+        const ValidationException("test").toString(),
         "ValidationException: test",
       );
 
       expect(
-        ValidationException("test", ["test", "test"]).toString(),
+        const ValidationException("test", ["test", "test"]).toString(),
         "ValidationException: test\n\nErrors:\n\ntest\ntest",
       );
 
       expect(
-        DiscoveryException("test").toString(),
+        const DiscoveryException("test").toString(),
         "DiscoveryException: test",
       );
 
       expect(
-        NotReadableException("test").toString(),
+        const NotReadableException("test").toString(),
         "NotReadableException: test",
       );
     });

@@ -95,7 +95,7 @@ class WoT implements scripting_api.WoT {
     final thingDescription = await requestThingDescription(url);
 
     if (!thingDescription.isValidDirectoryThingDescription) {
-      throw DiscoveryException(
+      throw const DiscoveryException(
         "Encountered an invalid Directory Thing Description",
       );
     }
@@ -113,7 +113,7 @@ class WoT implements scripting_api.WoT {
     final rawThingDescriptions = await interactionOutput.value();
 
     if (rawThingDescriptions is! List<Object?>) {
-      throw DiscoveryException(
+      throw const DiscoveryException(
         "Expected an array of Thing Descriptions but received an "
         "invalid output instead.",
       );

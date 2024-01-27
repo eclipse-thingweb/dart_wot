@@ -290,7 +290,7 @@ extension ParseField on Map<String, dynamic> {
       return forms;
     }
 
-    throw ValidationException(
+    throw const ValidationException(
       'Missing "forms" member in Intraction Affordance',
     );
   }
