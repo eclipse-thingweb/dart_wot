@@ -246,7 +246,12 @@ final class HttpClient implements ProtocolClient {
     final type = response.headers["Content-Type"] ?? form.contentType;
     final responseStream = response.stream.asBroadcastStream()
       ..listen(null, onDone: stop);
-    return Content(type, responseStream);
+
+    return Content(
+      type,
+      responseStream,
+      additionalData: response.headers,
+    );
   }
 
   @override
