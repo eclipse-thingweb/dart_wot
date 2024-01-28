@@ -6,6 +6,7 @@
 
 import "dart:typed_data";
 
+import "package:meta/meta.dart";
 import "package:typed_data/typed_data.dart";
 
 import "../definitions/data_schema.dart";
@@ -16,7 +17,11 @@ import "content_serdes.dart";
 /// type this data is encoded in.
 class Content {
   /// Creates a new [Content] object from a media [type] and a [body].
-  Content(this.type, this.body);
+  Content(
+    this.type,
+    this.body, {
+    this.additionalData,
+  });
 
   /// Creates a new [Content] object from an [interactionInput].
   ///
@@ -54,6 +59,12 @@ class Content {
 
   /// The payload as a byte [Stream].
   final Stream<List<int>> body;
+
+  /// Field used to pass additional, protocol-specific information upstream.
+  ///
+  /// One example for this could be HTTP headers.
+  @experimental
+  final Map<String, Object?>? additionalData;
 
   /// Converts the [body] of the content to a [ByteBuffer] asynchronously.
   Future<ByteBuffer> get byteBuffer async {
