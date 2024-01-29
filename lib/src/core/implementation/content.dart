@@ -88,8 +88,9 @@ class DiscoveryContent extends Content {
   DiscoveryContent(
     super.type,
     super.body,
-    this.sourceUri,
-  );
+    this.sourceUri, {
+    super.additionalData,
+  });
 
   /// Creates a new [DiscoveryContent] object from regular [Content] and a
   /// [sourceUri].

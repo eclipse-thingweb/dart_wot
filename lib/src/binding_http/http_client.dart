@@ -242,15 +242,50 @@ final class HttpClient implements ProtocolClient {
     return headers;
   }
 
+  DateTime? _tryParseDateTimeHeader(String value) {
+    try {
+      return HttpDate.parse(value);
+    } on HttpException {
+      return null;
+    }
+  }
+
   Content _contentFromResponse(Form form, StreamedResponse response) {
-    final type = response.headers["Content-Type"] ?? form.contentType;
+    final headers = response.headers;
+
+    final type = headers["Content-Type"] ?? form.contentType;
     final responseStream = response.stream.asBroadcastStream()
       ..listen(null, onDone: stop);
+
+    final additionalData = Map<String, Object?>.fromEntries(
+      headers.entries.map(
+        (entry) {
+          final key = entry.key;
+          final value = entry.value;
+
+          final dateTime = _tryParseDateTimeHeader(value);
+
+          if (dateTime != null) {
+            return MapEntry(key, dateTime);
+          }
+
+          final splitValue = entry.value.split(RegExp(r"\s*,\s*"));
+
+          if (splitValue.length == 1) {
+            return MapEntry(key, splitValue.first);
+          }
+
+          return MapEntry(key, splitValue);
+        },
+      ),
+    );
+
+    print(additionalData);
 
     return Content(
       type,
       responseStream,
-      additionalData: response.headers,
+      additionalData: additionalData,
     );
   }
 
