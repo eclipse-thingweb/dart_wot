@@ -57,7 +57,7 @@ class Servient {
 
   /// Starts this [Servient] and returns a [WoT] runtime object.
   ///
-  /// The [scripting_api.WoT] runtime can be used for consuming, procuding, and
+  /// The [scripting_api.WoT] runtime can be used for consuming, producing, and
   /// discovering Things.
   Future<scripting_api.WoT> start() async {
     final serverStatuses = _servers
