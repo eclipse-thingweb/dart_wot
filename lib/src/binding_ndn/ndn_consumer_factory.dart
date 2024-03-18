@@ -4,13 +4,19 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "package:meta/meta.dart";
+
 import "../../core.dart";
 import "ndn_config.dart";
 import "ndn_consumer.dart";
 
 /// A [ProtocolClientFactory] that produces
+@immutable
 class NdnClientFactory implements ProtocolClientFactory {
-  NdnClientFactory(this.ndnConfig);
+  /// Creates a new [ProtocolClientFactory] from an [ndnConfig].
+  const NdnClientFactory({
+    this.ndnConfig = const NdnConfig(),
+  });
 
   /// The [NdnConfig] acting as the blueprint for creating
   final NdnConfig ndnConfig;
