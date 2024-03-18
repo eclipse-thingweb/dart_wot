@@ -198,7 +198,7 @@ class Servient {
       _clientFactories.remove(scheme);
 
   /// Returns the [ProtocolClient] associated with a given [scheme].
-  ProtocolClient clientFor(String scheme) {
+  Future<ProtocolClient> createClient(String scheme) async {
     final clientFactory = _clientFactories[scheme];
 
     if (clientFactory == null) {
@@ -232,7 +232,7 @@ class Servient {
 
   /// Requests a [ThingDescription] from a [url].
   Future<ThingDescription> requestThingDescription(Uri url) async {
-    final client = clientFor(url.scheme);
+    final client = await createClient(url.scheme);
     final content = await client.requestThingDescription(url);
 
     final dataSchemaValue = await contentSerdes.contentToValue(content, null);

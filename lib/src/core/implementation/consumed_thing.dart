@@ -35,13 +35,13 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   /// Determines the id of this [ConsumedThing].
   String get identifier => thingDescription.identifier;
 
-  (ProtocolClient client, AugmentedForm form) _getClientFor(
+  Future<(ProtocolClient client, AugmentedForm form)> _getClientFor(
     List<Form> forms,
     OperationType operationType,
     InteractionAffordance interactionAffordance, {
     required int? formIndex,
     required Map<String, Object>? uriVariables,
-  }) {
+  }) async {
     final augmentedForms = forms
         .map(
           (form) => AugmentedForm.new(
@@ -59,7 +59,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       if (formIndex >= 0 && formIndex < forms.length) {
         foundForm = augmentedForms[formIndex];
         final scheme = foundForm.href.scheme;
-        client = servient.clientFor(scheme);
+        client = await servient.createClient(scheme);
       } else {
         throw ArgumentError(
           'ConsumedThing "$title" missing formIndex for '
@@ -86,7 +86,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
         orElse: () => throw Exception("No matching form found!"),
       );
       final scheme = foundForm.href.scheme;
-      client = servient.clientFor(scheme);
+      client = await servient.createClient(scheme);
     }
 
     return (client, foundForm);
@@ -108,7 +108,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       );
     }
 
-    final (ProtocolClient client, AugmentedForm form) = _getClientFor(
+    final (ProtocolClient client, AugmentedForm form) = await _getClientFor(
       property.forms,
       OperationType.readproperty,
       property,
@@ -137,7 +137,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       );
     }
 
-    final (client, form) = _getClientFor(
+    final (client, form) = await _getClientFor(
       property.forms,
       OperationType.writeproperty,
       property,
@@ -173,7 +173,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       );
     }
 
-    final (client, form) = _getClientFor(
+    final (client, form) = await _getClientFor(
       action.forms,
       OperationType.invokeaction,
       action,
@@ -269,7 +269,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
         subscriptions = _subscribedEvents;
     }
 
-    final (client, form) = _getClientFor(
+    final (client, form) = await _getClientFor(
       affordance.forms,
       operationType,
       affordance,
