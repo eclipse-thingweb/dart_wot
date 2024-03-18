@@ -26,7 +26,7 @@ abstract interface class ProtocolClientFactory {
 
   /// Creates a new [ProtocolClient] with that supports one or more of the given
   /// [schemes].
-  ProtocolClient createClient();
+  Future<ProtocolClient> createClient();
 
   /// Indicates whether this [ProtocolClientFactory] supports a given
   /// [operationType] and subprotocol.

@@ -10,9 +10,6 @@ import "../content.dart";
 
 /// Base class for a Protocol Client.
 abstract interface class ProtocolClient {
-  /// Starts this [ProtocolClient].
-  Future<void> start();
-
   /// Stops this [ProtocolClient].
   Future<void> stop();
 

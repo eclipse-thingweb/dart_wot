@@ -50,9 +50,7 @@ void main() {
       expect(defaultClientFactory.coapConfig, null);
       expect(defaultClientFactory.init(), true);
 
-      final coapClient = defaultClientFactory.createClient();
-
-      await coapClient.start();
+      final coapClient = await defaultClientFactory.createClient();
 
       await coapClient.stop();
 

@@ -33,7 +33,7 @@ final class HttpClientFactory implements ProtocolClientFactory {
   }
 
   @override
-  ProtocolClient createClient() => HttpClient(
+  Future<ProtocolClient> createClient() async => HttpClient(
         basicCredentialsCallback: _basicCredentialsCallback,
         bearerCredentialsCallback: _bearerCredentialsCallback,
       );
