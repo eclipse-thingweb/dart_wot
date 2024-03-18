@@ -204,11 +204,6 @@ class _MockedProtocolClient implements ProtocolClient {
   }
 
   @override
-  Future<void> start() async {
-    // Do nothing
-  }
-
-  @override
   Future<void> stop() async {
     // Do nothing
   }

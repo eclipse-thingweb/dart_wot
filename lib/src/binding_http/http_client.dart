@@ -264,11 +264,6 @@ final class HttpClient implements ProtocolClient {
   }
 
   @override
-  Future<void> start() async {
-    // Do nothing
-  }
-
-  @override
   Future<void> stop() async {
     _client.close();
   }

@@ -439,11 +439,6 @@ final class CoapClient implements ProtocolClient {
   }
 
   @override
-  Future<void> start() async {
-    // Do nothing
-  }
-
-  @override
   Future<void> stop() async {}
 
   Stream<DiscoveryContent> _discoverFromMulticast(
