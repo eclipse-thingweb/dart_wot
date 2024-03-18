@@ -9,8 +9,8 @@ import "ndn_config.dart";
 import "ndn_consumer.dart";
 
 /// A [ProtocolClientFactory] that produces
-class NdnConsumerFactory implements ProtocolClientFactory {
-  NdnConsumerFactory(this.ndnConfig);
+class NdnClientFactory implements ProtocolClientFactory {
+  NdnClientFactory(this.ndnConfig);
 
   /// The [NdnConfig] acting as the blueprint for creating
   final NdnConfig ndnConfig;
