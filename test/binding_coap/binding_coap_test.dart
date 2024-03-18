@@ -52,8 +52,6 @@ void main() {
 
       final coapClient = await defaultClientFactory.createClient();
 
-      await coapClient.start();
-
       await coapClient.stop();
 
       expect(defaultClientFactory.destroy(), true);
