@@ -117,6 +117,8 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     );
 
     final content = await client.readResource(form);
+    // FIXME: Clients should be reusable
+    await client.stop();
     return InteractionOutput(content, servient.contentSerdes, form, property);
   }
 
