@@ -36,7 +36,7 @@ final class CoapClientFactory implements ProtocolClientFactory {
   }
 
   @override
-  ProtocolClient createClient() => CoapClient(
+  Future<ProtocolClient> createClient() async => CoapClient(
         coapConfig: coapConfig,
         pskCredentialsCallback: _pskCredentialsCallback,
         aceSecurityCallback: _aceSecurityCallback,

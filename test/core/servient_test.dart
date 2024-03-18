@@ -11,7 +11,7 @@ const testUriScheme = "test";
 
 class MockedProtocolClientFactory implements ProtocolClientFactory {
   @override
-  ProtocolClient createClient() {
+  Future<ProtocolClient> createClient() {
     throw UnimplementedError("Instantiating a client is not supported yet.");
   }
 
@@ -69,7 +69,7 @@ void main() {
       final servient = Servient();
 
       expect(
-        () => servient.clientFor(testUriScheme),
+        () => servient.createClient(testUriScheme),
         throwsA(isA<DartWotException>()),
       );
     },
