@@ -7,12 +7,14 @@
 // ignore_for_file: avoid_print
 
 import "package:dart_wot/binding_coap.dart";
+import "package:dart_wot/binding_http.dart";
 import "package:dart_wot/core.dart";
 
 Future<void> main(List<String> args) async {
   final servient = Servient(
     clientFactories: [
       CoapClientFactory(),
+      HttpClientFactory(),
     ],
   );
   final wot = await servient.start();
@@ -27,10 +29,15 @@ Future<void> main(List<String> args) async {
     '"${thingDescription.title}"!',
   );
 
+  print(consumedThing.thingDescription.events);
+  final subscription = await consumedThing.subscribeEvent("change", print);
+
   print("Incrementing counter ...");
   await consumedThing.invokeAction("increment");
 
   final status = await consumedThing.readProperty("count");
   final value = await status.value();
   print("New counter value: $value");
+
+  await subscription.stop();
 }

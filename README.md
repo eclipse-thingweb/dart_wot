@@ -46,8 +46,8 @@ Below you can find a basic example for incrementing and reading the value of a
 counter Thing, which is part of the
 [Thingweb Online Things](https://www.thingweb.io/services).
 
-In the example, we first create a WoT runtime using a `Servient` with CoAP
-support.
+In the example, we first create a WoT runtime using a `Servient` with CoAP and
+HTTP support.
 With the runtime, we then retrieve a TD (using the `requestThingDescription()`
 method) and consume it (using the `consume()` method), creating a
 `ConsumedThing` object,
@@ -56,12 +56,14 @@ Afterward, the actual interactions with the counter are performed by calling the
 
 ```dart
 import "package:dart_wot/binding_coap.dart";
+import "package:dart_wot/binding_http.dart";
 import "package:dart_wot/core.dart";
 
 Future<void> main(List<String> args) async {
   final servient = Servient(
     clientFactories: [
       CoapClientFactory(),
+      HttpClientFactory(),
     ],
   );
   final wot = await servient.start();
@@ -76,12 +78,17 @@ Future<void> main(List<String> args) async {
     '"${thingDescription.title}"!',
   );
 
+  print(consumedThing.thingDescription.events);
+  final subscription = await consumedThing.subscribeEvent("change", print);
+
   print("Incrementing counter ...");
   await consumedThing.invokeAction("increment");
 
   final status = await consumedThing.readProperty("count");
   final value = await status.value();
   print("New counter value: $value");
+
+  await subscription.stop();
 }
 ```
 
