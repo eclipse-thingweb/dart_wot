@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Switched to the automated publishing workflow on pub.dev ([#118](https://github.com/eclipse-thingweb/dart_wot/pull/118))
 - Switched to the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format for new changelog entries ([#115](https://github.com/eclipse-thingweb/dart_wot/pull/115))
 - Adjusted the main example to also use HTTP and CoAP observe ([#101](https://github.com/eclipse-thingweb/dart_wot/pull/101))
 - Adjusted the link to the initial release in the changelog ([#119](https://github.com/eclipse-thingweb/dart_wot/pull/119))
