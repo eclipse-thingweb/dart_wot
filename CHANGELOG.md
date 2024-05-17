@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Upgrade lints to version 4.0.0 ([903475d](https://github.com/eclipse-thingweb/dart_wot/commit/903475d215d385e7d12bea61a263b828f09fef75))
+
 ## [0.28.3] - 2024-05-17
 
 ### Added
@@ -920,6 +926,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[Unreleased]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.3..HEAD
 [0.28.3]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.2..v0.28.3
 [0.28.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.1..v0.28.2
 [0.28.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.0..v0.28.1
