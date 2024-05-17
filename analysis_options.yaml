@@ -22,27 +22,3 @@ linter:
     close_sinks: true
     cascade_invocations: true
     only_throw_errors: true
-    # prefer_final_parameters: true
-
-dart_code_metrics:
-  anti-patterns:
-    - long-method
-    - long-parameter-list
-  metrics:
-    cyclomatic-complexity: 20
-    maximum-nesting-level: 5
-    number-of-parameters: 4
-    source-lines-of-code: 50
-  metrics-exclude:
-    - test/**
-  rules:
-    - avoid-nested-conditional-expressions:
-        - acceptable-level: 2
-    - avoid-throw-in-catch-block # throwWithStackTrace should be used instead
-    - avoid-unnecessary-type-casts
-    - no-boolean-literal-compare
-    - no-empty-block
-    - no-equal-then-else
-    - no-magic-number:
-        - allowed: [3.14, -1, 0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 100]
-    - prefer-correct-type-name
