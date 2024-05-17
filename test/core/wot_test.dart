@@ -37,7 +37,7 @@ void main() {
           "nosec_sc": {"scheme": "nosec"},
         },
         "security": ["nosec_sc"],
-        "id": "urn:test"
+        "id": "urn:test",
       };
 
       final wot = await Servient().start();
