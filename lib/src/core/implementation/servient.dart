@@ -11,6 +11,7 @@ import "../exceptions.dart";
 import "../scripting_api.dart" as scripting_api;
 import "consumed_thing.dart";
 import "content_serdes.dart";
+import "discovery/discovery_configuration.dart";
 import "exposed_thing.dart";
 import "protocol_interfaces/protocol_client.dart";
 import "protocol_interfaces/protocol_client_factory.dart";
@@ -38,7 +39,9 @@ class Servient {
     List<ProtocolClientFactory>? clientFactories,
     ServerSecurityCallback? serverSecurityCallback,
     ContentSerdes? contentSerdes,
+    List<DiscoveryConfiguration>? discoveryConfiguration,
   })  : contentSerdes = contentSerdes ?? ContentSerdes(),
+        discoveryConfiguration = discoveryConfiguration ?? [],
         _serverSecurityCallback = serverSecurityCallback {
     for (final clientFactory in clientFactories ?? <ProtocolClientFactory>[]) {
       addClientFactory(clientFactory);
@@ -51,6 +54,10 @@ class Servient {
   final Map<String, ConsumedThing> _consumedThings = {};
 
   final ServerSecurityCallback? _serverSecurityCallback;
+
+  /// [List] of [DiscoveryConfiguration]s that are used when calling the
+  /// [scripting_api.WoT.discover] method.
+  List<DiscoveryConfiguration> discoveryConfiguration;
 
   /// The [ContentSerdes] object that is used for serializing/deserializing.
   final ContentSerdes contentSerdes;

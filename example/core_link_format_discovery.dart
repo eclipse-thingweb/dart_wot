@@ -10,15 +10,18 @@ import "package:dart_wot/binding_coap.dart";
 import "package:dart_wot/core.dart";
 
 Future<void> main(List<String> args) async {
-  final servient = Servient(clientFactories: [CoapClientFactory()]);
+  final servient = Servient(
+    clientFactories: [CoapClientFactory()],
+    discoveryConfiguration: [
+      CoreLinkFormatConfiguration(
+        Uri.parse("coap://plugfest.thingweb.io"),
+      ),
+    ],
+  );
 
   final wot = await servient.start();
 
-  final discoveryUri =
-      Uri.parse("coap://plugfest.thingweb.io/.well-known/core");
-
-  await for (final thingDescription
-      in wot.discover(discoveryUri, method: DiscoveryMethod.coreLinkFormat)) {
+  await for (final thingDescription in wot.discover()) {
     print(thingDescription.title);
 
     if (thingDescription.title != "Smart-Coffee-Machine") {

@@ -7,6 +7,7 @@
 // ignore_for_file: avoid_print
 
 import "package:dart_wot/binding_coap.dart";
+import "package:dart_wot/binding_http.dart";
 import "package:dart_wot/core.dart";
 
 void handleThingDescription(ThingDescription thingDescription) =>
@@ -16,16 +17,18 @@ Future<void> main(List<String> args) async {
   final servient = Servient(
     clientFactories: [
       CoapClientFactory(),
+      HttpClientFactory(),
+    ],
+    discoveryConfiguration: [
+      DnsSdDConfiguration(protocolType: ProtocolType.udp),
     ],
   );
 
   final wot = await servient.start();
-  final uri = Uri.parse("_wot._udp.local");
 
   // Example using for-await-loop
   try {
-    await for (final thingDescription
-        in wot.discover(uri, method: DiscoveryMethod.dnsServiceDiscovery)) {
+    await for (final thingDescription in wot.discover()) {
       handleThingDescription(thingDescription);
     }
     print('Discovery with "await for" has finished.');
@@ -37,7 +40,7 @@ Future<void> main(List<String> args) async {
   //
   // Notice how the "onDone" callback is called before the result is passed
   // to the handleThingDescription function.
-  wot.discover(uri, method: DiscoveryMethod.dnsServiceDiscovery).listen(
+  wot.discover().listen(
         handleThingDescription,
         onError: (error) => print("Encountered an error: $error"),
         onDone: () => print('Discovery with "listen" has finished.'),
