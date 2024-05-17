@@ -94,21 +94,6 @@ Future<void> main(List<String> args) async {
 
 More complex examples can be found in the `example` directory.
 
-## Additional information
-
-The package will be extended gradually over the upcoming months.
-Support for exposing Things will be added as well as
-more protocols and security schemes.
-
-Contributions are very welcome.
-You will soon be able to find guidelines for contributing to the package
-in a `CONTRIBUTING` file.
-Until then, you can already file issues for pointing out bugs or requesting
-features.
-You can also open PRs; these have to adhere the defined coding style and
-linter rules.
-Contributions will be licensed according to the project licenses (see below).
-
 ## License
 
 `dart_wot` is licensed under the 3-Clause BSD License.
