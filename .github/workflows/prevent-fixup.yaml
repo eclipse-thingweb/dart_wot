@@ -1,0 +1,21 @@
+name: Prevent Fixup Commits
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  prevent-fixup-commits:
+    name: Check for fixup! commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+      - name: Check for fixup! commits
+        run: |
+          if git log origin/main..HEAD | grep -q -e '^    fixup!'; then
+            echo "Error: fixup! commits are present in this PR, please remove them before merging."
+            exit 1
+          fi
