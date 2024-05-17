@@ -5,11 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.28.1] - 2024-05-17
+## [0.28.2] - 2024-05-17
 
 ### Changed
 
 - Switched to the automated publishing workflow on pub.dev ([#118](https://github.com/eclipse-thingweb/dart_wot/pull/118))
+
+## [0.28.1] - 2024-05-17
+
+### Changed
+
 - Switched to the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format for new changelog entries ([#115](https://github.com/eclipse-thingweb/dart_wot/pull/115))
 - Adjusted the main example to also use HTTP and CoAP observe ([#101](https://github.com/eclipse-thingweb/dart_wot/pull/101))
 - Adjusted the link to the initial release in the changelog ([#119](https://github.com/eclipse-thingweb/dart_wot/pull/119))
@@ -485,6 +490,7 @@ JSON-LD.
 
 - Initial version.
 
+[0.28.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.1...v0.28.2
 [0.28.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.27.1...v0.28.0
 [0.27.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.27.0...v0.27.1
