@@ -31,6 +31,7 @@ class ThingDescription {
     required this.title,
     required this.security,
     required this.securityDefinitions,
+    required Map<String, dynamic> rawThingDescription,
     this.titles,
     this.atType,
     this.id,
@@ -51,7 +52,7 @@ class ThingDescription {
     this.version,
     this.uriVariables,
     this.prefixMapping,
-  });
+  }) : _rawThingDescription = rawThingDescription;
 
   /// Creates a [ThingDescription] from a [json] object.
 
@@ -136,6 +137,7 @@ class ThingDescription {
       security: security,
       securityDefinitions: securityDefinitions,
       atType: atType,
+      rawThingDescription: json,
     );
   }
 
@@ -146,9 +148,10 @@ class ThingDescription {
   }
 
   /// Converts this [ThingDescription] to a [Map] resembling a JSON objct.
-  Map<String, dynamic> toJson() {
-    throw UnimplementedError();
-  }
+  // TODO: Revisit this for dynamic serialization
+  Map<String, dynamic> toJson() => _rawThingDescription;
+
+  final Map<String, dynamic> _rawThingDescription;
 
   /// Contains the values of the @context for CURIE expansion.
   final PrefixMapping? prefixMapping;

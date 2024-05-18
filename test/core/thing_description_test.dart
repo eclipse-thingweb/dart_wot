@@ -37,11 +37,7 @@ void main() {
     };
     final thingDescription = thingDescriptionJson.toThingDescription();
 
-    // TODO(JKRhb): Implement toJson method
-    expect(
-      thingDescription.toJson,
-      throwsUnimplementedError,
-    );
+    expect(thingDescriptionJson, thingDescription.toJson());
   });
 
   test("should throw a ValidationException when it is invalid during parsing",
