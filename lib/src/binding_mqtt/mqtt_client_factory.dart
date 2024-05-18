@@ -25,7 +25,7 @@ final class MqttClientFactory implements ProtocolClientFactory {
       _basicCredentialsCallback;
 
   @override
-  ProtocolClient createClient() => MqttClient(
+  Future<ProtocolClient> createClient() async => MqttClient(
         mqttConfig: _mqttConfig,
         basicCredentialsCallback: _basicCredentialsCallback,
       );

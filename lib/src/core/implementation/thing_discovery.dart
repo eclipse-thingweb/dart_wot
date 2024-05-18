@@ -69,7 +69,7 @@ class ThingDiscovery extends Stream<ThingDescription>
     }
   }
 
-  ProtocolClient _clientForUriScheme(Uri uri) {
+  Future<ProtocolClient> _clientForUriScheme(Uri uri) async {
     final uriScheme = uri.scheme;
     final existingClient = _clients[uriScheme];
 
@@ -77,7 +77,7 @@ class ThingDiscovery extends Stream<ThingDescription>
       return existingClient;
     }
 
-    final newClient = _servient.clientFor(uriScheme);
+    final newClient = await _servient.createClient(uriScheme);
     _clients[uriScheme] = newClient;
     return newClient;
   }
@@ -106,7 +106,7 @@ class ThingDiscovery extends Stream<ThingDescription>
   }
 
   Stream<ThingDescription> _discoverDirectly(Uri uri) async* {
-    final client = _clientForUriScheme(uri);
+    final client = await _clientForUriScheme(uri);
 
     yield* client
         .discoverDirectly(uri, disableMulticast: true)
@@ -180,7 +180,7 @@ class ThingDiscovery extends Stream<ThingDescription>
   ) async* {
     final Set<Uri> discoveredUris = {};
     final discoveryUri = uri.toLinkFormatDiscoveryUri(resourceType);
-    final client = _clientForUriScheme(uri);
+    final client = await _clientForUriScheme(uri);
 
     await for (final coreWebLink
         in client.discoverWithCoreLinkFormat(discoveryUri)) {

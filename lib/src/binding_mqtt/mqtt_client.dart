@@ -167,11 +167,6 @@ final class MqttClient implements ProtocolClient {
   }
 
   @override
-  Future<void> start() async {
-    // Do nothing
-  }
-
-  @override
   Future<void> stop() async {
     // Do nothing
   }
