@@ -9,6 +9,7 @@ import "dart:async";
 import "package:uuid/uuid.dart";
 
 import "../definitions.dart";
+import "../definitions/context.dart";
 import "../exceptions.dart";
 import "../scripting_api.dart" as scripting_api;
 import "consumed_thing.dart";
@@ -143,7 +144,8 @@ extension _DirectoryValidationExtension on ThingDescription {
       return true;
     }
 
-    return context.contains((value: discoveryContextUri, key: null)) &&
+    return context.contextEntries
+            .contains(SingleContextEntry.fromString(discoveryContextUri)) &&
         atTypes.contains(type);
   }
 }

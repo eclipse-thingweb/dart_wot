@@ -8,6 +8,7 @@ import "dart:convert";
 
 import "package:curie/curie.dart";
 import "package:dart_wot/core.dart";
+import "package:dart_wot/src/core/definitions/context.dart";
 import "package:dart_wot/src/core/definitions/extensions/json_parser.dart";
 import "package:test/test.dart";
 
@@ -50,7 +51,13 @@ void main() {
       expect(thingDescription.title, "MyLampThing");
       expect(
         thingDescription.context,
-        [const (key: null, value: "https://www.w3.org/2022/wot/td/v1.1")],
+        Context(
+          [
+            SingleContextEntry.fromString(
+              "https://www.w3.org/2022/wot/td/v1.1",
+            ),
+          ],
+        ),
       );
       expect(thingDescription.security, ["nosec_sc"]);
       expect(thingDescription.securityDefinitions["nosec_sc"]?.scheme, "nosec");

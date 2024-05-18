@@ -4,11 +4,11 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:collection/collection.dart";
 import "package:curie/curie.dart";
 
 import "../../exceptions.dart";
 import "../additional_expected_response.dart";
+import "../context.dart";
 import "../data_schema.dart";
 import "../expected_response.dart";
 import "../form.dart";
@@ -26,13 +26,7 @@ import "../security/no_security_scheme.dart";
 import "../security/oauth2_security_scheme.dart";
 import "../security/psk_security_scheme.dart";
 import "../security/security_scheme.dart";
-import "../thing_description.dart";
 import "../version_info.dart";
-
-const _validTdContextValues = [
-  "https://www.w3.org/2019/wot/td/v1",
-  "https://www.w3.org/2022/wot/td/v1.1",
-];
 
 /// Extension for parsing fields of JSON objects.
 extension ParseField on Map<String, dynamic> {
@@ -586,71 +580,55 @@ extension ParseField on Map<String, dynamic> {
     return value;
   }
 
-  /// Parses the JSON-LD @context of a TD and returns a [List] of
+  /// Parses the JSON-LD `@context` of a TD and returns a [List] of
   /// [ContextEntry]s.
-  List<ContextEntry> parseContext(
-    PrefixMapping prefixMapping,
-    Set<String>? parsedFields, {
-    bool firstEntry = true,
-  }) {
+  Context parseContext(Set<String>? parsedFields) {
     final fieldValue = parseField("@context", parsedFields);
+    final contextEntries = _parseContextEntries(fieldValue).toList();
 
-    return _parseContext(fieldValue, prefixMapping);
+    return Context(contextEntries);
   }
 }
 
 /// Parses a [List] of `@context` entries from a given [json] value.
-///
-/// `@context` extensions are added to the provided [prefixMapping].
-/// If a given entry is the [firstEntry], it will be set in the
-/// [prefixMapping] accordingly.
-List<ContextEntry> _parseContext(
-  dynamic json,
-  PrefixMapping prefixMapping, {
-  bool firstEntry = true,
-}) {
+Iterable<ContextEntry> _parseContextEntries(dynamic json) sync* {
   switch (json) {
     case final String jsonString:
       {
-        if (firstEntry && _validTdContextValues.contains(jsonString)) {
-          prefixMapping.defaultPrefixValue = jsonString;
+        yield SingleContextEntry.fromString(jsonString);
+      }
+    case final List<dynamic> contextEntryList:
+      {
+        for (final contextEntry in contextEntryList.map(_parseContextEntries)) {
+          yield* contextEntry;
         }
-        return [(key: null, value: jsonString)];
       }
-    case final List<dynamic> contextList:
+    case final Map<String, dynamic> contextEntryList:
       {
-        final List<ContextEntry> result = [];
-        contextList
-            .mapIndexed(
-              (index, contextEntry) => _parseContext(
-                contextEntry,
-                prefixMapping,
-                firstEntry: index == 0,
-              ),
-            )
-            .forEach(result.addAll);
-        return result;
-      }
-    case final Map<String, dynamic> contextList:
-      {
-        return contextList.entries.map((entry) {
+        yield* contextEntryList.entries.map((entry) {
           final key = entry.key;
           final value = entry.value;
 
           if (value is! String) {
             throw ValidationException(
-                "Excepted either a String or a Map<String, String> "
+                "Expected $value to be a String or a Map<String, String> "
                 "as @context entry, got ${value.runtimeType} instead.");
           }
 
-          if (!key.startsWith("@") && Uri.tryParse(value) != null) {
-            prefixMapping.addPrefix(key, value);
-          }
-          return (key: key, value: value);
-        }).toList();
-      }
-  }
+          final uri = Uri.tryParse(value);
 
-  throw ValidationException("Excepted either a String or a Map<String, String> "
-      "as @context entry, got ${json.runtimeType} instead.");
+          if (!key.startsWith("@") && uri != null) {
+            return UriMapContextEntry(key, uri);
+          }
+
+          return StringMapContextEntry(key, value);
+        });
+      }
+    default:
+      throw ValidationException(
+        "Expected the @context entry $json to "
+        "either be a String or a Map<String, String>, "
+        "got ${json.runtimeType} instead.",
+      );
+  }
 }

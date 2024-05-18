@@ -9,6 +9,7 @@ import "package:meta/meta.dart";
 
 import "../exceptions.dart";
 import "additional_expected_response.dart";
+import "context.dart";
 import "data_schema.dart";
 import "extensions/json_parser.dart";
 import "form.dart";
@@ -18,9 +19,6 @@ import "security/security_scheme.dart";
 import "thing_model.dart";
 import "validation/thing_description_schema.dart";
 import "version_info.dart";
-
-/// Type definition for a JSON-LD @context entry.
-typedef ContextEntry = ({String? key, String value});
 
 /// Represents a WoT Thing Description
 @immutable
@@ -51,7 +49,6 @@ class ThingDescription {
     this.description,
     this.version,
     this.uriVariables,
-    this.prefixMapping,
   }) : _rawThingDescription = rawThingDescription;
 
   /// Creates a [ThingDescription] from a [json] object.
@@ -71,9 +68,10 @@ class ThingDescription {
     }
 
     final Set<String> parsedFields = {};
-    final prefixMapping = PrefixMapping();
 
-    final context = json.parseContext(prefixMapping, parsedFields);
+    final context = json.parseContext(parsedFields);
+    final prefixMapping = context.prefixMapping;
+
     final atType = json.parseArrayField<String>("@type", parsedFields);
     final title = json.parseRequiredField<String>("title", parsedFields);
     final titles = json.parseMapField<String>("titles", parsedFields);
@@ -113,7 +111,6 @@ class ThingDescription {
         json.parseAdditionalFields(prefixMapping, parsedFields);
 
     return ThingDescription._(
-      prefixMapping: prefixMapping,
       context: context,
       title: title,
       titles: titles,
@@ -154,10 +151,10 @@ class ThingDescription {
   final Map<String, dynamic> _rawThingDescription;
 
   /// Contains the values of the @context for CURIE expansion.
-  final PrefixMapping? prefixMapping;
+  PrefixMapping get prefixMapping => context.prefixMapping;
 
   /// The JSON-LD `@context`, represented by a  [List] of [ContextEntry]s.
-  final List<ContextEntry> context;
+  final Context context;
 
   /// JSON-LD keyword to label the object with semantic tags (or types).
   final List<String>? atType;
