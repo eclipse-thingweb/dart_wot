@@ -59,6 +59,20 @@ void main() {
       );
     });
 
+    test("support determining the default language via the dedicated getter",
+        () {
+      final context1 = Context([
+        SingleContextEntry.fromString("https://www.w3.org/2022/wot/td/v1.1"),
+        const StringMapContextEntry("@language", "en"),
+      ]);
+      final context2 = Context([
+        SingleContextEntry.fromString("https://www.w3.org/2022/wot/td/v1.1"),
+      ]);
+
+      expect(context1.defaultLanguageCode, "en");
+      expect(context2.defaultLanguageCode, null);
+    });
+
     test("correctly override the hashCode getter", () {
       final contextEntry1 =
           SingleContextEntry.fromString("https://www.w3.org/2022/wot/td/v1.1");

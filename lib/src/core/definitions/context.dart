@@ -85,6 +85,13 @@ final class Context {
   /// Used to map context extension prefixes within the `@context` to URIs.
   final PrefixMapping prefixMapping;
 
+  /// Determines the default language for this `@context` if defined.
+  String? get defaultLanguageCode => contextEntries
+      .whereType<MapContextEntry>()
+      .where((contextEntry) => contextEntry.key == "@language")
+      .firstOrNull
+      ?.value;
+
   /// Allows for directly accessing this [Context]'s [contextEntries] by
   /// [index].
   ContextEntry operator [](int index) {
