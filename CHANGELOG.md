@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.29.0] - 2024-05-18
+
+### Added
+
+- Add getter for default language code ([4dea7dc](https://github.com/eclipse-thingweb/dart_wot/commit/4dea7dcca4aa31572d9691db3221d31bea21687c))
+
+### Changed
+
+- Rework TD @context handling ([4d4e0f7](https://github.com/eclipse-thingweb/dart_wot/commit/4d4e0f7a52597cf186e42a503de2a619fc7758e8))
+
 ## [0.28.4] - 2024-05-18
 
 ### Added
@@ -946,6 +956,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.29.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.4..v0.29.0
 [0.28.4]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.3..v0.28.4
 [0.28.3]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.2..v0.28.3
 [0.28.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.1..v0.28.2
