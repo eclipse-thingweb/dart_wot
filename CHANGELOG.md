@@ -5,11 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.28.4] - 2024-05-18
+
+### Added
+
+- Add reference to CONTRIBUTING.md ([2265820](https://github.com/eclipse-thingweb/dart_wot/commit/22658205e188548a67cf5d966679f91b05276d10))
+- Add basic toJson implementation ([55ce372](https://github.com/eclipse-thingweb/dart_wot/commit/55ce3726b50779402090c64a133f01d6392fd50f))
+- Add section on release management ([09ec557](https://github.com/eclipse-thingweb/dart_wot/commit/09ec557220079dfe320caafeef0253e345344de7))
 
 ### Changed
 
 - Upgrade lints to version 4.0.0 ([903475d](https://github.com/eclipse-thingweb/dart_wot/commit/903475d215d385e7d12bea61a263b828f09fef75))
+- Prevent accidental merge of fixup! commits ([db7ad25](https://github.com/eclipse-thingweb/dart_wot/commit/db7ad25b5e177fa9c30f7b95bff0e8c3803eaa96))
+- Update deprecated import from lint package ([a880c9c](https://github.com/eclipse-thingweb/dart_wot/commit/a880c9c5140381ffee29002bca455884e05182d3))
+- Bump 0.x.x versions differently ([653de9b](https://github.com/eclipse-thingweb/dart_wot/commit/653de9bf055f8bbeae7efb35f54e86dd7e71f542))
+- Create CONTRIBUTING.md file ([ce2573b](https://github.com/eclipse-thingweb/dart_wot/commit/ce2573b32c03e7b66e13e678b657ebfcf3f8b9fc))
+
+### Fixed
+
+- Fix formatting ([6f40ce0](https://github.com/eclipse-thingweb/dart_wot/commit/6f40ce0151d83f73ed8fc09392f64379c607a5b1))
+
+### Removed
+
+- Remove commented out linter rule ([2a1ef96](https://github.com/eclipse-thingweb/dart_wot/commit/2a1ef96a10db2c4fe7ca8eaa74e36bb7b88b2299))
+- Remove unused dart_code_metrics configuration ([ac251c0](https://github.com/eclipse-thingweb/dart_wot/commit/ac251c06b9711398c45865d258b69cf8c6ce2aa7))
+- Remove obsolete contribution guidelines ([5e0cb1b](https://github.com/eclipse-thingweb/dart_wot/commit/5e0cb1b8b4bf6c6445a9d89954934c9d363bff1c))
 
 ## [0.28.3] - 2024-05-17
 
@@ -926,7 +946,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
-[Unreleased]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.3..HEAD
+[0.28.4]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.3..v0.28.4
 [0.28.3]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.2..v0.28.3
 [0.28.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.1..v0.28.2
 [0.28.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.0..v0.28.1
