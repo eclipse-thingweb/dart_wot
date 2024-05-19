@@ -417,7 +417,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   }
 
   /// Cleans up the resources used by this [ConsumedThing].
-  void destroy() {
+  bool destroy({bool external = true}) {
     for (final observedProperty in _observedProperties.values) {
       observedProperty.stop();
     }
@@ -426,5 +426,11 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       subscribedEvent.stop();
     }
     _subscribedEvents.clear();
+
+    if (external) {
+      return servient.deregisterConsumedthing(this);
+    }
+
+    return false;
   }
 }

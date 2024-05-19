@@ -51,7 +51,7 @@ class Servient {
   final List<ProtocolServer> _servers = [];
   final Map<String, ProtocolClientFactory> _clientFactories = {};
   final Map<String, ExposedThing> _things = {};
-  final Map<String, ConsumedThing> _consumedThings = {};
+  final Set<ConsumedThing> _consumedThings = {};
 
   final ServerSecurityCallback? _serverSecurityCallback;
 
@@ -85,7 +85,7 @@ class Servient {
       clientFactory.destroy();
     }
     _clientFactories.clear();
-    for (final consumedThing in _consumedThings.values) {
+    for (final consumedThing in _consumedThings) {
       consumedThing.destroy();
     }
     _consumedThings.clear();
@@ -135,20 +135,20 @@ class Servient {
     return true;
   }
 
-  /// Removes and cleans up the resources of the [ConsumedThing] with the given
-  /// [id].
+  /// Removes and cleans up the resources of a [ConsumedThing].
   ///
   /// If the [ConsumedThing] has not been registered before, `false` is
   /// returned, otherwise `true`.
-  bool destroyConsumedThing(String id) {
-    final existingThing = _consumedThings.remove(id);
+  bool destroyConsumedThing(ConsumedThing consumedThing) {
+    return consumedThing.destroy(external: false);
+  }
 
-    if (existingThing != null) {
-      existingThing.destroy();
-      return true;
-    }
-
-    return false;
+  /// Deregisters the given [consumedThing].
+  ///
+  /// If the [ConsumedThing] has not been registered before, `false` is
+  /// returned, otherwise `true`.
+  bool deregisterConsumedthing(ConsumedThing consumedThing) {
+    return _consumedThings.remove(consumedThing);
   }
 
   /// Adds a [ConsumedThing] to the servient if it hasn't been registered
@@ -156,15 +156,7 @@ class Servient {
   ///
   /// Returns `false` if the [thing] has already been registered, otherwise
   /// `true`.
-  bool addConsumedThing(ConsumedThing thing) {
-    final id = thing.identifier;
-    if (_consumedThings.containsKey(id)) {
-      return false;
-    }
-
-    _consumedThings[id] = thing;
-    return true;
-  }
+  bool addConsumedThing(ConsumedThing thing) => _consumedThings.add(thing);
 
   /// Returns an [ExposedThing] with the given [id] if it has been registered.
   ExposedThing? thing(String id) => _things[id];

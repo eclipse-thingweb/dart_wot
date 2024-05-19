@@ -262,7 +262,6 @@ void main() {
       );
 
       await servient.shutdown();
-      expect(servient.destroyConsumedThing(parsedTd.identifier), false);
     },
     skip: true, // TODO: Replace with test with local server
   );
