@@ -146,13 +146,12 @@ Future<void> main() async {
     "/Oracle/oracle-Festo_Shared.td.jsonld",
   );
 
-  final thingDiscovery = wot.discover(thingUri);
+  final discoveredThingDescription =
+      await wot.requestThingDescription(thingUri);
 
-  await for (final thingDescription in thingDiscovery) {
-    final consumedDiscoveredThing = await wot.consume(thingDescription);
-    print(
-      "The title of the fetched TD is "
-      "${consumedDiscoveredThing.thingDescription.title}.",
-    );
-  }
+  final consumedDiscoveredThing = await wot.consume(discoveredThingDescription);
+  print(
+    "The title of the fetched TD is "
+    "${consumedDiscoveredThing.thingDescription.title}.",
+  );
 }

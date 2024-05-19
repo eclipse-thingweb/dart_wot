@@ -7,7 +7,6 @@
 import "../definitions.dart";
 
 import "consumed_thing.dart";
-import "discovery/discovery_method.dart";
 import "discovery/thing_discovery.dart";
 import "discovery/thing_filter.dart";
 import "exposed_thing.dart";
@@ -75,12 +74,7 @@ abstract interface class WoT {
     DirectoryPayloadFormat? format,
   });
 
-  /// Discovers [ThingDescription]s from a given [url] using the specified
-  /// [method].
-  ///
-  /// As this part of the Scripting API specification is still in development,
-  /// this method's implementation is in an experimental state and does not
-  /// conform to the specification's latest version.
+  /// Discovers [ThingDescription]s using the underlying platform configuration.
   ///
   /// A [thingFilter] may be passed for filtering out TDs before they
   /// are processed.
@@ -88,21 +82,13 @@ abstract interface class WoT {
   /// the Scripting API document, this parameter does not have an effect yet.
   ///
   /// The [ThingDiscovery] object that is returned by this function implements
-  /// the  [Stream] interface, which makes it possible to `listen` for
+  /// the [Stream] interface, which makes it possible to `listen` for
   /// discovered [ThingDescription]s or to iterate over the discovered results
   /// using the `await for` syntax.
   /// It also allows for stopping the Discovery process prematurely and
   /// for retrieving information about its current state (i.e., whether it is
   /// still [ThingDiscovery.active]).
-  @Deprecated(
-    "The discover method is curently in the process of being adjusted to the "
-    "latest Scripting API version and is therefore subject to change. "
-    "For direct and directory discovery, please refer to the "
-    "requestThingDescription and exploreDirectory methods instead.",
-  )
-  ThingDiscovery discover(
-    Uri url, {
+  ThingDiscovery discover({
     ThingFilter? thingFilter,
-    DiscoveryMethod method = DiscoveryMethod.direct,
   });
 }

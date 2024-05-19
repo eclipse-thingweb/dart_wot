@@ -11,6 +11,7 @@ export "implementation/augmented_form.dart";
 export "implementation/codecs/content_codec.dart";
 export "implementation/content.dart";
 export "implementation/content_serdes.dart";
+export "implementation/discovery/discovery_configuration.dart";
 export "implementation/protocol_interfaces/protocol_client.dart";
 export "implementation/protocol_interfaces/protocol_client_factory.dart";
 export "implementation/protocol_interfaces/protocol_server.dart";

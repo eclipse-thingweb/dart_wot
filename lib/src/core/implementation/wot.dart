@@ -67,12 +67,10 @@ class WoT implements scripting_api.WoT {
   }
 
   @override
-  ThingDiscovery discover(
-    Uri url, {
+  ThingDiscovery discover({
     scripting_api.ThingFilter? thingFilter,
-    scripting_api.DiscoveryMethod method = scripting_api.DiscoveryMethod.direct,
   }) {
-    return ThingDiscovery(url, thingFilter, _servient, method: method);
+    return ThingDiscovery(thingFilter, _servient);
   }
 
   @override

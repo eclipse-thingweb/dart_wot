@@ -12,7 +12,6 @@ library scripting_api;
 
 export "scripting_api/consumed_thing.dart";
 export "scripting_api/data_schema_value.dart";
-export "scripting_api/discovery/discovery_method.dart";
 export "scripting_api/discovery/thing_discovery.dart";
 export "scripting_api/discovery/thing_filter.dart";
 export "scripting_api/exposed_thing.dart";
