@@ -35,12 +35,9 @@ class WoT implements scripting_api.WoT {
     ThingDescription thingDescription,
   ) async {
     final newThing = ConsumedThing(_servient, thingDescription);
-    if (_servient.addConsumedThing(newThing)) {
-      return newThing;
-    } else {
-      final id = thingDescription.identifier;
-      throw DartWotException(id);
-    }
+    _servient.addConsumedThing(newThing);
+
+    return newThing;
   }
 
   /// Exposes a Thing based on a (partial) TD.

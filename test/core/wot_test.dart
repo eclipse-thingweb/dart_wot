@@ -9,7 +9,7 @@ import "package:test/test.dart";
 
 void main() {
   group("WoT should", () {
-    test("throw an execption when consuming the same TD twice", () async {
+    test("not throw an execption when consuming the same TD twice", () async {
       const thingDescriptionJson = {
         "@context": "https://www.w3.org/2022/wot/td/v1.1",
         "title": "Test Thing",
@@ -22,9 +22,9 @@ void main() {
 
       final wot = await Servient().start();
 
-      await wot.consume(thingDescription);
-      final result = wot.consume(thingDescription);
-      await expectLater(result, throwsA(isA<DartWotException>()));
+      final firstConsumedThing = await wot.consume(thingDescription);
+      final secondConsumedThing = await wot.consume(thingDescription);
+      expect(firstConsumedThing != secondConsumedThing, isTrue);
     });
 
     test(
