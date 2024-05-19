@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.30.0] - 2024-05-19
+
+### Changed
+
+- Rework WoT discover method ([c596e37](https://github.com/eclipse-thingweb/dart_wot/commit/c596e37201fc0c046c58eae27e25ae7fe13305b8))
+- Allow for consuming the same TD twice ([b54450e](https://github.com/eclipse-thingweb/dart_wot/commit/b54450ed38f3b47790ffadfa695fa0c146f0b61e))
+
 ## [0.29.0] - 2024-05-18
 
 ### Added
@@ -956,6 +963,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.30.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.29.0..v0.30.0
 [0.29.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.4..v0.29.0
 [0.28.4]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.3..v0.28.4
 [0.28.3]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.2..v0.28.3
