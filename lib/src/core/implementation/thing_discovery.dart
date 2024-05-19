@@ -26,7 +26,7 @@ class ThingDiscovery extends Stream<ThingDescription>
     _stream = _start();
   }
 
-  final Servient _servient;
+  final InternalServient _servient;
 
   final Map<String, ProtocolClient> _clients = {};
 
@@ -43,7 +43,7 @@ class ThingDiscovery extends Stream<ThingDescription>
   late final Stream<ThingDescription> _stream;
 
   Stream<ThingDescription> _start() async* {
-    for (final discoveryParameter in _servient.discoveryConfiguration) {
+    for (final discoveryParameter in _servient.discoveryConfigurations) {
       switch (discoveryParameter) {
         case DnsSdDConfiguration(
             :final discoveryType,

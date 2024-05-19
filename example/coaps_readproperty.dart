@@ -37,7 +37,7 @@ Future<void> main(List<String> args) async {
     pskCredentialsCallback: _pskCredentialsCallback,
   );
 
-  final servient = Servient(
+  final servient = Servient.create(
     clientFactories: [
       coapClientFactory,
     ],

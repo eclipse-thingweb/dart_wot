@@ -18,7 +18,7 @@ void main() {
     test(
       "Parse incomplete Thing Description",
       () async {
-        final servient = Servient();
+        final servient = Servient.create();
         final wot = await servient.start();
         final Map<String, dynamic> exposedThingInit = <String, dynamic>{
           "@context": "https://www.w3.org/2022/wot/td/v1.1",

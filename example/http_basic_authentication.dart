@@ -61,7 +61,7 @@ Future<void> main(List<String> args) async {
   final httpClientFactory = HttpClientFactory(
     basicCredentialsCallback: basicCredentialsCallback,
   );
-  final servient = Servient(
+  final servient = Servient.create(
     clientFactories: [
       httpClientFactory,
     ],

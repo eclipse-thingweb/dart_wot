@@ -6,6 +6,7 @@
 
 import "package:dart_wot/binding_http.dart";
 import "package:dart_wot/core.dart";
+import "package:dart_wot/src/core/implementation/servient.dart";
 import "package:mockito/annotations.dart";
 import "package:test/test.dart";
 import "http_test.mocks.dart";
@@ -116,7 +117,7 @@ void main() {
         ]) async =>
             bearerCredentialsStore[uri.host];
 
-        final servient = Servient(
+        final servient = InternalServient(
           clientFactories: [
             HttpClientFactory(
               basicCredentialsCallback: basicCredentialsCallback,

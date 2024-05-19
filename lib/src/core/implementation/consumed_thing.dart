@@ -20,7 +20,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       : title = thingDescription.title;
 
   /// The [Servient] corresponding with this [ConsumedThing].
-  final Servient servient;
+  final InternalServient servient;
 
   @override
   final ThingDescription thingDescription;
@@ -428,7 +428,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     _subscribedEvents.clear();
 
     if (external) {
-      return servient.deregisterConsumedthing(this);
+      return servient.deregisterConsumedThing(this);
     }
 
     return false;

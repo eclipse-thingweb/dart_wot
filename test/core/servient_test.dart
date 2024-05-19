@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "package:dart_wot/core.dart";
+import "package:dart_wot/src/core/implementation/servient.dart";
 import "package:test/test.dart";
 
 const testUriScheme = "test";
@@ -37,7 +38,7 @@ void main() {
   group("Servient", () {
     test("should accept a ProtocolClientFactory list as constructor argument",
         () {
-      final servient = Servient(
+      final servient = InternalServient(
         clientFactories: [
           MockedProtocolClientFactory(),
         ],
@@ -49,7 +50,7 @@ void main() {
     test(
       "should allow for adding and removing a ProtocolClientFactory at runtime",
       () {
-        final servient = Servient()
+        final servient = InternalServient()
           ..addClientFactory(MockedProtocolClientFactory());
 
         expect(servient.clientSchemes.contains(testUriScheme), true);
@@ -66,7 +67,7 @@ void main() {
     "should throw a DartWotException when a "
     "ProtocolClientFactory is not registered",
     () {
-      final servient = Servient();
+      final servient = InternalServient();
 
       expect(
         () => servient.clientFor(testUriScheme),
