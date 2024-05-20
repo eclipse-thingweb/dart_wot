@@ -49,32 +49,25 @@ The changelog is formatted according to the
 [Keep a Changelog](https://keepachangelog.com) format via the configuration
 options set in `cliff.toml`.
 
-Between releases, the changelog can be updated with a list of unreleased changes
-by using the following command:
-
-```sh
-  git cliff -o CHANGELOG.md
-```
+Whenever a new commit is published to the `main` branch, a GitHub Actions
+workflow is run to update the changelog and push any changes to a (if needed)
+newly created Pull Request that also bumps the version number in the
+`pubspec.yaml` file.
 
 ### Creating a new release
 
-Updating the changelog and preparing a new release is currently still involves
-some manual work.
-Once a new release is ready, run
+Preparing a new release is currently still involves some manual work.
 
-```sh
-  git cliff --bump -o CHANGELOG.md
-```
+Once a new release is ready, merge the latest Pull Request for release
+prepartion.
+Then create a corresponding git tag for the release number with the prefix
+`v`(e.g., `v1.0.0` for version `1.0.0`).
+This can also be done via the GitHub web interface while creating a new release
+(where the latest `CHANGELOG.md` entry can be used for the release notes).
 
-to update the changelog and determine the new package version based on the
-type of changes that have been made so far.
-This version number then needs to be integrated into the `pubspec.yaml` file.
-After the changes have been committed to the `main` branch, a new git tag with
-the format `v[0-9]+.[0-9]+.[0-9]+*` that points to the latest commit has to be
-created.
 When the new tag is pushed to the remote repository on GitHub, a separate
 GitHub Actions workflow is then triggered that will push the new version to
-the pub.dev package repository.
+the pub.dev package repository, making it avaible for package users.
 
 ## Contact
 
