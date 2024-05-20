@@ -1,0 +1,70 @@
+name: Prepare next release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate a changelog
+        id: git-cliff
+        uses: orhun/git-cliff-action@v3
+        with:
+          config: cliff.toml
+          args: --verbose --bump
+        env:
+          OUTPUT: CHANGELOG.md
+          GITHUB_REPO: ${{ github.repository }}
+
+      - name: Determine changes
+        uses: orhun/git-cliff-action@v3
+        id: git-cliff-changes
+        with:
+          config: cliff.toml
+          args: --verbose --bump --unreleased --strip header
+        env:
+          OUTPUT: CHANGES.md
+          GITHUB_REPO: ${{ github.repository }}
+
+      - name: Format and set new version number
+        id: version-number
+        run: |
+          NEW_VERSION=$(echo ${{ steps.git-cliff.outputs.version }}| cut -d'v' -f 2)
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Write new version to pubspec.yaml
+        run: |
+          NEW_VERSION=${{ steps.version-number.outputs.version }}
+          sed -i "/^\(^version: \).*/s//\1$NEW_VERSION/" pubspec.yaml
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(release): prepare release ${{ steps.version-number.outputs.version }}"
+          committer: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          signoff: true
+          branch: next-release
+          delete-branch: true
+          title: 'chore(release): prepare release ${{ steps.version-number.outputs.version }}'
+          body-path: CHANGES.md
+          labels: |
+            release
+          draft: true
+          add-paths: |
+            pubspec.yaml
+            CHANGELOG.md
