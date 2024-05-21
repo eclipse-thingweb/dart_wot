@@ -64,7 +64,7 @@ extension MqttUriExtension on Uri {
 /// Additional methods for making MQTT [Form]s easier to work with.
 extension MqttFormExtension on AugmentedForm {
   /// Indicates if this [Form] requires basic authentication.
-  bool requiresBasicAuthencation(BasicCredentials? credentials) {
+  bool requiresBasicAuthentication(BasicCredentials? credentials) {
     if (_hasBasicSecurityScheme) {
       return true;
     }
