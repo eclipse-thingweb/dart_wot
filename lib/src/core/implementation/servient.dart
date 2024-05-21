@@ -59,7 +59,7 @@ abstract class Servient {
     List<DiscoveryConfiguration> discoveryConfigurations,
   );
 
-  /// Starts this [Servient] and returns a [WoT] runtime object.
+  /// Starts this [Servient] and returns a [scripting_api.WoT] runtime object.
   ///
   /// The [scripting_api.WoT] runtime can be used for consuming, producing, and
   /// discovering Things.
