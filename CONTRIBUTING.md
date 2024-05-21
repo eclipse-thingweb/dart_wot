@@ -16,7 +16,7 @@ Thus, before your contribution can be accepted by the project team, contributors
 -   Obtain an [Eclipse Foundation account](https://accounts.eclipse.org/)
     -   Anyone who currently uses Eclipse Bugzilla or Gerrit systems already has one of those
     -   Newcomers can [create a new account](https://accounts.eclipse.org/user/register?destination=user)
--   Add your GiHub username to your Eclipse Foundation account
+-   Add your GitHub username to your Eclipse Foundation account
     -   ([Log into Eclipse](https://accounts.eclipse.org/))
     -   Go to the _Edit Profile_ tab
     -   Fill in the _GitHub ID_ under _Social Media Links_ and save
@@ -56,10 +56,10 @@ newly created Pull Request that also bumps the version number in the
 
 ### Creating a new release
 
-Preparing a new release is currently still involves some manual work.
+Preparing a new release currently still involves some manual work.
 
 Once a new release is ready, merge the latest Pull Request for release
-prepartion.
+preparation.
 Then create a corresponding git tag for the release number with the prefix
 `v`(e.g., `v1.0.0` for version `1.0.0`).
 This can also be done via the GitHub web interface while creating a new release
@@ -67,7 +67,7 @@ This can also be done via the GitHub web interface while creating a new release
 
 When the new tag is pushed to the remote repository on GitHub, a separate
 GitHub Actions workflow is then triggered that will push the new version to
-the pub.dev package repository, making it avaible for package users.
+the pub.dev package repository, making it available for package users.
 
 ## Contact
 
