@@ -98,7 +98,7 @@ Future<void> main() async {
   final httpClientFactory =
       HttpClientFactory(basicCredentialsCallback: basicCredentialsCallback);
 
-  final servient = Servient(
+  final servient = Servient.create(
     clientFactories: [
       coapClientFactory,
       httpClientFactory,

@@ -11,7 +11,7 @@ import "package:dart_wot/binding_http.dart";
 import "package:dart_wot/core.dart";
 
 Future<void> main(List<String> args) async {
-  final servient = Servient(
+  final servient = Servient.create(
     clientFactories: [
       CoapClientFactory(),
       HttpClientFactory(),

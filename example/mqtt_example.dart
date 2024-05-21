@@ -60,7 +60,7 @@ Future<BasicCredentials?> basicCredentialsCallback(
 }
 
 Future<void> main(List<String> args) async {
-  final servient = Servient(
+  final servient = Servient.create(
     clientFactories: [
       MqttClientFactory(basicCredentialsCallback: basicCredentialsCallback),
     ],

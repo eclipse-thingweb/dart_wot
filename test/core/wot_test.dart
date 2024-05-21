@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "package:dart_wot/core.dart";
+import "package:dart_wot/src/core/implementation/servient.dart";
 import "package:test/test.dart";
 
 void main() {
@@ -20,7 +21,7 @@ void main() {
       };
       final thingDescription = thingDescriptionJson.toThingDescription();
 
-      final wot = await Servient().start();
+      final wot = await InternalServient().start();
 
       final firstConsumedThing = await wot.consume(thingDescription);
       final secondConsumedThing = await wot.consume(thingDescription);
@@ -40,7 +41,7 @@ void main() {
         "id": "urn:test",
       };
 
-      final wot = await Servient().start();
+      final wot = await InternalServient().start();
 
       await wot.produce(exposedThingInit);
       final result = wot.produce(exposedThingInit);

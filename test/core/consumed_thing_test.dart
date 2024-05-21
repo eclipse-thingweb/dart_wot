@@ -238,7 +238,7 @@ void main() {
 
       final parsedTd = ThingDescription.fromJson(thingDescriptionJson);
 
-      final servient = Servient(clientFactories: [HttpClientFactory()]);
+      final servient = Servient.create(clientFactories: [HttpClientFactory()]);
       final wot = await servient.start();
 
       final uriVariables = {"value": "SFRUUEJJTiBpcyBhd2Vzb21l"};
@@ -278,7 +278,7 @@ void main() {
 
     final parsedTd = ThingDescription.fromJson(thingDescriptionJson);
 
-    final servient = Servient();
+    final servient = Servient.create();
     final wot = await servient.start();
 
     final consumedThing = await wot.consume(parsedTd);

@@ -6,14 +6,9 @@
 
 import "dart:async";
 
-import "package:uuid/uuid.dart";
-
 import "../definitions.dart";
-import "../definitions/context.dart";
-import "../exceptions.dart";
 import "../scripting_api.dart" as scripting_api;
 import "consumed_thing.dart";
-import "exposed_thing.dart";
 import "servient.dart";
 import "thing_discovery.dart";
 
@@ -22,7 +17,7 @@ class WoT implements scripting_api.WoT {
   /// Creates a new [WoT] runtime based on a [Servient].
   WoT(this._servient);
 
-  final Servient _servient;
+  final InternalServient _servient;
 
   /// Consumes a [ThingDescription] and returns a [scripting_api.ConsumedThing].
   ///
@@ -33,47 +28,25 @@ class WoT implements scripting_api.WoT {
   @override
   Future<scripting_api.ConsumedThing> consume(
     ThingDescription thingDescription,
-  ) async {
-    final newThing = ConsumedThing(_servient, thingDescription);
-    _servient.addConsumedThing(newThing);
-
-    return newThing;
-  }
+  ) =>
+      _servient.consume(thingDescription);
 
   /// Exposes a Thing based on a (partial) TD.
   @override
   Future<scripting_api.ExposedThing> produce(
     Map<String, dynamic> init,
-  ) async {
-    const uuid = Uuid();
-
-    final exposedThingInit = {
-      "id": "urn:uuid:${uuid.v4()}",
-      ...init,
-    };
-
-    final newThing = ExposedThing(_servient, exposedThingInit);
-    if (_servient.addThing(newThing)) {
-      return newThing;
-    } else {
-      final id = newThing.thingDescription.identifier;
-      throw DartWotException(
-        "A ConsumedThing with identifier $id already exists.",
-      );
-    }
-  }
+  ) =>
+      _servient.produce(init);
 
   @override
   ThingDiscovery discover({
     scripting_api.ThingFilter? thingFilter,
-  }) {
-    return ThingDiscovery(thingFilter, _servient);
-  }
+  }) =>
+      _servient.discover(thingFilter: thingFilter);
 
   @override
-  Future<ThingDescription> requestThingDescription(Uri url) {
-    return _servient.requestThingDescription(url);
-  }
+  Future<ThingDescription> requestThingDescription(Uri url) =>
+      _servient.requestThingDescription(url);
 
   @override
   Future<scripting_api.ThingDiscoveryProcess> exploreDirectory(
@@ -82,65 +55,12 @@ class WoT implements scripting_api.WoT {
     int? offset,
     int? limit,
     scripting_api.DirectoryPayloadFormat? format,
-  }) async {
-    // TODO(JKRhb): Add support for the collection format.
-    if (format == scripting_api.DirectoryPayloadFormat.collection) {
-      throw ArgumentError('Format "$format" is currently not supported.');
-    }
-
-    final thingDescription = await requestThingDescription(url);
-
-    if (!thingDescription.isValidDirectoryThingDescription) {
-      throw const DiscoveryException(
-        "Encountered an invalid Directory Thing Description",
+  }) =>
+      _servient.exploreDirectory(
+        url,
+        thingFilter: filter,
+        offset: offset,
+        limit: limit,
+        format: format,
       );
-    }
-
-    final consumedDirectoryThing = await consume(thingDescription);
-
-    final interactionOutput = await consumedDirectoryThing.readProperty(
-      "things",
-      uriVariables: {
-        if (offset != null) "offset": offset,
-        if (limit != null) "limit": limit,
-        if (format != null) "format": format.toString(),
-      },
-    );
-    final rawThingDescriptions = await interactionOutput.value();
-
-    if (rawThingDescriptions is! List<Object?>) {
-      throw const DiscoveryException(
-        "Expected an array of Thing Descriptions but received an "
-        "invalid output instead.",
-      );
-    }
-
-    final thingDescriptionStream = Stream.fromIterable(
-      rawThingDescriptions.whereType<Map<String, Object?>>(),
-    ).map((rawThingDescription) => rawThingDescription.toThingDescription());
-
-    return ThingDiscoveryProcess(thingDescriptionStream, filter);
-  }
-}
-
-extension _DirectoryValidationExtension on ThingDescription {
-  bool get isValidDirectoryThingDescription {
-    final atTypes = atType;
-
-    if (atTypes == null) {
-      return false;
-    }
-
-    const discoveryContextUri = "https://www.w3.org/2022/wot/discovery";
-    const type = "ThingDirectory";
-    const fullIri = "$discoveryContextUri#$type";
-
-    if (atTypes.contains(fullIri)) {
-      return true;
-    }
-
-    return context.contextEntries
-            .contains(SingleContextEntry.fromString(discoveryContextUri)) &&
-        atTypes.contains(type);
-  }
 }

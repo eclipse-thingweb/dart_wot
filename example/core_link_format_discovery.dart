@@ -10,9 +10,9 @@ import "package:dart_wot/binding_coap.dart";
 import "package:dart_wot/core.dart";
 
 Future<void> main(List<String> args) async {
-  final servient = Servient(
+  final servient = Servient.create(
     clientFactories: [CoapClientFactory()],
-    discoveryConfiguration: [
+    discoveryConfigurations: [
       CoreLinkFormatConfiguration(
         Uri.parse("coap://plugfest.thingweb.io"),
       ),

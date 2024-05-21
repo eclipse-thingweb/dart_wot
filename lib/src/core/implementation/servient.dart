@@ -5,8 +5,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "package:meta/meta.dart";
+import "package:uuid/uuid.dart";
 
 import "../definitions.dart";
+import "../definitions/context.dart";
 import "../exceptions.dart";
 import "../scripting_api.dart" as scripting_api;
 import "consumed_thing.dart";
@@ -16,32 +18,77 @@ import "exposed_thing.dart";
 import "protocol_interfaces/protocol_client.dart";
 import "protocol_interfaces/protocol_client_factory.dart";
 import "protocol_interfaces/protocol_server.dart";
+import "thing_discovery.dart";
 import "wot.dart";
 
-// TODO(JKRhb): Documentation should be improved.
 /// A software stack that implements the WoT building blocks.
 ///
 /// A [Servient] can host and expose Things and/or host Consumers that consume
 /// Things. Servients can support multiple Protocol Bindings to enable
 /// interaction with different IoT platforms.
-class Servient {
+abstract class Servient {
   /// Creates a new [Servient].
   ///
-  /// The [Servient] can be preconfigured with a [List] of
-  /// [ProtocolClientFactory]s.
+  /// The [Servient] can be pre-configured with [List]s of
+  /// [clientFactories] and [discoveryConfigurations].
   /// However, it is also possible to dynamically [addClientFactory]s and
   /// [removeClientFactory]s at runtime.
   ///
   /// If you want to support a custom media type not already included in the
   /// [ContentSerdes] class, a custom [contentSerdes] object can be passed as an
   /// argument.
-  Servient({
+  factory Servient.create({
     List<ProtocolClientFactory>? clientFactories,
     ServerSecurityCallback? serverSecurityCallback,
     ContentSerdes? contentSerdes,
-    List<DiscoveryConfiguration>? discoveryConfiguration,
+    List<DiscoveryConfiguration>? discoveryConfigurations,
+  }) {
+    return InternalServient(
+      clientFactories: clientFactories,
+      serverSecurityCallback: serverSecurityCallback,
+      contentSerdes: contentSerdes,
+      discoveryConfigurations: discoveryConfigurations,
+    );
+  }
+
+  /// [List] of [DiscoveryConfiguration]s that are used when calling the
+  /// [scripting_api.WoT.discover] method.
+  List<DiscoveryConfiguration> get discoveryConfigurations;
+
+  set discoveryConfigurations(
+    List<DiscoveryConfiguration> discoveryConfigurations,
+  );
+
+  /// Starts this [Servient] and returns a [WoT] runtime object.
+  ///
+  /// The [scripting_api.WoT] runtime can be used for consuming, producing, and
+  /// discovering Things.
+  Future<scripting_api.WoT> start();
+
+  /// Adds a new [clientFactory] to this [Servient].
+  void addClientFactory(ProtocolClientFactory clientFactory);
+
+  /// Removes a [ProtocolClientFactory] matching the given [scheme] from this
+  /// [Servient], if present.
+  ///
+  /// If a [ProtocolClientFactory] was removed, the method returns it, otherwise
+  /// the return value is `null`.
+  ProtocolClientFactory? removeClientFactory(String scheme);
+
+  /// Closes this [Servient] and cleans up all resources.
+  Future<void> shutdown();
+}
+
+/// Provides the internal implementation details of the [Servient] class.
+class InternalServient implements Servient {
+  /// Creates a new [InternalServient].
+  InternalServient({
+    List<ProtocolClientFactory>? clientFactories,
+    ServerSecurityCallback? serverSecurityCallback,
+    ContentSerdes? contentSerdes,
+    List<DiscoveryConfiguration>? discoveryConfigurations,
   })  : contentSerdes = contentSerdes ?? ContentSerdes(),
-        discoveryConfiguration = discoveryConfiguration ?? [],
+        discoveryConfigurations = discoveryConfigurations ?? [],
         _serverSecurityCallback = serverSecurityCallback {
     for (final clientFactory in clientFactories ?? <ProtocolClientFactory>[]) {
       addClientFactory(clientFactory);
@@ -55,18 +102,14 @@ class Servient {
 
   final ServerSecurityCallback? _serverSecurityCallback;
 
-  /// [List] of [DiscoveryConfiguration]s that are used when calling the
-  /// [scripting_api.WoT.discover] method.
-  List<DiscoveryConfiguration> discoveryConfiguration;
+  @override
+  List<DiscoveryConfiguration> discoveryConfigurations;
 
   /// The [ContentSerdes] object that is used for serializing/deserializing.
   final ContentSerdes contentSerdes;
 
-  /// Starts this [Servient] and returns a [WoT] runtime object.
-  ///
-  /// The [scripting_api.WoT] runtime can be used for consuming, producing, and
-  /// discovering Things.
-  Future<scripting_api.WoT> start() async {
+  @override
+  Future<WoT> start() async {
     final serverStatuses = _servers
         .map((server) => server.start(_serverSecurityCallback))
         .toList(growable: false);
@@ -79,7 +122,7 @@ class Servient {
     return WoT(this);
   }
 
-  /// Closes the client.
+  @override
   Future<void> shutdown() async {
     for (final clientFactory in _clientFactories.values) {
       clientFactory.destroy();
@@ -143,11 +186,11 @@ class Servient {
     return consumedThing.destroy(external: false);
   }
 
-  /// Deregisters the given [consumedThing].
+  /// De-registers the given [consumedThing].
   ///
   /// If the [ConsumedThing] has not been registered before, `false` is
   /// returned, otherwise `true`.
-  bool deregisterConsumedthing(ConsumedThing consumedThing) {
+  bool deregisterConsumedThing(ConsumedThing consumedThing) {
     return _consumedThings.remove(consumedThing);
   }
 
@@ -181,18 +224,14 @@ class Servient {
   List<String> get clientSchemes =>
       _clientFactories.keys.toList(growable: false);
 
-  /// Adds a new [clientFactory] to this [Servient].
+  @override
   void addClientFactory(ProtocolClientFactory clientFactory) {
     for (final scheme in clientFactory.schemes) {
       _clientFactories[scheme] = clientFactory;
     }
   }
 
-  /// Removes a [ProtocolClientFactory] matching the given [scheme] from this
-  /// [Servient], if present.
-  ///
-  /// If a [ProtocolClientFactory] was removed, the method returns it, otherwise
-  /// the return value is `null`.
+  @override
   ProtocolClientFactory? removeClientFactory(String scheme) =>
       _clientFactories.remove(scheme);
 
@@ -229,6 +268,49 @@ class Servient {
     return protocolClient.supportsOperation(operationType, subprotocol);
   }
 
+  /// Consumes a [ThingDescription] and returns a [scripting_api.ConsumedThing].
+  Future<scripting_api.ConsumedThing> consume(
+    ThingDescription thingDescription,
+  ) async {
+    final newThing = ConsumedThing(this, thingDescription);
+    addConsumedThing(newThing);
+
+    return newThing;
+  }
+
+  /// Exposes a Thing based on an [scripting_api.ExposedThingInit].
+  Future<scripting_api.ExposedThing> produce(
+    scripting_api.ExposedThingInit init,
+  ) async {
+    const uuid = Uuid();
+
+    final exposedThingInit = {
+      "id": "urn:uuid:${uuid.v4()}",
+      ...init,
+    };
+
+    final newThing = ExposedThing(this, exposedThingInit);
+    if (addThing(newThing)) {
+      return newThing;
+    } else {
+      final id = newThing.thingDescription.identifier;
+      throw DartWotException(
+        "A ConsumedThing with identifier $id already exists.",
+      );
+    }
+  }
+
+  /// Perform automatic discovery using this [InternalServient]'s
+  /// [discoveryConfigurations].
+  ///
+  /// A [thingFilter] can be provided to filter the discovered Thing
+  /// Descriptions; however, doing so currently does not have any effect yet.
+  ThingDiscovery discover({
+    scripting_api.ThingFilter? thingFilter,
+  }) {
+    return ThingDiscovery(thingFilter, this);
+  }
+
   /// Requests a [ThingDescription] from a [url].
   Future<ThingDescription> requestThingDescription(Uri url) async {
     final client = clientFor(url.scheme);
@@ -244,5 +326,90 @@ class Servient {
     }
 
     return ThingDescription.fromJson(dataSchemaValue.value);
+  }
+
+  /// Retrieves [ThingDescription] from a Thing Description Directory (TDD).
+  ///
+  /// This method expects the TDD's Thing Description to be located under the
+  /// provided [url] (e.g., https://example.org/.well-known/wot).
+  /// Optionally, a [thingFilter] can be provided that is supposed to be used
+  /// as part of the query issues to the TDD; however, providing the filter
+  /// has no effect at the moment.
+  ///
+  /// Corresponding with the [API] specified in the
+  /// [WoT Discovery Recommendation], it possible to specify an [offset] and
+  /// a limit for the Thing Descriptions that are supposed to be returned from
+  /// the TDD.
+  /// The [format] is also configurable, however, only
+  /// [scripting_api.DirectoryPayloadFormat.array] is supported at the moment.
+  ///
+  /// [API]: https://www.w3.org/TR/wot-discovery/#exploration-directory-api
+  /// [WoT Discovery Recommendation]: https://www.w3.org/TR/wot-discovery
+  Future<scripting_api.ThingDiscoveryProcess> exploreDirectory(
+    Uri url, {
+    scripting_api.ThingFilter? thingFilter,
+    int? offset,
+    int? limit,
+    scripting_api.DirectoryPayloadFormat? format,
+  }) async {
+    // TODO(JKRhb): Add support for the collection format.
+    if (format == scripting_api.DirectoryPayloadFormat.collection) {
+      throw ArgumentError('Format "$format" is currently not supported.');
+    }
+
+    final thingDescription = await requestThingDescription(url);
+
+    if (!thingDescription.isValidDirectoryThingDescription) {
+      throw const DiscoveryException(
+        "Encountered an invalid Directory Thing Description",
+      );
+    }
+
+    final consumedDirectoryThing = await consume(thingDescription);
+
+    final interactionOutput = await consumedDirectoryThing.readProperty(
+      "things",
+      uriVariables: {
+        if (offset != null) "offset": offset,
+        if (limit != null) "limit": limit,
+        if (format != null) "format": format.toString(),
+      },
+    );
+    final rawThingDescriptions = await interactionOutput.value();
+
+    if (rawThingDescriptions is! List<Object?>) {
+      throw const DiscoveryException(
+        "Expected an array of Thing Descriptions but received an "
+        "invalid output instead.",
+      );
+    }
+
+    final thingDescriptionStream = Stream.fromIterable(
+      rawThingDescriptions.whereType<Map<String, Object?>>(),
+    ).map((rawThingDescription) => rawThingDescription.toThingDescription());
+
+    return ThingDiscoveryProcess(thingDescriptionStream, thingFilter);
+  }
+}
+
+extension _DirectoryValidationExtension on ThingDescription {
+  bool get isValidDirectoryThingDescription {
+    final atTypes = atType;
+
+    if (atTypes == null) {
+      return false;
+    }
+
+    const discoveryContextUri = "https://www.w3.org/2022/wot/discovery";
+    const type = "ThingDirectory";
+    const fullIri = "$discoveryContextUri#$type";
+
+    if (atTypes.contains(fullIri)) {
+      return true;
+    }
+
+    return context.contextEntries
+            .contains(SingleContextEntry.fromString(discoveryContextUri)) &&
+        atTypes.contains(type);
   }
 }

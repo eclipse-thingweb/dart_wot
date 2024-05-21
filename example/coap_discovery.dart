@@ -37,9 +37,9 @@ Future<void> handleThingDescription(
 }
 
 Future<void> main(List<String> args) async {
-  final servient = Servient(
+  final servient = Servient.create(
     clientFactories: [CoapClientFactory()],
-    discoveryConfiguration: [
+    discoveryConfigurations: [
       DirectConfiguration(
         Uri.parse("coap://plugfest.thingweb.io:5683/testthing"),
       ),

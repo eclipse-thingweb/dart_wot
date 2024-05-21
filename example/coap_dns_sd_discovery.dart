@@ -14,12 +14,12 @@ void handleThingDescription(ThingDescription thingDescription) =>
     print('Discovered TD with title "${thingDescription.title}".');
 
 Future<void> main(List<String> args) async {
-  final servient = Servient(
+  final servient = Servient.create(
     clientFactories: [
       CoapClientFactory(),
       HttpClientFactory(),
     ],
-    discoveryConfiguration: [
+    discoveryConfigurations: [
       DnsSdDConfiguration(protocolType: ProtocolType.udp),
     ],
   );

@@ -279,7 +279,7 @@ extension _DiscoveryContentCreationExtension on String {
 void main() {
   group("requestThingDescription()", () {
     test("should be able to retrieve a valid TD", () async {
-      final servient = Servient(
+      final servient = Servient.create(
         clientFactories: [
           _MockedProtocolClientFactory(),
         ],
@@ -295,7 +295,7 @@ void main() {
     test(
       "should throw an exception when an invalid TD is retrieved",
       () async {
-        final servient = Servient(
+        final servient = Servient.create(
           clientFactories: [
             _MockedProtocolClientFactory(),
           ],
@@ -313,7 +313,7 @@ void main() {
 
   group("exploreDirectory()", () {
     test("should be able to discover valid TDs from a TD directory", () async {
-      final servient = Servient(
+      final servient = Servient.create(
         clientFactories: [
           _MockedProtocolClientFactory(),
         ],
@@ -333,7 +333,7 @@ void main() {
     });
 
     test("should reject invalid TDD Thing Descriptions", () async {
-      final servient = Servient(
+      final servient = Servient.create(
         clientFactories: [
           _MockedProtocolClientFactory(),
         ],
@@ -349,7 +349,7 @@ void main() {
 
     test("should be able to handle an array of invalid TDs during discovery",
         () async {
-      final servient = Servient(
+      final servient = Servient.create(
         clientFactories: [
           _MockedProtocolClientFactory(),
         ],
@@ -382,7 +382,7 @@ void main() {
     test(
         "should be able to handle an invalid non-array output during discovery",
         () async {
-      final servient = Servient(
+      final servient = Servient.create(
         clientFactories: [
           _MockedProtocolClientFactory(),
         ],
@@ -397,7 +397,7 @@ void main() {
     });
 
     test("should be able to handle premature cancellation", () async {
-      final servient = Servient(
+      final servient = Servient.create(
         clientFactories: [
           _MockedProtocolClientFactory(),
         ],
@@ -416,7 +416,7 @@ void main() {
     });
 
     test("should support the experimental query parameters API", () async {
-      final servient = Servient(
+      final servient = Servient.create(
         clientFactories: [
           _MockedProtocolClientFactory(),
         ],
@@ -442,7 +442,7 @@ void main() {
     test(
         'should currently not support the "collection" format when using the '
         "experimental query parameters API", () async {
-      final servient = Servient();
+      final servient = Servient.create();
       final wot = await servient.start();
 
       expect(
