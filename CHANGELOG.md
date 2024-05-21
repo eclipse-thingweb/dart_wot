@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.30.1] - 2024-05-21
+
+### Added
+
+- Add missing codecov token for code coverage determination ([13f6818](https://github.com/eclipse-thingweb/dart_wot/commit/13f68187f039f2437e8b7c4e4ae5176006ef4f92))
+
+### Changed
+
+- Automate release generation ([056ed95](https://github.com/eclipse-thingweb/dart_wot/commit/056ed95f9c69892a5281c8a369dd96424f605683))
+- Update instructions for release management ([ecb3c37](https://github.com/eclipse-thingweb/dart_wot/commit/ecb3c37b33a38f7d3d92aac337d9506ba10a5482))
+
 ## [0.30.0] - 2024-05-19
 
 ### Changed
@@ -963,6 +974,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.30.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.30.0..v0.30.1
 [0.30.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.29.0..v0.30.0
 [0.29.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.4..v0.29.0
 [0.28.4]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.3..v0.28.4
