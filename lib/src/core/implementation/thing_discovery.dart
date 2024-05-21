@@ -266,7 +266,7 @@ class ThingDiscovery extends Stream<ThingDescription>
                   ?.contains(resourceType.asCoreLinkFormatAttributeValue()) ??
               false,
         )
-        .map((weblink) => Uri.tryParse(weblink.uri))
+        .map((webLink) => Uri.tryParse(webLink.uri))
         .whereType<Uri>()
         .map((uri) => uri.toAbsoluteUri(sourceUri));
   }
