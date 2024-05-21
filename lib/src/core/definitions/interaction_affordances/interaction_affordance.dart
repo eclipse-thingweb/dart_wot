@@ -36,13 +36,13 @@ sealed class InteractionAffordance {
   /// The default [title] of this [InteractionAffordance].
   final String? title;
 
-  /// Multilanguage [titles] of this [InteractionAffordance].
+  /// Multi-language [titles] of this [InteractionAffordance].
   final Map<String, String>? titles;
 
   /// The default [description] of this [InteractionAffordance].
   final String? description;
 
-  /// Multilanguage [descriptions] of this [InteractionAffordance].
+  /// Multi-language [descriptions] of this [InteractionAffordance].
   final Map<String, String>? descriptions;
 
   /// The basic [forms] which can be used for interacting with this resource.

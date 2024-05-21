@@ -18,7 +18,7 @@ import "discovery/discovery_configuration.dart";
 import "protocol_interfaces/protocol_client.dart";
 import "servient.dart";
 
-/// Implemention of the [scripting_api.ThingDiscovery] interface.
+/// Implementation of the [scripting_api.ThingDiscovery] interface.
 class ThingDiscovery extends Stream<ThingDescription>
     implements scripting_api.ThingDiscovery {
   /// Creates a new [ThingDiscovery] object with a given [thingFilter].
@@ -337,7 +337,7 @@ extension _UriExtension on Uri {
   }
 }
 
-/// Implemention of the [scripting_api.ThingDiscoveryProcess] interface.
+/// Implementation of the [scripting_api.ThingDiscoveryProcess] interface.
 class ThingDiscoveryProcess extends Stream<ThingDescription>
     implements scripting_api.ThingDiscoveryProcess {
   /// Constructs a new [ThingDiscoveryProcess].

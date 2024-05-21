@@ -58,7 +58,7 @@ typedef AceSecurityCallback = Future<AceCredentials?> Function(
 /// argument.
 ///
 /// This callback signature is currently only used for [PskCredentials] due to
-/// implementation limititations, which do not allow for asynchronous callbacks.
+/// implementation limitations, which do not allow for asynchronous callbacks.
 typedef AsyncClientSecurityCallback<T extends Credentials> = Future<T?>
     Function(Uri uri, AugmentedForm? form, T? invalidCredentials);
 

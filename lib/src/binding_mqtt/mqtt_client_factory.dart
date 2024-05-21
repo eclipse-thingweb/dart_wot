@@ -12,7 +12,7 @@ import "mqtt_config.dart";
 
 /// [ProtocolClientFactory] for creating [MqttClient]s.
 final class MqttClientFactory implements ProtocolClientFactory {
-  /// Instatiates a new [MqttClientFactory].
+  /// Instantiates a new [MqttClientFactory].
   MqttClientFactory({
     MqttConfig? mqttConfig,
     AsyncClientSecurityCallback<BasicCredentials>? basicCredentialsCallback,

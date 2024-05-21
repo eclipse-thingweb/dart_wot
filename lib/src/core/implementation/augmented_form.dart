@@ -12,7 +12,7 @@ import "package:uri/uri.dart";
 import "../definitions.dart";
 import "../exceptions.dart";
 
-/// A [Form] augmented with information from its asscociated [_thingDescription]
+/// A [Form] augmented with information from its associated [_thingDescription]
 /// and [_interactionAffordance].
 @immutable
 final class AugmentedForm implements Form {
