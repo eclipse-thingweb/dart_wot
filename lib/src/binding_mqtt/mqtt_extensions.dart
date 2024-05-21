@@ -136,7 +136,7 @@ extension MqttFormExtension on AugmentedForm {
         return MqttQos.exactlyOnce;
     }
 
-    // TODO: This validation should maybe already happen ealier.
+    // TODO: This validation should maybe already happen earlier.
     if (qosValue != null) {
       throw ValidationException(
         "Encountered unknown QoS value $qosValue. "
