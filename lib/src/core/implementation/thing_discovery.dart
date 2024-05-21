@@ -60,7 +60,7 @@ class ThingDiscovery extends Stream<ThingDescription>
             :final uri,
             :final discoveryType,
           ):
-          yield* _discoverfromCoreResourceDirectory(uri, discoveryType);
+          yield* _discoverFromCoreResourceDirectory(uri, discoveryType);
         case DirectConfiguration(:final uri):
           yield* Stream.fromFuture(_servient.requestThingDescription(uri));
       }
@@ -209,7 +209,7 @@ class ThingDiscovery extends Stream<ThingDescription>
     }
   }
 
-  Stream<ThingDescription> _discoverfromCoreResourceDirectory(
+  Stream<ThingDescription> _discoverFromCoreResourceDirectory(
     Uri uri,
     DiscoveryType discoveryType,
   ) async* {
