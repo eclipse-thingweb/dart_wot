@@ -10,7 +10,7 @@ import "package:test/test.dart";
 
 void main() {
   group("WoT should", () {
-    test("not throw an execption when consuming the same TD twice", () async {
+    test("not throw an exception when consuming the same TD twice", () async {
       const thingDescriptionJson = {
         "@context": "https://www.w3.org/2022/wot/td/v1.1",
         "title": "Test Thing",
@@ -29,7 +29,7 @@ void main() {
     });
 
     test(
-        "throw an execption when producing an ExposedThing "
+        "throw an exception when producing an ExposedThing "
         "from the same TD twice", () async {
       const exposedThingInit = {
         "@context": "https://www.w3.org/2022/wot/td/v1.1",

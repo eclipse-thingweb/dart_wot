@@ -41,7 +41,7 @@ final class MqttClient implements ProtocolClient {
     bool unauthorized = false,
   ]) async {
     final requiresBasicAuthentication =
-        form?.requiresBasicAuthencation(invalidCredentials) ?? false;
+        form?.requiresBasicAuthentication(invalidCredentials) ?? false;
     final isDiscovery = form == null && unauthorized;
 
     if (!(requiresBasicAuthentication || isDiscovery)) {

@@ -64,7 +64,7 @@ extension MqttUriExtension on Uri {
 /// Additional methods for making MQTT [Form]s easier to work with.
 extension MqttFormExtension on AugmentedForm {
   /// Indicates if this [Form] requires basic authentication.
-  bool requiresBasicAuthencation(BasicCredentials? credentials) {
+  bool requiresBasicAuthentication(BasicCredentials? credentials) {
     if (_hasBasicSecurityScheme) {
       return true;
     }
@@ -136,7 +136,7 @@ extension MqttFormExtension on AugmentedForm {
         return MqttQos.exactlyOnce;
     }
 
-    // TODO: This validation should maybe already happen ealier.
+    // TODO: This validation should maybe already happen earlier.
     if (qosValue != null) {
       throw ValidationException(
         "Encountered unknown QoS value $qosValue. "
