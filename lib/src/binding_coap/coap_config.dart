@@ -48,7 +48,7 @@ class CoapConfig {
   /// Indicates if multicast should be available for discovery.
   ///
   /// Defaults to false for security reasons, as multicast can lead to
-  /// amplication scenarios/attacks (c.f., [WoT Discovery Specification]).
+  /// amplification scenarios/attacks (c.f., [WoT Discovery Specification]).
   ///
   /// [WoT Discovery Specification]: https://w3c.github.io/wot-discovery/#security-consideration-amp-ddos
   final bool allowMulticastDiscovery;

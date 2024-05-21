@@ -9,7 +9,7 @@ import "../scripting_api.dart" as scripting_api;
 
 import "servient.dart";
 
-/// Implemention of the [scripting_api.ExposedThing] interface.
+/// Implementation of the [scripting_api.ExposedThing] interface.
 class ExposedThing implements scripting_api.ExposedThing {
   /// Creates a new [ExposedThing] from a [servient] and an [exposedThingInit].
   ExposedThing(this.servient, scripting_api.ExposedThingInit exposedThingInit)

@@ -217,7 +217,7 @@ extension ParseField on Map<String, dynamic> {
   /// Parses a field with a given [name] as a [Map] of [DataSchema]s.
   ///
   /// Returns `null` if the field should not be present or if it is not a
-  /// JSON object contaning other objects.
+  /// JSON object containing other objects.
   ///
   /// If a [Set] of [parsedFields] is passed to this function, the field [name]
   /// will added. This can be used for filtering when parsing additional fields.
@@ -244,7 +244,7 @@ extension ParseField on Map<String, dynamic> {
 
   /// Parses [Form]s contained in this JSON object.
   ///
-  /// Epands compact URIs using the given [prefixMapping] and adds the key
+  /// Expands compact URIs using the given [prefixMapping] and adds the key
   /// `forms` to the set of [parsedFields], if defined.
   List<Form>? parseForms(
     PrefixMapping prefixMapping,

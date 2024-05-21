@@ -154,7 +154,7 @@ final class DnsSdDConfiguration extends TwoStepConfiguration {
 final class CoreLinkFormatConfiguration extends TwoStepConfiguration {
   /// Instantiates a new [CoreLinkFormatConfiguration] object.
   ///
-  /// The [baseUrl] can either be a unicast or – when using a mulicast-capable
+  /// The [baseUrl] can either be a unicast or – when using a multicast-capable
   /// protocol such as CoAP – a multicast [Uri]. The default URI path used for
   /// discovering Thing Descriptions is the standardized `/.well-known/core`
   /// (see [RFC 6690, section 4]).
@@ -198,7 +198,7 @@ final class CoreLinkFormatConfiguration extends TwoStepConfiguration {
 final class CoreResourceDirectoryConfiguration extends TwoStepConfiguration {
   /// Instantiates a new [CoreResourceDirectoryConfiguration] object.
   ///
-  /// The [baseUrl] can either be a unicast or – when using a mulicast-capable
+  /// The [baseUrl] can either be a unicast or – when using a multicast-capable
   /// protocol such as CoAP – a multicast [Uri]. The default URI path used for
   /// discovering lookup interfaces of CoRE Resource Directories is the
   /// standardized URI path `/.well-known/core` (see [RFC 6690, section 4]).

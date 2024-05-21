@@ -14,7 +14,7 @@ abstract interface class ProtocolClientFactory {
   /// The protocol [schemes] support of the clients this factory produces.
   Set<String> get schemes;
 
-  /// Initalizes this [ProtocolClientFactory].
+  /// Initializes this [ProtocolClientFactory].
   ///
   /// Returns `true` on success.
   bool init();

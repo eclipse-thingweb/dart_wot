@@ -193,7 +193,7 @@ class ContentSerdes {
   /// Converts a [Content] object to a typed [Object].
   ///
   /// A [dataSchema] can be passed for validating the result. If the media type
-  /// specified in the [content] is not supported, the method willl try to
+  /// specified in the [content] is not supported, the method will try to
   /// convert its body to an UTF-8 string.
   Future<DataSchemaValue<Object?>?> contentToValue(
     Content content,
