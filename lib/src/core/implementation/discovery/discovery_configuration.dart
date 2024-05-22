@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "../../scripting_api/discovery/thing_filter.dart";
+
 /// Used to indicate whether the discovery mechanism will be used to discover
 /// Thing Descriptions of Things or Thing Description Directories.
 enum DiscoveryType {
@@ -97,6 +99,38 @@ final class DirectConfiguration extends DiscoveryConfiguration {
 
   /// The [Uri] the Thing Description can be retrieved from.
   final Uri uri;
+}
+
+/// A configuration that is used for retrieving Thing Descriptions from a Thing
+/// Description Directory (TDD).
+final class ExploreDirectoryConfiguration extends DiscoveryConfiguration {
+  /// Instantiates a new [ExploreDirectoryConfiguration].
+  ///
+  /// The [uri] needs to point to the Thing Description exposed by the TDD that
+  /// is supposed to be used for this [DiscoveryConfiguration].
+  ///
+  /// A [thingFilter] can be provided for filtering and the total number of TDs
+  /// can be [limit]ed.
+  ExploreDirectoryConfiguration(
+    this.uri, {
+    this.thingFilter,
+    this.limit,
+  });
+
+  /// The [Uri] the TDD's Thing Description can be retrieved from.
+  final Uri uri;
+
+  /// Optional filter that is supposed to used as a query parameter and
+  /// to filter received TDs.
+  ///
+  /// Currently, this configuration parameter is unused, however.
+  final ThingFilter? thingFilter;
+
+  /// The maximum number of TDs that should be returned by the Thing Description
+  /// Directory.
+  ///
+  /// Note that, currently, this limit is not being enforced at the client side.
+  final int? limit;
 }
 
 /// Base class for configuring discovery mechanisms that involve a two-step

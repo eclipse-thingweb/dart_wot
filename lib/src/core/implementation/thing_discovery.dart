@@ -63,6 +63,12 @@ class ThingDiscovery extends Stream<ThingDescription>
           yield* _discoverFromCoreResourceDirectory(uri, discoveryType);
         case DirectConfiguration(:final uri):
           yield* Stream.fromFuture(_servient.requestThingDescription(uri));
+        case ExploreDirectoryConfiguration(:final uri, :final thingFilter):
+          final thingDiscoveryProcess = await _servient.exploreDirectory(
+            uri,
+            thingFilter: thingFilter,
+          );
+          yield* thingDiscoveryProcess;
       }
     }
   }
