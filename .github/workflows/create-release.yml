@@ -39,7 +39,7 @@ jobs:
         if: ${{ steps.tag-check.outputs.new-tag != '' }}
         with:
           config: cliff.toml
-          args: --verbose --unreleased --strip header --tag ${{ steps.pubspec-version-number.outputs.pubspec-version }}
+          args: --verbose --unreleased --strip header --tag ${{ steps.tag-check.outputs.new-tag }}
         env:
           OUTPUT: CHANGES.md
           GITHUB_REPO: ${{ github.repository }}
