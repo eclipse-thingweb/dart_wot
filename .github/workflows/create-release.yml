@@ -1,0 +1,54 @@
+name: Create GitHub Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-github-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine current version in pubspec.yaml
+        id: pubspec-version-number
+        run: |
+          PUBSPEC_VERSION=$(yq ".version" pubspec.yaml)
+          echo "pubspec-version=$PUBSPEC_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if version tag already exists
+        id: tag-check
+        run: |
+          TAG=v${{ steps.pubspec-version-number.outputs.pubspec-version }}
+          if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
+            echo "Version tag $TAG already exists, not creating a new release."
+          else
+            echo "new-tag=$TAG" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate release notes
+        uses: orhun/git-cliff-action@v3
+        if: ${{ steps.tag-check.outputs.new-tag != '' }}
+        with:
+          config: cliff.toml
+          args: --verbose --unreleased --strip header --tag ${{ steps.pubspec-version-number.outputs.pubspec-version }}
+        env:
+          OUTPUT: CHANGES.md
+          GITHUB_REPO: ${{ github.repository }}
+
+      - name: Create new GitHub release if tag does not exist yet
+        uses: ncipollo/release-action@v1
+        if: ${{ steps.tag-check.outputs.new-tag != '' }}
+        with:
+          tag: ${{ steps.tag-check.outputs.new-tag }}
+          bodyFile: CHANGES.md
+          name: Version ${{ steps.pubspec-version-number.outputs.pubspec-version }}
+          token: ${{ secrets.BOT_TOKEN }}
