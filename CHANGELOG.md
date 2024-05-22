@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.31.0] - 2024-05-22
+
+### Added
+
+- Add ExploreDirectoryConfiguration for TDDs ([8cdd508](https://github.com/eclipse-thingweb/dart_wot/commit/8cdd508bc7a3db3c12b3196a809299616129fdb2))
+- Add workflow for automatically creating GitHub releases ([893cdfe](https://github.com/eclipse-thingweb/dart_wot/commit/893cdfef639358ab8fbe465e2f9345e24c24e9de))
+
+### Changed
+
+- Rework Servient API ([830b964](https://github.com/eclipse-thingweb/dart_wot/commit/830b9649aacec031ff7910d65cda69c51f3ac492))
+- Improve variable naming in closure ([6ccd69d](https://github.com/eclipse-thingweb/dart_wot/commit/6ccd69d4d7c53de5ce2c47fe9c8e47cf608f2ed9))
+
+### Fixed
+
+- Fix typos in documentation comments ([633a9cb](https://github.com/eclipse-thingweb/dart_wot/commit/633a9cb7163dad684933b05b62c30907bf0959e4))
+- Fix reference to WoT interface ([32ee0b3](https://github.com/eclipse-thingweb/dart_wot/commit/32ee0b396209b01f6d1bc34abdd05a38328250d9))
+- Fix typo in ValidationException message ([d8f4fb0](https://github.com/eclipse-thingweb/dart_wot/commit/d8f4fb00be772aedc349466008fa1f2669040c82))
+- Fix typo in TODO comment ([d7961d6](https://github.com/eclipse-thingweb/dart_wot/commit/d7961d6202d8488bfda7a75e4cefdd3ba0d8e494))
+- Fix typo in getter name ([ca33572](https://github.com/eclipse-thingweb/dart_wot/commit/ca3357254671e0a6a889db8351ffa630f44da63d))
+- Fix typo in CoRE RD discover method name ([93ece23](https://github.com/eclipse-thingweb/dart_wot/commit/93ece23bf25c04670887274143507367bb7a1b0a))
+- Fix typos in test descriptions ([a0fdc73](https://github.com/eclipse-thingweb/dart_wot/commit/a0fdc73ecd880d67a6d535ea4434a6ab2ef48139))
+- Fix test grouping ([deb37e3](https://github.com/eclipse-thingweb/dart_wot/commit/deb37e3808a3c0b3e3ffb037fccb9b19e5978921))
+
 ## [0.30.1] - 2024-05-21
 
 ### Added
@@ -975,6 +998,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.31.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.30.1..v0.31.0
 [0.30.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.30.0..v0.30.1
 [0.30.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.29.0..v0.30.0
 [0.29.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.28.4..v0.29.0
