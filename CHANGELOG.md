@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.31.1] - 2024-05-22
+
+### Changed
+
+- Use new Servient API in README example ([62cd014](https://github.com/eclipse-thingweb/dart_wot/commit/62cd014f966b7aab4ae5295e2e20e9564c6650fe))
+
+### Fixed
+
+- Fix git tag reference automated GitHub releases ([249450f](https://github.com/eclipse-thingweb/dart_wot/commit/249450f0d742e9686fbd3ea54db8f771a3c79359))
+
 ## [0.31.0] - 2024-05-22
 
 ### Added
@@ -998,6 +1008,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.31.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.31.0..v0.31.1
 [0.31.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.30.1..v0.31.0
 [0.30.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.30.0..v0.30.1
 [0.30.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.29.0..v0.30.0
