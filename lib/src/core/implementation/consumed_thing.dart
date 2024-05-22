@@ -416,22 +416,4 @@ class ConsumedThing implements scripting_api.ConsumedThing {
         _subscribedEvents.remove(key);
     }
   }
-
-  /// Cleans up the resources used by this [ConsumedThing].
-  bool destroy({bool external = true}) {
-    for (final observedProperty in _observedProperties.values) {
-      observedProperty.stop();
-    }
-    _observedProperties.clear();
-    for (final subscribedEvent in _subscribedEvents.values) {
-      subscribedEvent.stop();
-    }
-    _subscribedEvents.clear();
-
-    if (external) {
-      return servient.deregisterConsumedThing(this);
-    }
-
-    return false;
-  }
 }
