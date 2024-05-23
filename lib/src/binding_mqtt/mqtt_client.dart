@@ -140,13 +140,15 @@ final class MqttClient implements ProtocolClient {
         final payload = publishedMessage.payload.message;
 
         completer.complete(Content(form.contentType, Stream.value(payload)));
-        client.disconnect();
         timer.cancel();
         break;
       }
     });
 
-    return completer.future;
+    final content = await completer.future;
+    client.disconnect();
+
+    return content;
   }
 
   @override
