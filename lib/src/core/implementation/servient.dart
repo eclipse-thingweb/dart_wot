@@ -97,7 +97,6 @@ class InternalServient implements Servient {
   final List<ProtocolServer> _servers = [];
   final Map<String, ProtocolClientFactory> _clientFactories = {};
   final Map<String, ExposedThing> _things = {};
-  final Set<ConsumedThing> _consumedThings = {};
 
   final ServerSecurityCallback? _serverSecurityCallback;
 
@@ -127,10 +126,6 @@ class InternalServient implements Servient {
       clientFactory.destroy();
     }
     _clientFactories.clear();
-    for (final consumedThing in _consumedThings) {
-      consumedThing.destroy();
-    }
-    _consumedThings.clear();
 
     final serverStatuses = _servers.map((server) => server.stop()).toList();
     await Future.wait(serverStatuses);
@@ -176,29 +171,6 @@ class InternalServient implements Servient {
     _things[id] = thing;
     return true;
   }
-
-  /// Removes and cleans up the resources of a [ConsumedThing].
-  ///
-  /// If the [ConsumedThing] has not been registered before, `false` is
-  /// returned, otherwise `true`.
-  bool destroyConsumedThing(ConsumedThing consumedThing) {
-    return consumedThing.destroy(external: false);
-  }
-
-  /// De-registers the given [consumedThing].
-  ///
-  /// If the [ConsumedThing] has not been registered before, `false` is
-  /// returned, otherwise `true`.
-  bool deregisterConsumedThing(ConsumedThing consumedThing) {
-    return _consumedThings.remove(consumedThing);
-  }
-
-  /// Adds a [ConsumedThing] to the servient if it hasn't been registered
-  /// before.
-  ///
-  /// Returns `false` if the [thing] has already been registered, otherwise
-  /// `true`.
-  bool addConsumedThing(ConsumedThing thing) => _consumedThings.add(thing);
 
   /// Returns an [ExposedThing] with the given [id] if it has been registered.
   ExposedThing? thing(String id) => _things[id];
@@ -270,12 +242,8 @@ class InternalServient implements Servient {
   /// Consumes a [ThingDescription] and returns a [scripting_api.ConsumedThing].
   Future<scripting_api.ConsumedThing> consume(
     ThingDescription thingDescription,
-  ) async {
-    final newThing = ConsumedThing(this, thingDescription);
-    addConsumedThing(newThing);
-
-    return newThing;
-  }
+  ) async =>
+      ConsumedThing(this, thingDescription);
 
   /// Exposes a Thing based on an [scripting_api.ExposedThingInit].
   Future<scripting_api.ExposedThing> produce(

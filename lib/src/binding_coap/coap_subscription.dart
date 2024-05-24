@@ -8,15 +8,16 @@ import "package:coap/coap.dart";
 
 import "../../core.dart";
 
-/// [Subscription] to a CoAP resource, based on the observe option ([RFC 7641]).
+/// [ProtocolSubscription] to a CoAP resource, based on the observe option
+/// ([RFC 7641]).
 ///
 /// [RFC 7641]: https://datatracker.ietf.org/doc/html/rfc7641
-class CoapSubscription implements Subscription {
+final class CoapSubscription extends ProtocolSubscription {
   /// Constructor
   CoapSubscription(
     this._coapClient,
     this._observeClientRelation,
-    this._complete,
+    super._complete,
   ) : _active = true;
 
   final CoapClient _coapClient;
@@ -27,10 +28,6 @@ class CoapSubscription implements Subscription {
 
   @override
   bool get active => _active;
-
-  /// Callback used to pass by the servient that is used to signal it that an
-  /// observation has been cancelled.
-  final void Function() _complete;
 
   @override
   Future<void> stop({
@@ -48,6 +45,7 @@ class CoapSubscription implements Subscription {
       await _coapClient.cancelObserveProactive(observeClientRelation);
     }
     _coapClient.close();
-    _complete();
+    await super
+        .stop(formIndex: formIndex, uriVariables: uriVariables, data: data);
   }
 }
