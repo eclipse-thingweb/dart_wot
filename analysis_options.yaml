@@ -2,6 +2,10 @@
 
 include: package:lint/package.yaml
 
+analyzer:
+  errors:
+    public_member_api_docs: warning
+
 # Adjusted linting rules
 linter:
   rules:
