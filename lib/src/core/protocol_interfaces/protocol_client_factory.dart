@@ -6,7 +6,7 @@
 
 import "package:meta/meta.dart";
 
-import "../../definitions.dart";
+import "../definitions.dart";
 import "protocol_client.dart";
 
 /// Base class for a factory that produces [ProtocolClient]s.

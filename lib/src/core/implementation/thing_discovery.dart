@@ -12,10 +12,11 @@ import "package:multicast_dns/multicast_dns.dart";
 
 import "../definitions.dart";
 import "../exceptions.dart";
+import "../protocol_interfaces.dart";
 import "../scripting_api.dart" as scripting_api;
+
 import "content.dart";
 import "discovery/discovery_configuration.dart";
-import "protocol_interfaces/protocol_client.dart";
 import "servient.dart";
 
 /// Implementation of the [scripting_api.ThingDiscovery] interface.
