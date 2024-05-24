@@ -29,9 +29,9 @@ class ConsumedThing implements scripting_api.ConsumedThing {
   /// The [title] of the Thing.
   final String title;
 
-  final Map<String, scripting_api.Subscription> _subscribedEvents = {};
+  final Set<String> _subscribedEvents = {};
 
-  final Map<String, scripting_api.Subscription> _observedProperties = {};
+  final Set<String> _observedProperties = {};
 
   /// Determines the id of this [ConsumedThing].
   String get identifier => thingDescription.identifier;
@@ -229,7 +229,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       );
     }
 
-    if (_observedProperties.containsKey(propertyName)) {
+    if (_observedProperties.contains(propertyName)) {
       throw StateError(
         "ConsumedThing '$title' already has a function "
         "subscribed to $propertyName. You can only observe once",
@@ -259,15 +259,12 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     required Map<String, Object>? uriVariables,
   }) async {
     final OperationType operationType;
-    final Map<String, scripting_api.Subscription> subscriptions;
 
     switch (subscriptionType) {
       case scripting_api.SubscriptionType.property:
         operationType = OperationType.observeproperty;
-        subscriptions = _observedProperties;
       case scripting_api.SubscriptionType.event:
         operationType = OperationType.subscribeevent;
-        subscriptions = _subscribedEvents;
     }
 
     final (client, form) = _getClientFor(
@@ -288,17 +285,10 @@ class ConsumedThing implements scripting_api.ConsumedThing {
           onError(error);
         }
       },
-      complete: () => removeSubscription(affordanceName, subscriptionType),
+      complete: () => _removeSubscription(affordanceName, subscriptionType),
     );
 
-    switch (subscriptionType) {
-      case scripting_api.SubscriptionType.property:
-        _observedProperties[affordanceName] = subscription;
-      case scripting_api.SubscriptionType.event:
-        _subscribedEvents[affordanceName] = subscription;
-    }
-
-    subscriptions[affordanceName] = subscription;
+    _addSubscription(affordanceName, subscriptionType);
 
     return subscription;
   }
@@ -376,7 +366,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
       );
     }
 
-    if (_subscribedEvents.containsKey(eventName)) {
+    if (_subscribedEvents.contains(eventName)) {
       throw DartWotException(
         "ConsumedThing '$title' already has a function "
         "subscribed to $eventName. You can only subscribe once.",
@@ -407,8 +397,20 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     );
   }
 
+  void _addSubscription(
+    String key,
+    scripting_api.SubscriptionType type,
+  ) {
+    switch (type) {
+      case scripting_api.SubscriptionType.property:
+        _observedProperties.add(key);
+      case scripting_api.SubscriptionType.event:
+        _subscribedEvents.add(key);
+    }
+  }
+
   /// Removes a subscription with a specified [key] and [type].
-  void removeSubscription(String key, scripting_api.SubscriptionType type) {
+  void _removeSubscription(String key, scripting_api.SubscriptionType type) {
     switch (type) {
       case scripting_api.SubscriptionType.property:
         _observedProperties.remove(key);
