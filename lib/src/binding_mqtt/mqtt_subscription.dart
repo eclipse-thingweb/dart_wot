@@ -9,13 +9,13 @@ import "package:mqtt_client/mqtt_server_client.dart";
 
 import "../../core.dart";
 
-/// [Subscription] for the MQTT protocol.
-class MqttSubscription implements Subscription {
+/// [ProtocolSubscription] for the MQTT protocol.
+final class MqttSubscription extends ProtocolSubscription {
   /// Constructor.
   MqttSubscription(
     this._form,
     this._client,
-    this._complete, {
+    super._complete, {
     required void Function(Content content) next,
     void Function(Exception error)? error,
   }) : _active = true {
@@ -52,8 +52,6 @@ class MqttSubscription implements Subscription {
 
   bool _active = true;
 
-  final void Function() _complete;
-
   @override
   bool get active => _active;
 
@@ -65,6 +63,7 @@ class MqttSubscription implements Subscription {
   }) async {
     _client.disconnect();
     _active = false;
-    _complete();
+    await super
+        .stop(formIndex: formIndex, uriVariables: uriVariables, data: data);
   }
 }
