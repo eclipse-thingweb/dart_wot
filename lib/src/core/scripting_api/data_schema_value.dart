@@ -48,7 +48,7 @@ sealed class DataSchemaValue<T> {
   static ObjectValue fromObject(Map<String, dynamic> value) =>
       ObjectValue._fromValue(value);
 
-  /// Tries to instatiate a [DataSchemaValue] from a raw [value].
+  /// Tries to instantiate a [DataSchemaValue] from a raw [value].
   ///
   /// If the [value] is a non-valid data type, the method returns `null`
   /// instead.
