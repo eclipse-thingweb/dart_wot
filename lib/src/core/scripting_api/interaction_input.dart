@@ -13,23 +13,33 @@ import "data_schema_value.dart";
 /// Can be either a [DataSchemaValue] or a byte [Stream].
 @immutable
 sealed class InteractionInput {
+  /// Const constructor for the [InteractionInput] class.
   const InteractionInput();
 
+  /// Creates an [InteractionInput] that represents a [Null] value.
   factory InteractionInput.fromNull() =>
       DataSchemaValueInput(DataSchemaValue.fromNull());
 
+  /// Creates an [InteractionInput] from a [bool]ean [value].
   factory InteractionInput.fromBoolean(bool value) =>
       DataSchemaValueInput(DataSchemaValue.fromBoolean(value));
 
+  /// Creates an [InteractionInput] from an [int]eger [value].
   factory InteractionInput.fromInteger(int value) =>
       DataSchemaValueInput(DataSchemaValue.fromInteger(value));
 
+  /// Creates an [InteractionInput] from a [num]eric [value].
   factory InteractionInput.fromNumber(num value) =>
       DataSchemaValueInput(DataSchemaValue.fromNumber(value));
 
+  /// Creates an [InteractionInput] from a [bool]ean [value].
   factory InteractionInput.fromString(String value) =>
       DataSchemaValueInput(DataSchemaValue.fromString(value));
 
+  /// Creates an [InteractionInput] from a [List] of [value]s.
+  ///
+  /// Throws a [FormatException] if any element of the [value] list is not a
+  /// valid [DataSchemaValue].
   factory InteractionInput.fromArray(List<Object?> value) {
     final dataSchemaValue = ArrayValue.tryParse(value);
 
@@ -40,6 +50,10 @@ sealed class InteractionInput {
     return DataSchemaValueInput(dataSchemaValue);
   }
 
+  /// Creates an [InteractionInput] from a [Map] of [value]s.
+  ///
+  /// Throws a [FormatException] if any entry of the [value] map is not a
+  /// valid [DataSchemaValue].
   factory InteractionInput.fromObject(Map<String, Object?> value) {
     final dataSchemaValue = ObjectValue.tryParse(value);
 
@@ -50,6 +64,7 @@ sealed class InteractionInput {
     return DataSchemaValueInput(dataSchemaValue);
   }
 
+  /// Creates an [InteractionInput] from a byte [stream].
   factory InteractionInput.fromStream(Stream<List<int>> stream) =>
       StreamInput(stream);
 }
