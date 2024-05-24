@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.32.0] - 2024-05-24
+
+### Changed
+
+- Create separate module for protocol_interfaces ([a7d2b25](https://github.com/eclipse-thingweb/dart_wot/commit/a7d2b25c5ba8caab7b09246bf23ffce727338bdc))
+- Do not store ConsumedThings in InternalServient ([509969a](https://github.com/eclipse-thingweb/dart_wot/commit/509969ad5409c1a39014501db937f6c5fc9b8880))
+- Introduce ProtocolSubscription class ([380e203](https://github.com/eclipse-thingweb/dart_wot/commit/380e2039fb089feaf3155ceee74acd19c2e45604))
+- Use ProtocolSubscription as new base subscription base class ([d5ce0d7](https://github.com/eclipse-thingweb/dart_wot/commit/d5ce0d7c09a868c6ced6cfb6b5586b569ae061e3))
+- Don't store Subscriptions internally ([aab9e9b](https://github.com/eclipse-thingweb/dart_wot/commit/aab9e9b2cf70e7f47b181f3eeb553bbd748292ed))
+
+### Fixed
+
+- Fix disconnect of client after reading a resource ([10c1f6d](https://github.com/eclipse-thingweb/dart_wot/commit/10c1f6d21b3ba8372943a5a6fc193bee7ca317be))
+- Fix typo in Subscription interface ([f891cad](https://github.com/eclipse-thingweb/dart_wot/commit/f891cad8feefa9fd9782bbcb6dfd7ea110b2d796))
+
 ## [0.31.1] - 2024-05-22
 
 ### Changed
@@ -1008,6 +1023,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.32.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.31.1..v0.32.0
 [0.31.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.31.0..v0.31.1
 [0.31.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.30.1..v0.31.0
 [0.30.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.30.0..v0.30.1
