@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.32.1] - 2024-05-24
+
+### Added
+
+- Add missing documentation for InteractionInput ([ff77118](https://github.com/eclipse-thingweb/dart_wot/commit/ff7711851431d52d538db717e55777270c1e0788))
+
+### Changed
+
+- Report warnings for missing documentation ([5b56ce2](https://github.com/eclipse-thingweb/dart_wot/commit/5b56ce239819059626efbba44e599ddb093c50cf))
+
+### Fixed
+
+- Fix typo in DataSchemaValue documentation ([43c0ca7](https://github.com/eclipse-thingweb/dart_wot/commit/43c0ca72b11ccb0ba9ee53a513e662b6ac70b0bd))
+
 ## [0.32.0] - 2024-05-24
 
 ### Changed
@@ -1023,6 +1037,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.32.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.32.0..v0.32.1
 [0.32.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.31.1..v0.32.0
 [0.31.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.31.0..v0.31.1
 [0.31.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.30.1..v0.31.0
