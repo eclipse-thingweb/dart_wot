@@ -6,11 +6,12 @@
 
 import "../definitions.dart";
 import "../exceptions.dart";
+import "../protocol_interfaces.dart";
 import "../scripting_api.dart" as scripting_api;
+
 import "augmented_form.dart";
 import "content.dart";
 import "interaction_output.dart";
-import "protocol_interfaces/protocol_client.dart";
 import "servient.dart";
 
 /// Implementation of the [scripting_api.ConsumedThing] interface.

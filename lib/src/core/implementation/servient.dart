@@ -10,14 +10,13 @@ import "package:uuid/uuid.dart";
 import "../definitions.dart";
 import "../definitions/context.dart";
 import "../exceptions.dart";
+import "../protocol_interfaces.dart";
 import "../scripting_api.dart" as scripting_api;
+
 import "consumed_thing.dart";
 import "content_serdes.dart";
 import "discovery/discovery_configuration.dart";
 import "exposed_thing.dart";
-import "protocol_interfaces/protocol_client.dart";
-import "protocol_interfaces/protocol_client_factory.dart";
-import "protocol_interfaces/protocol_server.dart";
 import "thing_discovery.dart";
 import "wot.dart";
 

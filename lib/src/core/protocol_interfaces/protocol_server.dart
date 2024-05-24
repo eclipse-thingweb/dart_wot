@@ -4,8 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "../../definitions/credentials/callbacks.dart";
-import "../../scripting_api/exposed_thing.dart";
+import "../definitions/credentials/callbacks.dart";
+import "../scripting_api/exposed_thing.dart";
 
 /// Base class for a Protocol Server.
 abstract interface class ProtocolServer {

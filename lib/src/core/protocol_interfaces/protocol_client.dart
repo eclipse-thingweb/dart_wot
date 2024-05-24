@@ -4,9 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "../../scripting_api/subscription.dart";
-import "../augmented_form.dart";
-import "../content.dart";
+import "../implementation.dart";
+import "../scripting_api.dart";
 
 /// Base class for a Protocol Client.
 abstract interface class ProtocolClient {
