@@ -7,3 +7,4 @@
 export "protocol_interfaces/protocol_client.dart";
 export "protocol_interfaces/protocol_client_factory.dart";
 export "protocol_interfaces/protocol_server.dart";
+export "protocol_interfaces/protocol_subscription.dart";
