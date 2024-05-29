@@ -506,7 +506,7 @@ final class CoapClient extends ProtocolClient {
     final streamController = StreamController<DiscoveryContent>();
 
     // TODO: Replace once https://github.com/shamblett/coap/pull/129 is merged
-    if (uri.isMulticastAddress) {
+    if (uri.hasMulticastAddress) {
       multicastResponseHandler = coap.CoapMulticastResponseHandler(
         (data) {
           streamController.add(data.determineDiscoveryContent(uri.scheme));
@@ -526,7 +526,7 @@ final class CoapClient extends ProtocolClient {
       multicastResponseHandler: multicastResponseHandler,
     );
 
-    if (uri.isMulticastAddress) {
+    if (uri.hasMulticastAddress) {
       yield* streamController.stream;
     } else {
       yield content;
