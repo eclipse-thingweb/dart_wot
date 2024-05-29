@@ -21,7 +21,7 @@ import "mqtt_subscription.dart";
 /// [ProtocolClient] for supporting the MQTT protocol.
 ///
 /// Currently, only MQTT version 3.1.1 is supported.
-final class MqttClient extends ProtocolClient {
+final class MqttClient extends ProtocolClient with MqttDiscoverer {
   /// Constructor.
   MqttClient({
     MqttConfig? mqttConfig,
@@ -196,5 +196,47 @@ final class MqttClient extends ProtocolClient {
     }
 
     return MqttSubscription(form, client, complete, next: next, error: error);
+  }
+
+  @override
+  Stream<Content> performMqttDiscovery(
+    Uri brokerUri, {
+    required String discoveryTopic,
+    required String expectedContentType,
+    required Duration discoveryTimeout,
+  }) async* {
+    final client = await _connect(brokerUri, null);
+
+    // TODO: Revisit QoS value and subscription check
+    if (client.subscribe(discoveryTopic, MqttQos.atLeastOnce) == null) {
+      throw MqttBindingException(
+        "Subscription to topic $discoveryTopic failed",
+      );
+    }
+
+    final receivedMessageStream = client.updates;
+    if (receivedMessageStream == null) {
+      throw MqttBindingException(
+        "Subscription to topic $discoveryTopic failed",
+      );
+    }
+
+    Timer(
+      discoveryTimeout,
+      () async {
+        client.disconnect();
+      },
+    );
+
+    await for (final receivedMessageList in receivedMessageStream) {
+      for (final receivedMessage in receivedMessageList) {
+        final mqttMessage = receivedMessage.payload;
+        if (mqttMessage is MqttPublishMessage) {
+          final messagePayload = mqttMessage.payload.message;
+
+          yield Content(expectedContentType, Stream.value(messagePayload));
+        }
+      }
+    }
   }
 }

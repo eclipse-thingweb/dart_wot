@@ -75,6 +75,18 @@ class ThingDiscovery extends Stream<ThingDescription>
             thingFilter: thingFilter,
           );
           yield* thingDiscoveryProcess;
+        case MqttDiscoveryConfiguration(
+            :final brokerUri,
+            :final discoveryTopic,
+            :final expectedContentType,
+            :final discoveryTimeout,
+          ):
+          yield* _performMqttDiscovery(
+            brokerUri,
+            discoveryTopic,
+            expectedContentType,
+            discoveryTimeout,
+          );
       }
     }
   }
@@ -248,6 +260,34 @@ class ThingDiscovery extends Stream<ThingDescription>
         }
       }),
     );
+  }
+
+  Stream<ThingDescription> _performMqttDiscovery(
+    Uri brokerUri,
+    String discoveryTopic,
+    String expectedContentType,
+    Duration discoveryTimeout,
+  ) async* {
+    final uriScheme = brokerUri.scheme;
+    final client = _clientForUriScheme(uriScheme);
+
+    if (client is! MqttDiscoverer) {
+      yield* Stream.error(
+        DiscoveryException(
+          "Client for URI scheme $uriScheme does not support MQTT Discovery.",
+        ),
+      );
+      return;
+    }
+
+    final contentStream = client.performMqttDiscovery(
+      brokerUri,
+      discoveryTopic: discoveryTopic,
+      expectedContentType: expectedContentType,
+      discoveryTimeout: discoveryTimeout,
+    );
+
+    yield* _transformContentStreamToThingDescriptions(contentStream);
   }
 
   @override

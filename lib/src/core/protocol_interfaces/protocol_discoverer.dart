@@ -45,3 +45,22 @@ base mixin CoreLinkFormatDiscoverer on ProtocolClient {
   @experimental
   Stream<DiscoveryContent> discoverWithCoreLinkFormat(Uri uri);
 }
+
+/// Interface for performing experimental discovery using the MQTT protocol.
+@experimental
+base mixin MqttDiscoverer on ProtocolClient {
+  /// Performs discovery of Thing Descriptions using the MQTT protocol via the
+  /// given [brokerUri].
+  ///
+  /// By default, the [discoveryTopic] `wot/td/#` will be used as discussed in
+  /// [this issue].
+  ///
+  /// [this issue]: https://github.com/w3c/wot-discovery/issues/134
+  @experimental
+  Stream<Content> performMqttDiscovery(
+    Uri brokerUri, {
+    required String discoveryTopic,
+    required String expectedContentType,
+    required Duration discoveryTimeout,
+  });
+}
