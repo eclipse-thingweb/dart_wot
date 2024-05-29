@@ -43,9 +43,3 @@ const defaultKeepAlivePeriod = 20;
 ///
 /// Evaluates to `'application/octet-stream'.
 const defaultContentType = "application/octet-stream";
-
-/// Content type used for the Content objects returned by discovery using MQTT.
-///
-/// Evaluates to `application/td+json`.
-// TODO: Should probably be redefined globally
-const discoveryContentType = "application/td+json";
