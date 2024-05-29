@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.33.0] - 2024-05-29
+
+### Changed
+
+- Use base instead of interface for ProtocolClient class ([26a8075](https://github.com/eclipse-thingweb/dart_wot/commit/26a807506ee9024ad04b3e256224ef76581aa885))
+- Make DiscoveryConfiguration class immutable ([9981a2d](https://github.com/eclipse-thingweb/dart_wot/commit/9981a2da4be461cdcca71c47779034b6a9aaeb68))
+- Move hasMulticastAddress extension to core package ([405757d](https://github.com/eclipse-thingweb/dart_wot/commit/405757d1a39536b124826c545cc05f6e89b79957))
+- Rework discoverer APIs ([44bb791](https://github.com/eclipse-thingweb/dart_wot/commit/44bb7917a3144c6288d6ad7ce83c747c44c876f3))
+- Introduce new MQTT discovery method ([fc3cc5c](https://github.com/eclipse-thingweb/dart_wot/commit/fc3cc5ca04e98f85d8488f6e3e46bd99641be46d))
+
+### Removed
+
+- Remove discoveryContentType constant ([96f76e4](https://github.com/eclipse-thingweb/dart_wot/commit/96f76e44afe588b1c756828dde44d6baec4cbc0f))
+
 ## [0.32.1] - 2024-05-24
 
 ### Added
@@ -1037,6 +1051,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.33.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.32.1..v0.33.0
 [0.32.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.32.0..v0.32.1
 [0.32.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.31.1..v0.32.0
 [0.31.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.31.0..v0.31.1
