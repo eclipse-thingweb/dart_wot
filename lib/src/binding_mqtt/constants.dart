@@ -32,8 +32,8 @@ const mqttContextUri = "http://www.example.org/mqtt-binding#";
 /// The default prefix used in MQTT-related compact URIs (CURIEs) in TDs.
 const defaultMqttPrefix = "mqv";
 
-/// Default timeout length used for reading properties and discovering TDs.
-const defaultTimeout = Duration(seconds: 10);
+/// Default timeout length used for reading properties.
+const defaultReadTimeout = Duration(seconds: 10);
 
 /// Default duration MQTT connections are kept alive in seconds.
 const defaultKeepAlivePeriod = 20;
