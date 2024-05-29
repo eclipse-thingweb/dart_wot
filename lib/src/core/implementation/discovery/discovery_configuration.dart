@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "package:meta/meta.dart";
+
 import "../../scripting_api/discovery/thing_filter.dart";
 
 /// Used to indicate whether the discovery mechanism will be used to discover
@@ -89,13 +91,16 @@ enum ProtocolType {
 
 /// A configuration that is used by the `WoT.discover()` method when registered
 /// with the underlying `Servient`.
-sealed class DiscoveryConfiguration {}
+@immutable
+sealed class DiscoveryConfiguration {
+  const DiscoveryConfiguration();
+}
 
 /// A configuration used for direct discovery, i.e. the direct retrieval of a
 /// Thing Description from a [uri].
 final class DirectConfiguration extends DiscoveryConfiguration {
   /// Instantiates a new [DirectConfiguration] object from a [uri].
-  DirectConfiguration(this.uri);
+  const DirectConfiguration(this.uri);
 
   /// The [Uri] the Thing Description can be retrieved from.
   final Uri uri;
@@ -111,7 +116,7 @@ final class ExploreDirectoryConfiguration extends DiscoveryConfiguration {
   ///
   /// A [thingFilter] can be provided for filtering and the total number of TDs
   /// can be [limit]ed.
-  ExploreDirectoryConfiguration(
+  const ExploreDirectoryConfiguration(
     this.uri, {
     this.thingFilter,
     this.limit,
@@ -141,7 +146,7 @@ final class ExploreDirectoryConfiguration extends DiscoveryConfiguration {
 /// (exploration phase).
 sealed class TwoStepConfiguration extends DiscoveryConfiguration {
   /// Creates a new [TwoStepConfiguration] object from a [discoveryType].
-  TwoStepConfiguration({required this.discoveryType});
+  const TwoStepConfiguration({required this.discoveryType});
 
   /// Indicates whether this configuration is used for discovering Things or
   /// Thing Description Directories.
@@ -161,7 +166,7 @@ final class DnsSdDConfiguration extends TwoStepConfiguration {
   /// Other domain names are currently unsupported.
   ///
   /// [RFC 6762]: https://datatracker.ietf.org/doc/html/rfc6762
-  DnsSdDConfiguration({
+  const DnsSdDConfiguration({
     this.domainName = ".local",
     super.discoveryType = DiscoveryType.thing,
     this.protocolType = ProtocolType.tcp,

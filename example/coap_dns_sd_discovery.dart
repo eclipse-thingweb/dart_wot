@@ -20,7 +20,7 @@ Future<void> main(List<String> args) async {
       HttpClientFactory(),
     ],
     discoveryConfigurations: [
-      DnsSdDConfiguration(protocolType: ProtocolType.udp),
+      const DnsSdDConfiguration(protocolType: ProtocolType.udp),
     ],
   );
 
