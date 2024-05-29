@@ -21,7 +21,7 @@ import "mqtt_subscription.dart";
 /// [ProtocolClient] for supporting the MQTT protocol.
 ///
 /// Currently, only MQTT version 3.1.1 is supported.
-final class MqttClient implements ProtocolClient {
+final class MqttClient extends ProtocolClient {
   /// Constructor.
   MqttClient({
     MqttConfig? mqttConfig,
