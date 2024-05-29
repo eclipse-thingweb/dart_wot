@@ -138,13 +138,7 @@ const invalidTestThingDescription2 = '''
   {"foo": "bar"}
 ''';
 
-final class _MockedProtocolClient extends ProtocolClient {
-  @override
-  Stream<DiscoveryContent> discoverWithCoreLinkFormat(Uri uri) {
-    // TODO: implement discoverWithCoreLinkFormat
-    throw UnimplementedError();
-  }
-
+final class _MockedProtocolClient extends ProtocolClient with DirectDiscoverer {
   @override
   Future<Content> invokeResource(Form form, Content content) {
     // TODO: implement invokeResource
@@ -175,7 +169,7 @@ final class _MockedProtocolClient extends ProtocolClient {
   }
 
   @override
-  Future<Content> requestThingDescription(Uri url) async {
+  Future<Content> discoverDirectly(Uri url) async {
     if (url == validTestDiscoveryUri) {
       return validTestThingDescription.toDiscoveryContent(url);
     }
@@ -227,15 +221,6 @@ final class _MockedProtocolClient extends ProtocolClient {
   @override
   Future<void> writeResource(Form form, Content content) {
     // TODO: implement writeResource
-    throw UnimplementedError();
-  }
-
-  @override
-  Stream<DiscoveryContent> discoverDirectly(
-    Uri uri, {
-    bool disableMulticast = false,
-  }) {
-    // TODO: implement discoverDirectly
     throw UnimplementedError();
   }
 }

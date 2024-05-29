@@ -12,6 +12,7 @@ import "package:multicast_dns/multicast_dns.dart";
 
 import "../definitions.dart";
 import "../exceptions.dart";
+import "../extensions.dart";
 import "../protocol_interfaces.dart";
 import "../scripting_api.dart" as scripting_api;
 
@@ -63,7 +64,11 @@ class ThingDiscovery extends Stream<ThingDescription>
           ):
           yield* _discoverFromCoreResourceDirectory(uri, discoveryType);
         case DirectConfiguration(:final uri):
-          yield* Stream.fromFuture(_servient.requestThingDescription(uri));
+          if (!uri.hasMulticastAddress) {
+            yield* Stream.fromFuture(_servient.requestThingDescription(uri));
+          } else {
+            yield* _performMulticastDiscovery(uri);
+          }
         case ExploreDirectoryConfiguration(:final uri, :final thingFilter):
           final thingDiscoveryProcess = await _servient.exploreDirectory(
             uri,
@@ -190,7 +195,18 @@ class ThingDiscovery extends Stream<ThingDescription>
     Uri uri,
     String resourceType,
   ) async* {
-    final client = _clientForUriScheme(uri.scheme);
+    final uriScheme = uri.scheme;
+    final client = _clientForUriScheme(uriScheme);
+
+    if (client is! CoreLinkFormatDiscoverer) {
+      yield* Stream.error(
+        DiscoveryException(
+          "Client for URI scheme $uriScheme does not support Core Link Format "
+          "Discovery.",
+        ),
+      );
+      return;
+    }
 
     await for (final coreWebLink in client.discoverWithCoreLinkFormat(uri)) {
       try {
@@ -251,7 +267,7 @@ class ThingDiscovery extends Stream<ThingDescription>
 
     if (dataSchemaValue is! scripting_api.DataSchemaValue<String>) {
       throw DiscoveryException(
-        "Could not parse Thing Description obtained from $sourceUri",
+        "Could not parse CoRE web links obtained from $sourceUri",
       );
     }
 
@@ -318,6 +334,45 @@ class ThingDiscovery extends Stream<ThingDescription>
     }
 
     return Map.fromEntries(recordsList);
+  }
+
+  Stream<ThingDescription> _performMulticastDiscovery(Uri uri) async* {
+    final client = _clientForUriScheme(uri.scheme);
+
+    if (client is MulticastDiscoverer) {
+      final contentStream = client.discoverViaMulticast(uri);
+      yield* _transformContentStreamToThingDescriptions(contentStream);
+    }
+  }
+
+  Stream<ThingDescription> _transformContentStreamToThingDescriptions(
+    Stream<Content> contentStream,
+  ) async* {
+    await for (final content in contentStream) {
+      try {
+        final thingDescription =
+            await _convertContentToThingDescription(content);
+        yield thingDescription;
+      } on Exception catch (exception) {
+        yield* Stream.error(exception);
+      }
+    }
+  }
+
+  Future<ThingDescription> _convertContentToThingDescription(
+    Content content,
+  ) async {
+    final dataSchemaValue =
+        await _servient.contentSerdes.contentToValue(content, null);
+
+    if (dataSchemaValue is scripting_api.ObjectValue) {
+      return dataSchemaValue.value.toThingDescription();
+    }
+
+    throw ValidationException(
+      "Encountered wrong datatype ${dataSchemaValue.runtimeType} that cannot "
+      "be processed as a Thing Description.",
+    );
   }
 }
 

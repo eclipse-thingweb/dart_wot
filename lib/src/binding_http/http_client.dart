@@ -36,7 +36,8 @@ const _authorizationHeader = "Authorization";
 /// [RFC 7616]: https://datatracker.ietf.org/doc/html/rfc7616
 /// [RFC 6750]: https://datatracker.ietf.org/doc/html/rfc6750
 /// [`ComboSecurityScheme`]: https://w3c.github.io/wot-thing-description/#combosecurityscheme
-final class HttpClient extends ProtocolClient {
+final class HttpClient extends ProtocolClient
+    with DirectDiscoverer, CoreLinkFormatDiscoverer {
   /// Creates a new [HttpClient].
   HttpClient({
     AsyncClientSecurityCallback<BasicCredentials>? basicCredentialsCallback,
@@ -304,13 +305,13 @@ final class HttpClient extends ProtocolClient {
   }
 
   @override
-  Stream<DiscoveryContent> discoverDirectly(
+  Future<DiscoveryContent> discoverDirectly(
     Uri uri, {
     bool disableMulticast = false,
-  }) async* {
+  }) async {
     final request = Request(HttpRequestMethod.get.methodName, uri);
 
-    yield await _sendDiscoveryRequest(
+    return _sendDiscoveryRequest(
       request,
       acceptHeaderValue: "application/td+json",
     );
@@ -326,19 +327,5 @@ final class HttpClient extends ProtocolClient {
     );
 
     yield encodedLinks;
-  }
-
-  @override
-  Future<Content> requestThingDescription(Uri url) async {
-    final request = Request(HttpRequestMethod.get.methodName, url);
-    const tdContentType = "application/td+json";
-    request.headers["Accept"] = tdContentType;
-
-    final response = await _client.send(request);
-
-    return Content(
-      response.headers["Content-Type"] ?? tdContentType,
-      response.stream,
-    );
   }
 }

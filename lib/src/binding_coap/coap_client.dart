@@ -73,7 +73,8 @@ coap.PskCredentialsCallback? _createPskCallback(
 }
 
 /// A [ProtocolClient] for the Constrained Application Protocol (CoAP).
-final class CoapClient extends ProtocolClient {
+final class CoapClient extends ProtocolClient
+    with DirectDiscoverer, MulticastDiscoverer, CoreLinkFormatDiscoverer {
   /// Creates a new [CoapClient] based on an optional [CoapConfig].
   CoapClient({
     CoapConfig? coapConfig,
@@ -446,59 +447,14 @@ final class CoapClient extends ProtocolClient {
   @override
   Future<void> stop() async {}
 
-  Stream<DiscoveryContent> _discoverFromMulticast(
-    coap.CoapClient client,
-    Uri uri,
-  ) async* {
-    final streamController = StreamController<DiscoveryContent>();
-    final multicastResponseHandler = coap.CoapMulticastResponseHandler(
-      (data) {
-        streamController.add(data.determineDiscoveryContent(uri.scheme));
-      },
-      onError: streamController.addError,
-      onDone: () async {
-        await streamController.close();
-      },
-    );
-
-    final content = _sendDiscoveryRequest(
-      uri,
-      coap.RequestMethod.get,
-      form: null,
-      accept: coap.CoapMediaType.applicationTdJson,
-      multicastResponseHandler: multicastResponseHandler,
-    );
-    unawaited(content);
-    yield* streamController.stream;
-  }
-
-  Stream<DiscoveryContent> _discoverFromUnicast(
-    coap.CoapClient client,
-    Uri uri,
-  ) async* {
-    yield await _sendDiscoveryRequest(
-      uri,
-      coap.RequestMethod.get,
-      form: null,
-      accept: coap.CoapMediaType.applicationTdJson,
-    );
-  }
-
   @override
-  Stream<DiscoveryContent> discoverDirectly(
-    Uri uri, {
-    bool disableMulticast = false,
-  }) async* {
-    final client = coap.CoapClient(uri);
-
-    if (uri.isMulticastAddress) {
-      if (!disableMulticast) {
-        yield* _discoverFromMulticast(client, uri);
-      }
-    } else {
-      yield* _discoverFromUnicast(client, uri);
-    }
-  }
+  Future<DiscoveryContent> discoverDirectly(Uri uri) async =>
+      _sendDiscoveryRequest(
+        uri,
+        coap.RequestMethod.get,
+        form: null,
+        accept: coap.CoapMediaType.applicationTdJson,
+      );
 
   @override
   Stream<DiscoveryContent> discoverWithCoreLinkFormat(Uri uri) async* {
@@ -534,10 +490,26 @@ final class CoapClient extends ProtocolClient {
   }
 
   @override
-  Future<Content> requestThingDescription(Uri url) async => _sendRequest(
-        url,
-        coap.RequestMethod.get,
-        form: null,
-        accept: coap.CoapMediaType.applicationTdJson,
-      );
+  Stream<Content> discoverViaMulticast(Uri uri) async* {
+    final streamController = StreamController<DiscoveryContent>();
+    final multicastResponseHandler = coap.CoapMulticastResponseHandler(
+      (data) {
+        streamController.add(data.determineDiscoveryContent(uri.scheme));
+      },
+      onError: streamController.addError,
+      onDone: () async {
+        await streamController.close();
+      },
+    );
+
+    final content = _sendDiscoveryRequest(
+      uri,
+      coap.RequestMethod.get,
+      form: null,
+      accept: coap.CoapMediaType.applicationTdJson,
+      multicastResponseHandler: multicastResponseHandler,
+    );
+    unawaited(content);
+    yield* streamController.stream;
+  }
 }
