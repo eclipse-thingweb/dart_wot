@@ -9,8 +9,10 @@
 /// runtime used for consuming, exposing, and discovering Things.
 library core;
 
+// TODO(JKRhb): Reorganize top-level core package into smaller packages.
 export "src/core/definitions.dart";
 export "src/core/exceptions.dart";
+export "src/core/extensions.dart";
 export "src/core/implementation.dart";
 export "src/core/protocol_interfaces.dart";
 export "src/core/scripting_api.dart";

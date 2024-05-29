@@ -280,9 +280,16 @@ class InternalServient implements Servient {
 
   /// Requests a [ThingDescription] from a [url].
   Future<ThingDescription> requestThingDescription(Uri url) async {
-    final client = clientFor(url.scheme);
-    final content = await client.requestThingDescription(url);
+    final uriScheme = url.scheme;
+    final client = clientFor(uriScheme);
 
+    if (client is! DirectDiscoverer) {
+      throw DiscoveryException(
+        "Client with URI scheme $uriScheme does not support direct discovery.",
+      );
+    }
+
+    final content = await client.discoverDirectly(url);
     final dataSchemaValue = await contentSerdes.contentToValue(content, null);
 
     if (dataSchemaValue

@@ -138,6 +138,45 @@ final class ExploreDirectoryConfiguration extends DiscoveryConfiguration {
   final int? limit;
 }
 
+/// Experimental [DiscoveryConfiguration] that is used to perform discovery with
+/// the MQTT protocol.
+@experimental
+final class MqttDiscoveryConfiguration extends DiscoveryConfiguration {
+  /// Instantiates a new [DiscoveryConfiguration] for MQTT.
+  const MqttDiscoveryConfiguration(
+    this.brokerUri, {
+    this.discoveryTopic = "wot/td/#",
+    this.expectedContentType = "application/td+json",
+    this.discoveryTimeout = const Duration(seconds: 5),
+  });
+
+  /// [Uri] of the broker the
+  final Uri brokerUri;
+
+  /// The topic that will be used for performing the discovery process.
+  ///
+  /// If a wildcard topic is used, then the discovery process may return more
+  /// than one TD.
+  ///
+  /// Defaults to `wot/td/#`.
+  final String discoveryTopic;
+
+  /// The Thing Description content type that is expected during the discovery
+  /// process.
+  ///
+  /// Data that is received during the discovery process that is not
+  /// deserializable using the content type provided here will be ignored.
+  ///
+  /// Defaults to `application/td+json`.
+  final String expectedContentType;
+
+  /// Time period after which the MQTT discovery process is going to be
+  /// cancelled.
+  ///
+  /// Defaults to five seconds.
+  final Duration discoveryTimeout;
+}
+
 /// Base class for configuring discovery mechanisms that involve a two-step
 /// approach.
 ///

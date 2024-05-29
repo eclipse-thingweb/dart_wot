@@ -4,7 +4,6 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "dart:io";
 import "dart:typed_data";
 
 import "package:cbor/cbor.dart";
@@ -15,15 +14,6 @@ import "../../core.dart" hide PskCredentials;
 
 import "coap_binding_exception.dart";
 import "coap_definitions.dart";
-
-/// Extension which makes it easier to handle [Uri]s containing
-/// [InternetAddress]es.
-extension InternetAddressMethods on Uri {
-  /// Checks whether the host of this [Uri] is a multicast [InternetAddress].
-  bool get isMulticastAddress {
-    return InternetAddress.tryParse(host)?.isMulticast ?? false;
-  }
-}
 
 /// CoAP-specific extensions for the [AugmentedForm] class.
 extension CoapFormExtension on AugmentedForm {

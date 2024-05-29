@@ -73,7 +73,8 @@ coap.PskCredentialsCallback? _createPskCallback(
 }
 
 /// A [ProtocolClient] for the Constrained Application Protocol (CoAP).
-final class CoapClient extends ProtocolClient {
+final class CoapClient extends ProtocolClient
+    with DirectDiscoverer, MulticastDiscoverer, CoreLinkFormatDiscoverer {
   /// Creates a new [CoapClient] based on an optional [CoapConfig].
   CoapClient({
     CoapConfig? coapConfig,
@@ -446,10 +447,50 @@ final class CoapClient extends ProtocolClient {
   @override
   Future<void> stop() async {}
 
-  Stream<DiscoveryContent> _discoverFromMulticast(
-    coap.CoapClient client,
-    Uri uri,
-  ) async* {
+  @override
+  Future<DiscoveryContent> discoverDirectly(Uri uri) async =>
+      _sendDiscoveryRequest(
+        uri,
+        coap.RequestMethod.get,
+        form: null,
+        accept: coap.CoapMediaType.applicationTdJson,
+      );
+
+  @override
+  Stream<DiscoveryContent> discoverWithCoreLinkFormat(Uri uri) async* {
+    coap.CoapMulticastResponseHandler? multicastResponseHandler;
+    final streamController = StreamController<DiscoveryContent>();
+
+    // TODO: Replace once https://github.com/shamblett/coap/pull/129 is merged
+    if (uri.hasMulticastAddress) {
+      multicastResponseHandler = coap.CoapMulticastResponseHandler(
+        (data) {
+          streamController.add(data.determineDiscoveryContent(uri.scheme));
+        },
+        onError: streamController.addError,
+        onDone: () async {
+          await streamController.close();
+        },
+      );
+    }
+
+    final content = await _sendDiscoveryRequest(
+      uri,
+      coap.RequestMethod.get,
+      form: null,
+      accept: coap.CoapMediaType.applicationLinkFormat,
+      multicastResponseHandler: multicastResponseHandler,
+    );
+
+    if (uri.hasMulticastAddress) {
+      yield* streamController.stream;
+    } else {
+      yield content;
+    }
+  }
+
+  @override
+  Stream<Content> discoverViaMulticast(Uri uri) async* {
     final streamController = StreamController<DiscoveryContent>();
     final multicastResponseHandler = coap.CoapMulticastResponseHandler(
       (data) {
@@ -471,73 +512,4 @@ final class CoapClient extends ProtocolClient {
     unawaited(content);
     yield* streamController.stream;
   }
-
-  Stream<DiscoveryContent> _discoverFromUnicast(
-    coap.CoapClient client,
-    Uri uri,
-  ) async* {
-    yield await _sendDiscoveryRequest(
-      uri,
-      coap.RequestMethod.get,
-      form: null,
-      accept: coap.CoapMediaType.applicationTdJson,
-    );
-  }
-
-  @override
-  Stream<DiscoveryContent> discoverDirectly(
-    Uri uri, {
-    bool disableMulticast = false,
-  }) async* {
-    final client = coap.CoapClient(uri);
-
-    if (uri.isMulticastAddress) {
-      if (!disableMulticast) {
-        yield* _discoverFromMulticast(client, uri);
-      }
-    } else {
-      yield* _discoverFromUnicast(client, uri);
-    }
-  }
-
-  @override
-  Stream<DiscoveryContent> discoverWithCoreLinkFormat(Uri uri) async* {
-    coap.CoapMulticastResponseHandler? multicastResponseHandler;
-    final streamController = StreamController<DiscoveryContent>();
-
-    // TODO: Replace once https://github.com/shamblett/coap/pull/129 is merged
-    if (uri.isMulticastAddress) {
-      multicastResponseHandler = coap.CoapMulticastResponseHandler(
-        (data) {
-          streamController.add(data.determineDiscoveryContent(uri.scheme));
-        },
-        onError: streamController.addError,
-        onDone: () async {
-          await streamController.close();
-        },
-      );
-    }
-
-    final content = await _sendDiscoveryRequest(
-      uri,
-      coap.RequestMethod.get,
-      form: null,
-      accept: coap.CoapMediaType.applicationLinkFormat,
-      multicastResponseHandler: multicastResponseHandler,
-    );
-
-    if (uri.isMulticastAddress) {
-      yield* streamController.stream;
-    } else {
-      yield content;
-    }
-  }
-
-  @override
-  Future<Content> requestThingDescription(Uri url) async => _sendRequest(
-        url,
-        coap.RequestMethod.get,
-        form: null,
-        accept: coap.CoapMediaType.applicationTdJson,
-      );
 }

@@ -14,9 +14,10 @@ import "constants.dart";
 /// The default [QoS] values for the different operation types will be used if
 /// no Quality of Service is defined in the respective form.
 ///
-/// If no [readTimeout] or [discoveryTimeout] is defined, a [defaultTimeout] of
-/// 10 seconds will be used. Furthermore, the [keepAlivePeriod] defaults to 20
-/// seconds.
+/// If no [readTimeout] is defined, a [defaultReadTimeout] of
+/// 10 seconds will be used.
+/// Furthermore, the [keepAlivePeriod] defaults to a [defaultKeepAlivePeriod] of
+/// 20 seconds.
 class MqttConfig {
   /// Creates a new [MqttConfig] object.
   MqttConfig({
@@ -24,8 +25,7 @@ class MqttConfig {
     this.defaultWriteQoS = QoS.atMostOnce,
     this.defaultActionQoS = QoS.atMostOnce,
     this.defaultSubscribeQoS = QoS.atLeastOnce,
-    this.readTimeout = defaultTimeout,
-    this.discoveryTimeout = defaultTimeout,
+    this.readTimeout = defaultReadTimeout,
     this.keepAlivePeriod = defaultKeepAlivePeriod,
   });
 
@@ -50,11 +50,6 @@ class MqttConfig {
   /// If no value has been read until the timeout has expired, the operation
   /// will be canceled.
   final Duration readTimeout;
-
-  /// Timeout value used for discovery using MQTT.
-  ///
-  /// The discovery process will be aborted once the timeout has expired.
-  final Duration discoveryTimeout;
 }
 
 /// Enum for indicating the default Quality of Service (QoS) that should be used

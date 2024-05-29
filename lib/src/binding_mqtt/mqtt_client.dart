@@ -21,7 +21,7 @@ import "mqtt_subscription.dart";
 /// [ProtocolClient] for supporting the MQTT protocol.
 ///
 /// Currently, only MQTT version 3.1.1 is supported.
-final class MqttClient extends ProtocolClient {
+final class MqttClient extends ProtocolClient with MqttDiscoverer {
   /// Constructor.
   MqttClient({
     MqttConfig? mqttConfig,
@@ -199,22 +199,13 @@ final class MqttClient extends ProtocolClient {
   }
 
   @override
-  Stream<DiscoveryContent> discoverDirectly(
-    Uri uri, {
-    bool disableMulticast = false,
+  Stream<Content> performMqttDiscovery(
+    Uri brokerUri, {
+    required String discoveryTopic,
+    required String expectedContentType,
+    required Duration discoveryTimeout,
   }) async* {
-    final client = await _connect(uri, null);
-    const discoveryTopic = "wot/td/#";
-
-    final streamController = StreamController<DiscoveryContent>();
-
-    Timer(
-      _mqttConfig.discoveryTimeout,
-      () async {
-        client.disconnect();
-        await streamController.close();
-      },
-    );
+    final client = await _connect(brokerUri, null);
 
     // TODO: Revisit QoS value and subscription check
     if (client.subscribe(discoveryTopic, MqttQos.atLeastOnce) == null) {
@@ -223,36 +214,29 @@ final class MqttClient extends ProtocolClient {
       );
     }
 
-    client.updates?.listen(
-      (messages) {
-        for (final message in messages) {
-          final publishedMessage = message.payload as MqttPublishMessage;
-          final payload = publishedMessage.payload.message;
+    final receivedMessageStream = client.updates;
+    if (receivedMessageStream == null) {
+      throw MqttBindingException(
+        "Subscription to topic $discoveryTopic failed",
+      );
+    }
 
-          streamController.add(
-            DiscoveryContent(
-              discoveryContentType,
-              Stream.value(payload),
-              uri,
-            ),
-          );
-        }
+    Timer(
+      discoveryTimeout,
+      () async {
+        client.disconnect();
       },
-      cancelOnError: false,
     );
 
-    yield* streamController.stream;
-  }
+    await for (final receivedMessageList in receivedMessageStream) {
+      for (final receivedMessage in receivedMessageList) {
+        final mqttMessage = receivedMessage.payload;
+        if (mqttMessage is MqttPublishMessage) {
+          final messagePayload = mqttMessage.payload.message;
 
-  @override
-  Stream<DiscoveryContent> discoverWithCoreLinkFormat(Uri uri) {
-    // TODO: implement discoverWithCoreLinkFormat
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Content> requestThingDescription(Uri url) {
-    // TODO: implement requestThingDescription
-    throw UnimplementedError();
+          yield Content(expectedContentType, Stream.value(messagePayload));
+        }
+      }
+    }
   }
 }
