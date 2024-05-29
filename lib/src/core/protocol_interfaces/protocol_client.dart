@@ -8,7 +8,7 @@ import "../implementation.dart";
 import "../scripting_api.dart";
 
 /// Base class for a Protocol Client.
-abstract interface class ProtocolClient {
+abstract base class ProtocolClient {
   /// Starts this [ProtocolClient].
   Future<void> start();
 

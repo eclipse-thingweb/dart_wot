@@ -73,7 +73,7 @@ coap.PskCredentialsCallback? _createPskCallback(
 }
 
 /// A [ProtocolClient] for the Constrained Application Protocol (CoAP).
-final class CoapClient implements ProtocolClient {
+final class CoapClient extends ProtocolClient {
   /// Creates a new [CoapClient] based on an optional [CoapConfig].
   CoapClient({
     CoapConfig? coapConfig,

@@ -138,7 +138,7 @@ const invalidTestThingDescription2 = '''
   {"foo": "bar"}
 ''';
 
-class _MockedProtocolClient implements ProtocolClient {
+final class _MockedProtocolClient extends ProtocolClient {
   @override
   Stream<DiscoveryContent> discoverWithCoreLinkFormat(Uri uri) {
     // TODO: implement discoverWithCoreLinkFormat
