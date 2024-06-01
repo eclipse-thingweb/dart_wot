@@ -42,11 +42,11 @@ jobs:
         run: dart analyze
 
       - name: Run tests with coverage
-        run: dart run coverage:test_with_coverage
+        run: dart test --coverage=coverage
 
       - uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage/lcov.info
+          directory: ./coverage
           name: Upload to codecov.io
           verbose: true
