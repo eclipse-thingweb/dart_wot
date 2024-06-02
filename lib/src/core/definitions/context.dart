@@ -16,7 +16,7 @@ const _tdVersion11ContextUrl = "https://www.w3.org/2022/wot/td/v1.1";
 final class Context {
   /// Creates a new context from a list of [contextEntries].
   Context(this.contextEntries)
-      : prefixMapping = _createPrefixMappping(contextEntries);
+      : prefixMapping = _createPrefixMapping(contextEntries);
 
   /// Determines the default prefix URL via the procedure described in
   /// [section 5.3.1.1] of the Thing Description 1.1 specification.
@@ -57,7 +57,7 @@ final class Context {
     return firstContextValue;
   }
 
-  static PrefixMapping _createPrefixMappping(
+  static PrefixMapping _createPrefixMapping(
     List<ContextEntry> contextEntries,
   ) {
     final defaultPrefixValue = _determineDefaultPrefix(contextEntries);
