@@ -14,7 +14,7 @@ base class DartWotException implements Exception {
   /// Constructor.
   const DartWotException(this.message);
 
-  /// The error message of this [ValidationException].
+  /// The error message of this [DartWotException].
   final String message;
 
   /// The name of this [Exception] that will appear in the error message log.
