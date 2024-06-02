@@ -249,22 +249,98 @@ class InternalServient implements Servient {
   Future<scripting_api.ExposedThing> produce(
     scripting_api.ExposedThingInit init,
   ) async {
-    const uuid = Uuid();
+    final thingDescription = _expandExposedThingInit(init);
 
-    final exposedThingInit = {
-      "id": "urn:uuid:${uuid.v4()}",
-      ...init,
-    };
-
-    final newThing = ExposedThing(this, exposedThingInit);
+    final newThing = ExposedThing(this, thingDescription);
     if (addThing(newThing)) {
       return newThing;
-    } else {
-      final id = newThing.thingDescription.identifier;
-      throw DartWotException(
-        "A ConsumedThing with identifier $id already exists.",
+    }
+
+    throw DartWotException(
+      "An ExposedThing with identifier ${newThing.thingDescription.id} "
+      "already exists.",
+    );
+  }
+
+  List<String> _determineUnsupportedSecuritySchemes(
+    scripting_api.ExposedThingInit exposedThingInit,
+  ) {
+    // TODO: Implement
+    return [];
+  }
+
+  // TODO: Implement missing steps of algorithm,
+  //       see https://w3c.github.io/wot-scripting-api/#expand-an-exposedthinginit
+  Map<String, dynamic> _expandExposedThingInit(
+    scripting_api.ExposedThingInit exposedThingInit,
+  ) {
+    final thingDescription = Map.of(exposedThingInit);
+
+    if (!thingDescription.containsKey("@context")) {
+      thingDescription["@context"] = "https://www.w3.org/2022/wot/td/v1.1";
+    }
+
+    final unsupportedSecuritySchemes =
+        _determineUnsupportedSecuritySchemes(thingDescription);
+
+    final securityDefinitions = thingDescription["securityDefinitions"] ??
+        <String, Map<String, dynamic>>{};
+
+    if (securityDefinitions is! Map<String, Map<String, dynamic>>) {
+      throw FormatException(
+        "Incorrect type for securitySchemes field, "
+        "expected Map<Map<String, dynamic>>, got "
+        "${securityDefinitions.runtimeType}",
       );
     }
+
+    unsupportedSecuritySchemes.forEach(securityDefinitions.remove);
+
+    final security = <String>[];
+
+    // TODO: Refactor
+    final tdSecurity = thingDescription["security"] ?? <String>[];
+
+    if (tdSecurity is List<String>) {
+      security.addAll(tdSecurity);
+    } else if (tdSecurity is String) {
+      security.add(tdSecurity);
+    } else {
+      throw FormatException(
+        "Incorrect type for security field, "
+        "expected List<String>, got "
+        "${tdSecurity.runtimeType}",
+      );
+    }
+
+    thingDescription["security"] =
+        security.where(securityDefinitions.containsKey).toList();
+
+    // TODO: Should an ID be assigned here?
+    if (!thingDescription.containsKey("id")) {
+      const uuid = Uuid();
+
+      thingDescription["id"] = "urn:uuid:${uuid.v4()}";
+    }
+
+    if (!thingDescription.containsKey("title")) {
+      // TODO: Decide which title should be used here.
+      thingDescription["title"] = "Exposed Thing";
+    }
+
+    if (security.isEmpty) {
+      if (securityDefinitions.isEmpty) {
+        securityDefinitions["nosec_sc"] = {
+          "scheme": "nosec",
+        };
+        thingDescription["securityDefinitions"] = securityDefinitions;
+      }
+
+      thingDescription["security"] =
+          securityDefinitions.keys.firstOrNull ?? "nosec_sc";
+    }
+
+    return thingDescription;
   }
 
   /// Perform automatic discovery using this [InternalServient]'s

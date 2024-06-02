@@ -53,8 +53,13 @@ class Form {
     final contentCoding =
         json.parseField<String>("contentCoding", parsedFields);
 
-    final security = json.parseArrayField<String>("security", parsedFields);
-    final scopes = json.parseArrayField<String>("scopes", parsedFields);
+    final security = json.parseArrayField<String>(
+      "security",
+      parsedFields: parsedFields,
+      minimalSize: 1,
+    );
+    final scopes =
+        json.parseArrayField<String>("scopes", parsedFields: parsedFields);
     final response = json.parseExpectedResponse(prefixMapping, parsedFields);
 
     final additionalResponses = json.parseAdditionalExpectedResponse(

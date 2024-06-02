@@ -36,19 +36,26 @@ extension ParseField on Map<String, dynamic> {
 
   /// Parses a single field with a given [name].
   ///
-  /// Ensures that the field value is of type [T] and returns `null` if the
-  /// value does not have this type or is not present.
+  /// If the field is set, the method ensures that its value is of type [T] and
+  /// throws a [FormatException] otherwise.
+  /// In case the field is not set, `null` is returned instead, indicating a
+  /// missing value.
   ///
   /// If a [Set] of [parsedFields] is passed to this function, the field [name]
-  /// will added. This can be used for filtering when parsing additional fields.
+  /// will be added to it. This can be used for filtering when parsing
+  /// additional fields.
   T? parseField<T>(String name, [Set<String>? parsedFields]) {
     final fieldValue = _processFieldName(name, parsedFields);
+
+    if (!containsKey(name)) {
+      return null;
+    }
 
     if (fieldValue is T) {
       return fieldValue;
     }
 
-    return null;
+    throw FormatException("Expected $T, got ${fieldValue.runtimeType}");
   }
 
   /// Parses a single field with a given [name] as a [Uri].
@@ -57,7 +64,8 @@ extension ParseField on Map<String, dynamic> {
   /// value cannot be parsed as such.
   ///
   /// If a [Set] of [parsedFields] is passed to this function, the field [name]
-  /// will added. This can be used for filtering when parsing additional fields.
+  /// will be added to it. This can be used for filtering when parsing
+  /// additional fields.
   Uri? parseUriField(String name, [Set<String>? parsedFields]) {
     final fieldValue = parseField<String>(name, parsedFields);
 
@@ -65,7 +73,7 @@ extension ParseField on Map<String, dynamic> {
       return null;
     }
 
-    return Uri.tryParse(fieldValue);
+    return Uri.parse(fieldValue);
   }
 
   /// Parses a single field with a given [name] as a [List] of [Uri]s.
@@ -75,8 +83,16 @@ extension ParseField on Map<String, dynamic> {
   ///
   /// If a [Set] of [parsedFields] is passed to this function, the field [name]
   /// will added. This can be used for filtering when parsing additional fields.
-  List<Uri>? parseUriArrayField(String name, [Set<String>? parsedFields]) {
-    final fieldValue = parseArrayField<String>(name, parsedFields);
+  List<Uri>? parseUriArrayField(
+    String name, {
+    Set<String>? parsedFields,
+    int minimalSize = 0,
+  }) {
+    final fieldValue = parseArrayField<String>(
+      name,
+      parsedFields: parsedFields,
+      minimalSize: minimalSize,
+    );
 
     if (fieldValue == null) {
       return null;
@@ -94,20 +110,16 @@ extension ParseField on Map<String, dynamic> {
     return result;
   }
 
-  /// Parses a single field with a given [name] and throws a
-  /// [FormatException] if the field is not present or does not have the
-  /// type [T].
+  /// Parses a single field with a given [name] and throws a [FormatException]
+  /// if the field should not be set or not be of type [T].
   ///
   /// Like [parseField], it adds the field [name] to the set of [parsedFields],
   /// if present.
   T parseRequiredField<T>(String name, [Set<String>? parsedFields]) {
-    final fieldValue = parseField(name, parsedFields);
+    final fieldValue = parseField<T>(name, parsedFields);
 
-    if (fieldValue is! T) {
-      throw FormatException(
-        "Value for field $name has wrong data type or is missing. "
-        "Expected ${T.runtimeType}, got ${fieldValue.runtimeType}.",
-      );
+    if (fieldValue == null) {
+      throw FormatException("Required field $name is not set.");
     }
 
     return fieldValue;
@@ -117,7 +129,8 @@ extension ParseField on Map<String, dynamic> {
   /// [FormatException] if the field is not present or cannot be parsed.
   ///
   /// If a [Set] of [parsedFields] is passed to this function, the field [name]
-  /// will added. This can be used for filtering when parsing additional fields.
+  /// will be added. This can be used for filtering when parsing additional
+  /// fields.
   Uri parseRequiredUriField(String name, [Set<String>? parsedFields]) {
     final fieldValue = parseRequiredField<String>(name, parsedFields);
 
@@ -134,39 +147,109 @@ extension ParseField on Map<String, dynamic> {
   Map<String, T>? parseMapField<T>(String name, [Set<String>? parsedFields]) {
     final fieldValue = _processFieldName(name, parsedFields);
 
+    if (!containsKey(name)) {
+      return null;
+    }
+
     if (fieldValue is Map<String, dynamic>) {
       final Map<String, T> result = {};
 
       for (final entry in fieldValue.entries) {
         final value = entry.value;
+
         if (value is T) {
           result[entry.key] = value;
         }
       }
 
-      return result;
+      if (result.length == fieldValue.length) {
+        return result;
+      }
     }
-    return null;
+
+    throw FormatException(
+      "Expected ${Map<String, T>}, got ${fieldValue.runtimeType}",
+    );
   }
 
   /// Parses a field with a given [name] that can contain either a single value
   /// or a list of values of type [T].
   ///
-  /// Ensures that the field value is of type [T] or `List<T>` and returns
-  /// `null` if the value does not have one of these types or is not present.
+  /// Ensures that the field value is either of type [T] or of type [List<T>],
+  /// and throws a [FormatException] otherwise.
+  /// If the field is unset, `null` will be returned instead.
   ///
   /// If a [Set] of [parsedFields] is passed to this function, the field [name]
-  /// will added. This can be used for filtering when parsing additional fields.
-  List<T>? parseArrayField<T>(String name, [Set<String>? parsedFields]) {
+  /// will be added. This can be used for filtering when parsing additional
+  /// fields.
+  List<T>? parseArrayField<T>(
+    String name, {
+    Set<String>? parsedFields,
+    int minimalSize = 0,
+  }) {
     final fieldValue = parseField(name, parsedFields);
 
-    if (fieldValue is T) {
-      return [fieldValue];
-    } else if (fieldValue is List<dynamic>) {
-      return fieldValue.whereType<T>().toList(growable: false);
+    if (fieldValue == null) {
+      return null;
     }
 
-    return null;
+    final List<T> result;
+
+    if (fieldValue is List<T>) {
+      result = fieldValue;
+    } else if (fieldValue is T) {
+      result = [fieldValue];
+    } else if (fieldValue is List<dynamic>) {
+      final filteredArray = fieldValue.whereType<T>().toList(growable: false);
+
+      if (filteredArray.length == fieldValue.length) {
+        result = filteredArray;
+      } else {
+        throw FormatException(
+          "Expected $T or a List of $T, but found a List member with invalid "
+          "type",
+        );
+      }
+    } else {
+      throw FormatException(
+        "Expected $T or a List of $T, got ${fieldValue.runtimeType}",
+      );
+    }
+
+    if (result.length < minimalSize) {
+      throw const FormatException(
+        "Expected a non-empty array, but encountered an empty one.",
+      );
+    }
+
+    return result;
+  }
+
+  /// Parses a field with a given [name] that can contain either a single value
+  /// or a list of values of type [T].
+  ///
+  /// Ensures that the field value is either of type [T] or of type [List<T>],
+  /// and throws a [FormatException] otherwise.
+  ///
+  /// If a [Set] of [parsedFields] is passed to this function, the field [name]
+  /// will be added. This can be used for filtering when parsing additional
+  /// fields.
+  List<T> parseRequiredArrayField<T>(
+    String name, {
+    Set<String>? parsedFields,
+    int minimalSize = 0,
+  }) {
+    final result = parseArrayField<T>(
+      name,
+      parsedFields: parsedFields,
+      minimalSize: minimalSize,
+    );
+
+    if (result == null) {
+      throw FormatException("Missing required field $name");
+    }
+
+    return result;
   }
 
   /// Parses a field with a given [name] as a [DataSchema].
@@ -181,13 +264,13 @@ extension ParseField on Map<String, dynamic> {
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
-    final fieldValue = parseField(name, parsedFields);
+    final fieldValue = parseField<Map<String, dynamic>>(name, parsedFields);
 
-    if (fieldValue is Map<String, dynamic>) {
-      return DataSchema.fromJson(fieldValue, prefixMapping);
+    if (fieldValue == null) {
+      return null;
     }
 
-    return null;
+    return DataSchema.fromJson(fieldValue, prefixMapping);
   }
 
   /// Parses a field with a given [name] as a [List] of [DataSchema]s.
@@ -202,43 +285,55 @@ extension ParseField on Map<String, dynamic> {
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
-    final fieldValue = parseField(name, parsedFields);
+    final fieldValue =
+        parseField<List<Map<String, dynamic>>>(name, parsedFields);
 
-    if (fieldValue is List<Map<String, dynamic>>) {
-      return fieldValue
-          .map((e) => DataSchema.fromJson(e, prefixMapping))
-          .toList();
-    }
-
-    return null;
+    return fieldValue
+        ?.map((e) => DataSchema.fromJson(e, prefixMapping))
+        .toList();
   }
 
   /// Parses a field with a given [name] as a [Map] of [DataSchema]s.
   ///
-  /// Returns `null` if the field should not be present or if it is not a
-  /// JSON object containing other objects.
+  /// Returns `null` if the field should not be present and throws a
+  /// [FormatException] if it is not a [Map] containing at least a number a
+  /// [minimalSize] of other [Map]s.
   ///
   /// If a [Set] of [parsedFields] is passed to this function, the field [name]
   /// will added. This can be used for filtering when parsing additional fields.
   Map<String, DataSchema>? parseDataSchemaMapField(
     String name,
     PrefixMapping prefixMapping,
-    Set<String>? parsedFields,
-  ) {
-    final fieldValue = parseField(name, parsedFields);
+    Set<String>? parsedFields, {
+    int minimalSize = 0,
+  }) {
+    final fieldValue = parseField<Map<String, dynamic>>(name, parsedFields);
 
-    if (fieldValue is Map<String, Map<String, dynamic>>) {
-      return Map.fromEntries(
-        fieldValue.entries.map(
-          (entry) => MapEntry(
-            entry.key,
-            DataSchema.fromJson(entry.value, prefixMapping),
-          ),
-        ),
-      );
+    if (fieldValue == null) {
+      return null;
     }
 
-    return null;
+    final length = fieldValue.length;
+    if (fieldValue.length < minimalSize) {
+      throw FormatException(
+          "Expected this Map to contain at least $minimalSize other Map(s), "
+          "got $length.");
+    }
+
+    final result = <String, DataSchema>{};
+    for (final entry in fieldValue.entries) {
+      final value = entry.value;
+
+      if (value is Map<String, dynamic>) {
+        result[entry.key] = DataSchema.fromJson(value, prefixMapping);
+      } else {
+        throw FormatException(
+          "Expected a Map<String, dynamic>, got ${value.runtimeType}",
+        );
+      }
+    }
+
+    return result;
   }
 
   /// Parses [Form]s contained in this JSON object.
@@ -249,15 +344,14 @@ extension ParseField on Map<String, dynamic> {
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
-    final fieldValue = parseField("forms", parsedFields);
-
-    if (fieldValue is! List) {
-      return null;
-    }
+    final fieldValue = parseArrayField<Map<String, dynamic>>(
+      "forms",
+      parsedFields: parsedFields,
+      minimalSize: 1,
+    );
 
     return fieldValue
-        .whereType<Map<String, dynamic>>()
-        .map(
+        ?.map(
           (e) => Form.fromJson(
             e,
             prefixMapping,
@@ -279,13 +373,13 @@ extension ParseField on Map<String, dynamic> {
       parsedFields,
     );
 
-    if (forms != null) {
-      return forms;
+    if (forms == null) {
+      throw const FormatException(
+        'Missing "forms" member in InteractionAffordance',
+      );
     }
 
-    throw const FormatException(
-      'Missing "forms" member in InteractionAffordance',
-    );
+    return forms;
   }
 
   /// Parses [Link]s contained in this JSON object.
@@ -295,23 +389,17 @@ extension ParseField on Map<String, dynamic> {
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
-    final fieldValue = parseField("links", parsedFields);
+    final fieldValue =
+        parseField<List<Map<String, dynamic>>>("links", parsedFields);
 
-    if (fieldValue is! List) {
-      return null;
-    }
-
-    return fieldValue
-        .whereType<Map<String, dynamic>>()
-        .map((e) => Link.fromJson(e, prefixMapping))
-        .toList();
+    return fieldValue?.map((e) => Link.fromJson(e, prefixMapping)).toList();
   }
 
   /// Parses [SecurityScheme]s contained in this JSON object.
   ///
   /// Adds the key `securityDefinitions` to the set of [parsedFields], if
   /// defined.
-  Map<String, SecurityScheme>? parseSecurityDefinitions(
+  Map<String, SecurityScheme> parseSecurityDefinitions(
     PrefixMapping prefixMapping,
     Set<String> parsedFields,
   ) {
@@ -319,7 +407,13 @@ extension ParseField on Map<String, dynamic> {
         parseMapField<dynamic>("securityDefinitions", parsedFields);
 
     if (fieldValue == null) {
-      return null;
+      throw const FormatException("Missing required securityDefinitions field");
+    }
+
+    if (fieldValue.isEmpty) {
+      throw const FormatException(
+        "securityDefinitions has to contain at least one element but is empty.",
+      );
     }
 
     final Map<String, SecurityScheme> result = {};
@@ -385,7 +479,7 @@ extension ParseField on Map<String, dynamic> {
     final Map<String, Property> result = {};
 
     for (final property in fieldValue.entries) {
-      final dynamic value = property.value;
+      final value = property.value;
       if (value is Map<String, dynamic>) {
         result[property.key] = Property.fromJson(value, prefixMapping);
       }
@@ -410,7 +504,7 @@ extension ParseField on Map<String, dynamic> {
     final Map<String, Action> result = {};
 
     for (final property in fieldValue.entries) {
-      final dynamic value = property.value;
+      final value = property.value;
       if (value is Map<String, dynamic>) {
         result[property.key] = Action.fromJson(value, prefixMapping);
       }
@@ -435,7 +529,7 @@ extension ParseField on Map<String, dynamic> {
     final Map<String, Event> result = {};
 
     for (final property in fieldValue.entries) {
-      final dynamic value = property.value;
+      final value = property.value;
       if (value is Map<String, dynamic>) {
         result[property.key] = Event.fromJson(value, prefixMapping);
       }
@@ -447,9 +541,14 @@ extension ParseField on Map<String, dynamic> {
   /// Processes this JSON value and tries to generate a [List] of
   /// [OperationType]s from it.
   List<OperationType>? parseOperationTypes(
-    Set<String>? parsedFields,
-  ) {
-    final opArray = parseArrayField<String>("op", parsedFields);
+    Set<String>? parsedFields, {
+    int minimalSize = 0,
+  }) {
+    final opArray = parseArrayField<String>(
+      "op",
+      parsedFields: parsedFields,
+      minimalSize: minimalSize,
+    );
 
     return opArray?.map(OperationType.fromString).toList();
   }
@@ -477,11 +576,13 @@ extension ParseField on Map<String, dynamic> {
   List<AdditionalExpectedResponse>? parseAdditionalExpectedResponse(
     PrefixMapping prefixMapping,
     String formContentType,
-    Set<String>? parsedFields,
-  ) {
+    Set<String>? parsedFields, {
+    int minimalSize = 0,
+  }) {
     final fieldValue = parseArrayField<Map<String, dynamic>>(
       "additionalResponses",
-      parsedFields,
+      parsedFields: parsedFields,
+      minimalSize: minimalSize,
     );
 
     if (fieldValue == null) {

@@ -44,4 +44,3 @@ export "definitions/security/psk_security_scheme.dart";
 export "definitions/security/security_scheme.dart";
 export "definitions/thing_description.dart";
 export "definitions/thing_model.dart";
-export "definitions/validation/thing_description_schema.dart";

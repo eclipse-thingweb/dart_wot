@@ -107,7 +107,7 @@ final class AugmentedForm implements Form {
       return href;
     }
 
-    final Map<String, Object> affordanceUriVariables = {
+    final Map<String, DataSchema> affordanceUriVariables = {
       ..._thingDescription.uriVariables ?? {},
       ..._interactionAffordance.uriVariables ?? {},
     };
@@ -132,7 +132,7 @@ final class AugmentedForm implements Form {
 
   void _validateUriVariables(
     List<String> uriVariablesInHref,
-    Map<String, Object> affordanceUriVariables,
+    Map<String, DataSchema> affordanceUriVariables,
     Map<String, Object> userProvidedUriVariables,
   ) {
     final uncoveredHrefUriVariables = uriVariablesInHref
@@ -157,7 +157,7 @@ final class AugmentedForm implements Form {
       }
 
       final schemaValue = affordanceUriVariable.value;
-      final schema = JsonSchema.create(schemaValue);
+      final schema = JsonSchema.create(schemaValue.rawJson ?? {});
       final result = schema.validate(userProvidedValue);
 
       if (!result.isValid) {

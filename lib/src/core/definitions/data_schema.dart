@@ -61,7 +61,8 @@ class DataSchema {
     Set<String>? parsedFields,
   ]) {
     parsedFields = parsedFields ?? {};
-    final atType = json.parseArrayField<String>("@type", parsedFields);
+    final atType =
+        json.parseArrayField<String>("@type", parsedFields: parsedFields);
     final title = json.parseField<String>("title", parsedFields);
     final titles = json.parseMapField<String>("titles", parsedFields);
     final description = json.parseField<String>("description", parsedFields);
@@ -69,7 +70,11 @@ class DataSchema {
         json.parseMapField<String>("descriptions", parsedFields);
     final constant = json.parseField<Object>("constant", parsedFields);
     final defaultValue = json.parseField<Object>("default", parsedFields);
-    final enumeration = json.parseField<List<Object>>("enum", parsedFields);
+    final enumeration = json.parseArrayField<Object?>(
+      "enum",
+      parsedFields: parsedFields,
+      minimalSize: 1,
+    );
     final readOnly = json.parseField<bool>("readOnly", parsedFields);
     final writeOnly = json.parseField<bool>("writeOnly", parsedFields);
     final format = json.parseField<String>("format", parsedFields);
@@ -166,7 +171,7 @@ class DataSchema {
   final List<DataSchema>? oneOf;
 
   /// Restricted set of values provided as a [List].
-  final List<Object>? enumeration;
+  final List<Object?>? enumeration;
 
   /// Indicates if a value is read only.
   final bool? readOnly;

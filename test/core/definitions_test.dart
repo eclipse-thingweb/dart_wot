@@ -516,10 +516,7 @@ void main() {
     };
 
     expect(
-      () => ThingDescription.fromJson(
-        invalidThingDescription1,
-        validate: false,
-      ),
+      () => ThingDescription.fromJson(invalidThingDescription1),
       throwsA(isA<FormatException>()),
     );
 
@@ -538,7 +535,7 @@ void main() {
     );
   });
 
-  test("Should reject invalid @context entries", () {
+  test("Should reject invalid @context entry types", () {
     // TODO(JKRhb): Double-check if this the correct behavior.
     final invalidThingDescription1 = {
       "@context": [
@@ -556,6 +553,128 @@ void main() {
 
     expect(
       () => ThingDescription.fromJson(invalidThingDescription1),
+      throwsA(isA<FormatException>()),
+    );
+  });
+
+  test("Should throw FormatExceptions for incorrect array value types in TDs",
+      () {
+    final invalidThingDescription = {
+      "@context": ["https://www.w3.org/2022/wot/td/v1.1"],
+      "title": "Thingweb WoT Thing",
+      "security": [2],
+      "securityDefinitions": {
+        "nosec_sc": {
+          "scheme": "nosec",
+        },
+      },
+    };
+
+    expect(
+      () => ThingDescription.fromJson(invalidThingDescription),
+      throwsA(isA<FormatException>()),
+    );
+  });
+
+  test("Should throw FormatExceptions for incorrect Map value types in TDs",
+      () {
+    final invalidThingDescription = {
+      "@context": ["https://www.w3.org/2022/wot/td/v1.1"],
+      "title": "Thingweb WoT Thing",
+      "titles": {
+        "de": 42,
+      },
+      "security": ["nosec_sc"],
+      "securityDefinitions": {
+        "nosec_sc": {
+          "scheme": "nosec",
+        },
+      },
+    };
+
+    expect(
+      () => ThingDescription.fromJson(invalidThingDescription),
+      throwsA(isA<FormatException>()),
+    );
+  });
+
+  test("Should throw FormatExceptions for incorrect field types in TDs", () {
+    final invalidThingDescription = {
+      "@context": ["https://www.w3.org/2022/wot/td/v1.1"],
+      "title": 42,
+      "security": ["nosec_sc"],
+      "securityDefinitions": {
+        "nosec_sc": {
+          "scheme": "nosec",
+        },
+      },
+    };
+
+    expect(
+      () => ThingDescription.fromJson(invalidThingDescription),
+      throwsA(isA<FormatException>()),
+    );
+  });
+
+  test("Should throw FormatExceptions for incorrect DataSchema types in TDs",
+      () {
+    final invalidThingDescription = {
+      "@context": ["https://www.w3.org/2022/wot/td/v1.1"],
+      "title": "Thingweb WoT Thing",
+      "security": ["nosec_sc"],
+      "securityDefinitions": {
+        "nosec_sc": {
+          "scheme": "nosec",
+        },
+      },
+      "schemaDefinitions": {
+        "invalidSchema": 42,
+      },
+    };
+
+    expect(
+      () => ThingDescription.fromJson(invalidThingDescription),
+      throwsA(isA<FormatException>()),
+    );
+  });
+
+  test("Should throw FormatExceptions for empty affordance forms in TDs", () {
+    final invalidThingDescription = {
+      "@context": ["https://www.w3.org/2022/wot/td/v1.1"],
+      "title": "Thingweb WoT Thing",
+      "security": ["nosec_sc"],
+      "securityDefinitions": {
+        "nosec_sc": {
+          "scheme": "nosec",
+        },
+      },
+      "actions": {
+        "testAction": {
+          "forms": [],
+        },
+      },
+    };
+
+    expect(
+      () => ThingDescription.fromJson(invalidThingDescription),
+      throwsA(isA<FormatException>()),
+    );
+  });
+
+  test("Should throw FormatExceptions for wrong array field types", () {
+    final invalidThingDescription = {
+      "@context": ["https://www.w3.org/2022/wot/td/v1.1"],
+      "title": "Thingweb WoT Thing",
+      "security": 42,
+      "securityDefinitions": {
+        "nosec_sc": {
+          "scheme": "nosec",
+        },
+      },
+    };
+
+    expect(
+      () => ThingDescription.fromJson(invalidThingDescription),
       throwsA(isA<FormatException>()),
     );
   });

@@ -73,5 +73,95 @@ void main() {
         "https://www.w3.org/2022/wot/td/v1.1",
       );
     });
+
+    test("reject invalid ComboSecuritySchemes", () {
+      final invalidThingDescription1 = {
+        "@context": [
+          "https://www.w3.org/2022/wot/td/v1.1",
+        ],
+        "title": "Invalid TD with missing security field.",
+        "security": "combo_sc",
+        "securityDefinitions": {
+          "combo_sc": {"scheme": "combo"},
+        },
+      };
+
+      expect(
+        invalidThingDescription1.toThingDescription,
+        throwsFormatException,
+      );
+
+      final invalidThingDescription2 = {
+        "@context": [
+          "https://www.w3.org/2022/wot/td/v1.1",
+        ],
+        "title": "Invalid TD with missing security field.",
+        "security": "combo_sc",
+        "securityDefinitions": {
+          "nosec_sc1": {"scheme": "nosec"},
+          "nosec_sc2": {"scheme": "nosec"},
+          "combo_sc": {
+            "scheme": "combo",
+            "oneOf": [
+              "nosec_sc1",
+              "nosec_sc2",
+            ],
+            "allOf": [
+              "nosec_sc1",
+              "nosec_sc2",
+            ],
+          },
+        },
+      };
+
+      expect(
+        invalidThingDescription2.toThingDescription,
+        throwsFormatException,
+      );
+
+      final invalidThingDescription3 = {
+        "@context": [
+          "https://www.w3.org/2022/wot/td/v1.1",
+        ],
+        "title": "Invalid TD with missing security field.",
+        "security": "combo_sc",
+        "securityDefinitions": {
+          "nosec_sc1": {"scheme": "nosec"},
+          "combo_sc": {
+            "scheme": "combo",
+            "oneOf": [
+              "nosec_sc1",
+            ],
+          },
+        },
+      };
+
+      expect(
+        invalidThingDescription3.toThingDescription,
+        throwsFormatException,
+      );
+
+      final invalidThingDescription4 = {
+        "@context": [
+          "https://www.w3.org/2022/wot/td/v1.1",
+        ],
+        "title": "Invalid TD with missing security field.",
+        "security": "combo_sc",
+        "securityDefinitions": {
+          "nosec_sc1": {"scheme": "nosec"},
+          "combo_sc": {
+            "scheme": "combo",
+            "allOf": [
+              "nosec_sc1",
+            ],
+          },
+        },
+      };
+
+      expect(
+        invalidThingDescription4.toThingDescription,
+        throwsFormatException,
+      );
+    });
   });
 }

@@ -43,7 +43,8 @@ final class AceSecurityScheme extends SecurityScheme {
     final as = json.parseField<String>("ace:as", parsedFields);
     final cnonce = json.parseField<bool>("ace:cnonce", parsedFields);
     final audience = json.parseField<String>("ace:audience", parsedFields);
-    final scopes = json.parseArrayField<String>("ace:scopes", parsedFields);
+    final scopes =
+        json.parseArrayField<String>("ace:scopes", parsedFields: parsedFields);
 
     final additionalFields =
         json.parseAdditionalFields(prefixMapping, parsedFields);

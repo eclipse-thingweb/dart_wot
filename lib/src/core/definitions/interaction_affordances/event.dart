@@ -34,8 +34,11 @@ class Event extends InteractionAffordance {
     final description = json.parseField<String>("description", parsedFields);
     final descriptions =
         json.parseMapField<String>("descriptions", parsedFields);
-    final uriVariables =
-        json.parseMapField<Object>("uriVariables", parsedFields);
+    final uriVariables = json.parseDataSchemaMapField(
+      "uriVariables",
+      prefixMapping,
+      parsedFields,
+    );
 
     final subscription =
         json.parseDataSchemaField("subscription", prefixMapping, parsedFields);

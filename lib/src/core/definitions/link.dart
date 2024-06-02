@@ -39,7 +39,8 @@ class Link {
     final rel = json.parseField<String>("rel", parsedFields);
     final anchor = json.parseUriField("anchor", parsedFields);
     final sizes = json.parseField<String>("sizes", parsedFields);
-    final hreflang = json.parseArrayField<String>("hreflang", parsedFields);
+    final hreflang =
+        json.parseArrayField<String>("hreflang", parsedFields: parsedFields);
     final additionalFields =
         json.parseAdditionalFields(prefixMapping, parsedFields);
 

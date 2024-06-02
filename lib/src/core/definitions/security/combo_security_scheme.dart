@@ -4,6 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "package:collection/collection.dart";
 import "package:curie/curie.dart";
 
 import "../extensions/json_parser.dart";
@@ -38,8 +39,26 @@ final class ComboSecurityScheme extends SecurityScheme {
     final jsonLdType = json.parseArrayField<String>("@type");
     final proxy = json.parseUriField("proxy", parsedFields);
 
-    final oneOf = json.parseArrayField<String>("oneOf", parsedFields);
-    final allOf = json.parseArrayField<String>("allOf", parsedFields);
+    final oneOf = json.parseArrayField<String>(
+      "oneOf",
+      parsedFields: parsedFields,
+      minimalSize: 2,
+    );
+    final allOf = json.parseArrayField<String>(
+      "allOf",
+      parsedFields: parsedFields,
+      minimalSize: 2,
+    );
+
+    final count =
+        [oneOf, allOf].whereNotNull().fold(0, (previous, _) => previous + 1);
+
+    if (count != 1) {
+      throw FormatException(
+        "Expected exactly one of allOf or oneOf to be "
+        "defined, but $count were given.",
+      );
+    }
 
     final additionalFields =
         json.parseAdditionalFields(prefixMapping, parsedFields);

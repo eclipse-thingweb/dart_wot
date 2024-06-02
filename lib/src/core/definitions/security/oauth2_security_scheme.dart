@@ -46,7 +46,8 @@ final class OAuth2SecurityScheme extends SecurityScheme {
         json.parseField<String>("authorization", parsedFields);
     final token = json.parseField<String>("token", parsedFields);
     final refresh = json.parseField<String>("refresh", parsedFields);
-    final scopes = json.parseArrayField<String>("scopes", parsedFields);
+    final scopes =
+        json.parseArrayField<String>("scopes", parsedFields: parsedFields);
     final flow = json.parseRequiredField<String>("flow", parsedFields);
 
     final additionalFields =
