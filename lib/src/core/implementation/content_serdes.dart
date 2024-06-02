@@ -10,7 +10,6 @@ import "package:http_parser/http_parser.dart";
 import "package:json_schema/json_schema.dart";
 
 import "../definitions/data_schema.dart";
-import "../exceptions.dart";
 import "../scripting_api/data_schema_value.dart";
 import "codecs/cbor_codec.dart";
 import "codecs/codec_media_type.dart";
@@ -145,7 +144,7 @@ class ContentSerdes {
     }
 
     if (dataSchemaValue == null) {
-      throw const ValidationException("Expected a defined dataSchemaValue");
+      throw const FormatException("Expected a defined dataSchemaValue");
     }
 
     final schema = JsonSchema.create(
@@ -153,7 +152,7 @@ class ContentSerdes {
       schemaVersion: SchemaVersion.draft7,
     );
     if (!schema.validate(dataSchemaValue.value).isValid) {
-      throw const ValidationException("JSON Schema validation failed.");
+      throw const FormatException("JSON Schema validation failed.");
     }
   }
 

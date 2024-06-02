@@ -409,7 +409,7 @@ class ThingDiscovery extends Stream<ThingDescription>
       return dataSchemaValue.value.toThingDescription();
     }
 
-    throw ValidationException(
+    throw FormatException(
       "Encountered wrong datatype ${dataSchemaValue.runtimeType} that cannot "
       "be processed as a Thing Description.",
     );

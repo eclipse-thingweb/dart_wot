@@ -6,7 +6,6 @@
 
 import "package:curie/curie.dart";
 
-import "../../exceptions.dart";
 import "../additional_expected_response.dart";
 import "../context.dart";
 import "../data_schema.dart";
@@ -96,7 +95,7 @@ extension ParseField on Map<String, dynamic> {
   }
 
   /// Parses a single field with a given [name] and throws a
-  /// [ValidationException] if the field is not present or does not have the
+  /// [FormatException] if the field is not present or does not have the
   /// type [T].
   ///
   /// Like [parseField], it adds the field [name] to the set of [parsedFields],
@@ -105,7 +104,7 @@ extension ParseField on Map<String, dynamic> {
     final fieldValue = parseField(name, parsedFields);
 
     if (fieldValue is! T) {
-      throw ValidationException(
+      throw FormatException(
         "Value for field $name has wrong data type or is missing. "
         "Expected ${T.runtimeType}, got ${fieldValue.runtimeType}.",
       );
@@ -115,7 +114,7 @@ extension ParseField on Map<String, dynamic> {
   }
 
   /// Parses a single field with a given [name] as a [Uri] and throws a
-  /// [ValidationException] if the field is not present or cannot be parsed.
+  /// [FormatException] if the field is not present or cannot be parsed.
   ///
   /// If a [Set] of [parsedFields] is passed to this function, the field [name]
   /// will added. This can be used for filtering when parsing additional fields.
@@ -284,7 +283,7 @@ extension ParseField on Map<String, dynamic> {
       return forms;
     }
 
-    throw const ValidationException(
+    throw const FormatException(
       'Missing "forms" member in InteractionAffordance',
     );
   }
@@ -610,7 +609,7 @@ Iterable<ContextEntry> _parseContextEntries(dynamic json) sync* {
           final value = entry.value;
 
           if (value is! String) {
-            throw ValidationException(
+            throw FormatException(
                 "Expected $value to be a String or a Map<String, String> "
                 "as @context entry, got ${value.runtimeType} instead.");
           }
@@ -625,7 +624,7 @@ Iterable<ContextEntry> _parseContextEntries(dynamic json) sync* {
         });
       }
     default:
-      throw ValidationException(
+      throw FormatException(
         "Expected the @context entry $json to "
         "either be a String or a Map<String, String>, "
         "got ${json.runtimeType} instead.",

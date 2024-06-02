@@ -4,7 +4,6 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "../exceptions.dart";
 import "interaction_affordances/interaction_affordance.dart";
 
 /// Enumeration for the possible WoT operation types.
@@ -55,7 +54,7 @@ enum OperationType {
     final operationType = OperationType._registry[stringValue];
 
     if (operationType == null) {
-      throw ValidationException(
+      throw FormatException(
         "Encountered unknown OperationType $stringValue.",
       );
     }

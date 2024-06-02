@@ -52,7 +52,7 @@ void main() {
 
       expect(
         () => augmentedForm.qualityOfService,
-        throwsA(isA<ValidationException>()),
+        throwsA(isA<FormatException>()),
       );
     });
   });

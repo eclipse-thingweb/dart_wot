@@ -258,7 +258,7 @@ void main() {
           "status2",
           uriVariables: uriVariables,
         ),
-        throwsA(const TypeMatcher<ValidationException>()),
+        throwsA(const TypeMatcher<FormatException>()),
       );
 
       await servient.shutdown();

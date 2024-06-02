@@ -4,7 +4,6 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:dart_wot/core.dart";
 import "package:dart_wot/src/core/definitions/context.dart";
 import "package:dart_wot/src/core/definitions/extensions/json_parser.dart";
 import "package:test/test.dart";
@@ -17,7 +16,7 @@ void main() {
 
       expect(
         () => Context([illegalSingleContextEntry]),
-        throwsA(isA<ValidationException>()),
+        throwsA(isA<FormatException>()),
       );
     });
 
@@ -90,7 +89,7 @@ void main() {
     test("only be valid when created from a valid URI", () {
       expect(
         () => SingleContextEntry.fromString("::foobar::"),
-        throwsA(isA<ValidationException>()),
+        throwsA(isA<FormatException>()),
       );
     });
 

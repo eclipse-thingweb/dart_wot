@@ -7,7 +7,6 @@
 import "package:curie/curie.dart";
 import "package:meta/meta.dart";
 
-import "../exceptions.dart";
 import "additional_expected_response.dart";
 import "context.dart";
 import "data_schema.dart";
@@ -60,7 +59,7 @@ class ThingDescription {
     if (validate) {
       final validationResult = thingDescriptionSchema.validate(json);
       if (!validationResult.isValid) {
-        throw ValidationException(
+        throw FormatException(
           "Validation of Thing Description failed.",
           validationResult.errors,
         );

@@ -16,16 +16,6 @@ void main() {
       );
 
       expect(
-        const ValidationException("test").toString(),
-        "ValidationException: test",
-      );
-
-      expect(
-        const ValidationException("test", ["test", "test"]).toString(),
-        "ValidationException: test\n\nErrors:\n\ntest\ntest",
-      );
-
-      expect(
         const DiscoveryException("test").toString(),
         "DiscoveryException: test",
       );

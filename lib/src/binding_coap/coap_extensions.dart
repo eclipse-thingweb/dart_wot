@@ -83,7 +83,7 @@ extension CoapFormExtension on AugmentedForm {
       return BlockSize.fromDecodedValue(value);
       // ignore: avoid_catching_errors
     } on ArgumentError {
-      throw ValidationException(
+      throw FormatException(
         "Encountered invalid blocksize $value in CoAP form",
       );
     }

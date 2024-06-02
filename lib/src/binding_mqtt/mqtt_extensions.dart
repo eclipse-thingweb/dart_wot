@@ -138,7 +138,7 @@ extension MqttFormExtension on AugmentedForm {
 
     // TODO: This validation should maybe already happen earlier.
     if (qosValue != null) {
-      throw ValidationException(
+      throw FormatException(
         "Encountered unknown QoS value $qosValue. "
         "in form with href $href of Thing Description with Identifier "
         "$tdIdentifier.",
