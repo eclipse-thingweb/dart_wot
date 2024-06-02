@@ -389,8 +389,10 @@ extension ParseField on Map<String, dynamic> {
     PrefixMapping prefixMapping,
     Set<String>? parsedFields,
   ) {
-    final fieldValue =
-        parseField<List<Map<String, dynamic>>>("links", parsedFields);
+    final fieldValue = parseArrayField<Map<String, dynamic>>(
+      "links",
+      parsedFields: parsedFields,
+    );
 
     return fieldValue?.map((e) => Link.fromJson(e, prefixMapping)).toList();
   }
