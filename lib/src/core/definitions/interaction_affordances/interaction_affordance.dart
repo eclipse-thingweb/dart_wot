@@ -51,7 +51,7 @@ sealed class InteractionAffordance {
   /// URI template variables as defined in [RFC 6570].
   ///
   /// [RFC 6570]: http://tools.ietf.org/html/rfc6570
-  final Map<String, Object>? uriVariables;
+  final Map<String, DataSchema>? uriVariables;
 
   /// Additional fields that could not be deserialized as class members.
   final Map<String, dynamic>? additionalFields;

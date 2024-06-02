@@ -8,7 +8,7 @@ import "extensions/json_parser.dart";
 
 /// Class representing a WoT Thing Model.
 ///
-/// See W3C WoT Thing Description Specificition, [section 10][spec link].
+/// See W3C WoT Thing Description Specification, [section 10][spec link].
 ///
 /// [spec link]: https://w3c.github.io/wot-thing-description/#thing-model
 class ThingModel {

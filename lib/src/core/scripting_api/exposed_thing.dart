@@ -104,7 +104,7 @@ abstract interface class ExposedThing {
 
   /// Assigns a [handler] function to an event with a given [name].
   ///
-  /// If the event is ubsubscribed, the [handler] function will be called
+  /// If the event is unsubscribed, the [handler] function will be called
   /// to handle the interaction.
   void setEventUnsubscribeHandler(
     String name,
@@ -117,7 +117,7 @@ abstract interface class ExposedThing {
   void setEventHandler(String name, EventListenerHandler handler);
 
   /// Informs all subscribers of an Event with the given [name] that it has
-  /// occured.
+  /// occurred.
   ///
   /// You can provide (optional) input [data] that is emitted with the event.
   Future<void> emitEvent(String name, InteractionInput data);

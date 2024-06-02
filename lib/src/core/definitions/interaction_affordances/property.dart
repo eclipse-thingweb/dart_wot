@@ -26,8 +26,11 @@ class Property extends InteractionAffordance implements DataSchema {
     final Set<String> parsedFields = {};
     final observable =
         json.parseField<bool>("observable", parsedFields) ?? false;
-    final uriVariables =
-        json.parseMapField<Object>("uriVariables", parsedFields);
+    final uriVariables = json.parseDataSchemaMapField(
+      "uriVariables",
+      prefixMapping,
+      parsedFields,
+    );
     final dataSchema = DataSchema.fromJson(json, prefixMapping, parsedFields);
     final forms = json.parseAffordanceForms(
       prefixMapping,
@@ -73,7 +76,7 @@ class Property extends InteractionAffordance implements DataSchema {
   Object? get defaultValue => dataSchema?.defaultValue;
 
   @override
-  List<Object>? get enumeration => dataSchema?.enumeration;
+  List<Object?>? get enumeration => dataSchema?.enumeration;
 
   @override
   String? get format => dataSchema?.format;

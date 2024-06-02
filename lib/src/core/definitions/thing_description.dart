@@ -16,7 +16,6 @@ import "interaction_affordances/interaction_affordance.dart";
 import "link.dart";
 import "security/security_scheme.dart";
 import "thing_model.dart";
-import "validation/thing_description_schema.dart";
 import "version_info.dart";
 
 /// Represents a WoT Thing Description
@@ -51,27 +50,16 @@ class ThingDescription {
   }) : _rawThingDescription = rawThingDescription;
 
   /// Creates a [ThingDescription] from a [json] object.
-
-  factory ThingDescription.fromJson(
-    Map<String, dynamic> json, {
-    bool validate = true,
-  }) {
-    if (validate) {
-      final validationResult = thingDescriptionSchema.validate(json);
-      if (!validationResult.isValid) {
-        throw FormatException(
-          "Validation of Thing Description failed.",
-          validationResult.errors,
-        );
-      }
-    }
-
+  ///
+  /// Throws a [FormatException] if the Thing Description should not be valid.
+  factory ThingDescription.fromJson(Map<String, dynamic> json) {
     final Set<String> parsedFields = {};
 
     final context = json.parseContext(parsedFields);
     final prefixMapping = context.prefixMapping;
 
-    final atType = json.parseArrayField<String>("@type", parsedFields);
+    final atType =
+        json.parseArrayField<String>("@type", parsedFields: parsedFields);
     final title = json.parseRequiredField<String>("title", parsedFields);
     final titles = json.parseMapField<String>("titles", parsedFields);
     final description = json.parseField<String>("description", parsedFields);
@@ -84,13 +72,23 @@ class ThingDescription {
     final base = json.parseUriField("base", parsedFields);
     final id = json.parseField<String>("id", parsedFields);
 
-    final security =
-        json.parseArrayField<String>("security", parsedFields) ?? [];
+    final security = json.parseRequiredArrayField<String>(
+      "security",
+      parsedFields: parsedFields,
+      minimalSize: 1,
+    );
 
     final securityDefinitions =
-        json.parseSecurityDefinitions(prefixMapping, parsedFields) ?? {};
+        json.parseSecurityDefinitions(prefixMapping, parsedFields);
 
     final forms = json.parseForms(prefixMapping, parsedFields);
+    // TODO: Move somewhere else
+    // TODO: Validate correct use of op-values
+    forms?.forEach((form) {
+      if (form.op == null) {
+        throw const FormatException('Missing "op" field in thing-level form.');
+      }
+    });
 
     final properties = json.parseProperties(prefixMapping, parsedFields);
     final actions = json.parseActions(prefixMapping, parsedFields);
@@ -98,14 +96,21 @@ class ThingDescription {
 
     final links = json.parseLinks(prefixMapping, parsedFields);
 
-    final profile = json.parseUriArrayField("profile", parsedFields);
+    final profile = json.parseUriArrayField(
+      "profile",
+      parsedFields: parsedFields,
+      minimalSize: 1,
+    );
     final schemaDefinitions = json.parseDataSchemaMapField(
       "schemaDefinitions",
       prefixMapping,
       parsedFields,
     );
-    final uriVariables =
-        json.parseMapField<Object>("uriVariables", parsedFields);
+    final uriVariables = json.parseDataSchemaMapField(
+      "uriVariables",
+      prefixMapping,
+      parsedFields,
+    );
     final additionalFields =
         json.parseAdditionalFields(prefixMapping, parsedFields);
 
@@ -234,7 +239,7 @@ class ThingDescription {
   /// URI template variables as defined in [RFC 6570].
   ///
   /// [RFC 6570]: http://tools.ietf.org/html/rfc6570
-  final Map<String, Object>? uriVariables;
+  final Map<String, DataSchema>? uriVariables;
 
   /// Additional fields collected during the parsing of a JSON object.
   final Map<String, dynamic>? additionalFields;

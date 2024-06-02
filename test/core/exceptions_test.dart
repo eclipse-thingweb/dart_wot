@@ -9,7 +9,7 @@ import "package:test/test.dart";
 
 void main() {
   group("DartWotException should", () {
-    test("be indicate the respective name in its toString() method", () {
+    test("indicate the respective name in its toString() method", () {
       expect(
         const DartWotException("test").toString(),
         "DartWotException: test",

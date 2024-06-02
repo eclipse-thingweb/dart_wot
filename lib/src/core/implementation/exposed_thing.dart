@@ -13,8 +13,7 @@ import "servient.dart";
 class ExposedThing implements scripting_api.ExposedThing {
   /// Creates a new [ExposedThing] from a [servient] and an [exposedThingInit].
   ExposedThing(this.servient, scripting_api.ExposedThingInit exposedThingInit)
-      : thingDescription =
-            ThingDescription.fromJson(exposedThingInit, validate: false);
+      : thingDescription = ThingDescription.fromJson(exposedThingInit);
 
   @override
   final ThingDescription thingDescription;

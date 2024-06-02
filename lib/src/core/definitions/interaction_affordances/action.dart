@@ -37,8 +37,11 @@ final class Action extends InteractionAffordance {
     final description = json.parseField<String>("description", parsedFields);
     final descriptions =
         json.parseMapField<String>("descriptions", parsedFields);
-    final uriVariables =
-        json.parseMapField<Object>("uriVariables", parsedFields);
+    final uriVariables = json.parseDataSchemaMapField(
+      "uriVariables",
+      prefixMapping,
+      parsedFields,
+    );
 
     final safe = json.parseField<bool>("safe", parsedFields) ?? false;
     final idempotent =
