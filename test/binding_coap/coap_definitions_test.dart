@@ -80,11 +80,11 @@ void main() {
       );
       expect(
         () => invalidForm.block1Size,
-        throwsA(isA<ValidationException>()),
+        throwsA(isA<FormatException>()),
       );
       expect(
         () => invalidForm.block2Size,
-        throwsA(isA<ValidationException>()),
+        throwsA(isA<FormatException>()),
       );
     });
   });

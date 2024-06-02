@@ -23,7 +23,7 @@ void main() {
 
       expect(
         () => ThingDescription.fromJson(illegalThingDescription),
-        throwsA(isA<ValidationException>()),
+        throwsA(isA<FormatException>()),
       );
     });
 
@@ -220,7 +220,7 @@ void main() {
           PrefixMapping(),
           {},
         ),
-        throwsA(isA<ValidationException>()),
+        throwsA(isA<FormatException>()),
       );
     });
 
@@ -481,7 +481,7 @@ void main() {
 
     expect(
       () => OperationType.fromString("test"),
-      throwsA(isA<ValidationException>()),
+      throwsA(isA<FormatException>()),
     );
   });
 
@@ -520,7 +520,7 @@ void main() {
         invalidThingDescription1,
         validate: false,
       ),
-      throwsA(isA<ValidationException>()),
+      throwsA(isA<FormatException>()),
     );
 
     final invalidThingDescription2 = {
@@ -534,7 +534,7 @@ void main() {
 
     expect(
       () => ThingDescription.fromJson(invalidThingDescription2),
-      throwsA(isA<ValidationException>()),
+      throwsA(isA<FormatException>()),
     );
   });
 
@@ -556,7 +556,7 @@ void main() {
 
     expect(
       () => ThingDescription.fromJson(invalidThingDescription1),
-      throwsA(isA<ValidationException>()),
+      throwsA(isA<FormatException>()),
     );
   });
 }

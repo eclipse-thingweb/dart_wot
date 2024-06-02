@@ -10,7 +10,6 @@ import "package:meta/meta.dart";
 import "package:uri/uri.dart";
 
 import "../definitions.dart";
-import "../exceptions.dart";
 
 /// A [Form] augmented with information from its associated [_thingDescription]
 /// and [_interactionAffordance].
@@ -140,7 +139,7 @@ final class AugmentedForm implements Form {
         .where((element) => !affordanceUriVariables.containsKey(element));
 
     if (uncoveredHrefUriVariables.isNotEmpty) {
-      throw ValidationException(
+      throw FormatException(
           "The following URI template variables defined in the form's href "
           "but are not covered by a uriVariable entry at the TD or affordance "
           "level: ${uncoveredHrefUriVariables.join(", ")}.");
@@ -162,7 +161,7 @@ final class AugmentedForm implements Form {
       final result = schema.validate(userProvidedValue);
 
       if (!result.isValid) {
-        throw ValidationException("Invalid type for URI variable $key");
+        throw FormatException("Invalid type for URI variable $key");
       }
     }
   }

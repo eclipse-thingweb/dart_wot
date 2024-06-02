@@ -194,7 +194,7 @@ void main() {
 
       expect(
         () => augmentedForm4.resolvedHref,
-        throwsA(isA<ValidationException>()),
+        throwsA(isA<FormatException>()),
       );
 
       final augmentedForm5 = AugmentedForm(
@@ -209,7 +209,7 @@ void main() {
 
       expect(
         () => augmentedForm5.resolvedHref,
-        throwsA(isA<ValidationException>()),
+        throwsA(isA<FormatException>()),
       );
 
       final augmentedForm6 = AugmentedForm(

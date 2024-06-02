@@ -39,7 +39,7 @@ void main() {
       expect(thingDescriptionJson, thingDescription.toJson());
     });
 
-    test("throw a ValidationException when it is invalid during parsing", () {
+    test("throw a FormatException when it is invalid during parsing", () {
       const thingDescriptionJson = {
         "@context": [
           "https://www.w3.org/2022/wot/td/v1.1",
@@ -52,7 +52,7 @@ void main() {
 
       expect(
         () => ThingDescription.fromJson(thingDescriptionJson),
-        throwsA(isA<ValidationException>()),
+        throwsA(isA<FormatException>()),
       );
     });
 

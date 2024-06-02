@@ -8,8 +8,6 @@ import "package:collection/collection.dart";
 import "package:curie/curie.dart";
 import "package:meta/meta.dart";
 
-import "../exceptions.dart";
-
 const _tdVersion10ContextUrl = "https://www.w3.org/2019/wot/td/v1";
 const _tdVersion11ContextUrl = "https://www.w3.org/2022/wot/td/v1.1";
 
@@ -30,14 +28,14 @@ final class Context {
     final firstContextEntry = contextEntries.firstOrNull;
 
     if (firstContextEntry is! SingleContextEntry) {
-      throw const ValidationException("Missing TD context URL.");
+      throw const FormatException("Missing TD context URL.");
     }
 
     final firstContextValue = firstContextEntry.value;
 
     if (![_tdVersion10ContextUrl, _tdVersion11ContextUrl]
         .contains(firstContextValue)) {
-      throw ValidationException(
+      throw FormatException(
         "Encountered invalid TD context URL $firstContextEntry",
       );
     }
@@ -142,12 +140,12 @@ final class SingleContextEntry extends ContextEntry {
   /// Creates a new [SingleContextEntry] from a [string] that represents a URI.
   ///
   /// If the [string] should not be a valid URI, this factory constructor will
-  /// throw a [ValidationException].
+  /// throw a [FormatException].
   factory SingleContextEntry.fromString(String string) {
     final parsedUri = Uri.tryParse(string);
 
     if (parsedUri == null) {
-      throw ValidationException("Encountered invalid URI $string");
+      throw FormatException("Encountered invalid URI $string");
     }
 
     return SingleContextEntry(parsedUri);
