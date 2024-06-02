@@ -57,7 +57,7 @@ abstract interface class WoT {
   /// The [exposedThingInit] is a Thing Description which does not have to
   /// include all fields that are usually required for a TD.
   /// Missing information is added during the production of the [ExposedThing],
-  /// based on the underlying impementation.
+  /// based on the underlying implementation.
   Future<ExposedThing> produce(ExposedThingInit exposedThingInit);
 
   /// Requests a [ThingDescription] from the given [url].

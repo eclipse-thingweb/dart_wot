@@ -28,7 +28,7 @@ abstract interface class InteractionOutput {
   /// [InteractionOutput].
   DataSchema? get schema;
 
-  /// Asyncronously creates a [ByteBuffer] representation of the value of
+  /// Asynchronously creates a [ByteBuffer] representation of the value of
   /// of the [InteractionOutput].
   ///
   /// Follows the algorithm defined for the `arrayBuffer()` function in the

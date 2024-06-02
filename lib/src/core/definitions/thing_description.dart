@@ -148,7 +148,7 @@ class ThingDescription {
     throw UnimplementedError();
   }
 
-  /// Converts this [ThingDescription] to a [Map] resembling a JSON objct.
+  /// Converts this [ThingDescription] to a [Map] resembling a JSON object.
   // TODO: Revisit this for dynamic serialization
   Map<String, dynamic> toJson() => _rawThingDescription;
 
