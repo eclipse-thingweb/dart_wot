@@ -100,4 +100,42 @@ final class Action extends InteractionAffordance {
   /// the status of the action is needed. Lack of this keyword means that no
   /// claim on the synchronicity of the action can be made.
   final bool? synchronous;
+
+  /// Converts this [InteractionAffordance] to a [Map] resembling a JSON
+  /// object.
+  @override
+  Map<String, dynamic> toJson() {
+    final result = {
+      ...super.toJson(),
+    };
+
+    for (final (key, value) in [("idempotent", idempotent), ("safe", safe)]) {
+      if (value) {
+        result[key] = value;
+      }
+    }
+
+    final keyValuePairs = [
+      ("input", input),
+      ("output", output),
+      ("synchronous", synchronous),
+    ];
+
+    for (final (key, value) in keyValuePairs) {
+      final dynamic convertedValue;
+
+      switch (value) {
+        case null:
+          continue;
+        case DataSchema():
+          convertedValue = value.toJson();
+        default:
+          convertedValue = value;
+      }
+
+      result[key] = convertedValue;
+    }
+
+    return result;
+  }
 }

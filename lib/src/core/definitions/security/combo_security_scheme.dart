@@ -86,4 +86,19 @@ final class ComboSecurityScheme extends SecurityScheme {
 
   @override
   String get scheme => comboSecuritySchemeName;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final result = super.toJson();
+
+    if (oneOf != null) {
+      result["oneOf"] = oneOf;
+    }
+
+    if (allOf != null) {
+      result["allOf"] = allOf;
+    }
+
+    return result;
+  }
 }

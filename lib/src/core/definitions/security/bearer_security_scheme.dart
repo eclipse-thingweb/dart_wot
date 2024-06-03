@@ -88,4 +88,24 @@ final class BearerSecurityScheme extends SecurityScheme {
 
   @override
   String get scheme => bearerSecuritySchemeName;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final result = <String, dynamic>{
+      "in": in_,
+      "alg": alg,
+      "format": format,
+      ...super.toJson(),
+    };
+
+    if (name != null) {
+      result["name"] = name;
+    }
+
+    if (authorization != null) {
+      result["authorization"] = authorization;
+    }
+
+    return result;
+  }
 }

@@ -10,11 +10,12 @@ import "package:meta/meta.dart";
 import "additional_expected_response.dart";
 import "expected_response.dart";
 import "extensions/json_parser.dart";
+import "extensions/serializable.dart";
 import "operation_type.dart";
 
 /// Contains the information needed for performing interactions with a Thing.
 @immutable
-class Form {
+class Form implements Serializable {
   /// Creates a new [Form] object.
   ///
   /// An [href] has to be provided. A [contentType] is optional.
@@ -128,4 +129,49 @@ class Form {
 
   /// Additional fields collected during the parsing of a JSON object.
   final Map<String, dynamic> additionalFields = {};
+
+  @override
+  Map<String, dynamic> toJson() {
+    final result = {
+      "href": href.toString(),
+      "contentType": contentType,
+      ...additionalFields,
+    };
+
+    if (subprotocol != null) {
+      result["subprotocol"] = subprotocol;
+    }
+
+    final op = this.op;
+    if (op != null) {
+      result["op"] =
+          op.map((opValue) => opValue.toString()).toList(growable: false);
+    }
+
+    if (contentCoding != null) {
+      result["contentCoding"] = contentCoding;
+    }
+
+    if (security != null) {
+      result["security"] = security;
+    }
+
+    if (scopes != null) {
+      result["scopes"] = scopes;
+    }
+
+    final response = this.response;
+    if (response != null) {
+      result["response"] = response.toJson();
+    }
+
+    final additionalResponses = this.additionalResponses;
+    if (additionalResponses != null) {
+      result["additionalResponses"] = additionalResponses
+          .map((additionalResponse) => additionalResponse.toJson())
+          .toList(growable: false);
+    }
+
+    return result;
+  }
 }

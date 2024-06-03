@@ -6,17 +6,19 @@
 
 import "package:meta/meta.dart";
 
+import "../extensions/serializable.dart";
+
 /// Class that contains metadata describing the configuration of a security
 /// mechanism.
 @immutable
-abstract base class SecurityScheme {
+abstract base class SecurityScheme implements Serializable {
   /// Constructor.
   const SecurityScheme({
     this.jsonLdType,
     this.description,
     this.proxy,
     this.descriptions,
-    this.additionalFields,
+    this.additionalFields = const {},
   });
 
   /// The actual security [scheme] identifier.
@@ -41,5 +43,38 @@ abstract base class SecurityScheme {
   final List<String>? jsonLdType;
 
   /// Additional fields collected during the parsing of a JSON object.
-  final Map<String, dynamic>? additionalFields;
+  final Map<String, dynamic> additionalFields;
+
+  @mustCallSuper
+  @override
+  Map<String, dynamic> toJson() {
+    final result = <String, dynamic>{
+      "scheme": scheme,
+      ...additionalFields,
+    };
+
+    final keyValuePairs = [
+      ("description", description),
+      ("descriptions", descriptions),
+      ("@type", jsonLdType),
+      ("proxy", proxy),
+    ];
+
+    for (final (key, value) in keyValuePairs) {
+      final dynamic convertedValue;
+
+      switch (value) {
+        case null:
+          continue;
+        case Uri():
+          convertedValue = value.toString();
+        default:
+          convertedValue = value;
+      }
+
+      result[key] = convertedValue;
+    }
+
+    return result;
+  }
 }

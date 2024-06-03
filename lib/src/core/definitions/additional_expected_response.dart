@@ -9,17 +9,18 @@ import "package:curie/curie.dart";
 import "package:meta/meta.dart";
 
 import "extensions/json_parser.dart";
+import "extensions/serializable.dart";
 
 /// Communication metadata describing the expected response message for the
 /// primary response.
 @immutable
-class AdditionalExpectedResponse {
+class AdditionalExpectedResponse implements Serializable {
   /// Constructs a new [AdditionalExpectedResponse] object from a [contentType].
   const AdditionalExpectedResponse(
     this.contentType, {
     this.schema,
     this.success = false,
-    this.additionalFields,
+    this.additionalFields = const {},
   });
 
   /// Creates an [AdditionalExpectedResponse] from a [json] object.
@@ -61,7 +62,7 @@ class AdditionalExpectedResponse {
   final String? schema;
 
   /// Any other additional field will be included in this [Map].
-  final Map<String, dynamic>? additionalFields;
+  final Map<String, dynamic> additionalFields;
 
   @override
   bool operator ==(Object other) {
@@ -79,4 +80,22 @@ class AdditionalExpectedResponse {
   @override
   int get hashCode =>
       Object.hash(success, schema, contentType, additionalFields);
+
+  @override
+  Map<String, dynamic> toJson() {
+    final result = {
+      "contentType": contentType,
+      ...additionalFields,
+    };
+
+    if (success) {
+      result["success"] = success;
+    }
+
+    if (schema != null) {
+      result["schema"] = schema;
+    }
+
+    return result;
+  }
 }

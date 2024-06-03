@@ -147,9 +147,6 @@ class Property extends InteractionAffordance implements DataSchema {
   final bool observable;
 
   @override
-  Map<String, dynamic>? get rawJson => dataSchema?.rawJson;
-
-  @override
   Map<String, dynamic> get additionalFields =>
       dataSchema?.additionalFields ?? {};
 }

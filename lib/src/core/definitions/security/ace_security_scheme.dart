@@ -81,4 +81,27 @@ final class AceSecurityScheme extends SecurityScheme {
 
   /// Indicates whether a [cnonce] is required by the Resource Server.
   final bool? cnonce;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final result = super.toJson();
+
+    if (as != null) {
+      result["ace:as"] = as.toString();
+    }
+
+    if (audience != null) {
+      result["ace:audience"] = audience;
+    }
+
+    if (scopes != null) {
+      result["ace:scopes"] = scopes;
+    }
+
+    if (cnonce != null) {
+      result["ace:cnonce"] = cnonce;
+    }
+
+    return result;
+  }
 }

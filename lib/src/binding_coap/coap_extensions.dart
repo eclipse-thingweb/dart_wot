@@ -116,7 +116,7 @@ extension CoapFormExtension on AugmentedForm {
 extension CoapExpectedResponseExtension on ExpectedResponse {
   T? _obtainVocabularyTerm<T>(String vocabularyTerm) {
     final curieString = coapPrefixMapping.expandCurieString(vocabularyTerm);
-    final formDefinition = additionalFields?[curieString];
+    final formDefinition = additionalFields[curieString];
 
     if (formDefinition is T) {
       return formDefinition;

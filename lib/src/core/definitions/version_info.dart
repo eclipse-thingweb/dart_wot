@@ -18,7 +18,7 @@ class VersionInfo {
   VersionInfo(
     this.instance, {
     this.model,
-    this.additionalFields,
+    this.additionalFields = const {},
   });
 
   /// Creates a new [VersionInfo] instance from a [json] object.
@@ -47,5 +47,19 @@ class VersionInfo {
   final String? model;
 
   /// Additional fields collected during the parsing of a JSON object.
-  final Map<String, dynamic>? additionalFields;
+  final Map<String, dynamic> additionalFields;
+
+  /// Converts this [VersionInfo] to a [Map] resembling a JSON object.
+  Map<String, dynamic> toJson() {
+    final result = {
+      "instance": instance,
+      ...additionalFields,
+    };
+
+    if (model != null) {
+      result["model"] = model;
+    }
+
+    return result;
+  }
 }

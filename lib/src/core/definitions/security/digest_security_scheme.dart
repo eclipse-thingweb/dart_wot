@@ -74,4 +74,19 @@ final class DigestSecurityScheme extends SecurityScheme {
 
   @override
   String get scheme => digestSecuritySchemeName;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final result = <String, dynamic>{
+      "in": in_,
+      "qop": qop,
+      ...super.toJson(),
+    };
+
+    if (name != null) {
+      result["name"] = name;
+    }
+
+    return result;
+  }
 }

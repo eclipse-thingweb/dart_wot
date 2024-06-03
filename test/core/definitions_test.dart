@@ -145,7 +145,6 @@ void main() {
         const AdditionalExpectedResponse(
           "application/json",
           schema: "hallo",
-          additionalFields: {},
         ),
       ]);
       expect(form3.additionalFields, {"test": "test"});
@@ -491,7 +490,7 @@ void main() {
       additionalFields: {"test": "test"},
     );
 
-    expect(firstResponse.additionalFields?["test"], "test");
+    expect(firstResponse.additionalFields["test"], "test");
 
     final expectedResponseJson = {
       "contentType": "application/json",
@@ -502,7 +501,7 @@ void main() {
         ExpectedResponse.fromJson(expectedResponseJson, PrefixMapping());
 
     expect(secondResponse, isA<ExpectedResponse>());
-    expect(secondResponse.additionalFields?["test"], "test");
+    expect(secondResponse.additionalFields["test"], "test");
   });
 
   test("Should reject invalid @context entries", () {

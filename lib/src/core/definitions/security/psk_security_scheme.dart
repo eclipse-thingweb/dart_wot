@@ -57,4 +57,15 @@ final class PskSecurityScheme extends SecurityScheme {
 
   @override
   String get scheme => pskSecuritySchemeName;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final result = super.toJson();
+
+    if (identity != null) {
+      result["identity"] = identity;
+    }
+
+    return result;
+  }
 }

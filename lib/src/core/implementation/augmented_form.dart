@@ -157,7 +157,7 @@ final class AugmentedForm implements Form {
       }
 
       final schemaValue = affordanceUriVariable.value;
-      final schema = JsonSchema.create(schemaValue.rawJson ?? {});
+      final schema = JsonSchema.create(schemaValue.toJson());
       final result = schema.validate(userProvidedValue);
 
       if (!result.isValid) {
@@ -165,4 +165,7 @@ final class AugmentedForm implements Form {
       }
     }
   }
+
+  @override
+  Map<String, dynamic> toJson() => _form.toJson();
 }

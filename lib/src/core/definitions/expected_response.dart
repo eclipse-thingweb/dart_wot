@@ -8,15 +8,16 @@ import "package:curie/curie.dart";
 import "package:meta/meta.dart";
 
 import "extensions/json_parser.dart";
+import "extensions/serializable.dart";
 
 /// Communication metadata describing the expected response message for the
 /// primary response.
 @immutable
-class ExpectedResponse {
+class ExpectedResponse implements Serializable {
   /// Constructs a new [ExpectedResponse] object from a [contentType].
   const ExpectedResponse(
     this.contentType, {
-    this.additionalFields,
+    this.additionalFields = const {},
   });
 
   /// Creates an [ExpectedResponse] from a [json] object.
@@ -38,5 +39,11 @@ class ExpectedResponse {
   final String contentType;
 
   /// Any other additional field will be included in this [Map].
-  final Map<String, dynamic>? additionalFields;
+  final Map<String, dynamic> additionalFields;
+
+  @override
+  Map<String, dynamic> toJson() => {
+        "contentType": contentType,
+        ...additionalFields,
+      };
 }

@@ -49,6 +49,9 @@ enum OperationType {
   static final Map<String, OperationType> _registry =
       Map.fromEntries(OperationType.values.map((e) => MapEntry(e.name, e)));
 
+  @override
+  String toString() => name;
+
   /// Creates an [OperationType] from a [stringValue].
   static OperationType fromString(String stringValue) {
     final operationType = OperationType._registry[stringValue];
