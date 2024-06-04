@@ -55,6 +55,12 @@ extension ParseField on Map<String, dynamic> {
       return fieldValue;
     }
 
+    if ((T == Map<String, dynamic>) &&
+        fieldValue is Map &&
+        fieldValue.isEmpty) {
+      return <String, dynamic>{} as T;
+    }
+
     throw FormatException("Expected $T, got ${fieldValue.runtimeType}");
   }
 
@@ -149,6 +155,10 @@ extension ParseField on Map<String, dynamic> {
 
     if (!containsKey(name)) {
       return null;
+    }
+
+    if (fieldValue is Map && fieldValue.isEmpty) {
+      return {};
     }
 
     if (fieldValue is Map<String, dynamic>) {

@@ -53,6 +53,8 @@ final class OAuth2SecurityScheme extends SecurityScheme {
     final additionalFields =
         json.parseAdditionalFields(prefixMapping, parsedFields);
 
+    // TODO: Add validation for the different flow-specific assertions
+    //       https://www.w3.org/TR/wot-thing-description11/#oauth2securityscheme
     return OAuth2SecurityScheme(
       flow,
       description: description,
@@ -92,4 +94,30 @@ final class OAuth2SecurityScheme extends SecurityScheme {
 
   @override
   String get scheme => oAuth2SecuritySchemeName;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final result = <String, dynamic>{
+      "flow": flow,
+      ...super.toJson(),
+    };
+
+    if (authorization != null) {
+      result["authorization"] = authorization;
+    }
+
+    if (token != null) {
+      result["token"] = token;
+    }
+
+    if (refresh != null) {
+      result["refresh"] = refresh;
+    }
+
+    if (scopes != null) {
+      result["scopes"] = scopes;
+    }
+
+    return result;
+  }
 }

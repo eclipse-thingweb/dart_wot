@@ -11,6 +11,7 @@ import "additional_expected_response.dart";
 import "context.dart";
 import "data_schema.dart";
 import "extensions/json_parser.dart";
+import "extensions/json_serializer.dart";
 import "form.dart";
 import "interaction_affordances/interaction_affordance.dart";
 import "link.dart";
@@ -27,7 +28,6 @@ class ThingDescription {
     required this.title,
     required this.security,
     required this.securityDefinitions,
-    required Map<String, dynamic> rawThingDescription,
     this.titles,
     this.atType,
     this.id,
@@ -47,7 +47,7 @@ class ThingDescription {
     this.description,
     this.version,
     this.uriVariables,
-  }) : _rawThingDescription = rawThingDescription;
+  });
 
   /// Creates a [ThingDescription] from a [json] object.
   ///
@@ -138,7 +138,6 @@ class ThingDescription {
       security: security,
       securityDefinitions: securityDefinitions,
       atType: atType,
-      rawThingDescription: json,
     );
   }
 
@@ -149,10 +148,106 @@ class ThingDescription {
   }
 
   /// Converts this [ThingDescription] to a [Map] resembling a JSON object.
-  // TODO: Revisit this for dynamic serialization
-  Map<String, dynamic> toJson() => _rawThingDescription;
+  Map<String, dynamic> toJson() {
+    final result = <String, dynamic>{
+      "@context": context.toJson(),
+      "title": title,
+      "securityDefinitions": securityDefinitions.map(
+        (key, securityDefinition) => MapEntry(
+          key,
+          securityDefinition.toJson(),
+        ),
+      ),
+      "security": security,
+    };
 
-  final Map<String, dynamic> _rawThingDescription;
+    if (titles != null) {
+      result["titles"] = titles;
+    }
+
+    if (description != null) {
+      result["description"] = description;
+    }
+
+    if (descriptions != null) {
+      result["descriptions"] = descriptions;
+    }
+
+    final version = this.version;
+    if (version != null) {
+      result["version"] = version.toJson();
+    }
+
+    final created = this.created;
+    if (created != null) {
+      result["created"] = created.toIso8601String();
+    }
+
+    final modified = this.modified;
+    if (modified != null) {
+      result["modified"] = modified.toIso8601String();
+    }
+
+    if (support != null) {
+      result["support"] = support.toString();
+    }
+
+    if (base != null) {
+      result["base"] = base.toString();
+    }
+
+    if (id != null) {
+      result["id"] = id;
+    }
+
+    final forms = this.forms;
+    if (forms != null) {
+      result["forms"] = forms.map((form) => form.toJson());
+    }
+
+    final properties = this.properties;
+    if (properties != null) {
+      result["properties"] =
+          (properties as Map<String, InteractionAffordance>).toJson();
+    }
+
+    final actions = this.actions;
+    if (actions != null) {
+      result["actions"] = actions.toJson();
+    }
+
+    final events = this.events;
+    if (events != null) {
+      result["events"] = events.toJson();
+    }
+
+    final atType = this.atType;
+    if (atType != null) {
+      result["@type"] = atType;
+    }
+
+    final schemaDefinitions = this.schemaDefinitions;
+    if (schemaDefinitions != null) {
+      result["schemaDefinitions"] = schemaDefinitions.toJson();
+    }
+
+    final links = this.links;
+    if (links != null) {
+      result["links"] = links.toJson();
+    }
+
+    final uriVariables = this.uriVariables;
+    if (uriVariables != null) {
+      result["uriVariables"] = uriVariables.toJson();
+    }
+
+    final profile = this.profile;
+    if (profile != null) {
+      result["profile"] = profile.toJson();
+    }
+
+    return result;
+  }
 
   /// Contains the values of the @context for CURIE expansion.
   PrefixMapping get prefixMapping => context.prefixMapping;

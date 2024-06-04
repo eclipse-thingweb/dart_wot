@@ -65,4 +65,18 @@ final class BasicSecurityScheme extends SecurityScheme {
 
   @override
   String get scheme => basicSecuritySchemeName;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final result = <String, dynamic>{
+      "in": in_,
+      ...super.toJson(),
+    };
+
+    if (name != null) {
+      result["name"] = name;
+    }
+
+    return result;
+  }
 }

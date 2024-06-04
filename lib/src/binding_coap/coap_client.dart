@@ -284,7 +284,7 @@ final class CoapClient extends ProtocolClient
 
     return AuthServerRequestCreationHint(
       authorizationServer:
-          aceSecurityScheme.as ?? creationHint?.authorizationServer,
+          aceSecurityScheme.as?.toString() ?? creationHint?.authorizationServer,
       scope: scope ?? creationHint?.scope,
       audience: aceSecurityScheme.audience ?? creationHint?.audience,
       clientNonce: creationHint?.clientNonce,

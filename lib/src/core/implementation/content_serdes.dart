@@ -137,9 +137,12 @@ class ContentSerdes {
     //              needs to be reworked.
     const filteredKeys = ["uriVariables"];
 
-    final filteredDataSchemaJson = dataSchema.rawJson?.entries
+    final filteredDataSchemaJson = dataSchema
+        .toJson()
+        .entries
         .where((element) => !filteredKeys.contains(element.key));
-    if (filteredDataSchemaJson == null || filteredDataSchemaJson.isEmpty) {
+
+    if (filteredDataSchemaJson.isEmpty) {
       return;
     }
 

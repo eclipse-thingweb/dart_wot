@@ -40,7 +40,7 @@ final class AceSecurityScheme extends SecurityScheme {
     final jsonLdType = json.parseArrayField<String>("@type");
     final proxy = json.parseUriField("proxy", parsedFields);
 
-    final as = json.parseField<String>("ace:as", parsedFields);
+    final as = json.parseUriField("ace:as", parsedFields);
     final cnonce = json.parseField<bool>("ace:cnonce", parsedFields);
     final audience = json.parseField<String>("ace:audience", parsedFields);
     final scopes =
@@ -66,7 +66,7 @@ final class AceSecurityScheme extends SecurityScheme {
   String get scheme => aceSecuritySchemeName;
 
   /// URI of the authorization server.
-  final String? as;
+  final Uri? as;
 
   /// The intended audience for this [AceSecurityScheme].
   final String? audience;
@@ -81,4 +81,27 @@ final class AceSecurityScheme extends SecurityScheme {
 
   /// Indicates whether a [cnonce] is required by the Resource Server.
   final bool? cnonce;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final result = super.toJson();
+
+    if (as != null) {
+      result["ace:as"] = as.toString();
+    }
+
+    if (audience != null) {
+      result["ace:audience"] = audience;
+    }
+
+    if (scopes != null) {
+      result["ace:scopes"] = scopes;
+    }
+
+    if (cnonce != null) {
+      result["ace:cnonce"] = cnonce;
+    }
+
+    return result;
+  }
 }

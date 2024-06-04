@@ -8,12 +8,14 @@ import "package:collection/collection.dart";
 import "package:curie/curie.dart";
 import "package:meta/meta.dart";
 
+import "extensions/serializable.dart";
+
 const _tdVersion10ContextUrl = "https://www.w3.org/2019/wot/td/v1";
 const _tdVersion11ContextUrl = "https://www.w3.org/2022/wot/td/v1.1";
 
 /// Represents the JSON-LD `@context` of a Thing Description or Thing Model.
 @immutable
-final class Context {
+final class Context implements Serializable {
   /// Creates a new context from a list of [contextEntries].
   Context(this.contextEntries)
       : prefixMapping = _createPrefixMapping(contextEntries);
@@ -114,6 +116,28 @@ final class Context {
 
   @override
   int get hashCode => Object.hashAll(contextEntries);
+
+  @override
+  List<dynamic> toJson() {
+    final result = <dynamic>[];
+    final mapResult = <String, String>{};
+
+    for (final contextEntry in contextEntries) {
+      switch (contextEntry) {
+        case SingleContextEntry(:final uri):
+          result.add(uri.toString());
+        case MapContextEntry(:final key, :final value):
+          //TODO: Could there be duplicate keys?
+          mapResult[key] = value;
+      }
+    }
+
+    if (mapResult.isNotEmpty) {
+      result.add(mapResult);
+    }
+
+    return result;
+  }
 }
 
 /// Base class for `@context` entries.

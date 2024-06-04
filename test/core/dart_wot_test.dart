@@ -48,7 +48,7 @@ void main() {
             "href": "https://example.org",
             "rel": "icon",
             "anchor": "https://example.org",
-            "@type": "test",
+            "type": "test",
             "sizes": "42x42",
             "test": "test",
             "hreflang": "de",
@@ -86,7 +86,7 @@ void main() {
       expect(parsedLink?.type, "test");
       expect(parsedLink?.sizes, "42x42");
       expect(parsedLink?.hreflang, ["de"]);
-      expect(parsedLink?.additionalFields?["test"], "test");
+      expect(parsedLink?.additionalFields["test"], "test");
 
       final secondParsedLink = parsedTd.links?[1];
       expect(secondParsedLink?.hreflang, ["de", "en"]);
@@ -108,12 +108,12 @@ void main() {
       expect(link.hreflang, ["de"]);
       expect(link.type, "test");
       expect(link.sizes, "42");
-      expect(link.additionalFields?["test"], "test");
+      expect(link.additionalFields["test"], "test");
 
       final link2 = Link(Uri.parse("https://example.org"));
       expect(link2.href, Uri.parse("https://example.org"));
       expect(link2.anchor, null);
-      expect(link2.additionalFields, isNull);
+      expect(link2.additionalFields, const {});
     });
   });
 }

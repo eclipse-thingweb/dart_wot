@@ -8,6 +8,8 @@ import "package:curie/curie.dart";
 import "package:meta/meta.dart";
 
 import "extensions/json_parser.dart";
+import "extensions/json_serializer.dart";
+import "extensions/serializable.dart";
 
 /// Metadata that describes the data format used. It can be used for validation.
 ///
@@ -15,7 +17,7 @@ import "extensions/json_parser.dart";
 ///
 /// [spec link]: https://w3c.github.io/wot-thing-description/#dataschema
 @immutable
-class DataSchema {
+class DataSchema implements Serializable {
   /// Constructor
   const DataSchema({
     this.atType,
@@ -47,8 +49,7 @@ class DataSchema {
     this.pattern,
     this.contentEncoding,
     this.contentMediaType,
-    this.rawJson,
-    this.additionalFields,
+    this.additionalFields = const {},
   });
 
   // TODO: Consider creating separate classes for each data type.
@@ -83,7 +84,7 @@ class DataSchema {
     final minimum = json.parseField<num>("minimum", parsedFields);
     final exclusiveMinimum =
         json.parseField<num>("exclusiveMinimum", parsedFields);
-    final maximum = json.parseField<num>("minimum", parsedFields);
+    final maximum = json.parseField<num>("maximum", parsedFields);
     final exclusiveMaximum =
         json.parseField<num>("exclusiveMaximum", parsedFields);
     final multipleOf = json.parseField<num>("multipleOf", parsedFields);
@@ -136,7 +137,6 @@ class DataSchema {
       contentMediaType: contentMediaType,
       oneOf: oneOf,
       properties: properties,
-      rawJson: json,
       additionalFields: additionalFields,
     );
   }
@@ -274,8 +274,63 @@ class DataSchema {
   final String? contentMediaType;
 
   /// Additional fields that could not be deserialized as class members.
-  final Map<String, dynamic>? additionalFields;
+  final Map<String, dynamic> additionalFields;
 
-  /// The original JSON object that was parsed when creating this [DataSchema].
-  final Map<String, dynamic>? rawJson;
+  @override
+  Map<String, dynamic> toJson() {
+    final result = {
+      ...additionalFields,
+    };
+
+    final keyValuePairs = [
+      ("@type", atType),
+      ("title", title),
+      ("titles", titles),
+      ("description", description),
+      ("descriptions", descriptions),
+      ("const", constant),
+      ("default", defaultValue),
+      ("enum", enumeration),
+      ("readOnly", readOnly),
+      ("writeOnly", writeOnly),
+      ("format", format),
+      ("unit", unit),
+      ("type", type),
+      ("minimum", minimum),
+      ("exclusiveMinimum", exclusiveMinimum),
+      ("maximum", maximum),
+      ("exclusiveMaximum", exclusiveMaximum),
+      ("multipleOf", multipleOf),
+      ("items", items),
+      ("minItems", minItems),
+      ("maxItems", maxItems),
+      ("required", required),
+      ("minLength", minLength),
+      ("maxLength", maxLength),
+      ("pattern", pattern),
+      ("contentEncoding", contentEncoding),
+      ("contentMediaType", contentMediaType),
+      ("oneOf", oneOf),
+      ("properties", properties),
+    ];
+
+    for (final (key, value) in keyValuePairs) {
+      final dynamic convertedValue;
+
+      switch (value) {
+        case null:
+          continue;
+        case List<Serializable>():
+          convertedValue = value.toJson();
+        case Map<String, Serializable>():
+          convertedValue = value.toJson();
+        default:
+          convertedValue = value;
+      }
+
+      result[key] = convertedValue;
+    }
+
+    return result;
+  }
 }

@@ -8,6 +8,7 @@ import "package:curie/curie.dart";
 import "package:meta/meta.dart";
 
 import "extensions/json_parser.dart";
+import "extensions/serializable.dart";
 
 /// Represents an element of the `links` array in a Thing Description.
 ///
@@ -15,7 +16,7 @@ import "extensions/json_parser.dart";
 /// type resource at link target", where the optional target attributes may
 /// further describe the resource.
 @immutable
-class Link {
+class Link implements Serializable {
   /// Constructor.
   const Link(
     this.href, {
@@ -24,7 +25,7 @@ class Link {
     this.anchor,
     this.sizes,
     this.hreflang,
-    this.additionalFields,
+    this.additionalFields = const {},
   });
 
   /// Creates a new [Link] from a [json] object.
@@ -35,7 +36,7 @@ class Link {
     final Set<String> parsedFields = {};
 
     final href = json.parseRequiredUriField("href", parsedFields);
-    final type = json.parseField<String>("@type", parsedFields);
+    final type = json.parseField<String>("type", parsedFields);
     final rel = json.parseField<String>("rel", parsedFields);
     final anchor = json.parseUriField("anchor", parsedFields);
     final sizes = json.parseField<String>("sizes", parsedFields);
@@ -83,5 +84,33 @@ class Link {
   final List<String>? hreflang;
 
   /// Additional fields collected during the parsing of a JSON object.
-  final Map<String, dynamic>? additionalFields;
+  final Map<String, dynamic> additionalFields;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final result = {
+      "href": href.toString(),
+      ...additionalFields,
+    };
+
+    final anchor = this.anchor;
+    if (anchor != null) {
+      result["anchor"] = anchor.toString();
+    }
+
+    final keyValuePairs = [
+      ("type", type),
+      ("rel", rel),
+      ("sizes", sizes),
+      ("hreflang", hreflang),
+    ];
+
+    for (final (key, value) in keyValuePairs) {
+      if (value != null) {
+        result[key] = value;
+      }
+    }
+
+    return result;
+  }
 }

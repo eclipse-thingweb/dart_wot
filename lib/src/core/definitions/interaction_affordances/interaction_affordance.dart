@@ -13,6 +13,8 @@ import "package:meta/meta.dart";
 
 import "../data_schema.dart";
 import "../extensions/json_parser.dart";
+import "../extensions/json_serializer.dart";
+import "../extensions/serializable.dart";
 import "../form.dart";
 
 part "action.dart";
@@ -21,17 +23,21 @@ part "property.dart";
 
 /// Base class for Interaction Affordances (Properties, Actions, and Events).
 @immutable
-sealed class InteractionAffordance {
+sealed class InteractionAffordance implements Serializable {
   /// Creates a new [InteractionAffordance]. Accepts a [List] of [forms].
   const InteractionAffordance({
+    this.atType,
     this.title,
     this.titles,
     this.description,
     this.descriptions,
     this.uriVariables,
     required this.forms,
-    this.additionalFields,
+    this.additionalFields = const {},
   });
+
+  /// /// JSON-LD keyword to label the object with semantic tags (or types).
+  final List<String>? atType;
 
   /// The default [title] of this [InteractionAffordance].
   final String? title;
@@ -54,5 +60,40 @@ sealed class InteractionAffordance {
   final Map<String, DataSchema>? uriVariables;
 
   /// Additional fields that could not be deserialized as class members.
-  final Map<String, dynamic>? additionalFields;
+  final Map<String, dynamic> additionalFields;
+
+  @mustCallSuper
+  @override
+  Map<String, dynamic> toJson() {
+    final result = {
+      "forms": forms.toJson(),
+      ...additionalFields,
+    };
+
+    final keyValuePairs = [
+      ("@type", atType),
+      ("title", title),
+      ("titles", titles),
+      ("description", description),
+      ("descriptions", descriptions),
+      ("uriVariables", uriVariables),
+    ];
+
+    for (final (key, value) in keyValuePairs) {
+      final dynamic convertedValue;
+
+      switch (value) {
+        case null:
+          continue;
+        case Map<String, DataSchema>():
+          convertedValue = value.toJson();
+        default:
+          convertedValue = value;
+      }
+
+      result[key] = convertedValue;
+    }
+
+    return result;
+  }
 }
