@@ -29,7 +29,7 @@ class VersionInfo {
     final Set<String> parsedFields = {};
 
     final instance = json.parseRequiredField<String>("instance", parsedFields);
-    final model = json.parseField<String>("instance", parsedFields);
+    final model = json.parseField<String>("model", parsedFields);
     final additionalFields =
         json.parseAdditionalFields(prefixMapping, parsedFields);
 
