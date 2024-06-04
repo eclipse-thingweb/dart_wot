@@ -36,7 +36,7 @@ class Link implements Serializable {
     final Set<String> parsedFields = {};
 
     final href = json.parseRequiredUriField("href", parsedFields);
-    final type = json.parseField<String>("@type", parsedFields);
+    final type = json.parseField<String>("type", parsedFields);
     final rel = json.parseField<String>("rel", parsedFields);
     final anchor = json.parseUriField("anchor", parsedFields);
     final sizes = json.parseField<String>("sizes", parsedFields);

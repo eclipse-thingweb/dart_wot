@@ -48,7 +48,7 @@ void main() {
             "href": "https://example.org",
             "rel": "icon",
             "anchor": "https://example.org",
-            "@type": "test",
+            "type": "test",
             "sizes": "42x42",
             "test": "test",
             "hreflang": "de",
