@@ -84,7 +84,7 @@ class DataSchema implements Serializable {
     final minimum = json.parseField<num>("minimum", parsedFields);
     final exclusiveMinimum =
         json.parseField<num>("exclusiveMinimum", parsedFields);
-    final maximum = json.parseField<num>("minimum", parsedFields);
+    final maximum = json.parseField<num>("maximum", parsedFields);
     final exclusiveMaximum =
         json.parseField<num>("exclusiveMaximum", parsedFields);
     final multipleOf = json.parseField<num>("multipleOf", parsedFields);
