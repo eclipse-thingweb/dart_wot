@@ -146,8 +146,7 @@ void main() {
       expect(
         () => contentSerdes.valueToContent(
           null,
-          // FIXME(JKRhb): Should not be necessary to use fromJson here
-          DataSchema.fromJson(const {"type": "object"}, PrefixMapping()),
+          const DataSchema(type: "object"),
         ),
         throwsA(isA<FormatException>()),
       );
