@@ -296,7 +296,7 @@ extension ParseField on Map<String, dynamic> {
     Set<String>? parsedFields,
   ) {
     final fieldValue =
-        parseField<List<Map<String, dynamic>>>(name, parsedFields);
+        parseArrayField<Map<String, dynamic>>(name, parsedFields: parsedFields);
 
     return fieldValue
         ?.map((e) => DataSchema.fromJson(e, prefixMapping))
