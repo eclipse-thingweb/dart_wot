@@ -92,7 +92,8 @@ class DataSchema implements Serializable {
         json.parseDataSchemaArrayField("items", prefixMapping, parsedFields);
     final minItems = json.parseField<int>("minItems", parsedFields);
     final maxItems = json.parseField<int>("maxItems", parsedFields);
-    final required = json.parseField<List<String>>("required", parsedFields);
+    final required =
+        json.parseArrayField<String>("required", parsedFields: parsedFields);
     final minLength = json.parseField<int>("minLength", parsedFields);
     final maxLength = json.parseField<int>("maxLength", parsedFields);
     final pattern = json.parseField<String>("pattern", parsedFields);
