@@ -45,7 +45,6 @@ final class HttpServer implements ProtocolServer {
   Future<void> expose(ExposedThing thing) async {
     final key = thing.thingDescription.identifier;
     _things[key] = thing;
-    print(_things);
   }
 
   @override
@@ -115,22 +114,15 @@ final class HttpServer implements ProtocolServer {
 
     print(exposedThing.thingDescription.forms);
 
-    final DataSchemaValue<String>? dataSchemaValue;
+    final rawThingDescription = exposedThing.thingDescription.toJson();
 
-    final rawThingDescription =
-        exposedThing.thingDescription.rawThingDescription;
-
-    if (rawThingDescription != null) {
-      dataSchemaValue = DataSchemaValue.fromString(rawThingDescription);
-    } else {
-      dataSchemaValue = null;
-    }
+    final dataSchemaValue = DataSchemaValue.tryParse(rawThingDescription);
 
     // FIXME: Thing Description is not generated correctly
     final content = _servient.contentSerdes.valueToContent(
       dataSchemaValue,
       null,
-      contentType,
+      contentType ?? "application/td+json",
     );
 
     response.statusCode = 404;

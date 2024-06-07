@@ -36,12 +36,12 @@ abstract class Servient {
   /// argument.
   factory Servient.create({
     List<ProtocolClientFactory>? clientFactories,
-    ServerSecurityCallback? serverSecurityCallback,
+    List<ProtocolServer>? servers,
     ContentSerdes? contentSerdes,
   }) {
     return InternalServient(
       clientFactories: clientFactories,
-      serverSecurityCallback: serverSecurityCallback,
+      servers: servers,
       contentSerdes: contentSerdes,
     );
   }
@@ -62,31 +62,39 @@ abstract class Servient {
   /// the return value is `null`.
   ProtocolClientFactory? removeClientFactory(String scheme);
 
+  /// Registers a new [ProtocolServer].
+  void addServer(ProtocolServer protocolServer);
+
+  /// De-registers a [ProtocolServer] for the given [scheme], if it exists.
+  ///
+  /// If a corresponding [ProtocolServer] was removed, it is return by this
+  /// method.
+  bool removeServer(String scheme);
+
   /// Closes this [Servient] and cleans up all resources.
   Future<void> shutdown();
+
+  /// The [ContentSerdes] object that is used for serializing/deserializing.
+  @internal
+  ContentSerdes get contentSerdes;
 }
 
 /// Provides the internal implementation details of the [Servient] class.
 class InternalServient implements Servient {
   /// Creates a new [InternalServient].
   InternalServient({
+    List<ProtocolServer>? servers,
     List<ProtocolClientFactory>? clientFactories,
-    ServerSecurityCallback? serverSecurityCallback,
     ContentSerdes? contentSerdes,
-  })  : contentSerdes = contentSerdes ?? ContentSerdes(),
-        _serverSecurityCallback = serverSecurityCallback {
-    for (final clientFactory in clientFactories ?? <ProtocolClientFactory>[]) {
-      addClientFactory(clientFactory);
-    }
+  }) : contentSerdes = contentSerdes ?? ContentSerdes() {
+    clientFactories?.forEach(addClientFactory);
+    servers?.forEach(addServer);
   }
 
   final List<ProtocolServer> _servers = [];
   final Map<String, ProtocolClientFactory> _clientFactories = {};
   final Map<String, ExposedThing> _things = {};
 
-  final ServerSecurityCallback? _serverSecurityCallback;
-
-  /// The [ContentSerdes] object that is used for serializing/deserializing.
   final ContentSerdes contentSerdes;
 
   @override
@@ -167,11 +175,27 @@ class InternalServient implements Servient {
   /// Returns a list of available [ProtocolServer]s.
   List<ProtocolServer> get servers => _servers;
 
-  /// Registers a new [ProtocolServer].
+  @override
   void addServer(ProtocolServer server) {
     _things.values.forEach(server.expose);
 
     _servers.add(server);
+  }
+
+  @override
+  bool removeServer(String scheme) {
+    // TODO: Refactor
+    final containsScheme =
+        servers.where((server) => server.scheme == scheme).isNotEmpty;
+
+    if (containsScheme) {
+      // TODO: "De-expose" the ExposedThings
+      servers.removeWhere((server) => server.scheme == scheme);
+
+      return true;
+    }
+
+    return false;
   }
 
   /// Returns a list of all protocol schemes the registered clients support.

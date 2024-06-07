@@ -20,11 +20,14 @@ void main() {
 
     test("Server tests", () {
       final defaultServer = CoapServer();
+      final servient = Servient.create(
+        servers: [
+          defaultServer,
+        ],
+      );
 
       expect(defaultServer.port, 5683);
       expect(defaultServer.scheme, "coap");
-
-      final servient = Servient();
 
       expect(
         () async => defaultServer.start(servient),
