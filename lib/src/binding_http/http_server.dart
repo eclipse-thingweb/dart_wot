@@ -57,6 +57,8 @@ final class HttpServer implements ProtocolServer {
 
     _server?.listen(_handleRequest);
 
+    print("Started!");
+
     // final handler = const shelf.Pipeline()
     //     .addMiddleware(shelf.logRequests())
     //     .addHandler(_handleRequest);
@@ -78,6 +80,8 @@ final class HttpServer implements ProtocolServer {
 
   Future<void> _handleRequest(io.HttpRequest request) async {
     final path = request.uri.path;
+
+    print(path);
 
     if (path.startsWith(_thingsPath)) {
       await _handleThingRequest(request);

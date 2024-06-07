@@ -4,7 +4,8 @@ import 'package:dart_wot/binding_http.dart';
 import 'package:dart_wot/core.dart';
 
 void main() async {
-  final servient = Servient()..addServer(HttpServer(null));
+  final servient =
+      Servient.create(servers: [HttpServer(HttpConfig(port: 3000))]);
 
   final wot = await servient.start();
 
@@ -19,10 +20,10 @@ void main() async {
           {
             'href': '/status',
           }
-        ]
-      }
-    }
+        ],
+      },
+    },
   });
 
-  await exposedThing.expose();
+  // await exposedThing.expose();
 }

@@ -259,6 +259,7 @@ class InternalServient implements Servient {
     final thingDescription = _expandExposedThingInit(init);
 
     final newThing = ExposedThing(this, thingDescription);
+    print(newThing.thingDescription.toJson());
     if (addThing(newThing)) {
       return newThing;
     }
