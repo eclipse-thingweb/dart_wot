@@ -6,6 +6,8 @@
 
 import "dart:async";
 
+import "package:meta/meta.dart";
+
 import "../definitions.dart";
 import "../scripting_api.dart" as scripting_api;
 import "consumed_thing.dart";
@@ -39,10 +41,15 @@ class WoT implements scripting_api.WoT {
       _servient.produce(init);
 
   @override
-  ThingDiscovery discover({
+  ThingDiscovery discover(
+    @experimental
+    List<scripting_api.DiscoveryConfiguration> discoveryConfigurations, {
     scripting_api.ThingFilter? thingFilter,
   }) =>
-      _servient.discover(thingFilter: thingFilter);
+      _servient.discover(
+        discoveryConfigurations,
+        thingFilter: thingFilter,
+      );
 
   @override
   Future<ThingDescription> requestThingDescription(Uri url) =>

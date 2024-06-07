@@ -39,18 +39,19 @@ Future<void> handleThingDescription(
 Future<void> main(List<String> args) async {
   final servient = Servient.create(
     clientFactories: [CoapClientFactory()],
-    discoveryConfigurations: [
-      DirectConfiguration(
-        Uri.parse("coap://plugfest.thingweb.io:5683/testthing"),
-      ),
-    ],
   );
 
   final wot = await servient.start();
+  final discoveryConfigurations = [
+    DirectConfiguration(
+      Uri.parse("coap://plugfest.thingweb.io:5683/testthing"),
+    ),
+  ];
 
   // Example using for-await-loop
   try {
-    await for (final thingDescription in wot.discover()) {
+    await for (final thingDescription
+        in wot.discover(discoveryConfigurations)) {
       await handleThingDescription(wot, thingDescription);
     }
     print('Discovery with "await for" has finished.');
@@ -62,7 +63,7 @@ Future<void> main(List<String> args) async {
   //
   // Notice how the "onDone" callback is called before the result is passed
   // to the handleThingDescription function.
-  wot.discover().listen(
+  wot.discover(discoveryConfigurations).listen(
     (thingDescription) async {
       await handleThingDescription(wot, thingDescription);
     },

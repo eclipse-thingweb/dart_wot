@@ -15,7 +15,6 @@ import "../scripting_api.dart" as scripting_api;
 
 import "consumed_thing.dart";
 import "content_serdes.dart";
-import "discovery/discovery_configuration.dart";
 import "exposed_thing.dart";
 import "thing_discovery.dart";
 import "wot.dart";
@@ -28,8 +27,7 @@ import "wot.dart";
 abstract class Servient {
   /// Creates a new [Servient].
   ///
-  /// The [Servient] can be pre-configured with [List]s of
-  /// [clientFactories] and [discoveryConfigurations].
+  /// The [Servient] can be pre-configured with a [List] of [clientFactories].
   /// However, it is also possible to dynamically [addClientFactory]s and
   /// [removeClientFactory]s at runtime.
   ///
@@ -40,23 +38,13 @@ abstract class Servient {
     List<ProtocolClientFactory>? clientFactories,
     ServerSecurityCallback? serverSecurityCallback,
     ContentSerdes? contentSerdes,
-    List<DiscoveryConfiguration>? discoveryConfigurations,
   }) {
     return InternalServient(
       clientFactories: clientFactories,
       serverSecurityCallback: serverSecurityCallback,
       contentSerdes: contentSerdes,
-      discoveryConfigurations: discoveryConfigurations,
     );
   }
-
-  /// [List] of [DiscoveryConfiguration]s that are used when calling the
-  /// [scripting_api.WoT.discover] method.
-  List<DiscoveryConfiguration> get discoveryConfigurations;
-
-  set discoveryConfigurations(
-    List<DiscoveryConfiguration> discoveryConfigurations,
-  );
 
   /// Starts this [Servient] and returns a [scripting_api.WoT] runtime object.
   ///
@@ -85,9 +73,7 @@ class InternalServient implements Servient {
     List<ProtocolClientFactory>? clientFactories,
     ServerSecurityCallback? serverSecurityCallback,
     ContentSerdes? contentSerdes,
-    List<DiscoveryConfiguration>? discoveryConfigurations,
   })  : contentSerdes = contentSerdes ?? ContentSerdes(),
-        discoveryConfigurations = discoveryConfigurations ?? [],
         _serverSecurityCallback = serverSecurityCallback {
     for (final clientFactory in clientFactories ?? <ProtocolClientFactory>[]) {
       addClientFactory(clientFactory);
@@ -99,9 +85,6 @@ class InternalServient implements Servient {
   final Map<String, ExposedThing> _things = {};
 
   final ServerSecurityCallback? _serverSecurityCallback;
-
-  @override
-  List<DiscoveryConfiguration> discoveryConfigurations;
 
   /// The [ContentSerdes] object that is used for serializing/deserializing.
   final ContentSerdes contentSerdes;
@@ -343,15 +326,15 @@ class InternalServient implements Servient {
     return thingDescription;
   }
 
-  /// Perform automatic discovery using this [InternalServient]'s
-  /// [discoveryConfigurations].
+  /// Perform discovery using the passed-in [discoveryConfigurations].
   ///
   /// A [thingFilter] can be provided to filter the discovered Thing
   /// Descriptions; however, doing so currently does not have any effect yet.
-  ThingDiscovery discover({
+  ThingDiscovery discover(
+    List<scripting_api.DiscoveryConfiguration> discoveryConfigurations, {
     scripting_api.ThingFilter? thingFilter,
   }) {
-    return ThingDiscovery(thingFilter, this);
+    return ThingDiscovery(thingFilter, this, discoveryConfigurations);
   }
 
   /// Requests a [ThingDescription] from a [url].

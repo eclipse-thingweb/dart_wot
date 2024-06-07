@@ -4,42 +4,17 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "package:meta/meta.dart";
+
 import "../definitions.dart";
 
 import "consumed_thing.dart";
+import "discovery/directory_payload_format.dart";
+import "discovery/discovery_configuration.dart";
 import "discovery/thing_discovery.dart";
 import "discovery/thing_filter.dart";
 import "exposed_thing.dart";
 import "types.dart";
-
-/// Enumeration for specifying the value of the `format` query parameter when
-/// using the `exploreDirectory` discovery method.
-///
-/// See [section 7.3.2.1.5] of the [WoT Discovery] specification for more
-/// information.
-///
-/// [WoT Discovery]: https://www.w3.org/TR/2023/REC-wot-discovery-20231205
-/// [section 7.3.2.1.5]: https://www.w3.org/TR/2023/REC-wot-discovery-20231205/#exploration-directory-api-things-listing
-enum DirectoryPayloadFormat {
-  /// Indicates that an array of Thing Descriptions should be returned.
-  ///
-  /// This is the default value.
-  array,
-
-  /// Indicates that an collection of Thing Descriptions should be returned.
-  collection,
-  ;
-
-  @override
-  String toString() {
-    switch (this) {
-      case array:
-        return "array";
-      case collection:
-        return "collection";
-    }
-  }
-}
 
 /// Interface for a [WoT] runtime.
 ///
@@ -74,7 +49,8 @@ abstract interface class WoT {
     DirectoryPayloadFormat? format,
   });
 
-  /// Discovers [ThingDescription]s using the underlying platform configuration.
+  /// Discovers [ThingDescription]s based on the provided
+  /// [discoveryConfigurations].
   ///
   /// A [thingFilter] may be passed for filtering out TDs before they
   /// are processed.
@@ -88,7 +64,11 @@ abstract interface class WoT {
   /// It also allows for stopping the Discovery process prematurely and
   /// for retrieving information about its current state (i.e., whether it is
   /// still [ThingDiscovery.active]).
-  ThingDiscovery discover({
+  ///
+  /// The shape of the `discover` API is still experimental and will most likely
+  /// change in the future.
+  ThingDiscovery discover(
+    @experimental List<DiscoveryConfiguration> discoveryConfigurations, {
     ThingFilter? thingFilter,
   });
 }
