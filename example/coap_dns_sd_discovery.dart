@@ -19,16 +19,18 @@ Future<void> main(List<String> args) async {
       CoapClientFactory(),
       HttpClientFactory(),
     ],
-    discoveryConfigurations: [
-      const DnsSdDConfiguration(protocolType: ProtocolType.udp),
-    ],
   );
 
   final wot = await servient.start();
 
+  final discoveryConfigurations = [
+    const DnsSdDConfiguration(protocolType: ProtocolType.udp),
+  ];
+
   // Example using for-await-loop
   try {
-    await for (final thingDescription in wot.discover()) {
+    await for (final thingDescription
+        in wot.discover(discoveryConfigurations)) {
       handleThingDescription(thingDescription);
     }
     print('Discovery with "await for" has finished.');
@@ -40,7 +42,7 @@ Future<void> main(List<String> args) async {
   //
   // Notice how the "onDone" callback is called before the result is passed
   // to the handleThingDescription function.
-  wot.discover().listen(
+  wot.discover(discoveryConfigurations).listen(
         handleThingDescription,
         onError: (error) => print("Encountered an error: $error"),
         onDone: () => print('Discovery with "listen" has finished.'),

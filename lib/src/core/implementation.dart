@@ -11,5 +11,4 @@ export "implementation/augmented_form.dart";
 export "implementation/codecs/content_codec.dart";
 export "implementation/content.dart";
 export "implementation/content_serdes.dart";
-export "implementation/discovery/discovery_configuration.dart";
 export "implementation/servient.dart" show Servient;

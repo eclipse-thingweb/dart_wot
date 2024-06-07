@@ -6,7 +6,7 @@
 
 import "package:meta/meta.dart";
 
-import "../../scripting_api/discovery/thing_filter.dart";
+import "thing_filter.dart";
 
 /// Used to indicate whether the discovery mechanism will be used to discover
 /// Thing Descriptions of Things or Thing Description Directories.
@@ -92,6 +92,7 @@ enum ProtocolType {
 /// A configuration that is used by the `WoT.discover()` method when registered
 /// with the underlying `Servient`.
 @immutable
+@experimental
 sealed class DiscoveryConfiguration {
   const DiscoveryConfiguration();
 }
@@ -108,6 +109,7 @@ final class DirectConfiguration extends DiscoveryConfiguration {
 
 /// A configuration that is used for retrieving Thing Descriptions from a Thing
 /// Description Directory (TDD).
+@experimental
 final class ExploreDirectoryConfiguration extends DiscoveryConfiguration {
   /// Instantiates a new [ExploreDirectoryConfiguration].
   ///
@@ -183,6 +185,7 @@ final class MqttDiscoveryConfiguration extends DiscoveryConfiguration {
 /// These mechanisms first discover URLs pointing to Thing Descriptions
 /// (introduction phase) before retrieving the Thing Descriptions themselves
 /// (exploration phase).
+@experimental
 sealed class TwoStepConfiguration extends DiscoveryConfiguration {
   /// Creates a new [TwoStepConfiguration] object from a [discoveryType].
   const TwoStepConfiguration({required this.discoveryType});
@@ -229,6 +232,7 @@ final class DnsSdDConfiguration extends TwoStepConfiguration {
 /// Configures discovery using the CoRE link format ([RFC 6690]).
 ///
 /// [RFC 6690]: https://datatracker.ietf.org/doc/html/rfc6690
+@experimental
 final class CoreLinkFormatConfiguration extends TwoStepConfiguration {
   /// Instantiates a new [CoreLinkFormatConfiguration] object.
   ///
@@ -273,6 +277,7 @@ final class CoreLinkFormatConfiguration extends TwoStepConfiguration {
 /// Descriptions themselves.
 ///
 /// [RFC 9176]: https://datatracker.ietf.org/doc/html/rfc9176
+@experimental
 final class CoreResourceDirectoryConfiguration extends TwoStepConfiguration {
   /// Instantiates a new [CoreResourceDirectoryConfiguration] object.
   ///

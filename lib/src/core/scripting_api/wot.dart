@@ -4,10 +4,13 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "package:meta/meta.dart";
+
 import "../definitions.dart";
 
 import "consumed_thing.dart";
 import "discovery/directory_payload_format.dart";
+import "discovery/discovery_configuration.dart";
 import "discovery/thing_discovery.dart";
 import "discovery/thing_filter.dart";
 import "exposed_thing.dart";
@@ -46,7 +49,8 @@ abstract interface class WoT {
     DirectoryPayloadFormat? format,
   });
 
-  /// Discovers [ThingDescription]s using the underlying platform configuration.
+  /// Discovers [ThingDescription]s based on the provided
+  /// [discoveryConfigurations].
   ///
   /// A [thingFilter] may be passed for filtering out TDs before they
   /// are processed.
@@ -60,7 +64,11 @@ abstract interface class WoT {
   /// It also allows for stopping the Discovery process prematurely and
   /// for retrieving information about its current state (i.e., whether it is
   /// still [ThingDiscovery.active]).
-  ThingDiscovery discover({
+  ///
+  /// The shape of the `discover` API is still experimental and will most likely
+  /// change in the future.
+  ThingDiscovery discover(
+    @experimental List<DiscoveryConfiguration> discoveryConfigurations, {
     ThingFilter? thingFilter,
   });
 }

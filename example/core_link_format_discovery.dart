@@ -12,16 +12,16 @@ import "package:dart_wot/core.dart";
 Future<void> main(List<String> args) async {
   final servient = Servient.create(
     clientFactories: [CoapClientFactory()],
-    discoveryConfigurations: [
-      CoreLinkFormatConfiguration(
-        Uri.parse("coap://plugfest.thingweb.io"),
-      ),
-    ],
   );
 
   final wot = await servient.start();
+  final discoveryConfigurations = [
+    CoreLinkFormatConfiguration(
+      Uri.parse("coap://plugfest.thingweb.io"),
+    ),
+  ];
 
-  await for (final thingDescription in wot.discover()) {
+  await for (final thingDescription in wot.discover(discoveryConfigurations)) {
     print(thingDescription.title);
 
     if (thingDescription.title != "Smart-Coffee-Machine") {

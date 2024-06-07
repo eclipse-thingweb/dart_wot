@@ -17,14 +17,17 @@ import "../protocol_interfaces.dart";
 import "../scripting_api.dart" as scripting_api;
 
 import "content.dart";
-import "discovery/discovery_configuration.dart";
 import "servient.dart";
 
 /// Implementation of the [scripting_api.ThingDiscovery] interface.
 class ThingDiscovery extends Stream<ThingDescription>
     implements scripting_api.ThingDiscovery {
   /// Creates a new [ThingDiscovery] object with a given [thingFilter].
-  ThingDiscovery(this.thingFilter, this._servient) {
+  ThingDiscovery(
+    this.thingFilter,
+    this._servient,
+    this._discoveryConfigurations,
+  ) {
     _stream = _start();
   }
 
@@ -42,40 +45,45 @@ class ThingDiscovery extends Stream<ThingDescription>
   @override
   final scripting_api.ThingFilter? thingFilter;
 
+  final List<scripting_api.DiscoveryConfiguration> _discoveryConfigurations;
+
   late final Stream<ThingDescription> _stream;
 
   Stream<ThingDescription> _start() async* {
-    for (final discoveryParameter in _servient.discoveryConfigurations) {
+    for (final discoveryParameter in _discoveryConfigurations) {
       switch (discoveryParameter) {
-        case DnsSdDConfiguration(
+        case scripting_api.DnsSdDConfiguration(
             :final discoveryType,
             domainName: final domain,
             :final protocolType,
           ):
           yield* _discoverUsingDnsSd(discoveryType, domain, protocolType);
-        case CoreLinkFormatConfiguration(
+        case scripting_api.CoreLinkFormatConfiguration(
             :final uri,
             :final discoveryType,
           ):
           yield* _discoverWithCoreLinkFormat(uri, discoveryType);
-        case CoreResourceDirectoryConfiguration(
+        case scripting_api.CoreResourceDirectoryConfiguration(
             :final uri,
             :final discoveryType,
           ):
           yield* _discoverFromCoreResourceDirectory(uri, discoveryType);
-        case DirectConfiguration(:final uri):
+        case scripting_api.DirectConfiguration(:final uri):
           if (!uri.hasMulticastAddress) {
             yield* Stream.fromFuture(_servient.requestThingDescription(uri));
           } else {
             yield* _performMulticastDiscovery(uri);
           }
-        case ExploreDirectoryConfiguration(:final uri, :final thingFilter):
+        case scripting_api.ExploreDirectoryConfiguration(
+            :final uri,
+            :final thingFilter
+          ):
           final thingDiscoveryProcess = await _servient.exploreDirectory(
             uri,
             thingFilter: thingFilter,
           );
           yield* thingDiscoveryProcess;
-        case MqttDiscoveryConfiguration(
+        case scripting_api.MqttDiscoveryConfiguration(
             :final brokerUri,
             :final discoveryTopic,
             :final expectedContentType,
@@ -122,9 +130,9 @@ class ThingDiscovery extends Stream<ThingDescription>
   }
 
   Stream<ThingDescription> _discoverUsingDnsSd(
-    DiscoveryType discoveryType,
+    scripting_api.DiscoveryType discoveryType,
     String domainName,
-    ProtocolType protocolType,
+    scripting_api.ProtocolType protocolType,
   ) async* {
     if (domainName != ".local") {
       throw UnimplementedError(
@@ -134,7 +142,7 @@ class ThingDiscovery extends Stream<ThingDescription>
 
     final serviceNameSegments = <String>[];
 
-    if (discoveryType == DiscoveryType.directory) {
+    if (discoveryType == scripting_api.DiscoveryType.directory) {
       serviceNameSegments.addAll(const ["_directory", "_sub"]);
     }
 
@@ -155,7 +163,7 @@ class ThingDiscovery extends Stream<ThingDescription>
   Stream<ThingDescription> _performMdnsDiscovery(
     String domainName,
     String defaultUriScheme,
-    DiscoveryType expectedType,
+    scripting_api.DiscoveryType expectedType,
   ) async* {
     final MDnsClient client = MDnsClient();
     await client.start();
@@ -233,7 +241,7 @@ class ThingDiscovery extends Stream<ThingDescription>
 
   Stream<ThingDescription> _discoverWithCoreLinkFormat(
     Uri uri,
-    DiscoveryType discoveryType,
+    scripting_api.DiscoveryType discoveryType,
   ) async* {
     await for (final coreWebLinks in _performCoreLinkFormatDiscovery(
       uri,
@@ -246,7 +254,7 @@ class ThingDiscovery extends Stream<ThingDescription>
 
   Stream<ThingDescription> _discoverFromCoreResourceDirectory(
     Uri uri,
-    DiscoveryType discoveryType,
+    scripting_api.DiscoveryType discoveryType,
   ) async* {
     yield* _performCoreLinkFormatDiscovery(
       uri,
