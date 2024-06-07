@@ -7,39 +7,11 @@
 import "../definitions.dart";
 
 import "consumed_thing.dart";
+import "discovery/directory_payload_format.dart";
 import "discovery/thing_discovery.dart";
 import "discovery/thing_filter.dart";
 import "exposed_thing.dart";
 import "types.dart";
-
-/// Enumeration for specifying the value of the `format` query parameter when
-/// using the `exploreDirectory` discovery method.
-///
-/// See [section 7.3.2.1.5] of the [WoT Discovery] specification for more
-/// information.
-///
-/// [WoT Discovery]: https://www.w3.org/TR/2023/REC-wot-discovery-20231205
-/// [section 7.3.2.1.5]: https://www.w3.org/TR/2023/REC-wot-discovery-20231205/#exploration-directory-api-things-listing
-enum DirectoryPayloadFormat {
-  /// Indicates that an array of Thing Descriptions should be returned.
-  ///
-  /// This is the default value.
-  array,
-
-  /// Indicates that an collection of Thing Descriptions should be returned.
-  collection,
-  ;
-
-  @override
-  String toString() {
-    switch (this) {
-      case array:
-        return "array";
-      case collection:
-        return "collection";
-    }
-  }
-}
 
 /// Interface for a [WoT] runtime.
 ///
