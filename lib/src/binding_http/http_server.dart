@@ -4,13 +4,20 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+// import "dart:io" as io;
+
 import "dart:io" as io;
 
-import "../../core.dart";
+import "package:shelf/shelf.dart";
+import "package:shelf/shelf_io.dart" as shelf_io;
+import "package:shelf_router/shelf_router.dart";
 
+import "../../core.dart" hide ExposedThing;
+
+import "../core/implementation/exposed_thing.dart";
 import "http_config.dart";
 
-const _thingsPath = "/things";
+const _thingsPath = "things";
 
 /// A [ProtocolServer] for the Hypertext Transfer Protocol (HTTP).
 final class HttpServer implements ProtocolServer {
@@ -35,6 +42,8 @@ final class HttpServer implements ProtocolServer {
 
   late final Servient _servient;
 
+  final Map<String, Router> _routes = {};
+
   static int _portFromConfig(HttpConfig? httpConfig) {
     final secure = httpConfig?.secure ?? false;
 
@@ -43,8 +52,42 @@ final class HttpServer implements ProtocolServer {
 
   @override
   Future<void> expose(ExposedThing thing) async {
-    final key = thing.thingDescription.identifier;
+    final thingDescription = thing.thingDescription;
+    final key = thingDescription.id;
+
+    print(key);
+
+    if (key == null) {
+      throw ArgumentError("Missing id field in thingDescription.");
+    }
+
     _things[key] = thing;
+
+    final router = Router();
+
+    // final affordances = [
+    //   ...thingDescription.actions?.entries ?? [],
+    //   ...thingDescription.properties?.entries ?? [],
+    //   ...thingDescription.events?.entries ?? [],
+    // ];
+
+    for (final affordance in thingDescription.properties?.entries ??
+        <MapEntry<String, Property>>[]) {
+      print("/$key/${affordance.key}");
+      router.get("/$key/${affordance.key}", (request, name) async {
+        final content = await thing.handleReadProperty(affordance.key);
+
+        return Response(
+          200,
+          body: content.body,
+          headers: {
+            "Content-Type": content.type,
+          },
+        );
+      });
+    }
+
+    _routes[key] = router;
   }
 
   @override
@@ -53,9 +96,10 @@ final class HttpServer implements ProtocolServer {
       throw StateError("Server already started");
     }
 
-    _server = await io.HttpServer.bind(_bindAddress, port);
+    // _server = await io.HttpServer.bind(_bindAddress, port);
+    _server = await shelf_io.serve(_handleRequest, _bindAddress, port);
 
-    _server?.listen(_handleRequest);
+    // _server?.listen(_handleRequest);
 
     print("Started!");
 
@@ -74,40 +118,49 @@ final class HttpServer implements ProtocolServer {
 
   @override
   Future<void> stop() async {
-    // await _server?.close();
+    await _server?.close();
     _server = null;
   }
 
-  Future<void> _handleRequest(io.HttpRequest request) async {
-    final path = request.uri.path;
+  Future<Response> _handleRequest(Request request) async {
+    final requestedUri = request.requestedUri;
 
-    print(path);
+    final firstSegment = requestedUri.pathSegments.firstOrNull;
 
-    if (path.startsWith(_thingsPath)) {
-      await _handleThingRequest(request);
+    print(_routes);
+    print(firstSegment);
+
+    final router = _routes[firstSegment];
+
+    if (router != null) {
+      print("yeah");
+      print(request.handlerPath);
+      return router.call(request);
     }
+
+    print(firstSegment);
+
+    if (firstSegment == _thingsPath) {
+      print("yo");
+      return _handleThingRequest(request);
+    }
+
+    return Response.notFound("Not found.");
   }
 
-  Future<void> _handleThingRequest(io.HttpRequest request) async {
-    final response = request.response;
+  Future<Response> _handleThingRequest(Request request) async {
     if (request.method != "GET") {
-      response
-        ..statusCode = 405
-        ..write("Method not allowed");
-      await response.close();
-      return;
+      return Response(405, body: "Method not allowed");
     }
 
-    final path = request.uri.pathSegments.sublist(1).join("/");
+    final path = request.requestedUri.pathSegments.sublist(1).join("/");
+
+    print(_things);
 
     final exposedThing = _things[path];
 
     if (exposedThing == null) {
-      response
-        ..statusCode = 404
-        ..write("Not found");
-      await response.close();
-      return;
+      return Response.notFound("Not found.");
     }
 
     // TODO: Fix content negotiation
@@ -129,9 +182,7 @@ final class HttpServer implements ProtocolServer {
       contentType ?? "application/td+json",
     );
 
-    response.statusCode = 404;
-    await response.addStream(content.body);
-    await response.close();
+    return Response(200, body: content.body);
   }
 
   // Response _handleRequest(shelf.Request request) {

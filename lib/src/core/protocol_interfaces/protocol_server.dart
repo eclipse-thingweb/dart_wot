@@ -4,8 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "../implementation/exposed_thing.dart";
 import "../implementation/servient.dart";
-import "../scripting_api/exposed_thing.dart";
+// import "../scripting_api/exposed_thing.dart";
 
 /// Base class for a Protocol Server.
 abstract interface class ProtocolServer {

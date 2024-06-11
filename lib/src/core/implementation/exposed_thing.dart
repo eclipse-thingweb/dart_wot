@@ -4,31 +4,36 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "../../../core.dart";
 import "../definitions.dart";
 import "../scripting_api.dart" as scripting_api;
 
+import "content.dart";
 import "servient.dart";
 
 /// Implementation of the [scripting_api.ExposedThing] interface.
 class ExposedThing implements scripting_api.ExposedThing {
-  /// Creates a new [ExposedThing] from a [servient] and an [exposedThingInit].
-  ExposedThing(this.servient, scripting_api.ExposedThingInit exposedThingInit)
+  /// Creates a new [ExposedThing] from a [_servient] and an [exposedThingInit].
+  ExposedThing(this._servient, scripting_api.ExposedThingInit exposedThingInit)
       : thingDescription = ThingDescription.fromJson(exposedThingInit);
 
   @override
   final ThingDescription thingDescription;
 
   /// The [Servient] associated with this [ExposedThing].
-  final InternalServient servient;
+  final InternalServient _servient;
 
-  /// A [Map] of all the [properties] of this [ExposedThing].
-  final Map<String, Property>? properties = {};
+  /// A [Map] of all the [_properties] of this [ExposedThing].
+  final Map<String, Property> _properties = {};
 
-  /// A [Map] of all the [actions] of this [ExposedThing].
-  final Map<String, Action>? actions = {};
+  /// A [Map] of all the [_actions] of this [ExposedThing].
+  final Map<String, Action> _actions = {};
 
-  /// A [Map] of all the [events] of this [ExposedThing].
-  final Map<String, Event>? events = {};
+  /// A [Map] of all the [_events] of this [ExposedThing].
+  final Map<String, Event> _events = {};
+
+  final Map<String, scripting_api.PropertyReadHandler> _propertyReadHandlers =
+      {};
 
   @override
   Future<void> emitPropertyChange(String name) {
@@ -59,7 +64,7 @@ class ExposedThing implements scripting_api.ExposedThing {
   @override
   Future<void> expose() async {
     // TODO: Refactor
-    return servient.expose(this);
+    return _servient.expose(this);
   }
 
   @override
@@ -96,7 +101,8 @@ class ExposedThing implements scripting_api.ExposedThing {
     String name,
     scripting_api.PropertyReadHandler handler,
   ) {
-    // TODO(JKRhb): implement setPropertyReadHandler
+    // TODO: Ensure that the property is actually readable.
+    _propertyReadHandlers[name] = handler;
   }
 
   @override
@@ -113,5 +119,33 @@ class ExposedThing implements scripting_api.ExposedThing {
     scripting_api.EventSubscriptionHandler handler,
   ) {
     // TODO(JKRhb): implement setEventUnsubscribeHandler
+  }
+
+  Future<Content> handleReadProperty(
+    String propertyName, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) async {
+    final readHandler = _propertyReadHandlers[propertyName];
+
+    if (readHandler == null) {
+      throw Exception(
+        "Read handler for property $propertyName is not defined.",
+      );
+    }
+
+    final interactionInput = await readHandler(
+      data: data,
+      uriVariables: uriVariables,
+      formIndex: formIndex,
+    );
+
+    return Content.fromInteractionInput(
+      interactionInput,
+      "application/json",
+      _servient.contentSerdes,
+      thingDescription.properties?[propertyName],
+    );
   }
 }

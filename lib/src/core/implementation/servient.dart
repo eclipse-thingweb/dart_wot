@@ -134,19 +134,27 @@ class InternalServient implements Servient {
 
   /// Exposes a [thing] so that WoT consumers can interact with it.
   Future<void> expose(ExposedThing thing) async {
+    print("balh");
+
     if (_servers.isEmpty) {
       return;
     }
 
-    [thing.properties?.values, thing.actions?.values, thing.events?.values]
-        .forEach(_cleanUpForms);
+    // TODO: Check whether this makes sense.
+    final thingDescription = thing.thingDescription;
+    [
+      thingDescription.properties?.values,
+      thingDescription.actions?.values,
+      thingDescription.events?.values,
+    ].forEach(_cleanUpForms);
 
-    final List<Future<void>> serverPromises = [];
-    for (final server in _servers) {
-      serverPromises.add(server.expose(thing));
-    }
+    print("yay");
 
-    await Future.wait(serverPromises);
+    await Future.wait(
+      _servers.map(
+        (server) => server.expose(thing),
+      ),
+    );
   }
 
   /// Adds a [ExposedThing] to the servient if it hasn't been registered before.
@@ -154,7 +162,7 @@ class InternalServient implements Servient {
   /// Returns `false` if the [thing] has already been registered, otherwise
   /// `true`.
   bool addThing(ExposedThing thing) {
-    final id = thing.thingDescription.identifier;
+    final id = thing.thingDescription.id!;
     if (_things.containsKey(id)) {
       return false;
     }
@@ -257,10 +265,11 @@ class InternalServient implements Servient {
     scripting_api.ExposedThingInit init,
   ) async {
     final thingDescription = _expandExposedThingInit(init);
+    print(thingDescription);
 
     final newThing = ExposedThing(this, thingDescription);
-    print(newThing.thingDescription.toJson());
     if (addThing(newThing)) {
+      await expose(newThing);
       return newThing;
     }
 
