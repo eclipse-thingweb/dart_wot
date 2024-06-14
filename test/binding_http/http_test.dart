@@ -7,11 +7,8 @@
 import "package:dart_wot/binding_http.dart";
 import "package:dart_wot/core.dart";
 import "package:dart_wot/src/core/implementation/servient.dart";
-import "package:mockito/annotations.dart";
 import "package:test/test.dart";
-import "http_test.mocks.dart";
 
-@GenerateMocks([ExposedThing])
 void main() {
   group("HTTP tests", () {
     setUp(() {
@@ -20,9 +17,11 @@ void main() {
 
     test("Server tests", () {
       final defaultServer = HttpServer(null);
-      final servient = Servient.create(servers: [
-        defaultServer,
-      ]);
+      final servient = Servient.create(
+        servers: [
+          defaultServer,
+        ],
+      );
 
       expect(defaultServer.port, 80);
       expect(defaultServer.scheme, "http");

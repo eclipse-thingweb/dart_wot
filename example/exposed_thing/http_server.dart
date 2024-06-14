@@ -12,6 +12,7 @@ void main() async {
   final exposedThing = await wot.produce({
     "@context": "https://www.w3.org/2022/wot/td/v1.1",
     "title": "My Lamp Thing",
+    "id": "test",
     "properties": {
       "status": {
         "type": "string",
@@ -22,5 +23,13 @@ void main() async {
         ],
       },
     },
+  });
+
+  exposedThing.setPropertyReadHandler("status", ({
+    data,
+    formIndex,
+    uriVariables,
+  }) async {
+    return InteractionInput.fromString("Hi :)");
   });
 }

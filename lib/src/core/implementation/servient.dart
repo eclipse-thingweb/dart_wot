@@ -95,6 +95,7 @@ class InternalServient implements Servient {
   final Map<String, ProtocolClientFactory> _clientFactories = {};
   final Map<String, ExposedThing> _things = {};
 
+  @override
   final ContentSerdes contentSerdes;
 
   @override
@@ -134,8 +135,6 @@ class InternalServient implements Servient {
 
   /// Exposes a [thing] so that WoT consumers can interact with it.
   Future<void> expose(ExposedThing thing) async {
-    print("balh");
-
     if (_servers.isEmpty) {
       return;
     }
@@ -147,8 +146,6 @@ class InternalServient implements Servient {
       thingDescription.actions?.values,
       thingDescription.events?.values,
     ].forEach(_cleanUpForms);
-
-    print("yay");
 
     await Future.wait(
       _servers.map(
@@ -265,7 +262,6 @@ class InternalServient implements Servient {
     scripting_api.ExposedThingInit init,
   ) async {
     final thingDescription = _expandExposedThingInit(init);
-    print(thingDescription);
 
     final newThing = ExposedThing(this, thingDescription);
     if (addThing(newThing)) {

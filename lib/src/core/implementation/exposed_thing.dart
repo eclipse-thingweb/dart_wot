@@ -4,7 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "../../../core.dart";
+import "package:meta/meta.dart";
+
 import "../definitions.dart";
 import "../scripting_api.dart" as scripting_api;
 
@@ -22,15 +23,6 @@ class ExposedThing implements scripting_api.ExposedThing {
 
   /// The [Servient] associated with this [ExposedThing].
   final InternalServient _servient;
-
-  /// A [Map] of all the [_properties] of this [ExposedThing].
-  final Map<String, Property> _properties = {};
-
-  /// A [Map] of all the [_actions] of this [ExposedThing].
-  final Map<String, Action> _actions = {};
-
-  /// A [Map] of all the [_events] of this [ExposedThing].
-  final Map<String, Event> _events = {};
 
   final Map<String, scripting_api.PropertyReadHandler> _propertyReadHandlers =
       {};
@@ -121,6 +113,8 @@ class ExposedThing implements scripting_api.ExposedThing {
     // TODO(JKRhb): implement setEventUnsubscribeHandler
   }
 
+  /// Handles a `readproperty` operation triggered by a TD consumer.
+  @internal
   Future<Content> handleReadProperty(
     String propertyName, {
     int? formIndex,

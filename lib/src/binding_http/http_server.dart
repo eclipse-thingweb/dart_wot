@@ -55,8 +55,6 @@ final class HttpServer implements ProtocolServer {
     final thingDescription = thing.thingDescription;
     final key = thingDescription.id;
 
-    print(key);
-
     if (key == null) {
       throw ArgumentError("Missing id field in thingDescription.");
     }
@@ -73,8 +71,7 @@ final class HttpServer implements ProtocolServer {
 
     for (final affordance in thingDescription.properties?.entries ??
         <MapEntry<String, Property>>[]) {
-      print("/$key/${affordance.key}");
-      router.get("/$key/${affordance.key}", (request, name) async {
+      router.get("/$key/${affordance.key}", (request) async {
         final content = await thing.handleReadProperty(affordance.key);
 
         return Response(
@@ -96,23 +93,8 @@ final class HttpServer implements ProtocolServer {
       throw StateError("Server already started");
     }
 
-    // _server = await io.HttpServer.bind(_bindAddress, port);
     _server = await shelf_io.serve(_handleRequest, _bindAddress, port);
 
-    // _server?.listen(_handleRequest);
-
-    print("Started!");
-
-    // final handler = const shelf.Pipeline()
-    //     .addMiddleware(shelf.logRequests())
-    //     .addHandler(_handleRequest);
-
-    // final server = await shelf_io.serve(handler, _bindAddress, port);
-
-    // Enable content compression
-    // server.autoCompress = true;
-
-    // _server = server;
     _servient = servient;
   }
 
@@ -127,21 +109,13 @@ final class HttpServer implements ProtocolServer {
 
     final firstSegment = requestedUri.pathSegments.firstOrNull;
 
-    print(_routes);
-    print(firstSegment);
-
     final router = _routes[firstSegment];
 
     if (router != null) {
-      print("yeah");
-      print(request.handlerPath);
       return router.call(request);
     }
 
-    print(firstSegment);
-
     if (firstSegment == _thingsPath) {
-      print("yo");
       return _handleThingRequest(request);
     }
 
@@ -155,8 +129,6 @@ final class HttpServer implements ProtocolServer {
 
     final path = request.requestedUri.pathSegments.sublist(1).join("/");
 
-    print(_things);
-
     final exposedThing = _things[path];
 
     if (exposedThing == null) {
@@ -168,8 +140,6 @@ final class HttpServer implements ProtocolServer {
     final contentType = ["*/*", null].contains(acceptHeader)
         ? "application/td+json"
         : acceptHeader;
-
-    print(exposedThing.thingDescription.forms);
 
     final rawThingDescription = exposedThing.thingDescription.toJson();
 
