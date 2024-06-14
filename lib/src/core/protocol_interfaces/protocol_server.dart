@@ -16,7 +16,6 @@ abstract interface class ProtocolServer {
   /// The protocol [scheme] associated with this server.
   String get scheme;
 
-  // TODO(JKRhb): Check if a Servient should be passed as a parameter instead
   /// Starts the server. Accepts a callback for retrieving a [Map] of
   /// credentials for [ExposedThing]s at runtime.
   Future<void> start(Servient servient);
