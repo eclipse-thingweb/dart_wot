@@ -17,27 +17,9 @@ void main() {
 
     test("Server tests", () {
       final defaultServer = HttpServer(null);
-      final servient = Servient.create(
-        servers: [
-          defaultServer,
-        ],
-      );
 
       expect(defaultServer.port, 80);
       expect(defaultServer.scheme, "http");
-
-      expect(
-        () async => defaultServer.start(servient),
-        throwsA(const TypeMatcher<UnimplementedError>()),
-      );
-      expect(
-        () async => defaultServer.stop(),
-        throwsA(const TypeMatcher<UnimplementedError>()),
-      );
-      // expect(
-      //   () async => defaultServer.expose(MockExposedThing()),
-      //   throwsA(const TypeMatcher<UnimplementedError>()),
-      // );
 
       final customServer1 = HttpServer(HttpConfig(secure: true));
 
