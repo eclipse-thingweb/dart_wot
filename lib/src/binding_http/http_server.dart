@@ -71,17 +71,31 @@ final class HttpServer implements ProtocolServer {
 
     for (final affordance in thingDescription.properties?.entries ??
         <MapEntry<String, Property>>[]) {
-      router.get("/$key/${affordance.key}", (request) async {
-        final content = await thing.handleReadProperty(affordance.key);
+      router
+        ..get("/$key/${affordance.key}", (request) async {
+          final content = await thing.handleReadProperty(affordance.key);
 
-        return Response(
-          200,
-          body: content.body,
-          headers: {
-            "Content-Type": content.type,
-          },
-        );
-      });
+          return Response(
+            200,
+            body: content.body,
+            headers: {
+              "Content-Type": content.type,
+            },
+          );
+        })
+        ..post("/$key/${affordance.key}", (request) async {
+          if (request is! Request) {
+            throw Exception();
+          }
+
+          final content =
+              Content(request.mimeType ?? "application/json", request.read());
+          await thing.handleWriteProperty(affordance.key, content);
+
+          return Response(
+            204,
+          );
+        });
     }
 
     _routes[key] = router;

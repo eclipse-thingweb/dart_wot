@@ -3,6 +3,8 @@
 import "package:dart_wot/binding_http.dart";
 import "package:dart_wot/core.dart";
 
+var property = "hi :)";
+
 void main() async {
   final servient =
       Servient.create(servers: [HttpServer(HttpConfig(port: 3000))]);
@@ -25,11 +27,27 @@ void main() async {
     },
   });
 
-  exposedThing.setPropertyReadHandler("status", ({
-    data,
-    formIndex,
-    uriVariables,
-  }) async {
-    return InteractionInput.fromString("Hi :)");
-  });
+  exposedThing
+    ..setPropertyReadHandler("status", ({
+      data,
+      formIndex,
+      uriVariables,
+    }) async {
+      return InteractionInput.fromString(property);
+    })
+    ..setPropertyWriteHandler("status", (
+      interactionOutput, {
+      data,
+      formIndex,
+      uriVariables,
+    }) async {
+      final value = await interactionOutput.value();
+
+      if (value is String) {
+        property = value;
+        return;
+      }
+
+      // TODO: Should an incorrect data type be handled in some way?
+    });
 }

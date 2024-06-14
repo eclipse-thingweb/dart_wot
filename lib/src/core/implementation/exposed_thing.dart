@@ -10,6 +10,7 @@ import "../definitions.dart";
 import "../scripting_api.dart" as scripting_api;
 
 import "content.dart";
+import "interaction_output.dart";
 import "servient.dart";
 
 /// Implementation of the [scripting_api.ExposedThing] interface.
@@ -27,6 +28,9 @@ class ExposedThing implements scripting_api.ExposedThing {
   final Map<String, scripting_api.PropertyReadHandler> _propertyReadHandlers =
       {};
 
+  final Map<String, scripting_api.PropertyWriteHandler> _propertyWriteHandlers =
+      {};
+
   @override
   Future<void> emitPropertyChange(String name) {
     // TODO(JKRhb): implement emitPropertyChange
@@ -38,7 +42,7 @@ class ExposedThing implements scripting_api.ExposedThing {
     String name,
     scripting_api.PropertyWriteHandler handler,
   ) {
-    // TODO(JKRhb): implement setPropertyWriteHandler
+    _propertyWriteHandlers[name] = handler;
   }
 
   @override
@@ -140,6 +144,47 @@ class ExposedThing implements scripting_api.ExposedThing {
       "application/json",
       _servient.contentSerdes,
       thingDescription.properties?[propertyName],
+    );
+  }
+
+  /// Handles a `writeproperty` operation triggered by a TD consumer.
+  @internal
+  Future<void> handleWriteProperty(
+    String propertyName,
+    Content input, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) async {
+    final writeHandler = _propertyWriteHandlers[propertyName];
+
+    if (writeHandler == null) {
+      throw Exception(
+        "Write handler for property $propertyName is not defined.",
+      );
+    }
+
+    final Form form;
+
+    if (formIndex == null) {
+      // FIXME: Returning a form does not really make sense here.
+      form = Form(Uri.parse("hi"));
+    } else {
+      form = thingDescription.properties?[propertyName]?.forms
+              .elementAtOrNull(formIndex) ??
+          Form(Uri.parse("hi"));
+    }
+
+    await writeHandler(
+      InteractionOutput(
+        input,
+        _servient.contentSerdes,
+        form,
+        thingDescription.properties?[propertyName],
+      ),
+      formIndex: formIndex,
+      uriVariables: uriVariables,
+      data: data,
     );
   }
 }
