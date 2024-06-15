@@ -107,6 +107,8 @@ final class HttpServer implements ProtocolServer {
                 204,
               );
             });
+
+            // TODO: Handle observe
           }
         default:
           continue;
