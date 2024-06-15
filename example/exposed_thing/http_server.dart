@@ -3,7 +3,7 @@
 import "package:dart_wot/binding_http.dart";
 import "package:dart_wot/core.dart";
 
-var property = "hi :)";
+String property = "hi :)";
 
 void main() async {
   final servient =

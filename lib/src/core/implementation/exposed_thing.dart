@@ -4,9 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:meta/meta.dart";
-
 import "../definitions.dart";
+import "../protocol_interfaces/exposable_thing.dart";
 import "../scripting_api.dart" as scripting_api;
 
 import "content.dart";
@@ -14,7 +13,7 @@ import "interaction_output.dart";
 import "servient.dart";
 
 /// Implementation of the [scripting_api.ExposedThing] interface.
-class ExposedThing implements scripting_api.ExposedThing {
+class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
   /// Creates a new [ExposedThing] from a [_servient] and an [exposedThingInit].
   ExposedThing(this._servient, scripting_api.ExposedThingInit exposedThingInit)
       : thingDescription = ThingDescription.fromJson(exposedThingInit);
@@ -117,8 +116,7 @@ class ExposedThing implements scripting_api.ExposedThing {
     // TODO(JKRhb): implement setEventUnsubscribeHandler
   }
 
-  /// Handles a `readproperty` operation triggered by a TD consumer.
-  @internal
+  @override
   Future<Content> handleReadProperty(
     String propertyName, {
     int? formIndex,
@@ -147,8 +145,7 @@ class ExposedThing implements scripting_api.ExposedThing {
     );
   }
 
-  /// Handles a `writeproperty` operation triggered by a TD consumer.
-  @internal
+  @override
   Future<void> handleWriteProperty(
     String propertyName,
     Content input, {

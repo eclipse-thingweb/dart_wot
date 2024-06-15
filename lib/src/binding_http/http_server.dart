@@ -14,7 +14,6 @@ import "package:shelf_router/shelf_router.dart";
 
 import "../../core.dart" hide ExposedThing;
 
-import "../core/implementation/exposed_thing.dart";
 import "http_config.dart";
 
 const _thingsPath = "things";
@@ -38,7 +37,7 @@ final class HttpServer implements ProtocolServer {
 
   io.HttpServer? _server;
 
-  final _things = <String, ExposedThing>{};
+  final _things = <String, ExposableThing>{};
 
   late final Servient _servient;
 
@@ -51,7 +50,7 @@ final class HttpServer implements ProtocolServer {
   }
 
   @override
-  Future<void> expose(ExposedThing thing) async {
+  Future<void> expose(ExposableThing thing) async {
     final thingDescription = thing.thingDescription;
     final key = thingDescription.id;
 

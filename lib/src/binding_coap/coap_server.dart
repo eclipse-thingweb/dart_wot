@@ -26,7 +26,7 @@ final class CoapServer implements ProtocolServer {
   final int? preferredBlockSize;
 
   @override
-  Future<void> expose(ExposedThing thing) {
+  Future<void> expose(ExposableThing thing) {
     // TODO(JKRhb): implement expose
     throw UnimplementedError();
   }

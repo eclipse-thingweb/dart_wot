@@ -6,7 +6,7 @@
 
 import "../implementation/exposed_thing.dart";
 import "../implementation/servient.dart";
-// import "../scripting_api/exposed_thing.dart";
+import "exposable_thing.dart";
 
 /// Base class for a Protocol Server.
 abstract interface class ProtocolServer {
@@ -24,5 +24,5 @@ abstract interface class ProtocolServer {
   Future<void> stop();
 
   /// Exposes a [thing].
-  Future<void> expose(ExposedThing thing);
+  Future<void> expose(ExposableThing thing);
 }
