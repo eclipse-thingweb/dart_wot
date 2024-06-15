@@ -118,9 +118,13 @@ class InternalServient implements Servient {
     }
     _clientFactories.clear();
 
-    final serverStatuses = _servers.map((server) => server.stop()).toList();
+    final thingDestructionFutures =
+        [..._things.values].map((exposedThing) => exposedThing.destroy());
+    await Future.wait(thingDestructionFutures);
+
+    final serverStatuses = _servers.map((server) => server.stop());
     await Future.wait(serverStatuses);
-    serverStatuses.clear();
+    _servers.clear();
   }
 
   void _cleanUpForms(Iterable<InteractionAffordance>? interactionAffordances) {
@@ -158,7 +162,7 @@ class InternalServient implements Servient {
   ///
   /// Returns `false` if the [thing] has already been registered, otherwise
   /// `true`.
-  bool addThing(ExposedThing thing) {
+  bool _addThing(ExposedThing thing) {
     final id = thing.thingDescription.id!;
     if (_things.containsKey(id)) {
       return false;
@@ -168,17 +172,21 @@ class InternalServient implements Servient {
     return true;
   }
 
-  /// Returns an [ExposedThing] with the given [id] if it has been registered.
-  ExposedThing? thing(String id) => _things[id];
+  /// Destroys a previously exposed [thing].
+  ///
+  /// Returns `true` if the [thing] was successfully destroyed.
+  bool destroyThing(ExposedThing thing) {
+    final id = thing.thingDescription.id;
+    if (!_things.containsKey(id)) {
+      return false;
+    }
 
-  /// Returns a [Map] with the [ThingDescription]s of all registered
-  /// [ExposedThing]s.
-  Map<String, ThingDescription> get thingDescriptions {
-    return _things.map((key, value) => MapEntry(key, value.thingDescription));
+    for (final server in _servers) {
+      server.destroyThing(thing);
+    }
+    _things.remove(id);
+    return true;
   }
-
-  /// Returns a list of available [ProtocolServer]s.
-  List<ProtocolServer> get servers => _servers;
 
   @override
   void addServer(ProtocolServer server) {
@@ -191,11 +199,11 @@ class InternalServient implements Servient {
   bool removeServer(String scheme) {
     // TODO: Refactor
     final containsScheme =
-        servers.where((server) => server.scheme == scheme).isNotEmpty;
+        _servers.where((server) => server.scheme == scheme).isNotEmpty;
 
     if (containsScheme) {
       // TODO: "De-expose" the ExposedThings
-      servers.removeWhere((server) => server.scheme == scheme);
+      _servers.removeWhere((server) => server.scheme == scheme);
 
       return true;
     }
@@ -264,7 +272,7 @@ class InternalServient implements Servient {
     final thingDescription = _expandExposedThingInit(init);
 
     final newThing = ExposedThing(this, thingDescription);
-    if (addThing(newThing)) {
+    if (_addThing(newThing)) {
       await expose(newThing);
       return newThing;
     }

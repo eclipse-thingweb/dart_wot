@@ -25,4 +25,7 @@ abstract interface class ProtocolServer {
 
   /// Exposes a [thing].
   Future<void> expose(ExposableThing thing);
+
+  /// Removes a [thing] from this server.
+  Future<void> destroyThing(ExposableThing thing);
 }

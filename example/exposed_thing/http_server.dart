@@ -6,8 +6,10 @@ import "package:dart_wot/core.dart";
 String property = "hi :)";
 
 void main() async {
-  final servient =
-      Servient.create(servers: [HttpServer(HttpConfig(port: 3000))]);
+  final servient = Servient.create(
+    clientFactories: [HttpClientFactory()],
+    servers: [HttpServer(HttpConfig(port: 3000))],
+  );
 
   final wot = await servient.start();
 
@@ -50,4 +52,10 @@ void main() async {
 
       // TODO: Should an incorrect data type be handled in some way?
     });
+
+  final thingDescription = await wot
+      .requestThingDescription(Uri.parse("http://localhost:3000/test"));
+
+  print(thingDescription.toJson());
+  await servient.shutdown();
 }

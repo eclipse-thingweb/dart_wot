@@ -42,4 +42,10 @@ final class CoapServer implements ProtocolServer {
     // TODO(JKRhb): implement stop
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> destroyThing(ExposableThing thing) {
+    // TODO: implement destroyThing
+    throw UnimplementedError();
+  }
 }

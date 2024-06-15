@@ -16,8 +16,6 @@ import "../../core.dart" hide ExposedThing;
 
 import "http_config.dart";
 
-const _thingsPath = "things";
-
 /// A [ProtocolServer] for the Hypertext Transfer Protocol (HTTP).
 final class HttpServer implements ProtocolServer {
   /// Create a new [HttpServer] from an optional [HttpConfig].
@@ -60,23 +58,44 @@ final class HttpServer implements ProtocolServer {
 
     _things[thingId] = thing;
 
-    final router = Router();
+    final router = Router()
+      ..get("/$thingId", (request) {
+        const defaultContentType = "application/td+json";
+        return Response(
+          200,
+          body: _servient.contentSerdes
+              .valueToContent(
+                DataSchemaValue.tryParse(thingDescription.toJson()),
+                null,
+                defaultContentType,
+              )
+              .body,
+          headers: {
+            "Content-Type": defaultContentType,
+          },
+        );
+      });
 
-    final affordances = [
-      ...thingDescription.actions?.entries ?? [],
-      ...thingDescription.properties?.entries ?? [],
-      ...thingDescription.events?.entries ?? [],
-    ];
+    final affordances = <MapEntry<String, InteractionAffordance>>[];
+
+    for (final affordanceMap in [
+      thingDescription.actions,
+      thingDescription.properties,
+      thingDescription.events,
+    ]) {
+      affordanceMap?.entries.forEach(affordances.add);
+    }
 
     for (final affordance in affordances) {
       final affordanceKey = affordance.key;
       final affordanceValue = affordance.value;
 
+      // TODO: Integrate URI variables here
+      final path = "/$thingId/$affordanceKey";
       switch (affordanceValue) {
         // TODO: Refactor
         // TODO: Handle values from protocol bindings
         case Property(:final readOnly, :final writeOnly):
-          final path = "/$thingId/$affordanceKey";
           if (!writeOnly) {
             router.get(path, (request) async {
               final content = await thing.handleReadProperty(affordance.key);
@@ -110,7 +129,26 @@ final class HttpServer implements ProtocolServer {
 
             // TODO: Handle observe
           }
-        default:
+        case Action():
+          router.post(path, (request) async {
+            if (request is! Request) {
+              throw Exception();
+            }
+
+            final content = Content(
+              request.mimeType ?? "application/json",
+              request.read(),
+            );
+            await thing.handleWriteProperty(affordance.key, content);
+
+            return Response(
+              204,
+            );
+          });
+
+        // TODO: Handle observe
+        case Event():
+          // TODO: Implement
           continue;
       }
     }
@@ -146,53 +184,14 @@ final class HttpServer implements ProtocolServer {
       return router.call(request);
     }
 
-    if (firstSegment == _thingsPath) {
-      return _handleThingRequest(request);
-    }
-
     return Response.notFound("Not found.");
   }
 
-  Future<Response> _handleThingRequest(Request request) async {
-    if (request.method != "GET") {
-      return Response(405, body: "Method not allowed");
-    }
+  @override
+  Future<void> destroyThing(ExposableThing thing) async {
+    final id = thing.thingDescription.id;
 
-    final path = request.requestedUri.pathSegments.sublist(1).join("/");
-
-    final exposedThing = _things[path];
-
-    if (exposedThing == null) {
-      return Response.notFound("Not found.");
-    }
-
-    // TODO: Fix content negotiation
-    final acceptHeader = request.headers["Accept"]?[0];
-    final contentType = ["*/*", null].contains(acceptHeader)
-        ? "application/td+json"
-        : acceptHeader;
-
-    final rawThingDescription = exposedThing.thingDescription.toJson();
-
-    final dataSchemaValue = DataSchemaValue.tryParse(rawThingDescription);
-
-    // FIXME: Thing Description is not generated correctly
-    final content = _servient.contentSerdes.valueToContent(
-      dataSchemaValue,
-      null,
-      contentType ?? "application/td+json",
-    );
-
-    return Response(200, body: content.body);
+    _things.remove(id);
+    _routes.remove(id);
   }
-
-  // Response _handleRequest(shelf.Request request) {
-  //   final path = request.url.path;
-
-  //   if (path.startsWith(_thingsPath)) {
-  //     return _handleThingRequest(request);
-  //   }
-
-  //   return shelf.Response.notFound('Not found.');
-  // }
 }

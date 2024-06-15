@@ -45,9 +45,8 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
   }
 
   @override
-  Future<void> destroy() {
-    // TODO(JKRhb): implement destroy
-    throw UnimplementedError();
+  Future<void> destroy() async {
+    _servient.destroyThing(this);
   }
 
   @override
@@ -57,10 +56,7 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
   }
 
   @override
-  Future<void> expose() async {
-    // TODO: Refactor
-    return _servient.expose(this);
-  }
+  Future<void> expose() => _servient.expose(this);
 
   @override
   void setActionHandler(String name, scripting_api.ActionHandler handler) {
