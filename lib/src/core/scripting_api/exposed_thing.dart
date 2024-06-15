@@ -27,7 +27,7 @@ typedef PropertyWriteHandler = Future<void> Function(
 
 /// A function that is called when an external request for invoking an Action
 /// is received and defines what to do with such requests.
-typedef ActionHandler = Future<void> Function(
+typedef ActionHandler = Future<InteractionInput> Function(
   InteractionOutput params, {
   int? formIndex,
   Map<String, Object>? uriVariables,
