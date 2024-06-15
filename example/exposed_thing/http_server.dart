@@ -56,12 +56,23 @@ void main() async {
         return;
       }
 
-      // TODO: Should an incorrect data type be handled in some way?
+      throw const FormatException();
     });
 
   final thingDescription = await wot
       .requestThingDescription(Uri.parse("http://localhost:3000/test"));
+  final consumedThing = await wot.consume(thingDescription);
 
-  print(thingDescription.toJson());
+  var value = await (await consumedThing.readProperty("status")).value();
+  print(value);
+
+  await consumedThing.writeProperty(
+    "status",
+    DataSchemaValueInput(DataSchemaValue.fromString("bye")),
+  );
+
+  value = await (await consumedThing.readProperty("status")).value();
+  print(value);
+
   await servient.shutdown();
 }

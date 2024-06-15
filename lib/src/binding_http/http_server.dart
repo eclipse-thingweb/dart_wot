@@ -63,7 +63,9 @@ final class HttpServer implements ProtocolServer {
           200,
           body: _servient.contentSerdes
               .valueToContent(
-                DataSchemaValue.tryParse(thingDescription.toJson()),
+                DataSchemaValue.tryParse(
+                  thingDescription.toJson(),
+                ),
                 null,
                 defaultContentType,
               )
@@ -90,6 +92,13 @@ final class HttpServer implements ProtocolServer {
 
       // TODO: Integrate URI variables here
       final path = "/$thingId/$affordanceKey";
+      final affordanceUri = Uri(
+        scheme: "http",
+        host: _server!.address.address,
+        port: _server!.port,
+        path: path,
+      );
+
       switch (affordanceValue) {
         // TODO: Refactor
         // TODO: Handle values from protocol bindings
@@ -106,10 +115,19 @@ final class HttpServer implements ProtocolServer {
                 },
               );
             });
+
+            affordanceValue.forms.add(
+              Form(
+                affordanceUri,
+                op: const [
+                  OperationType.readproperty,
+                ],
+              ),
+            );
           }
 
           if (!readOnly) {
-            router.post(path, (request) async {
+            router.put(path, (request) async {
               if (request is! Request) {
                 throw Exception();
               }
@@ -118,15 +136,27 @@ final class HttpServer implements ProtocolServer {
                 request.mimeType ?? "application/json",
                 request.read(),
               );
-              await thing.handleWriteProperty(affordance.key, content);
+              try {
+                await thing.handleWriteProperty(affordance.key, content);
+              } on FormatException {
+                return Response.badRequest();
+              }
 
               return Response(
                 204,
               );
             });
 
-            // TODO: Handle observe
+            affordanceValue.forms.add(
+              Form(
+                affordanceUri,
+                op: const [
+                  OperationType.writeproperty,
+                ],
+              ),
+            );
           }
+        // TODO: Handle observe
         case Action():
           router.post(path, (request) async {
             if (request is! Request) {
