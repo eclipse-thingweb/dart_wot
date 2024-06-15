@@ -4,8 +4,6 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-// import "dart:io" as io;
-
 import "dart:io" as io;
 
 import "package:shelf/shelf.dart";
