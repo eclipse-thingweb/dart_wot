@@ -13,6 +13,7 @@ import "package:shelf_router/shelf_router.dart";
 import "../../core.dart" hide ExposedThing;
 
 import "http_config.dart";
+import "http_extensions.dart";
 
 /// A [ProtocolServer] for the Hypertext Transfer Protocol (HTTP).
 final class HttpServer implements ProtocolServer {
@@ -104,7 +105,9 @@ final class HttpServer implements ProtocolServer {
         // TODO: Handle values from protocol bindings
         case Property(:final readOnly, :final writeOnly):
           if (!writeOnly) {
-            router.get(path, (request) async {
+            const operationType = OperationType.readproperty;
+            final methodName = operationType.defaultHttpMethod;
+            router.add(methodName, path, (request) async {
               final content = await thing.handleReadProperty(affordance.key);
 
               return Response(
@@ -120,14 +123,16 @@ final class HttpServer implements ProtocolServer {
               Form(
                 affordanceUri,
                 op: const [
-                  OperationType.readproperty,
+                  operationType,
                 ],
               ),
             );
           }
 
           if (!readOnly) {
-            router.put(path, (request) async {
+            const operationType = OperationType.writeproperty;
+            final methodName = operationType.defaultHttpMethod;
+            router.add(methodName, path, (request) async {
               if (request is! Request) {
                 throw Exception();
               }
@@ -151,14 +156,16 @@ final class HttpServer implements ProtocolServer {
               Form(
                 affordanceUri,
                 op: const [
-                  OperationType.writeproperty,
+                  operationType,
                 ],
               ),
             );
           }
         // TODO: Handle observe
         case Action():
-          router.post(path, (request) async {
+          const operationType = OperationType.invokeaction;
+          final methodName = operationType.defaultHttpMethod;
+          router.add(methodName, path, (request) async {
             if (request is! Request) {
               throw Exception();
             }
@@ -167,12 +174,23 @@ final class HttpServer implements ProtocolServer {
               request.mimeType ?? "application/json",
               request.read(),
             );
-            await thing.handleWriteProperty(affordance.key, content);
+            final blah =
+                await thing.handleInvokeAction(affordance.key, content);
 
             return Response(
+              body: blah?.body,
               204,
             );
           });
+
+          affordanceValue.forms.add(
+            Form(
+              affordanceUri,
+              op: const [
+                operationType,
+              ],
+            ),
+          );
 
         // TODO: Handle observe
         case Event():

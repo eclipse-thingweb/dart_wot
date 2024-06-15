@@ -33,6 +33,21 @@ void main() async {
         ],
       },
     },
+    "actions": {
+      "toggle": {
+        "input": {
+          "type": "boolean",
+        },
+        "output": {
+          "type": "null",
+        },
+        "forms": [
+          {
+            "href": "/toggle",
+          }
+        ],
+      },
+    },
   });
 
   exposedThing
@@ -57,10 +72,21 @@ void main() async {
       }
 
       throw const FormatException();
+    })
+    ..setActionHandler("toggle", (
+      actionInput, {
+      data,
+      formIndex,
+      uriVariables,
+    }) async {
+      print(await actionInput.value());
+
+      return InteractionInput.fromNull();
     });
 
   final thingDescription = await wot
       .requestThingDescription(Uri.parse("http://localhost:3000/test"));
+  print(thingDescription.toJson());
   final consumedThing = await wot.consume(thingDescription);
 
   var value = await (await consumedThing.readProperty("status")).value();
@@ -73,6 +99,13 @@ void main() async {
 
   value = await (await consumedThing.readProperty("status")).value();
   print(value);
+
+  final actionOutput = await consumedThing.invokeAction(
+    "toggle",
+    input: InteractionInput.fromBoolean(true),
+  );
+
+  print(await actionOutput.value());
 
   await servient.shutdown();
 }

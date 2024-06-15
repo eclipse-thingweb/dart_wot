@@ -29,4 +29,13 @@ abstract interface class ExposableThing {
     Map<String, Object>? uriVariables,
     Object? data,
   });
+
+  /// Handles a `invokeaction` operation triggered by a TD consumer.
+  Future<Content?> handleInvokeAction(
+    String propertyName,
+    Content input, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
 }

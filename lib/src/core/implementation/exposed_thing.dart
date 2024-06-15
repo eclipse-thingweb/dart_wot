@@ -30,6 +30,8 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
   final Map<String, scripting_api.PropertyWriteHandler> _propertyWriteHandlers =
       {};
 
+  final Map<String, scripting_api.ActionHandler> _actionHandlers = {};
+
   @override
   Future<void> emitPropertyChange(String name) {
     // TODO(JKRhb): implement emitPropertyChange
@@ -60,7 +62,7 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
 
   @override
   void setActionHandler(String name, scripting_api.ActionHandler handler) {
-    // TODO(JKRhb): implement setActionHandler
+    _actionHandlers[name] = handler;
   }
 
   @override
@@ -178,6 +180,47 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
       formIndex: formIndex,
       uriVariables: uriVariables,
       data: data,
+    );
+  }
+
+  @override
+  Future<Content?> handleInvokeAction(
+    String actionName,
+    Content input, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) async {
+    final actionHandler = _actionHandlers[actionName];
+
+    if (actionHandler == null) {
+      throw Exception(
+        "Action handler for action $actionName is not defined.",
+      );
+    }
+
+    final action = thingDescription.actions?[actionName];
+
+    final processedInput = InteractionOutput(
+      input,
+      _servient.contentSerdes,
+      // FIXME: Providing a form does not really make sense here.
+      Form(Uri()),
+      action?.input,
+    );
+
+    final actionOutput = await actionHandler(
+      processedInput,
+      formIndex: formIndex,
+      uriVariables: uriVariables,
+      data: data,
+    );
+
+    return Content.fromInteractionInput(
+      actionOutput,
+      "application/json",
+      _servient.contentSerdes,
+      null,
     );
   }
 }
