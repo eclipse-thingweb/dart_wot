@@ -10,7 +10,7 @@ import "package:test/test.dart";
 void main() {
   group("OperationType should indicate the correct default op values for", () {
     test("properties", () {
-      const regularProperty = Property(forms: []);
+      const regularProperty = Property(forms: [], dataSchema: DataSchema());
 
       final regularPropertyOpValues =
           OperationType.defaultOpValues(regularProperty);
