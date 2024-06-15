@@ -52,52 +52,68 @@ final class HttpServer implements ProtocolServer {
   @override
   Future<void> expose(ExposableThing thing) async {
     final thingDescription = thing.thingDescription;
-    final key = thingDescription.id;
+    final thingId = thingDescription.id;
 
-    if (key == null) {
+    if (thingId == null) {
       throw ArgumentError("Missing id field in thingDescription.");
     }
 
-    _things[key] = thing;
+    _things[thingId] = thing;
 
     final router = Router();
 
-    // final affordances = [
-    //   ...thingDescription.actions?.entries ?? [],
-    //   ...thingDescription.properties?.entries ?? [],
-    //   ...thingDescription.events?.entries ?? [],
-    // ];
+    final affordances = [
+      ...thingDescription.actions?.entries ?? [],
+      ...thingDescription.properties?.entries ?? [],
+      ...thingDescription.events?.entries ?? [],
+    ];
 
-    for (final affordance in thingDescription.properties?.entries ??
-        <MapEntry<String, Property>>[]) {
-      router
-        ..get("/$key/${affordance.key}", (request) async {
-          final content = await thing.handleReadProperty(affordance.key);
+    for (final affordance in affordances) {
+      final affordanceKey = affordance.key;
+      final affordanceValue = affordance.value;
 
-          return Response(
-            200,
-            body: content.body,
-            headers: {
-              "Content-Type": content.type,
-            },
-          );
-        })
-        ..post("/$key/${affordance.key}", (request) async {
-          if (request is! Request) {
-            throw Exception();
+      switch (affordanceValue) {
+        // TODO: Refactor
+        // TODO: Handle values from protocol bindings
+        case Property(:final readOnly, :final writeOnly):
+          final path = "/$thingId/$affordanceKey";
+          if (!writeOnly) {
+            router.get(path, (request) async {
+              final content = await thing.handleReadProperty(affordance.key);
+
+              return Response(
+                200,
+                body: content.body,
+                headers: {
+                  "Content-Type": content.type,
+                },
+              );
+            });
           }
 
-          final content =
-              Content(request.mimeType ?? "application/json", request.read());
-          await thing.handleWriteProperty(affordance.key, content);
+          if (!readOnly) {
+            router.post(path, (request) async {
+              if (request is! Request) {
+                throw Exception();
+              }
 
-          return Response(
-            204,
-          );
-        });
+              final content = Content(
+                request.mimeType ?? "application/json",
+                request.read(),
+              );
+              await thing.handleWriteProperty(affordance.key, content);
+
+              return Response(
+                204,
+              );
+            });
+          }
+        default:
+          continue;
+      }
     }
 
-    _routes[key] = router;
+    _routes[thingId] = router;
   }
 
   @override
