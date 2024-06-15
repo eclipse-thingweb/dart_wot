@@ -14,7 +14,7 @@ class Property extends InteractionAffordance implements DataSchema {
     required super.forms,
     super.uriVariables,
     super.additionalFields,
-    this.dataSchema,
+    required this.dataSchema,
     this.observable = false,
   });
 
@@ -52,94 +52,94 @@ class Property extends InteractionAffordance implements DataSchema {
   }
 
   /// The internal [DataSchema] this property is based on.
-  final DataSchema? dataSchema;
+  final DataSchema dataSchema;
 
   @override
-  String? get title => dataSchema?.title;
+  String? get title => dataSchema.title;
 
   @override
-  Map<String, String>? get titles => dataSchema?.titles;
+  Map<String, String>? get titles => dataSchema.titles;
 
   @override
-  String? get description => dataSchema?.description;
+  String? get description => dataSchema.description;
 
   @override
-  Map<String, String>? get descriptions => dataSchema?.descriptions;
+  Map<String, String>? get descriptions => dataSchema.descriptions;
 
   @override
-  List<String>? get atType => dataSchema?.atType;
+  List<String>? get atType => dataSchema.atType;
 
   @override
-  Object? get constant => dataSchema?.constant;
+  Object? get constant => dataSchema.constant;
 
   @override
-  Object? get defaultValue => dataSchema?.defaultValue;
+  Object? get defaultValue => dataSchema.defaultValue;
 
   @override
-  List<Object?>? get enumeration => dataSchema?.enumeration;
+  List<Object?>? get enumeration => dataSchema.enumeration;
 
   @override
-  String? get format => dataSchema?.format;
+  String? get format => dataSchema.format;
 
   @override
-  List<DataSchema>? get oneOf => dataSchema?.oneOf;
+  List<DataSchema>? get oneOf => dataSchema.oneOf;
 
   @override
-  bool get readOnly => dataSchema?.readOnly ?? false;
+  bool get readOnly => dataSchema.readOnly ?? false;
 
   @override
-  String? get type => dataSchema?.type;
+  String? get type => dataSchema.type;
 
   @override
-  String? get unit => dataSchema?.unit;
+  String? get unit => dataSchema.unit;
 
   @override
-  bool get writeOnly => dataSchema?.writeOnly ?? false;
+  bool get writeOnly => dataSchema.writeOnly ?? false;
 
   @override
-  String? get contentEncoding => dataSchema?.contentEncoding;
+  String? get contentEncoding => dataSchema.contentEncoding;
 
   @override
-  String? get contentMediaType => dataSchema?.contentMediaType;
+  String? get contentMediaType => dataSchema.contentMediaType;
 
   @override
-  num? get exclusiveMaximum => dataSchema?.exclusiveMaximum;
+  num? get exclusiveMaximum => dataSchema.exclusiveMaximum;
 
   @override
-  num? get exclusiveMinimum => dataSchema?.exclusiveMinimum;
+  num? get exclusiveMinimum => dataSchema.exclusiveMinimum;
 
   @override
-  List<DataSchema>? get items => dataSchema?.items;
+  List<DataSchema>? get items => dataSchema.items;
 
   @override
-  int? get maxItems => dataSchema?.maxItems;
+  int? get maxItems => dataSchema.maxItems;
 
   @override
-  int? get maxLength => dataSchema?.maxLength;
+  int? get maxLength => dataSchema.maxLength;
 
   @override
-  num? get maximum => dataSchema?.maximum;
+  num? get maximum => dataSchema.maximum;
 
   @override
-  int? get minItems => dataSchema?.minItems;
+  int? get minItems => dataSchema.minItems;
 
   @override
-  int? get minLength => dataSchema?.minItems;
+  int? get minLength => dataSchema.minItems;
 
   @override
-  num? get minimum => dataSchema?.minimum;
+  num? get minimum => dataSchema.minimum;
 
   @override
-  num? get multipleOf => dataSchema?.multipleOf;
+  num? get multipleOf => dataSchema.multipleOf;
 
   @override
-  String? get pattern => dataSchema?.pattern;
+  String? get pattern => dataSchema.pattern;
 
   @override
-  Map<String, DataSchema>? get properties => dataSchema?.properties;
+  Map<String, DataSchema>? get properties => dataSchema.properties;
 
   @override
-  List<String>? get required => dataSchema?.required;
+  List<String>? get required => dataSchema.required;
 
   /// A hint that indicates whether Servients hosting the Thing and
   /// Intermediaries should provide a Protocol Binding that supports the
@@ -147,6 +147,10 @@ class Property extends InteractionAffordance implements DataSchema {
   final bool observable;
 
   @override
-  Map<String, dynamic> get additionalFields =>
-      dataSchema?.additionalFields ?? {};
+  Map<String, dynamic> get additionalFields {
+    final additionalDataSchemaFields = dataSchema.additionalFields.entries
+        .where((entry) => super.additionalFields.containsKey(entry.key));
+
+    return Map.fromEntries(additionalDataSchemaFields);
+  }
 }
