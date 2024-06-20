@@ -174,11 +174,11 @@ final class HttpServer implements ProtocolServer {
               request.mimeType ?? "application/json",
               request.read(),
             );
-            final blah =
+            final actionOutput =
                 await thing.handleInvokeAction(affordance.key, content);
 
             return Response(
-              body: blah?.body,
+              body: actionOutput?.body,
               204,
             );
           });
@@ -192,7 +192,6 @@ final class HttpServer implements ProtocolServer {
             ),
           );
 
-        // TODO: Handle observe
         case Event():
           // TODO: Implement
           continue;

@@ -223,4 +223,73 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
       null,
     );
   }
+
+  @override
+  Stream<Content> handleObserveProperty(
+    String eventName, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) {
+    // TODO: implement handleObserveProperty
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> handleReadAllProperties(
+    List<String> propertyNames,
+    PropertyContentMap inputs, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) {
+    // TODO: implement handleReadAllProperties
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<PropertyContentMap> handleReadMultipleProperties(
+    List<String> propertyNames,
+    Content input, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) {
+    // TODO: implement handleReadMultipleProperties
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<Content> handleSubscribeEvent(
+    String eventName, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) {
+    // TODO: implement handleSubscribeEvent
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<Content> handleUnsubscribeEvent(
+    String eventName, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) {
+    // TODO: implement handleUnsubscribeEvent
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> handleWriteMultipleProperties(
+    List<String> propertyNames,
+    Content input, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) {
+    // TODO: implement handleWriteMultipleProperties
+    throw UnimplementedError();
+  }
 }

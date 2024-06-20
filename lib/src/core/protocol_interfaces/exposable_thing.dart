@@ -7,6 +7,8 @@
 import "../definitions.dart";
 import "../implementation.dart";
 
+typedef PropertyContentMap = Map<String, Content>;
+
 /// Interface that allows ProtocolServers to interact with ExposedThings.
 // TODO: This needs a better name
 abstract interface class ExposableThing {
@@ -21,6 +23,22 @@ abstract interface class ExposableThing {
     Object? data,
   });
 
+  Future<PropertyContentMap> handleReadMultipleProperties(
+    List<String> propertyNames,
+    Content input, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
+
+  Future<void> handleReadAllProperties(
+    List<String> propertyNames,
+    PropertyContentMap inputs, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
+
   /// Handles a `writeproperty` operation triggered by a TD consumer.
   Future<void> handleWriteProperty(
     String propertyName,
@@ -30,10 +48,43 @@ abstract interface class ExposableThing {
     Object? data,
   });
 
-  /// Handles a `invokeaction` operation triggered by a TD consumer.
+  /// Handles a `writemultipleproperties` operation triggered by a TD consumer.
+  Future<void> handleWriteMultipleProperties(
+    List<String> propertyNames,
+    Content input, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
+
+  /// Handles an `observeproperty` operation triggered by a TD consumer.
+  Stream<Content> handleObserveProperty(
+    String eventName, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
+
+  /// Handles an `invokeaction` operation triggered by a TD consumer.
   Future<Content?> handleInvokeAction(
     String propertyName,
     Content input, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
+
+  /// Handles a `subscribeevent` operation triggered by a TD consumer.
+  Stream<Content> handleSubscribeEvent(
+    String eventName, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
+
+  /// Handles an `unsubscribeevent` operation triggered by a TD consumer.
+  Stream<Content> handleUnsubscribeEvent(
+    String eventName, {
     int? formIndex,
     Map<String, Object>? uriVariables,
     Object? data,
