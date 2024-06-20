@@ -7,6 +7,7 @@
 import "../definitions.dart";
 import "../implementation.dart";
 
+///
 typedef PropertyContentMap = Map<String, Content>;
 
 /// Interface that allows ProtocolServers to interact with ExposedThings.
@@ -23,6 +24,7 @@ abstract interface class ExposableThing {
     Object? data,
   });
 
+  /// Handles a `readmultipleproperties` operation triggered by a TD consumer.
   Future<PropertyContentMap> handleReadMultipleProperties(
     List<String> propertyNames,
     Content input, {
@@ -31,6 +33,7 @@ abstract interface class ExposableThing {
     Object? data,
   });
 
+  /// Handles a `readallproperties` operation triggered by a TD consumer.
   Future<void> handleReadAllProperties(
     List<String> propertyNames,
     PropertyContentMap inputs, {
@@ -65,6 +68,14 @@ abstract interface class ExposableThing {
     Object? data,
   });
 
+  /// Handles an `unobserveproperty` operation triggered by a TD consumer.
+  Future<void> handleUnobserveProperty(
+    String eventName, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  });
+
   /// Handles an `invokeaction` operation triggered by a TD consumer.
   Future<Content?> handleInvokeAction(
     String propertyName,
@@ -83,7 +94,7 @@ abstract interface class ExposableThing {
   });
 
   /// Handles an `unsubscribeevent` operation triggered by a TD consumer.
-  Stream<Content> handleUnsubscribeEvent(
+  Future<void> handleUnsubscribeEvent(
     String eventName, {
     int? formIndex,
     Map<String, Object>? uriVariables,

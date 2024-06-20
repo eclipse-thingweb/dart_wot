@@ -271,7 +271,7 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
   }
 
   @override
-  Stream<Content> handleUnsubscribeEvent(
+  Future<void> handleUnsubscribeEvent(
     String eventName, {
     int? formIndex,
     Map<String, Object>? uriVariables,
@@ -290,6 +290,17 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
     Object? data,
   }) {
     // TODO: implement handleWriteMultipleProperties
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> handleUnobserveProperty(
+    String eventName, {
+    int? formIndex,
+    Map<String, Object>? uriVariables,
+    Object? data,
+  }) {
+    // TODO: implement handleUnobserveProperty
     throw UnimplementedError();
   }
 }
