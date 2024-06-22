@@ -30,20 +30,58 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
   final Map<String, scripting_api.PropertyWriteHandler> _propertyWriteHandlers =
       {};
 
+  final Map<String, scripting_api.PropertyReadHandler>
+      _propertyObserveHandlers = {};
+
+  final Map<String, scripting_api.PropertyReadHandler>
+      _propertyUnobserveHandlers = {};
+
   final Map<String, scripting_api.ActionHandler> _actionHandlers = {};
+
+  Property _obtainProperty(String name) {
+    final property = thingDescription.properties?[name];
+
+    if (property == null) {
+      throw ArgumentError(
+        "Property $name does not exist in ExposedThing "
+        "with title ${thingDescription.title}.",
+      );
+    }
+
+    return property;
+  }
+
+  void _checkReadableProperty(String name) {
+    final property = _obtainProperty(name);
+
+    if (property.writeOnly) {
+      final title = property.title ?? "without title";
+      throw ArgumentError("Property $title is not readable.");
+    }
+  }
+
+  void _checkWritableProperty(String name) {
+    final property = _obtainProperty(name);
+
+    if (property.readOnly) {
+      final title = property.title ?? "without title";
+      throw ArgumentError("Property $title is not writable.");
+    }
+  }
+
+  void _checkObservableProperty(String name) {
+    final property = _obtainProperty(name);
+
+    if (!property.observable) {
+      final title = property.title ?? "without title";
+      throw ArgumentError("Property $title is not observable.");
+    }
+  }
 
   @override
   Future<void> emitPropertyChange(String name) {
     // TODO(JKRhb): implement emitPropertyChange
     throw UnimplementedError();
-  }
-
-  @override
-  void setPropertyWriteHandler(
-    String name,
-    scripting_api.PropertyWriteHandler handler,
-  ) {
-    _propertyWriteHandlers[name] = handler;
   }
 
   @override
@@ -62,15 +100,51 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
 
   @override
   void setActionHandler(String name, scripting_api.ActionHandler handler) {
+    if (thingDescription.actions?[name] == null) {
+      throw ArgumentError("ExposedThing does not an Action with the key $name");
+    }
+
     _actionHandlers[name] = handler;
   }
 
   @override
-  void setEventHandler(
+  void setPropertyReadHandler(
     String name,
-    scripting_api.EventListenerHandler handler,
+    scripting_api.PropertyReadHandler handler,
   ) {
-    // TODO(JKRhb): implement setEventHandler
+    _checkReadableProperty(name);
+
+    _propertyReadHandlers[name] = handler;
+  }
+
+  @override
+  void setPropertyWriteHandler(
+    String name,
+    scripting_api.PropertyWriteHandler handler,
+  ) {
+    _checkWritableProperty(name);
+
+    _propertyWriteHandlers[name] = handler;
+  }
+
+  @override
+  void setPropertyObserveHandler(
+    String name,
+    scripting_api.PropertyReadHandler handler,
+  ) {
+    _checkObservableProperty(name);
+
+    _propertyObserveHandlers[name] = handler;
+  }
+
+  @override
+  void setPropertyUnobserveHandler(
+    String name,
+    scripting_api.PropertyReadHandler handler,
+  ) {
+    _checkObservableProperty(name);
+
+    _propertyUnobserveHandlers[name] = handler;
   }
 
   @override
@@ -79,31 +153,6 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
     scripting_api.EventSubscriptionHandler handler,
   ) {
     // TODO(JKRhb): implement setEventSubscribeHandler
-  }
-
-  @override
-  void setPropertyObserveHandler(
-    String name,
-    scripting_api.PropertyReadHandler handler,
-  ) {
-    // TODO(JKRhb): implement setPropertyObserveHandler
-  }
-
-  @override
-  void setPropertyReadHandler(
-    String name,
-    scripting_api.PropertyReadHandler handler,
-  ) {
-    // TODO: Ensure that the property is actually readable.
-    _propertyReadHandlers[name] = handler;
-  }
-
-  @override
-  void setPropertyUnobserveHandler(
-    String name,
-    scripting_api.PropertyReadHandler handler,
-  ) {
-    // TODO(JKRhb): implement setPropertyUnobserveHandler
   }
 
   @override
