@@ -7,11 +7,8 @@
 import "package:dart_wot/binding_coap.dart";
 import "package:dart_wot/core.dart";
 
-import "package:mockito/annotations.dart";
 import "package:test/test.dart";
-import "binding_coap_test.mocks.dart";
 
-@GenerateMocks([ExposedThing])
 void main() {
   group("CoAP Binding Tests", () {
     setUp(() {
@@ -20,20 +17,21 @@ void main() {
 
     test("Server tests", () {
       final defaultServer = CoapServer();
+      final servient = Servient.create(
+        servers: [
+          defaultServer,
+        ],
+      );
 
       expect(defaultServer.port, 5683);
       expect(defaultServer.scheme, "coap");
 
       expect(
-        () async => defaultServer.start(),
+        () async => defaultServer.start(servient),
         throwsA(const TypeMatcher<UnimplementedError>()),
       );
       expect(
         () async => defaultServer.stop(),
-        throwsA(const TypeMatcher<UnimplementedError>()),
-      );
-      expect(
-        () async => defaultServer.expose(MockExposedThing()),
         throwsA(const TypeMatcher<UnimplementedError>()),
       );
 

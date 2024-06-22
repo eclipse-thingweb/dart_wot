@@ -173,15 +173,17 @@ class ContentSerdes {
   Content valueToContent(
     DataSchemaValue<Object?>? value,
     DataSchema? dataSchema, [
-    String mediaType = defaultMediaType,
+    String? mediaType,
   ]) {
+    final resolvedMediaType = mediaType ?? defaultMediaType;
+
     _validateValue(value, dataSchema);
 
     if (value == null) {
-      return Content(mediaType, const Stream.empty());
+      return Content(resolvedMediaType, const Stream.empty());
     }
 
-    final parsedMediaType = MediaType.parse(mediaType);
+    final parsedMediaType = MediaType.parse(resolvedMediaType);
     final mimeType = parsedMediaType.mimeType;
     final parameters = parsedMediaType.parameters;
 
@@ -189,7 +191,7 @@ class ContentSerdes {
     final codec = _getCodecFromMediaType(mimeType) ?? TextCodec();
 
     final bytes = codec.valueToBytes(value, dataSchema, parameters);
-    return Content(mediaType, Stream.value(bytes));
+    return Content(resolvedMediaType, Stream.value(bytes));
   }
 
   /// Converts a [Content] object to a typed [Object].
