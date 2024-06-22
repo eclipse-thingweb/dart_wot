@@ -111,11 +111,6 @@ abstract interface class ExposedThing {
     EventSubscriptionHandler handler,
   );
 
-  /// Assigns a [handler] function to an event with a given [name].
-  ///
-  /// If the event is emitted, the [handler] function will be called.
-  void setEventHandler(String name, EventListenerHandler handler);
-
   /// Informs all subscribers of an Event with the given [name] that it has
   /// occurred.
   ///
