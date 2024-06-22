@@ -38,6 +38,12 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
 
   final Map<String, scripting_api.ActionHandler> _actionHandlers = {};
 
+  final Map<String, scripting_api.EventSubscriptionHandler>
+      _eventSubscribeHandlers = {};
+
+  final Map<String, scripting_api.EventSubscriptionHandler>
+      _eventUnsubscribeHandlers = {};
+
   Property _obtainProperty(String name) {
     final property = thingDescription.properties?[name];
 
@@ -152,7 +158,11 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
     String name,
     scripting_api.EventSubscriptionHandler handler,
   ) {
-    // TODO(JKRhb): implement setEventSubscribeHandler
+    if (thingDescription.events?[name] == null) {
+      throw ArgumentError("ExposedThing does not an Event with the key $name");
+    }
+
+    _eventSubscribeHandlers[name] = handler;
   }
 
   @override
@@ -160,7 +170,11 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
     String name,
     scripting_api.EventSubscriptionHandler handler,
   ) {
-    // TODO(JKRhb): implement setEventUnsubscribeHandler
+    if (thingDescription.events?[name] == null) {
+      throw ArgumentError("ExposedThing does not an Event with the key $name");
+    }
+
+    _eventUnsubscribeHandlers[name] = handler;
   }
 
   @override
@@ -212,11 +226,11 @@ class ExposedThing implements scripting_api.ExposedThing, ExposableThing {
 
     if (formIndex == null) {
       // FIXME: Returning a form does not really make sense here.
-      form = Form(Uri.parse("hi"));
+      form = Form(Uri());
     } else {
       form = thingDescription.properties?[propertyName]?.forms
               .elementAtOrNull(formIndex) ??
-          Form(Uri.parse("hi"));
+          Form(Uri());
     }
 
     await writeHandler(
