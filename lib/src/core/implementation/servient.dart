@@ -36,12 +36,12 @@ abstract class Servient {
   /// argument.
   factory Servient.create({
     List<ProtocolClientFactory>? clientFactories,
-    ServerSecurityCallback? serverSecurityCallback,
+    List<ProtocolServer>? servers,
     ContentSerdes? contentSerdes,
   }) {
     return InternalServient(
       clientFactories: clientFactories,
-      serverSecurityCallback: serverSecurityCallback,
+      servers: servers,
       contentSerdes: contentSerdes,
     );
   }
@@ -62,38 +62,46 @@ abstract class Servient {
   /// the return value is `null`.
   ProtocolClientFactory? removeClientFactory(String scheme);
 
+  /// Registers a new [ProtocolServer].
+  void addServer(ProtocolServer protocolServer);
+
+  /// De-registers a [ProtocolServer] for the given [scheme], if it exists.
+  ///
+  /// If a corresponding [ProtocolServer] was removed, it is return by this
+  /// method.
+  bool removeServer(String scheme);
+
   /// Closes this [Servient] and cleans up all resources.
   Future<void> shutdown();
+
+  /// The [ContentSerdes] object that is used for serializing/deserializing.
+  @internal
+  ContentSerdes get contentSerdes;
 }
 
 /// Provides the internal implementation details of the [Servient] class.
 class InternalServient implements Servient {
   /// Creates a new [InternalServient].
   InternalServient({
+    List<ProtocolServer>? servers,
     List<ProtocolClientFactory>? clientFactories,
-    ServerSecurityCallback? serverSecurityCallback,
     ContentSerdes? contentSerdes,
-  })  : contentSerdes = contentSerdes ?? ContentSerdes(),
-        _serverSecurityCallback = serverSecurityCallback {
-    for (final clientFactory in clientFactories ?? <ProtocolClientFactory>[]) {
-      addClientFactory(clientFactory);
-    }
+  }) : contentSerdes = contentSerdes ?? ContentSerdes() {
+    clientFactories?.forEach(addClientFactory);
+    servers?.forEach(addServer);
   }
 
   final List<ProtocolServer> _servers = [];
   final Map<String, ProtocolClientFactory> _clientFactories = {};
   final Map<String, ExposedThing> _things = {};
 
-  final ServerSecurityCallback? _serverSecurityCallback;
-
-  /// The [ContentSerdes] object that is used for serializing/deserializing.
+  @override
   final ContentSerdes contentSerdes;
 
   @override
   Future<WoT> start() async {
-    final serverStatuses = _servers
-        .map((server) => server.start(_serverSecurityCallback))
-        .toList(growable: false);
+    final serverStatuses =
+        _servers.map((server) => server.start(this)).toList(growable: false);
 
     for (final clientFactory in _clientFactories.values) {
       clientFactory.init();
@@ -110,9 +118,13 @@ class InternalServient implements Servient {
     }
     _clientFactories.clear();
 
-    final serverStatuses = _servers.map((server) => server.stop()).toList();
+    final thingDestructionFutures =
+        [..._things.values].map((exposedThing) => exposedThing.destroy());
+    await Future.wait(thingDestructionFutures);
+
+    final serverStatuses = _servers.map((server) => server.stop());
     await Future.wait(serverStatuses);
-    serverStatuses.clear();
+    _servers.clear();
   }
 
   void _cleanUpForms(Iterable<InteractionAffordance>? interactionAffordances) {
@@ -120,6 +132,7 @@ class InternalServient implements Servient {
       return;
     }
     for (final interactionAffordance in interactionAffordances) {
+      // FIXME: Properly augment forms
       interactionAffordance.forms.clear();
     }
   }
@@ -130,23 +143,27 @@ class InternalServient implements Servient {
       return;
     }
 
-    [thing.properties?.values, thing.actions?.values, thing.events?.values]
-        .forEach(_cleanUpForms);
+    // TODO: Check whether this makes sense.
+    final thingDescription = thing.thingDescription;
+    [
+      thingDescription.properties?.values,
+      thingDescription.actions?.values,
+      thingDescription.events?.values,
+    ].forEach(_cleanUpForms);
 
-    final List<Future<void>> serverPromises = [];
-    for (final server in _servers) {
-      serverPromises.add(server.expose(thing));
-    }
-
-    await Future.wait(serverPromises);
+    await Future.wait(
+      _servers.map(
+        (server) => server.expose(thing),
+      ),
+    );
   }
 
   /// Adds a [ExposedThing] to the servient if it hasn't been registered before.
   ///
   /// Returns `false` if the [thing] has already been registered, otherwise
   /// `true`.
-  bool addThing(ExposedThing thing) {
-    final id = thing.thingDescription.identifier;
+  bool _addThing(ExposedThing thing) {
+    final id = thing.thingDescription.id!;
     if (_things.containsKey(id)) {
       return false;
     }
@@ -155,23 +172,43 @@ class InternalServient implements Servient {
     return true;
   }
 
-  /// Returns an [ExposedThing] with the given [id] if it has been registered.
-  ExposedThing? thing(String id) => _things[id];
+  /// Destroys a previously exposed [thing].
+  ///
+  /// Returns `true` if the [thing] was successfully destroyed.
+  bool destroyThing(ExposedThing thing) {
+    final id = thing.thingDescription.id;
+    if (!_things.containsKey(id)) {
+      return false;
+    }
 
-  /// Returns a [Map] with the [ThingDescription]s of all registered
-  /// [ExposedThing]s.
-  Map<String, ThingDescription> get thingDescriptions {
-    return _things.map((key, value) => MapEntry(key, value.thingDescription));
+    for (final server in _servers) {
+      server.destroyThing(thing);
+    }
+    _things.remove(id);
+    return true;
   }
 
-  /// Returns a list of available [ProtocolServer]s.
-  List<ProtocolServer> get servers => _servers;
-
-  /// Registers a new [ProtocolServer].
+  @override
   void addServer(ProtocolServer server) {
     _things.values.forEach(server.expose);
 
     _servers.add(server);
+  }
+
+  @override
+  bool removeServer(String scheme) {
+    // TODO: Refactor
+    final containsScheme =
+        _servers.where((server) => server.scheme == scheme).isNotEmpty;
+
+    if (containsScheme) {
+      // TODO: "De-expose" the ExposedThings
+      _servers.removeWhere((server) => server.scheme == scheme);
+
+      return true;
+    }
+
+    return false;
   }
 
   /// Returns a list of all protocol schemes the registered clients support.
@@ -235,7 +272,8 @@ class InternalServient implements Servient {
     final thingDescription = _expandExposedThingInit(init);
 
     final newThing = ExposedThing(this, thingDescription);
-    if (addThing(newThing)) {
+    if (_addThing(newThing)) {
+      await expose(newThing);
       return newThing;
     }
 
