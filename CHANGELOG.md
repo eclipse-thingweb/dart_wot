@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.34.0] - 2024-07-17
+
+### Added
+
+- Address DataSchema FIXME comment ([2edef82](https://github.com/eclipse-thingweb/dart_wot/commit/2edef828bda8f42d60c8046623d4cd8888fe85f5))
+
+### Changed
+
+- Use FormatException instead of custom ValidationException ([f7ee480](https://github.com/eclipse-thingweb/dart_wot/commit/f7ee480107889156e9eff8705b64c261decebfab))
+- Improve deserialization and production logic ([91669cb](https://github.com/eclipse-thingweb/dart_wot/commit/91669cb9e7b25c706978aff4495193c83b54e181))
+- Implement proper serialization logic ([a9d950a](https://github.com/eclipse-thingweb/dart_wot/commit/a9d950af1fa29926631bb7c4db81f59bcf96c74c))
+- Parse `as` field as Uri ([7755c3e](https://github.com/eclipse-thingweb/dart_wot/commit/7755c3e8d7e106a3290002b7951c2df86abf757f))
+- Move DirectoryPayloadFormat to its own file ([bd74046](https://github.com/eclipse-thingweb/dart_wot/commit/bd740469f15532a01f907cca541f211a8d3bd3c1))
+- Move discovery configurations to scripting_api package ([bcac81f](https://github.com/eclipse-thingweb/dart_wot/commit/bcac81fb673048dc006cdf50b456b82ea349d22f))
+
+### Fixed
+
+- Fix error in DartWotException documentation ([4d47ee5](https://github.com/eclipse-thingweb/dart_wot/commit/4d47ee55b222346f27770b5bb5c4b5bc15dfe46e))
+- Fix typos in documentation comments ([83be3f9](https://github.com/eclipse-thingweb/dart_wot/commit/83be3f96050e9fab9ec0f426466313c8e4f800d3))
+- Fix typo in private method name ([41ee6d7](https://github.com/eclipse-thingweb/dart_wot/commit/41ee6d769d4d0baff800ddbc747d3b70a0877723))
+- Fix bug in link deserialization ([4faa21f](https://github.com/eclipse-thingweb/dart_wot/commit/4faa21f742bb78d717b05fe6954d1175c1cbca07))
+- Use correct field for deserializing maximum ([25c4cdc](https://github.com/eclipse-thingweb/dart_wot/commit/25c4cdc5456bfbc107876a234b608e97dbc73d29))
+- Use correct field for deserializing model ([45423a4](https://github.com/eclipse-thingweb/dart_wot/commit/45423a45ca447fc12f4285c02239b8124622a2f0))
+- Use correct field for deserializing type ([ed9daa8](https://github.com/eclipse-thingweb/dart_wot/commit/ed9daa8162600d7c80cf021e9dc640e0ff5b67af))
+- Fix deserialization of required field ([7b8f07c](https://github.com/eclipse-thingweb/dart_wot/commit/7b8f07cbb3a7eff9445f084722fbbd4cb6fa7837))
+- Fix parseDataSchemaArrayField method ([4a67d2d](https://github.com/eclipse-thingweb/dart_wot/commit/4a67d2d9edc838157119a67be5d9945e7f01e5cf))
+- Handle additional fields correctly ([487936b](https://github.com/eclipse-thingweb/dart_wot/commit/487936b5f5dcfc9564e596ce7fa92ece13fe0d58))
+
 ## [0.33.0] - 2024-05-29
 
 ### Changed
@@ -1051,6 +1079,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.34.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.33.0..v0.34.0
 [0.33.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.32.1..v0.33.0
 [0.32.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.32.0..v0.32.1
 [0.32.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.31.1..v0.32.0
