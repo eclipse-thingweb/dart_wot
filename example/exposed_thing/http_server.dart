@@ -9,7 +9,7 @@
 import "package:dart_wot/binding_http.dart";
 import "package:dart_wot/core.dart";
 
-String property = "hi :)";
+String testPayload = "Hello World";
 
 void main() async {
   final servient = Servient.create(
@@ -62,7 +62,7 @@ void main() async {
       formIndex,
       uriVariables,
     }) async {
-      return InteractionInput.fromString(property);
+      return InteractionInput.fromString(testPayload);
     })
     ..setPropertyWriteHandler("status", (
       interactionOutput, {
@@ -73,7 +73,7 @@ void main() async {
       final value = await interactionOutput.value();
 
       if (value is String) {
-        property = value;
+        testPayload = value;
         return;
       }
 
