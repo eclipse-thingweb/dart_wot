@@ -21,7 +21,8 @@ final class HttpServer implements ProtocolServer {
   HttpServer(HttpConfig? httpConfig)
       // TODO(JKRhb): Check if the scheme should be determined differently.
       : scheme = httpConfig?.secure ?? false ? "https" : "http",
-        port = _portFromConfig(httpConfig);
+        port = _portFromConfig(httpConfig),
+        bindAddress = httpConfig?.bindAddress ?? io.InternetAddress.anyIPv4;
 
   @override
   final String scheme;
@@ -29,8 +30,8 @@ final class HttpServer implements ProtocolServer {
   @override
   final int port;
 
-  // FIXME
-  final Object _bindAddress = io.InternetAddress.loopbackIPv4;
+  /// The [io.InternetAddress] this server is bound to.
+  final io.InternetAddress bindAddress;
 
   io.HttpServer? _server;
 
@@ -219,7 +220,7 @@ final class HttpServer implements ProtocolServer {
       throw StateError("Server already started");
     }
 
-    _server = await shelf_io.serve(_handleRequest, _bindAddress, port);
+    _server = await shelf_io.serve(_handleRequest, bindAddress, port);
 
     _servient = servient;
   }

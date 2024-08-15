@@ -4,16 +4,28 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "dart:io";
+
 /// Allows for configuring the behavior of HTTP clients and servers.
 class HttpConfig {
   /// Creates a new [HttpConfig] object.
-  HttpConfig({this.port, this.secure});
+  HttpConfig({
+    int? port,
+    this.secure = false,
+    InternetAddress? bindAddress,
+  })  : port = port ?? (secure ? 443 : 80),
+        bindAddress = bindAddress ?? InternetAddress.anyIPv4;
 
   /// Custom port number that should be used by a server.
   ///
   /// Defaults to 80 for HTTP and 443 for HTTPS.
-  int? port;
+  final int port;
 
   /// Indicates if the client or server should use HTTPS.
-  bool? secure;
+  bool secure;
+
+  /// The IP address the HTTP server should bind to.
+  ///
+  /// Defaults to [InternetAddress.anyIPv4].
+  final InternetAddress bindAddress;
 }

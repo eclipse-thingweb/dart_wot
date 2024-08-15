@@ -14,7 +14,13 @@ String property = "hi :)";
 void main() async {
   final servient = Servient.create(
     clientFactories: [HttpClientFactory()],
-    servers: [HttpServer(HttpConfig(port: 3000))],
+    servers: [
+      HttpServer(
+        HttpConfig(
+          port: 3000,
+        ),
+      ),
+    ],
   );
 
   final wot = await servient.start();
