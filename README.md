@@ -24,7 +24,7 @@ You can consume Thing Descriptions and interact with a Thing based on its
 exposed Properties, Actions, and Events.
 Discovery support is currently limited to the "direct" method (i.e. fetching a
 TD using a single URL).
-Exposing Things is not yet supported but will be added in future versions.
+Exposing Things is currently only (partially) supported for the HTTP binding.
 
 Using the Protocol Interfaces in the `core` package, you can add support for
 additional protocols in your own application or library. The main requirement

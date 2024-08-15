@@ -26,13 +26,13 @@ final class CoapServer implements ProtocolServer {
   final int? preferredBlockSize;
 
   @override
-  Future<void> expose(ExposedThing thing) {
+  Future<void> expose(ExposableThing thing) {
     // TODO(JKRhb): implement expose
     throw UnimplementedError();
   }
 
   @override
-  Future<void> start([ServerSecurityCallback? serverSecurityCallback]) {
+  Future<void> start(Servient servient) {
     // TODO(JKRhb): implement start
     throw UnimplementedError();
   }
@@ -40,6 +40,12 @@ final class CoapServer implements ProtocolServer {
   @override
   Future<void> stop() {
     // TODO(JKRhb): implement stop
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> destroyThing(ExposableThing thing) {
+    // TODO: implement destroyThing
     throw UnimplementedError();
   }
 }

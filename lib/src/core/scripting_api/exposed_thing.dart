@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "package:meta/meta.dart";
+
 import "../definitions.dart";
 import "interaction_input.dart";
 import "interaction_output.dart";
@@ -27,7 +29,7 @@ typedef PropertyWriteHandler = Future<void> Function(
 
 /// A function that is called when an external request for invoking an Action
 /// is received and defines what to do with such requests.
-typedef ActionHandler = Future<void> Function(
+typedef ActionHandler = Future<InteractionInput> Function(
   InteractionOutput params, {
   int? formIndex,
   Map<String, Object>? uriVariables,
@@ -88,7 +90,11 @@ abstract interface class ExposedThing {
 
   /// Informs all subscribers about the change of the property with the given
   /// [name].
-  Future<void> emitPropertyChange(String name);
+  @experimental
+  Future<void> emitPropertyChange(
+    String name, [
+    String contentType = "application/json",
+  ]);
 
   /// Assigns a [handler] function to an action with a given [name].
   ///
@@ -111,14 +117,14 @@ abstract interface class ExposedThing {
     EventSubscriptionHandler handler,
   );
 
-  /// Assigns a [handler] function to an event with a given [name].
-  ///
-  /// If the event is emitted, the [handler] function will be called.
-  void setEventHandler(String name, EventListenerHandler handler);
-
   /// Informs all subscribers of an Event with the given [name] that it has
   /// occurred.
   ///
   /// You can provide (optional) input [data] that is emitted with the event.
-  Future<void> emitEvent(String name, InteractionInput data);
+  @experimental
+  Future<void> emitEvent(
+    String name,
+    InteractionInput data, [
+    String contentType = "application/json",
+  ]);
 }

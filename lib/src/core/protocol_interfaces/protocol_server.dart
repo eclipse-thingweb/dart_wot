@@ -4,8 +4,9 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "../definitions/credentials/callbacks.dart";
-import "../scripting_api/exposed_thing.dart";
+import "../implementation/exposed_thing.dart";
+import "../implementation/servient.dart";
+import "exposable_thing.dart";
 
 /// Base class for a Protocol Server.
 abstract interface class ProtocolServer {
@@ -15,14 +16,16 @@ abstract interface class ProtocolServer {
   /// The protocol [scheme] associated with this server.
   String get scheme;
 
-  // TODO(JKRhb): Check if a Servient should be passed as a parameter instead
   /// Starts the server. Accepts a callback for retrieving a [Map] of
   /// credentials for [ExposedThing]s at runtime.
-  Future<void> start([ServerSecurityCallback? serverSecurityCallback]);
+  Future<void> start(Servient servient);
 
   /// Stops the server.
   Future<void> stop();
 
   /// Exposes a [thing].
-  Future<void> expose(ExposedThing thing);
+  Future<void> expose(ExposableThing thing);
+
+  /// Removes a [thing] from this server.
+  Future<void> destroyThing(ExposableThing thing);
 }
