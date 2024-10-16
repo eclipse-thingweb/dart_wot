@@ -29,7 +29,7 @@ class _InternalCoapConfig extends CoapConfigDefault {
         rootCertificates = coapConfig.rootCertificates,
         clientCertificateFileName = coapConfig.clientCertificateFileName,
         clientKeyFileName = coapConfig.clientKeyFileName,
-        verifyPrivateKey = coapConfig.verifyPrivateKey;
+        _verifyPrivateKey = coapConfig.verifyPrivateKey;
 
   @override
   final int preferredBlockSize;
@@ -52,8 +52,10 @@ class _InternalCoapConfig extends CoapConfigDefault {
   @override
   final String? clientKeyFileName;
 
+  final bool _verifyPrivateKey;
+
   @override
-  final bool verifyPrivateKey;
+  bool get verifyPrivateKey => _verifyPrivateKey;
 }
 
 coap.PskCredentialsCallback? _createPskCallback(

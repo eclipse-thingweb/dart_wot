@@ -61,7 +61,13 @@ class CoapConfig {
   /// Defaults to 60 seconds.
   final Duration multicastDiscoveryTimeout;
 
+  /// Name of a file referring to a client certificate used with DTLS PKI mode.
   final String? clientCertificateFileName;
+
+  /// Name of a file referring to a private client key used with DTLS PKI mode.
   final String? clientKeyFileName;
+
+  /// Whether the private key of the client certificate should be verified when
+  /// creating the DTLS context.
   final bool verifyPrivateKey;
 }
