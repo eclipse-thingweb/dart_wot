@@ -36,3 +36,7 @@ dependency_overrides:
     git:
       url: https://github.com/namib-project/coap
       ref: client-certificate-support
+  dtls2:
+    git:
+      url: https://github.com/JKRhb/dtls2
+      ref: client-certificates
