@@ -22,6 +22,9 @@ class CoapConfig {
     this.rootCertificates = const [],
     this.dtlsWithTrustedRoots = true,
     this.dtlsVerify = true,
+    this.clientKeyFileName,
+    this.clientCertificateFileName,
+    this.verifyPrivateKey = false,
   });
 
   /// Whether certificates should be verified by OpenSSL.
@@ -57,4 +60,8 @@ class CoapConfig {
   ///
   /// Defaults to 60 seconds.
   final Duration multicastDiscoveryTimeout;
+
+  final String? clientCertificateFileName;
+  final String? clientKeyFileName;
+  final bool verifyPrivateKey;
 }

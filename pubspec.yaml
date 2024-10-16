@@ -30,3 +30,9 @@ dependencies:
   typed_data: ^1.3.2
   uri: ^1.0.0
   uuid: ^4.2.1
+
+dependency_overrides:
+  coap:
+    git:
+      url: https://github.com/namib-project/coap
+      ref: client-certificate-support

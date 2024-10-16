@@ -26,7 +26,10 @@ class _InternalCoapConfig extends CoapConfigDefault {
         dtlsCiphers = coapConfig.dtlsCiphers,
         dtlsVerify = coapConfig.dtlsVerify,
         dtlsWithTrustedRoots = coapConfig.dtlsWithTrustedRoots,
-        rootCertificates = coapConfig.rootCertificates;
+        rootCertificates = coapConfig.rootCertificates,
+        clientCertificateFileName = coapConfig.clientCertificateFileName,
+        clientKeyFileName = coapConfig.clientKeyFileName,
+        verifyPrivateKey = coapConfig.verifyPrivateKey;
 
   @override
   final int preferredBlockSize;
@@ -42,6 +45,15 @@ class _InternalCoapConfig extends CoapConfigDefault {
 
   @override
   final List<Uint8List> rootCertificates;
+
+  @override
+  final String? clientCertificateFileName;
+
+  @override
+  final String? clientKeyFileName;
+
+  @override
+  final bool verifyPrivateKey;
 }
 
 coap.PskCredentialsCallback? _createPskCallback(
