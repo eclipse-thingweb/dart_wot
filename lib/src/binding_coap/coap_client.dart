@@ -27,8 +27,8 @@ class _InternalCoapConfig extends CoapConfigDefault {
         dtlsVerify = coapConfig.dtlsVerify,
         dtlsWithTrustedRoots = coapConfig.dtlsWithTrustedRoots,
         rootCertificates = coapConfig.rootCertificates,
-        clientCertificateFileName = coapConfig.clientCertificateFileName,
-        clientKeyFileName = coapConfig.clientKeyFileName,
+        clientCertificate = coapConfig.clientCertificate,
+        clientPrivateKey = coapConfig.clientPrivateKey,
         _verifyPrivateKey = coapConfig.verifyPrivateKey;
 
   @override
@@ -47,10 +47,10 @@ class _InternalCoapConfig extends CoapConfigDefault {
   final List<Uint8List> rootCertificates;
 
   @override
-  final String? clientCertificateFileName;
+  final coap.ClientCertificate? clientCertificate;
 
   @override
-  final String? clientKeyFileName;
+  final coap.ClientPrivateKey? clientPrivateKey;
 
   final bool _verifyPrivateKey;
 
