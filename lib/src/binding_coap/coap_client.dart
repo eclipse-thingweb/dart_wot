@@ -175,6 +175,7 @@ final class CoapClient extends ProtocolClient
         form,
         pskCredentialsCallback: _pskCredentialsCallback,
       ),
+      initTimeout: _coapConfig?.initTimeout ?? const Duration(seconds: 10),
     );
 
     final request = await _createRequest(

@@ -26,7 +26,10 @@ class CoapConfig {
     this.clientCertificate,
     this.clientPrivateKey,
     this.verifyPrivateKey = false,
+    this.initTimeout,
   });
+
+  final Duration? initTimeout;
 
   /// Whether certificates should be verified by OpenSSL.
   final bool dtlsVerify;
