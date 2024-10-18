@@ -6,6 +6,7 @@
 
 import "dart:typed_data";
 
+import "package:coap/coap.dart";
 import "package:meta/meta.dart";
 
 /// Allows for configuring the behavior of CoAP clients and servers.
@@ -22,7 +23,13 @@ class CoapConfig {
     this.rootCertificates = const [],
     this.dtlsWithTrustedRoots = true,
     this.dtlsVerify = true,
+    this.clientCertificate,
+    this.clientPrivateKey,
+    this.verifyPrivateKey = false,
+    this.initTimeout,
   });
+
+  final Duration? initTimeout;
 
   /// Whether certificates should be verified by OpenSSL.
   final bool dtlsVerify;
@@ -57,4 +64,14 @@ class CoapConfig {
   ///
   /// Defaults to 60 seconds.
   final Duration multicastDiscoveryTimeout;
+
+  /// Name of a file referring to a client certificate used with DTLS PKI mode.
+  final ClientCertificate? clientCertificate;
+
+  /// Name of a file referring to a private client key used with DTLS PKI mode.
+  final ClientPrivateKey? clientPrivateKey;
+
+  /// Whether the private key of the client certificate should be verified when
+  /// creating the DTLS context.
+  final bool verifyPrivateKey;
 }

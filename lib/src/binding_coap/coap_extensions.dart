@@ -36,15 +36,6 @@ extension CoapFormExtension on AugmentedForm {
   bool get usesAutoScheme =>
       securityDefinitions.whereType<AutoSecurityScheme>().isNotEmpty;
 
-  /// Get the [CoapSubprotocol] for this [AugmentedForm], if one is set.
-  CoapSubprotocol? get coapSubprotocol {
-    if (subprotocol == coapPrefixMapping.expandCurieString("observe")) {
-      return CoapSubprotocol.observe;
-    }
-
-    return null;
-  }
-
   /// The Content-Format for CoAP request and response payloads.
   CoapMediaType get contentFormat {
     final formDefinition = _obtainVocabularyTerm<int>("contentFormat");
@@ -159,22 +150,6 @@ extension OperationTypeExtension on OperationType {
       case OperationType.unsubscribeevent:
         return CoapRequestMethod.get;
     }
-  }
-
-  /// Determines the [CoapSubprotocol] (if any) for this [OperationType].
-  ///
-  /// The only supported subprotocol at the moment is `observe`.
-  CoapSubprotocol? get subprotocol {
-    if ([
-      OperationType.subscribeevent,
-      OperationType.unsubscribeevent,
-      OperationType.observeproperty,
-      OperationType.unobserveproperty,
-    ].contains(this)) {
-      return CoapSubprotocol.observe;
-    }
-
-    return null;
   }
 }
 

@@ -26,7 +26,10 @@ class _InternalCoapConfig extends CoapConfigDefault {
         dtlsCiphers = coapConfig.dtlsCiphers,
         dtlsVerify = coapConfig.dtlsVerify,
         dtlsWithTrustedRoots = coapConfig.dtlsWithTrustedRoots,
-        rootCertificates = coapConfig.rootCertificates;
+        rootCertificates = coapConfig.rootCertificates,
+        clientCertificate = coapConfig.clientCertificate,
+        clientPrivateKey = coapConfig.clientPrivateKey,
+        _verifyPrivateKey = coapConfig.verifyPrivateKey;
 
   @override
   final int preferredBlockSize;
@@ -42,6 +45,17 @@ class _InternalCoapConfig extends CoapConfigDefault {
 
   @override
   final List<Uint8List> rootCertificates;
+
+  @override
+  final coap.ClientCertificate? clientCertificate;
+
+  @override
+  final coap.ClientPrivateKey? clientPrivateKey;
+
+  final bool _verifyPrivateKey;
+
+  @override
+  bool get verifyPrivateKey => _verifyPrivateKey;
 }
 
 coap.PskCredentialsCallback? _createPskCallback(
@@ -161,6 +175,7 @@ final class CoapClient extends ProtocolClient
         form,
         pskCredentialsCallback: _pskCredentialsCallback,
       ),
+      initTimeout: _coapConfig?.initTimeout ?? const Duration(seconds: 10),
     );
 
     final request = await _createRequest(
@@ -421,22 +436,14 @@ final class CoapClient extends ProtocolClient
       accept: form.accept,
     );
 
-    final subprotocol = form.coapSubprotocol ?? operationType.subprotocol;
-
     final coapClient = coap.CoapClient(
       form.resolvedHref,
       config: _InternalCoapConfig(_coapConfig ?? const CoapConfig()),
     );
 
-    if (subprotocol == CoapSubprotocol.observe) {
-      final observeClientRelation = await coapClient.observe(request);
-      observeClientRelation.listen(handleResponse);
-      return CoapSubscription(coapClient, observeClientRelation, complete);
-    }
-
-    final response = await coapClient.send(request);
-    handleResponse(response);
-    return CoapSubscription(coapClient, null, complete);
+    final observeClientRelation = await coapClient.observe(request);
+    observeClientRelation.listen(handleResponse);
+    return CoapSubscription(coapClient, observeClientRelation, complete);
   }
 
   @override
