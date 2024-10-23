@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.34.2] - 2024-10-23
+
+### Changed
+
+- Introduce `startClientFactories` method ([96e576a](https://github.com/eclipse-thingweb/dart_wot/commit/96e576a3a45ffd65202fed934ffd07b1b137c857))
+- Move server starting code into private method ([a8f519f](https://github.com/eclipse-thingweb/dart_wot/commit/a8f519f0dd8db028827a0e703a9ed5724cac2315))
+
 ## [0.34.1] - 2024-10-23
 
 ### Fixed
@@ -1085,6 +1092,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.34.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.34.1..v0.34.2
 [0.34.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.34.0..v0.34.1
 [0.34.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.33.0..v0.34.0
 [0.33.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.32.1..v0.33.0
