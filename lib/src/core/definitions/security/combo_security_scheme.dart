@@ -4,7 +4,6 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "package:collection/collection.dart";
 import "package:curie/curie.dart";
 
 import "../extensions/json_parser.dart";
@@ -51,7 +50,7 @@ final class ComboSecurityScheme extends SecurityScheme {
     );
 
     final count =
-        [oneOf, allOf].whereNotNull().fold(0, (previous, _) => previous + 1);
+        [oneOf, allOf].nonNulls.fold(0, (previous, _) => previous + 1);
 
     if (count != 1) {
       throw FormatException(
