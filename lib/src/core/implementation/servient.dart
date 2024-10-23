@@ -52,6 +52,15 @@ abstract class Servient {
   /// discovering Things.
   Future<scripting_api.WoT> start();
 
+  /// Synchronously starts this [Servient] and returns a [scripting_api.WoT]
+  /// runtime object.
+  ///
+  /// In contrast to the [start] method, this method only initializes the
+  /// [ProtocolClientFactory]s and not the [ProtocolServer]s registered with
+  /// this [Servient].
+  /// This has the advantage that it is not necessary to return a [Future].
+  scripting_api.WoT startClientFactories();
+
   /// Adds a new [clientFactory] to this [Servient].
   void addClientFactory(ProtocolClientFactory clientFactory);
 
@@ -90,17 +99,22 @@ class InternalServient implements Servient {
   final ContentSerdes contentSerdes;
 
   @override
+  WoT startClientFactories() {
+    for (final clientFactory in _clientFactories.values) {
+      clientFactory.init();
+    }
+
+    return WoT(this);
+  }
+
+  @override
   Future<WoT> start() async {
     final serverStatuses = _servers
         .map((server) => server.start(_serverSecurityCallback))
         .toList(growable: false);
 
-    for (final clientFactory in _clientFactories.values) {
-      clientFactory.init();
-    }
-
     await Future.wait(serverStatuses);
-    return WoT(this);
+    return startClientFactories();
   }
 
   @override
