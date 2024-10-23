@@ -107,13 +107,18 @@ class InternalServient implements Servient {
     return WoT(this);
   }
 
-  @override
-  Future<WoT> start() async {
+  Future<void> _startServers() async {
     final serverStatuses = _servers
         .map((server) => server.start(_serverSecurityCallback))
         .toList(growable: false);
 
     await Future.wait(serverStatuses);
+  }
+
+  @override
+  Future<WoT> start() async {
+    await _startServers();
+
     return startClientFactories();
   }
 
