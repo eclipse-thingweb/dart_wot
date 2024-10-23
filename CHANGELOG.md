@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.34.0] - 2024-07-17
+## [0.34.1] - 2024-10-23
+
+### Fixed
+
+- Resolve deprecation warning regarding whereNotNull ([6cbbd6a](https://github.com/eclipse-thingweb/dart_wot/commit/6cbbd6a043161d3bcb53f16f031b584b5083a9c9))
+
+## [0.34.0] - 2024-10-23
 
 ### Added
 
@@ -1079,6 +1085,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.34.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.34.0..v0.34.1
 [0.34.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.33.0..v0.34.0
 [0.33.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.32.1..v0.33.0
 [0.32.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.32.0..v0.32.1
