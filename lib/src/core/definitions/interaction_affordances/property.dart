@@ -15,7 +15,7 @@ class Property extends InteractionAffordance implements DataSchema {
     super.uriVariables,
     super.additionalFields,
     required this.dataSchema,
-    this.observable = false,
+    this.observable = _defaultObservableValue,
   });
 
   /// Creates a new [Property] from a [json] object.
@@ -51,6 +51,22 @@ class Property extends InteractionAffordance implements DataSchema {
     return property;
   }
 
+  @override
+  Map<String, dynamic> toJson() {
+    final result = {
+      ...super.toJson(),
+      ...dataSchema.toJson(),
+    };
+
+    if (observable != _defaultObservableValue) {
+      result["observable"] = observable;
+    }
+
+    return result;
+  }
+
+  static const _defaultObservableValue = false;
+
   /// The internal [DataSchema] this property is based on.
   final DataSchema dataSchema;
 
@@ -85,7 +101,7 @@ class Property extends InteractionAffordance implements DataSchema {
   List<DataSchema>? get oneOf => dataSchema.oneOf;
 
   @override
-  bool get readOnly => dataSchema.readOnly ?? false;
+  bool get readOnly => dataSchema.readOnly;
 
   @override
   String? get type => dataSchema.type;
@@ -94,7 +110,7 @@ class Property extends InteractionAffordance implements DataSchema {
   String? get unit => dataSchema.unit;
 
   @override
-  bool get writeOnly => dataSchema.writeOnly ?? false;
+  bool get writeOnly => dataSchema.writeOnly;
 
   @override
   String? get contentEncoding => dataSchema.contentEncoding;
@@ -148,8 +164,15 @@ class Property extends InteractionAffordance implements DataSchema {
 
   @override
   Map<String, dynamic> get additionalFields {
-    final additionalDataSchemaFields = dataSchema.additionalFields.entries
-        .where((entry) => super.additionalFields.containsKey(entry.key));
+    final additionalDataSchemaFields =
+        dataSchema.additionalFields.entries.where(
+      (entry) => [
+        ...super.additionalFields.keys,
+        "observable",
+      ].contains(
+        entry.key,
+      ),
+    );
 
     return Map.fromEntries(additionalDataSchemaFields);
   }

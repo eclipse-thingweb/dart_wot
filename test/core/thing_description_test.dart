@@ -39,6 +39,74 @@ void main() {
       expect(thingDescriptionJson, thingDescription.toJson());
     });
 
+    test(
+        "be able to be created via its constructor and converted to a "
+        "Map<String, dynamic>", () {
+      const thingDescriptionJson = {
+        "@context": [
+          "https://www.w3.org/2022/wot/td/v1.1",
+          {"@language": "de"},
+        ],
+        "title": "Test Thing",
+        "securityDefinitions": {
+          "nosec_sc": {"scheme": "nosec"},
+        },
+        "security": ["nosec_sc"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "readOnly": true,
+            "observable": true,
+            "forms": [
+              {
+                "href": "https://example.org",
+                "contentType": "application/cbor",
+              }
+            ],
+          },
+        },
+      };
+
+      final thingDescription = ThingDescription(
+        context: Context(
+          [
+            SingleContextEntry(
+              Uri.parse("https://www.w3.org/2022/wot/td/v1.1"),
+            ),
+            const StringMapContextEntry(
+              "@language",
+              "de",
+            ),
+          ],
+        ),
+        title: "Test Thing",
+        security: const [
+          "nosec_sc",
+        ],
+        securityDefinitions: const {
+          "nosec_sc": NoSecurityScheme(),
+        },
+        properties: {
+          "status": Property(
+            forms: [
+              Form(
+                Uri.parse("https://example.org"),
+                contentType: "application/cbor",
+              ),
+            ],
+            observable: true,
+            dataSchema: const DataSchema(
+              type: "string",
+              readOnly: true,
+              writeOnly: false,
+            ),
+          ),
+        },
+      );
+
+      expect(thingDescriptionJson, thingDescription.toJson());
+    });
+
     test("throw a FormatException when it is invalid during parsing", () {
       const thingDescriptionJson = {
         "@context": [

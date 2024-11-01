@@ -14,6 +14,7 @@ library definitions;
 export "package:dcaf/dcaf.dart" show AuthServerRequestCreationHint;
 
 export "definitions/additional_expected_response.dart";
+export "definitions/context.dart";
 
 export "definitions/credentials/ace_credentials.dart";
 export "definitions/credentials/apikey_credentials.dart";

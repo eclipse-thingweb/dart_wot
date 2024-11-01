@@ -30,8 +30,8 @@ class DataSchema implements Serializable {
     this.unit,
     this.oneOf,
     this.enumeration,
-    this.readOnly = false,
-    this.writeOnly = false,
+    bool? readOnly,
+    bool? writeOnly,
     this.format,
     this.type,
     this.minimum,
@@ -50,7 +50,8 @@ class DataSchema implements Serializable {
     this.contentEncoding,
     this.contentMediaType,
     this.additionalFields = const {},
-  });
+  })  : readOnly = readOnly ?? _defaultReadOnly,
+        writeOnly = writeOnly ?? _defaultWriteOnly;
 
   // TODO: Consider creating separate classes for each data type.
   //       Also see https://github.com/w3c/wot-thing-description/issues/1390
@@ -142,6 +143,10 @@ class DataSchema implements Serializable {
     );
   }
 
+  static const _defaultWriteOnly = false;
+
+  static const _defaultReadOnly = false;
+
   /// JSON-LD keyword (@type) to label the object with semantic tags (or types).
   final List<String>? atType;
 
@@ -175,10 +180,10 @@ class DataSchema implements Serializable {
   final List<Object?>? enumeration;
 
   /// Indicates if a value is read only.
-  final bool? readOnly;
+  final bool readOnly;
 
   /// Indicates if a value is write only.
-  final bool? writeOnly;
+  final bool writeOnly;
 
   /// Allows validation based on a format pattern.
   ///
@@ -292,8 +297,6 @@ class DataSchema implements Serializable {
       ("const", constant),
       ("default", defaultValue),
       ("enum", enumeration),
-      ("readOnly", readOnly),
-      ("writeOnly", writeOnly),
       ("format", format),
       ("unit", unit),
       ("type", type),
@@ -330,6 +333,17 @@ class DataSchema implements Serializable {
       }
 
       result[key] = convertedValue;
+    }
+
+    final keyValuePairsWithDefault = [
+      ("readOnly", readOnly, _defaultReadOnly),
+      ("writeOnly", writeOnly, _defaultWriteOnly),
+    ];
+
+    for (final (key, value, defaultValue) in keyValuePairsWithDefault) {
+      if (value != defaultValue) {
+        result[key] = value;
+      }
     }
 
     return result;
