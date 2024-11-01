@@ -8,7 +8,6 @@ import "dart:convert";
 
 import "package:curie/curie.dart";
 import "package:dart_wot/core.dart";
-import "package:dart_wot/src/core/definitions/context.dart";
 import "package:dart_wot/src/core/definitions/extensions/json_parser.dart";
 import "package:test/test.dart";
 

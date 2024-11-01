@@ -5,7 +5,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "package:dart_wot/core.dart";
-import "package:dart_wot/src/core/definitions/context.dart";
 import "package:dart_wot/src/core/implementation/servient.dart";
 import "package:test/test.dart";
 

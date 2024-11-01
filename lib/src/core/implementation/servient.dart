@@ -8,7 +8,6 @@ import "package:meta/meta.dart";
 import "package:uuid/uuid.dart";
 
 import "../definitions.dart";
-import "../definitions/context.dart";
 import "../exceptions.dart";
 import "../protocol_interfaces.dart";
 import "../scripting_api.dart" as scripting_api;
