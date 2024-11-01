@@ -23,7 +23,7 @@ import "version_info.dart";
 @immutable
 class ThingDescription {
   /// Creates a new Thing Description object.
-  const ThingDescription._({
+  const ThingDescription({
     required this.context,
     required this.title,
     required this.security,
@@ -114,7 +114,7 @@ class ThingDescription {
     final additionalFields =
         json.parseAdditionalFields(prefixMapping, parsedFields);
 
-    return ThingDescription._(
+    return ThingDescription(
       context: context,
       title: title,
       titles: titles,
