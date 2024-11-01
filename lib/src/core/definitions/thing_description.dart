@@ -19,7 +19,7 @@ import "security/security_scheme.dart";
 import "thing_model.dart";
 import "version_info.dart";
 
-/// Represents a WoT Thing Description.
+/// Represents a WoT Thing Description
 @immutable
 class ThingDescription {
   /// Creates a new Thing Description object.
