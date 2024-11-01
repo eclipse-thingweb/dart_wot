@@ -21,7 +21,7 @@ class Form implements Serializable {
   /// An [href] has to be provided. A [contentType] is optional.
   Form(
     this.href, {
-    this.contentType = "application/json",
+    this.contentType = _defaultContentType,
     this.contentCoding,
     this.subprotocol,
     this.security,
@@ -86,6 +86,8 @@ class Form implements Serializable {
     );
   }
 
+  static const _defaultContentType = "application/json";
+
   /// The [href] pointing to the resource.
   ///
   /// Can be a relative or absolute URI.
@@ -134,7 +136,6 @@ class Form implements Serializable {
   Map<String, dynamic> toJson() {
     final result = {
       "href": href.toString(),
-      "contentType": contentType,
       ...additionalFields,
     };
 
@@ -146,6 +147,10 @@ class Form implements Serializable {
     if (op != null) {
       result["op"] =
           op.map((opValue) => opValue.toString()).toList(growable: false);
+    }
+
+    if (contentType != _defaultContentType) {
+      result["contentType"] = contentType;
     }
 
     if (contentCoding != null) {

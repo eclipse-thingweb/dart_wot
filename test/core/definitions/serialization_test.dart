@@ -38,8 +38,6 @@ void main() {
             "op": [
               "readmultipleproperties",
             ],
-            // TODO: Should defaults actually be set?
-            "contentType": "application/json",
           },
         ],
         "properties": {},
@@ -103,7 +101,6 @@ void main() {
         "href": "https://example.org",
         "subprotocol": "foobar",
         "contentCoding": "test",
-        "contentType": "application/json",
         "security": ["test"],
         "response": {
           "contentType": "application/json",
@@ -123,7 +120,6 @@ void main() {
     test("AugmentedForms", () async {
       final formJson = {
         "href": "https://example.org",
-        "contentType": "application/json",
       };
 
       final thingDescription = {
@@ -186,7 +182,6 @@ void main() {
         "forms": [
           {
             "href": "https://example.org",
-            "contentType": "application/json",
           }
         ],
       };
