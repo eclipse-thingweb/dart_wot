@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.35.0] - 2024-11-01
+
+### Added
+
+- Add test for unnamed ThingDescription constructor ([e698015](https://github.com/eclipse-thingweb/dart_wot/commit/e69801593e94482223a6cb60e9a3e08b12f9ff68))
+- Add a missing period ([f62c882](https://github.com/eclipse-thingweb/dart_wot/commit/f62c8820ac937bbbd93b13532783a0e193316648))
+
+### Changed
+
+- Make unnamed ThingDescription constructor public ([7997967](https://github.com/eclipse-thingweb/dart_wot/commit/7997967100c078e57066bc4fcdd84373c2ebbd3d))
+- Switch back to latest dart version on Windows ([e776186](https://github.com/eclipse-thingweb/dart_wot/commit/e776186d7fe8b75726d379e29018344ba3ca64d5))
+
+### Fixed
+
+- Export context definitions ([bf5aca3](https://github.com/eclipse-thingweb/dart_wot/commit/bf5aca3f466fd7ccbcf7fdc83c6b4abd8682b026))
+- Correctly serialize property affordances ([3c69d8a](https://github.com/eclipse-thingweb/dart_wot/commit/3c69d8a760a84b8cae68af2a24c33237ecfd8deb))
+
 ## [0.34.2] - 2024-10-23
 
 ### Changed
@@ -1092,6 +1109,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.35.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.34.2..v0.35.0
 [0.34.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.34.1..v0.34.2
 [0.34.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.34.0..v0.34.1
 [0.34.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.33.0..v0.34.0
