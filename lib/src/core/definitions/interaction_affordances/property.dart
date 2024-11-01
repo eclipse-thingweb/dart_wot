@@ -101,7 +101,7 @@ class Property extends InteractionAffordance implements DataSchema {
   List<DataSchema>? get oneOf => dataSchema.oneOf;
 
   @override
-  bool get readOnly => dataSchema.readOnly ?? false;
+  bool get readOnly => dataSchema.readOnly;
 
   @override
   String? get type => dataSchema.type;
@@ -110,7 +110,7 @@ class Property extends InteractionAffordance implements DataSchema {
   String? get unit => dataSchema.unit;
 
   @override
-  bool get writeOnly => dataSchema.writeOnly ?? false;
+  bool get writeOnly => dataSchema.writeOnly;
 
   @override
   String? get contentEncoding => dataSchema.contentEncoding;
