@@ -11,9 +11,9 @@ import "dart:io" as io;
 import "package:http/http.dart";
 import "package:http/io_client.dart";
 
-import "../../binding_http.dart";
 import "../../core.dart";
 
+import "http_config.dart";
 import "http_request_method.dart";
 import "http_security_exception.dart";
 
