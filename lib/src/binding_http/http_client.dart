@@ -6,9 +6,12 @@
 
 import "dart:convert";
 import "dart:io";
+import "dart:io" as io;
 
 import "package:http/http.dart";
+import "package:http/io_client.dart";
 
+import "../../binding_http.dart";
 import "../../core.dart";
 
 import "http_request_method.dart";
@@ -31,6 +34,8 @@ const _authorizationHeader = "Authorization";
 ///
 /// The use of Proxies is not supported yet, while support for the digest
 /// security scheme has been temporarily removed.
+/// Additional trusted certificates can be added via an (optional)
+/// [HttpClientConfig].
 ///
 /// [RFC 7617]: https://datatracker.ietf.org/doc/html/rfc7617
 /// [RFC 7616]: https://datatracker.ietf.org/doc/html/rfc7616
@@ -40,12 +45,30 @@ final class HttpClient extends ProtocolClient
     with DirectDiscoverer, CoreLinkFormatDiscoverer {
   /// Creates a new [HttpClient].
   HttpClient({
+    HttpClientConfig? httpClientConfig,
     AsyncClientSecurityCallback<BasicCredentials>? basicCredentialsCallback,
     AsyncClientSecurityCallback<BearerCredentials>? bearerCredentialsCallback,
   })  : _basicCredentialsCallback = basicCredentialsCallback,
-        _bearerCredentialsCallback = bearerCredentialsCallback;
+        _bearerCredentialsCallback = bearerCredentialsCallback,
+        _client =
+            IOClient(io.HttpClient(context: _createContext(httpClientConfig)));
 
-  final _client = Client();
+  static SecurityContext _createContext(HttpClientConfig? httpClientConfig) {
+    final context = SecurityContext();
+
+    final trustedCertificates = httpClientConfig?.trustedCertificates ?? [];
+
+    for (final trustedCertificate in trustedCertificates) {
+      context.setTrustedCertificatesBytes(
+        trustedCertificate.certificate,
+        password: trustedCertificate.password,
+      );
+    }
+
+    return context;
+  }
+
+  final IOClient _client;
 
   final AsyncClientSecurityCallback<BasicCredentials>?
       _basicCredentialsCallback;

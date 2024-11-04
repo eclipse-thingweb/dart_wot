@@ -13,10 +13,14 @@ import "http_config.dart";
 final class HttpClientFactory implements ProtocolClientFactory {
   /// Creates a new [HttpClientFactory] based on an optional [HttpConfig].
   HttpClientFactory({
+    HttpClientConfig? httpClientConfig,
     AsyncClientSecurityCallback<BasicCredentials>? basicCredentialsCallback,
     AsyncClientSecurityCallback<BearerCredentials>? bearerCredentialsCallback,
   })  : _basicCredentialsCallback = basicCredentialsCallback,
-        _bearerCredentialsCallback = bearerCredentialsCallback;
+        _bearerCredentialsCallback = bearerCredentialsCallback,
+        _httpClientConfig = httpClientConfig;
+
+  final HttpClientConfig? _httpClientConfig;
 
   final AsyncClientSecurityCallback<BasicCredentials>?
       _basicCredentialsCallback;
@@ -34,6 +38,7 @@ final class HttpClientFactory implements ProtocolClientFactory {
 
   @override
   ProtocolClient createClient() => HttpClient(
+        httpClientConfig: _httpClientConfig,
         basicCredentialsCallback: _basicCredentialsCallback,
         bearerCredentialsCallback: _bearerCredentialsCallback,
       );
