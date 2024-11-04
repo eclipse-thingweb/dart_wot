@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.35.2] - 2024-11-04
+
+### Added
+
+- Add withTrustedRoots config parameter ([28fbb08](https://github.com/eclipse-thingweb/dart_wot/commit/28fbb08f5e4e37cb77259f643c57af5f93a9fd24))
+
+### Fixed
+
+- Let HTTP client use the withTrustedRoots parameter ([e7dc1fe](https://github.com/eclipse-thingweb/dart_wot/commit/e7dc1feb331cba45a0859fdd80d99b6acbc4b273))
+
 ## [0.35.1] - 2024-11-04
 
 ### Added
@@ -1119,6 +1129,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.35.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.35.1..v0.35.2
 [0.35.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.35.0..v0.35.1
 [0.35.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.34.2..v0.35.0
 [0.34.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.34.1..v0.34.2
