@@ -25,8 +25,13 @@ class HttpConfig {
 class HttpClientConfig {
   /// Creates a new [HttpClientConfig] object.
   const HttpClientConfig({
+    this.withTrustedRoots = true,
     this.trustedCertificates,
   });
+
+  /// Indicates whether the security contexts created from this config will
+  /// incorporate trusted root certificates from the underlying platform.
+  final bool withTrustedRoots;
 
   /// List of trusted certificates that will be added to the security contexts
   /// of newly created HTTP clients.
