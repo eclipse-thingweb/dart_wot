@@ -54,7 +54,9 @@ final class HttpClient extends ProtocolClient
             IOClient(io.HttpClient(context: _createContext(httpClientConfig)));
 
   static SecurityContext _createContext(HttpClientConfig? httpClientConfig) {
-    final context = SecurityContext();
+    final context = SecurityContext(
+      withTrustedRoots: httpClientConfig?.withTrustedRoots ?? true,
+    );
 
     final trustedCertificates = httpClientConfig?.trustedCertificates ?? [];
 
