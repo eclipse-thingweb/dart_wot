@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.35.1] - 2024-11-04
+
+### Added
+
+- Add possibility to define a custom SecurityContext ([03796d6](https://github.com/eclipse-thingweb/dart_wot/commit/03796d64505b7c60f258b4b62b251297795b4624))
+
+### Changed
+
+- Limit scope of HttpClientConfig import ([c9674eb](https://github.com/eclipse-thingweb/dart_wot/commit/c9674eb9264cf441339c9788261bee8fbf2cc85f))
+
 ## [0.35.0] - 2024-11-01
 
 ### Added
@@ -1109,6 +1119,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.35.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.35.0..v0.35.1
 [0.35.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.34.2..v0.35.0
 [0.34.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.34.1..v0.34.2
 [0.34.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.34.0..v0.34.1
