@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "dart:developer";
+
 import "package:meta/meta.dart";
 import "package:uuid/uuid.dart";
 
@@ -379,6 +381,21 @@ class InternalServient implements Servient {
     return ThingDescription.fromJson(dataSchemaValue.value);
   }
 
+  Stream<ThingDescription> _processThingDescriptions(
+    List<Object?> rawThingDescriptions,
+  ) async* {
+    for (final rawThingDescription in rawThingDescriptions) {
+      if (rawThingDescription is Map<String, Object?>) {
+        try {
+          yield rawThingDescription.toThingDescription();
+        } on Exception catch (e) {
+          log(e.toString());
+          yield* Stream.error(e);
+        }
+      }
+    }
+  }
+
   /// Retrieves [ThingDescription] from a Thing Description Directory (TDD).
   ///
   /// This method expects the TDD's Thing Description to be located under the
@@ -435,9 +452,8 @@ class InternalServient implements Servient {
       );
     }
 
-    final thingDescriptionStream = Stream.fromIterable(
-      rawThingDescriptions.whereType<Map<String, Object?>>(),
-    ).map((rawThingDescription) => rawThingDescription.toThingDescription());
+    final thingDescriptionStream =
+        _processThingDescriptions(rawThingDescriptions);
 
     return ThingDiscoveryProcess(thingDescriptionStream, thingFilter);
   }
