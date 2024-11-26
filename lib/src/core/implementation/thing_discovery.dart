@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "dart:async";
+import "dart:io";
 
 import "package:coap/coap.dart";
 import "package:collection/collection.dart";
@@ -56,8 +57,14 @@ class ThingDiscovery extends Stream<ThingDescription>
             :final discoveryType,
             domainName: final domain,
             :final protocolType,
+            :final listenAddress,
           ):
-          yield* _discoverUsingDnsSd(discoveryType, domain, protocolType);
+          yield* _discoverUsingDnsSd(
+            discoveryType,
+            domain,
+            protocolType,
+            listenAddress: listenAddress,
+          );
         case scripting_api.CoreLinkFormatConfiguration(
             :final uri,
             :final discoveryType,
@@ -132,8 +139,9 @@ class ThingDiscovery extends Stream<ThingDescription>
   Stream<ThingDescription> _discoverUsingDnsSd(
     scripting_api.DiscoveryType discoveryType,
     String domainName,
-    scripting_api.ProtocolType protocolType,
-  ) async* {
+    scripting_api.ProtocolType protocolType, {
+    InternetAddress? listenAddress,
+  }) async* {
     if (domainName != ".local") {
       throw UnimplementedError(
         "Only multicast DNS is supported at the moment.",
@@ -157,16 +165,18 @@ class ThingDiscovery extends Stream<ThingDescription>
       fullDomainName,
       protocolType.defaultDnsSdUriScheme,
       discoveryType,
+      listenAddress: listenAddress,
     );
   }
 
   Stream<ThingDescription> _performMdnsDiscovery(
     String domainName,
     String defaultUriScheme,
-    scripting_api.DiscoveryType expectedType,
-  ) async* {
+    scripting_api.DiscoveryType expectedType, {
+    InternetAddress? listenAddress,
+  }) async* {
     final MDnsClient client = MDnsClient();
-    await client.start();
+    await client.start(listenAddress: listenAddress);
 
     const defaultType = "Thing";
 
