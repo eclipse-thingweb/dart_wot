@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "dart:io";
+
 import "package:meta/meta.dart";
 
 import "thing_filter.dart";
@@ -212,6 +214,7 @@ final class DnsSdDConfiguration extends TwoStepConfiguration {
     this.domainName = ".local",
     super.discoveryType = DiscoveryType.thing,
     this.protocolType = ProtocolType.tcp,
+    this.listenAddress,
   });
 
   /// The domain name that will be used for DNS-based Service Discovery.
@@ -227,6 +230,9 @@ final class DnsSdDConfiguration extends TwoStepConfiguration {
   /// Indicates whether TCP-based or a UDP-based WoT services be will be
   /// discovered.
   final ProtocolType protocolType;
+
+  /// Custom multicast address to use for listening for mDNS messages.
+  final InternetAddress? listenAddress;
 }
 
 /// Configures discovery using the CoRE link format ([RFC 6690]).
