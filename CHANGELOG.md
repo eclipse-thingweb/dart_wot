@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.35.3] - 2024-11-27
+
+### Added
+
+- Add sse_channel dependency ([45ec279](https://github.com/eclipse-thingweb/dart_wot/commit/45ec279ef71e8564eedd0a7ffb4f2092235bf733))
+- Add initial support for server-sent events ([a31de5c](https://github.com/eclipse-thingweb/dart_wot/commit/a31de5ca06890641342b9928f0fdbefe7be2bec9))
+
 ## [0.35.2] - 2024-11-04
 
 ### Added
@@ -1129,6 +1136,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.35.3]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.35.2..v0.35.3
 [0.35.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.35.1..v0.35.2
 [0.35.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.35.0..v0.35.1
 [0.35.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.34.2..v0.35.0
