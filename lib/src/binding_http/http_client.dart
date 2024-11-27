@@ -16,6 +16,7 @@ import "../../core.dart";
 import "http_config.dart";
 import "http_request_method.dart";
 import "http_security_exception.dart";
+import "http_subscription.dart";
 
 const _authorizationHeader = "Authorization";
 
@@ -306,13 +307,24 @@ final class HttpClient extends ProtocolClient
 
   @override
   Future<Subscription> subscribeResource(
-    Form form, {
+    AugmentedForm form, {
     required void Function(Content content) next,
     void Function(Exception error)? error,
     required void Function() complete,
   }) async {
-    // TODO(JKRhb): implement subscribeResource
-    throw UnimplementedError();
+    if (form.subprotocol != "sse") {
+      throw const DartWotException(
+        "Only server-sent events are supported at the moment by dart_wot",
+      );
+    }
+
+    return HttpSseSubscription(
+      form,
+      complete,
+      next: next,
+      onError: error,
+      complete: complete,
+    );
   }
 
   Future<DiscoveryContent> _sendDiscoveryRequest(
