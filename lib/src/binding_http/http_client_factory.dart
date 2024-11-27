@@ -50,18 +50,7 @@ final class HttpClientFactory implements ProtocolClientFactory {
 
   @override
   bool supportsOperation(OperationType operationType, String? subprotocol) {
-    const unsupportedOperations = [
-      OperationType.observeproperty,
-      OperationType.unobserveproperty,
-      OperationType.subscribeevent,
-      OperationType.unsubscribeevent,
-    ];
-
-    if (unsupportedOperations.contains(operationType)) {
-      return false;
-    }
-
-    if (subprotocol != null) {
+    if (subprotocol != null && !["sse"].contains(subprotocol)) {
       return false;
     }
 

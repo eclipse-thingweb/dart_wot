@@ -13,48 +13,29 @@ void main() {
     test("indicate correctly whether an operation is supported", () {
       final httpClientFactory = HttpClientFactory();
 
-      const observeOperations = [
-        OperationType.observeproperty,
-        OperationType.unobserveproperty,
-        OperationType.subscribeevent,
-        OperationType.unsubscribeevent,
-      ];
-      final otherOperations = OperationType.values
-          .where((operationType) => !observeOperations.contains(operationType));
-
       final testVector = [
         (
-          expectedResult: false,
-          operationTypes: observeOperations,
+          expectedResult: true,
           subprotocol: null,
-        ),
-        (
-          expectedResult: false,
-          operationTypes: observeOperations,
-          subprotocol: "foobar",
         ),
         (
           expectedResult: true,
-          operationTypes: otherOperations,
-          subprotocol: null,
+          subprotocol: "sse",
         ),
         (
           expectedResult: false,
-          operationTypes: otherOperations,
           subprotocol: "foobar",
         ),
       ];
 
       for (final testCase in testVector) {
-        for (final operationType in testCase.operationTypes) {
-          expect(
-            httpClientFactory.supportsOperation(
-              operationType,
-              testCase.subprotocol,
-            ),
-            testCase.expectedResult,
-          );
-        }
+        expect(
+          httpClientFactory.supportsOperation(
+            OperationType.invokeaction,
+            testCase.subprotocol,
+          ),
+          testCase.expectedResult,
+        );
       }
     });
   });
