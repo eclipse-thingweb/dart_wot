@@ -34,7 +34,6 @@ const thingDescriptionJson = {
         {
           "href": "coap://californium.eclipseprojects.io/obs",
           "op": ["observeproperty", "unobserveproperty"],
-          "subprotocol": "cov:observe",
         }
       ],
     },

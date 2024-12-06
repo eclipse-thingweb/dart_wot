@@ -88,12 +88,4 @@ void main() {
       );
     });
   });
-
-  test("parse CoAP subprotocols", () async {
-    final observeSubprotocol = CoapSubprotocol.tryParse("cov:observe");
-    expect(observeSubprotocol == CoapSubprotocol.observe, isTrue);
-
-    final unknownSubprotocol = CoapSubprotocol.tryParse("foobar");
-    expect(unknownSubprotocol, isNull);
-  });
 }

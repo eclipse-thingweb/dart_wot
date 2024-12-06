@@ -24,12 +24,12 @@ void main() {
 
       final testVector = [
         (
-          expectedResult: true,
+          expectedResult: false,
           operationTypes: observeOperations,
           subprotocol: "cov:observe",
         ),
         (
-          expectedResult: false,
+          expectedResult: true,
           operationTypes: observeOperations,
           subprotocol: null,
         ),

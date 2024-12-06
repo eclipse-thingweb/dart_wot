@@ -50,20 +50,3 @@ enum CoapRequestMethod {
   static CoapRequestMethod? fromString(String stringValue) =>
       _registry[stringValue];
 }
-
-/// Enumeration of available CoAP subprotocols.
-enum CoapSubprotocol {
-  /// Subprotocol for observing CoAP resources.
-  observe,
-  ;
-
-  /// Tries to match the given [subprotocol] string to one of the known
-  /// [CoapSubprotocol.values].
-  static CoapSubprotocol? tryParse(String subprotocol) {
-    if (subprotocol == "cov:observe") {
-      return CoapSubprotocol.observe;
-    }
-
-    return null;
-  }
-}

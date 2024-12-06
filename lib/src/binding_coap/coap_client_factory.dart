@@ -8,7 +8,6 @@ import "../../core.dart";
 
 import "coap_client.dart";
 import "coap_config.dart";
-import "coap_definitions.dart";
 
 /// A [ProtocolClientFactory] that produces CoAP clients.
 final class CoapClientFactory implements ProtocolClientFactory {
@@ -49,18 +48,6 @@ final class CoapClientFactory implements ProtocolClientFactory {
 
   @override
   bool supportsOperation(OperationType operationType, String? subprotocol) {
-    const observeOperations = [
-      OperationType.observeproperty,
-      OperationType.unobserveproperty,
-      OperationType.subscribeevent,
-      OperationType.unsubscribeevent,
-    ];
-
-    if (observeOperations.contains(operationType)) {
-      return CoapSubprotocol.tryParse(subprotocol ?? "") ==
-          CoapSubprotocol.observe;
-    }
-
     return subprotocol == null;
   }
 }
