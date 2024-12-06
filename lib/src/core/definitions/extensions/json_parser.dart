@@ -61,7 +61,9 @@ extension ParseField on Map<String, dynamic> {
       return <String, dynamic>{} as T;
     }
 
-    throw FormatException("Expected $T, got ${fieldValue.runtimeType}");
+    throw FormatException(
+      "Expected $T, got ${fieldValue.runtimeType} for field $name",
+    );
   }
 
   /// Parses a single field with a given [name] as a [Uri].
