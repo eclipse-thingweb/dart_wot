@@ -4,8 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "dart:typed_data";
-
+import "package:coap/coap.dart";
 import "package:meta/meta.dart";
 
 /// Allows for configuring the behavior of CoAP clients and servers.
@@ -34,7 +33,7 @@ class CoapConfig {
   final String? dtlsCiphers;
 
   /// List of custom root certificates to use with OpenSSL.
-  final List<Uint8List> rootCertificates;
+  final List<Certificate> rootCertificates;
 
   /// The port number used by a client or server. Defaults to 5683.
   final int port;
