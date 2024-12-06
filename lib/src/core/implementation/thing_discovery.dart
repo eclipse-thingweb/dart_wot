@@ -485,11 +485,11 @@ class ThingDiscoveryProcess extends Stream<ThingDescription>
   }) {
     final streamSubscription = _thingDescriptionStream.listen(
       onData,
-      onError: (error, stackTrace) {
+      onError: (error) {
         if (error is Exception) {
           _error = error;
           // ignore: avoid_dynamic_calls
-          onError?.call(error, stackTrace);
+          onError?.call(error);
         }
       },
       onDone: () {
