@@ -2,6 +2,7 @@
 [![Build](https://github.com/eclipse-thingweb/dart_wot/actions/workflows/ci.yml/badge.svg)](https://github.com/eclipse-thingweb/dart_wot/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/eclipse-thingweb/dart_wot/branch/main/graph/badge.svg?token=76OBNOVL60)](https://codecov.io/gh/eclipse-thingweb/dart_wot)
 [![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg)](https://pub.dev/packages/lint)
+[![Adopters](https://img.shields.io/badge/Show%20Adopters%20and%20Users-%2331b8a3ff?logoColor=31b8a3ff)](#adopters)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/eclipse-thingweb/thingweb/main/brand/logos/dart_wot_for_dark_bg.svg">
@@ -110,6 +111,17 @@ implementation for the Node.js ecosystem.
 ## Contribution
 
 Please refer to our [contribution guidelines](CONTRIBUTING.md) for more details.
+
+## Adopters
+
+If you are using Eclipse Thingweb dart_wot within your organization, please
+support us by adding your logo to the
+[Eclipse IoT adopters list](https://iot.eclipse.org/adopters/#iot.thingweb).
+To do so, simply open an issue at
+[the Eclipse Gitlab](https://gitlab.eclipse.org/eclipsefdn/it/api/eclipsefdn-project-adopters/-/issues/new?issuable_template=adopter_request)
+by providing the name of your organization, its logo, and a link to your
+organization or team.
+You should be affiliated with that organization for the issue to be implemented.
 
 ## Maintainers
 
