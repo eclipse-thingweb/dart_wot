@@ -352,7 +352,7 @@ void main() {
         (event) {
           counter++;
         },
-        onError: (error, stackTrace) async {},
+        onError: (error) async {},
         onDone: () {
           expect(counter, 0);
           expect(thingDiscoveryProcess.done, true);
