@@ -5,7 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.35.3] - 2024-11-27
+## [0.36.0] - 2024-12-06
+
+### Added
+
+- Add simple example for TDD discovery ([d3e6b08](https://github.com/eclipse-thingweb/dart_wot/commit/d3e6b08632151e508280bbe770cc52632b5f62e1))
+
+### Changed
+
+- Slightly improve error message for invalid type ([26921a7](https://github.com/eclipse-thingweb/dart_wot/commit/26921a78b07b79b8491a8ce3c4c54529f01b830a))
+
+### Fixed
+
+- Let exploreDirectory continue when encountering invalid TDs ([786db32](https://github.com/eclipse-thingweb/dart_wot/commit/786db3295c89e76797f866bdc6425d13762ee9df))
+- Fix error handling within ThingDiscovery class ([49c754f](https://github.com/eclipse-thingweb/dart_wot/commit/49c754faf19a1eec7401b50e7f58055f948c67c9))
+
+### Removed
+
+- Remove support for cov:observe subprotocol ([44059a1](https://github.com/eclipse-thingweb/dart_wot/commit/44059a100b5818ca2d58abd0fcbc83cb611f22ff))
+
+## [0.35.3] - 2024-12-02
 
 ### Added
 
@@ -1136,6 +1155,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.36.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.35.3..v0.36.0
 [0.35.3]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.35.2..v0.35.3
 [0.35.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.35.1..v0.35.2
 [0.35.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.35.0..v0.35.1
