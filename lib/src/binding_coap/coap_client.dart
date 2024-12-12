@@ -25,7 +25,8 @@ class _InternalCoapConfig extends CoapConfigDefault {
         dtlsCiphers = coapConfig.dtlsCiphers,
         dtlsVerify = coapConfig.dtlsVerify,
         dtlsWithTrustedRoots = coapConfig.dtlsWithTrustedRoots,
-        rootCertificates = coapConfig.rootCertificates;
+        rootCertificates = coapConfig.rootCertificates,
+        openSslSecurityLevel = coapConfig.openSslSecurityLevel;
 
   @override
   final int preferredBlockSize;
@@ -41,6 +42,9 @@ class _InternalCoapConfig extends CoapConfigDefault {
 
   @override
   final List<coap.Certificate> rootCertificates;
+
+  @override
+  final int? openSslSecurityLevel;
 }
 
 coap.PskCredentialsCallback? _createPskCallback(
