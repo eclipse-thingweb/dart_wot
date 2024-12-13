@@ -4,8 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "dart:typed_data";
-
+import "package:coap/coap.dart";
 import "package:meta/meta.dart";
 
 /// Allows for configuring the behavior of CoAP clients and servers.
@@ -22,6 +21,7 @@ class CoapConfig {
     this.rootCertificates = const [],
     this.dtlsWithTrustedRoots = true,
     this.dtlsVerify = true,
+    this.openSslSecurityLevel,
   });
 
   /// Whether certificates should be verified by OpenSSL.
@@ -34,7 +34,7 @@ class CoapConfig {
   final String? dtlsCiphers;
 
   /// List of custom root certificates to use with OpenSSL.
-  final List<Uint8List> rootCertificates;
+  final List<Certificate> rootCertificates;
 
   /// The port number used by a client or server. Defaults to 5683.
   final int port;
@@ -57,4 +57,19 @@ class CoapConfig {
   ///
   /// Defaults to 60 seconds.
   final Duration multicastDiscoveryTimeout;
+
+  /// Security level override for using DTLS with OpenSSL.
+  ///
+  /// The possible values for the security level range from 0 to 5.
+  ///
+  /// Lowering the security level can be necessary with newer versions of
+  /// OpenSSL to still be able to use the mandatory CoAP cipher suites
+  /// (e.g., `TLS_PSK_WITH_AES_128_CCM_8`, see [section 9.1.3.1 of RFC 7252]).
+  ///
+  /// See the [OpenSSL documentation] for more information on the meaning of the
+  /// individual security levels.
+  ///
+  /// [section 9.1.3.1 of RFC 7252]: https://datatracker.ietf.org/doc/html/rfc7252#section-9.1.3.1
+  /// [OpenSSL documentation]: https://docs.openssl.org/master/man3/SSL_CTX_set_security_level/#default-callback-behaviour
+  final int? openSslSecurityLevel;
 }

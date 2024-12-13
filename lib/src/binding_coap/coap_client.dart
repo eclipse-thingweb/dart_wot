@@ -5,7 +5,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "dart:async";
-import "dart:typed_data";
 
 import "package:coap/coap.dart" as coap;
 import "package:coap/config/coap_config_default.dart";
@@ -26,7 +25,8 @@ class _InternalCoapConfig extends CoapConfigDefault {
         dtlsCiphers = coapConfig.dtlsCiphers,
         dtlsVerify = coapConfig.dtlsVerify,
         dtlsWithTrustedRoots = coapConfig.dtlsWithTrustedRoots,
-        rootCertificates = coapConfig.rootCertificates;
+        rootCertificates = coapConfig.rootCertificates,
+        openSslSecurityLevel = coapConfig.openSslSecurityLevel;
 
   @override
   final int preferredBlockSize;
@@ -41,7 +41,10 @@ class _InternalCoapConfig extends CoapConfigDefault {
   final bool dtlsWithTrustedRoots;
 
   @override
-  final List<Uint8List> rootCertificates;
+  final List<coap.Certificate> rootCertificates;
+
+  @override
+  final int? openSslSecurityLevel;
 }
 
 coap.PskCredentialsCallback? _createPskCallback(
