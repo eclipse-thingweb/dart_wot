@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.36.2] - 2024-12-13
+
+### Added
+
+- Add support for PEM root certificates ([eb7d549](https://github.com/eclipse-thingweb/dart_wot/commit/eb7d5497accbf767278f86411dac80a7a5b2c30f))
+
+### Changed
+
+- Allow for overriding the OpenSSL security level ([c3c1e5f](https://github.com/eclipse-thingweb/dart_wot/commit/c3c1e5f70caa832b559b0872e5338aee5bc76e3b))
+
 ## [0.36.1] - 2024-12-06
 
 ### Added
@@ -1161,6 +1171,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.36.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.36.1..v0.36.2
 [0.36.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.36.0..v0.36.1
 [0.36.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.35.3..v0.36.0
 [0.35.3]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.35.2..v0.35.3
