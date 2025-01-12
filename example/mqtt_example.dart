@@ -46,18 +46,18 @@ const thingDescriptionJson = {
 };
 
 final Map<String, BasicCredentials> basicCredentials = {
-  "urn:test": const BasicCredentials("rw", "readwrite"),
+  "test.mosquitto.org:1884": const BasicCredentials(
+    "rw",
+    "readwrite",
+  ),
 };
 
 Future<BasicCredentials?> basicCredentialsCallback(
   Uri uri,
   AugmentedForm? form, [
   BasicCredentials? invalidCredentials,
-]) async {
-  final id = form?.tdIdentifier;
-
-  return basicCredentials[id];
-}
+]) async =>
+    basicCredentials[uri.authority];
 
 Future<void> main(List<String> args) async {
   final servient = Servient.create(

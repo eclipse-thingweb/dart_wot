@@ -63,7 +63,6 @@ void main() {
       expect(augmentedForm.href, Uri.parse(href));
       expect(augmentedForm.security, ["nosec_sc"]);
       expect(augmentedForm.securityDefinitions.first, isA<NoSecurityScheme>());
-      expect(augmentedForm.tdIdentifier, id);
       expect(
         augmentedForm.additionalResponses?.first.contentType,
         "application/json",

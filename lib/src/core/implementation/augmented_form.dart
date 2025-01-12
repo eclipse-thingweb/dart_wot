@@ -31,9 +31,6 @@ final class AugmentedForm implements Form {
 
   final Map<String, Object>? _userProvidedUriVariables;
 
-  /// The identifier of the [_thingDescription] associated with this form.
-  String get tdIdentifier => _thingDescription.identifier;
-
   @override
   Map<String, dynamic> get additionalFields => _form.additionalFields;
 
