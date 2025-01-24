@@ -8,7 +8,7 @@
 /// the [WoT Binding Templates Specification][spec link] for HTTP.
 ///
 /// [spec link]: https://www.w3.org/TR/wot-binding-templates/
-library binding_http;
+library;
 
 export "src/binding_http/http_client_factory.dart";
 export "src/binding_http/http_config.dart";

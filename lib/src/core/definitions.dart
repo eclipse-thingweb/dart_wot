@@ -9,7 +9,7 @@
 /// models for passing credentials to the Scripting API implementation.
 ///
 /// [spec link]: https://www.w3.org/TR/wot-thing-description11/
-library definitions;
+library;
 
 export "package:dcaf/dcaf.dart" show AuthServerRequestCreationHint;
 

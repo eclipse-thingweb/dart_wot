@@ -7,7 +7,7 @@
 /// Core implementation providing Scripting API implementations, interfaces
 /// for protocol bindings, and the `Servient` class which provides the WoT
 /// runtime used for consuming, exposing, and discovering Things.
-library core;
+library;
 
 // TODO(JKRhb): Reorganize top-level core package into smaller packages.
 export "src/core/definitions.dart";

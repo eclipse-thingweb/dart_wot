@@ -8,7 +8,7 @@
 /// the [WoT Binding Templates Specification][spec link] for CoAP.
 ///
 /// [spec link]: https://www.w3.org/TR/wot-binding-templates/
-library binding_coap;
+library;
 
 export "package:coap/coap.dart"
     show Certificate, DerCertificate, PemCertificate;

@@ -6,7 +6,7 @@
 
 /// Sub-library for defining the three kinds of interaction affordances
 /// (properties, actions, events).
-library interaction_affordance;
+library;
 
 import "package:curie/curie.dart";
 import "package:meta/meta.dart";

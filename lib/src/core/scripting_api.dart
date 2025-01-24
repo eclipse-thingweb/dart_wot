@@ -8,7 +8,7 @@
 /// [WoT Scripting API Specification][spec link].
 ///
 /// [spec link]: https://www.w3.org/TR/wot-scripting-api/
-library scripting_api;
+library;
 
 export "scripting_api/consumed_thing.dart";
 export "scripting_api/data_schema_value.dart";

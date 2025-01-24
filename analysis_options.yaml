@@ -26,3 +26,4 @@ linter:
     close_sinks: true
     cascade_invocations: true
     only_throw_errors: true
+    unnecessary_library_name: true
