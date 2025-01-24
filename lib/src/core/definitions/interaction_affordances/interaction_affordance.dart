@@ -26,13 +26,13 @@ part "property.dart";
 sealed class InteractionAffordance implements Serializable {
   /// Creates a new [InteractionAffordance]. Accepts a [List] of [forms].
   const InteractionAffordance({
+    required this.forms,
     this.atType,
     this.title,
     this.titles,
     this.description,
     this.descriptions,
     this.uriVariables,
-    required this.forms,
     this.additionalFields = const {},
   });
 

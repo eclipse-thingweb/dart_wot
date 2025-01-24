@@ -211,8 +211,8 @@ final class _MockedProtocolClient extends ProtocolClient with DirectDiscoverer {
   Future<Subscription> subscribeResource(
     Form form, {
     required void Function(Content content) next,
-    void Function(Exception error)? error,
     required void Function() complete,
+    void Function(Exception error)? error,
   }) {
     // TODO: implement subscribeResource
     throw UnimplementedError();

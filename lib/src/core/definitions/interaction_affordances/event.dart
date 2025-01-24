@@ -10,12 +10,12 @@ part of "interaction_affordance.dart";
 class Event extends InteractionAffordance {
   /// Creates a new [Event] from a [List] of [forms].
   const Event({
+    required super.forms,
     super.title,
     super.titles,
     super.description,
     super.descriptions,
     super.uriVariables,
-    required super.forms,
     this.subscription,
     this.data,
     this.cancellation,
