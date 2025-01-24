@@ -182,8 +182,8 @@ final class MqttClient extends ProtocolClient with MqttDiscoverer {
   Future<Subscription> subscribeResource(
     AugmentedForm form, {
     required void Function(Content content) next,
-    void Function(Exception error)? error,
     required void Function() complete,
+    void Function(Exception error)? error,
   }) async {
     final client = await _connectWithForm(form);
     final topic = form.topicFilter;

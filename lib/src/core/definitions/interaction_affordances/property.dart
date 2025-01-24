@@ -12,9 +12,9 @@ class Property extends InteractionAffordance implements DataSchema {
   /// Default constructor that creates a [Property] from a [List] of [forms].
   const Property({
     required super.forms,
+    required this.dataSchema,
     super.uriVariables,
     super.additionalFields,
-    required this.dataSchema,
     this.observable = _defaultObservableValue,
   });
 
