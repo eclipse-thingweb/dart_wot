@@ -5,6 +5,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 /// Sub-library for extensions used by `dart_wot`.
-library extensions;
+library;
 
 export "extensions/uri_extensions.dart";

@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 /// Sub-library containing the actual implementation of the WoT Scripting API.
-library implementation;
+library;
 
 export "implementation/augmented_form.dart";
 export "implementation/codecs/content_codec.dart";
