@@ -31,7 +31,7 @@ abstract base class ProtocolClient {
   Future<Subscription> subscribeResource(
     AugmentedForm form, {
     required void Function(Content content) next,
-    void Function(Exception error)? error,
     required void Function() complete,
+    void Function(Exception error)? error,
   });
 }

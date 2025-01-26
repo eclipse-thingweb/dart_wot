@@ -148,8 +148,8 @@ final class CoapClient extends ProtocolClient
   Future<Content> _sendRequest(
     Uri uri,
     coap.RequestMethod method, {
-    Content? content,
     required AugmentedForm? form,
+    Content? content,
     coap.CoapMediaType? format,
     coap.CoapMediaType? accept,
     coap.BlockSize? block1Size,
@@ -204,8 +204,8 @@ final class CoapClient extends ProtocolClient
   Future<DiscoveryContent> _sendDiscoveryRequest(
     Uri uri,
     coap.RequestMethod method, {
-    Content? content,
     required AugmentedForm? form,
+    Content? content,
     coap.CoapMediaType? format,
     coap.CoapMediaType? accept,
     coap.BlockSize? block1Size,
@@ -388,8 +388,8 @@ final class CoapClient extends ProtocolClient
   Future<Subscription> subscribeResource(
     AugmentedForm form, {
     required void Function(Content content) next,
-    void Function(Exception error)? error,
     required void Function() complete,
+    void Function(Exception error)? error,
   }) async {
     final OperationType operationType = form.op.firstWhere(
       (element) => [OperationType.subscribeevent, OperationType.observeproperty]

@@ -309,8 +309,8 @@ final class HttpClient extends ProtocolClient
   Future<Subscription> subscribeResource(
     AugmentedForm form, {
     required void Function(Content content) next,
-    void Function(Exception error)? error,
     required void Function() complete,
+    void Function(Exception error)? error,
   }) async {
     if (form.subprotocol != "sse") {
       throw const DartWotException(
