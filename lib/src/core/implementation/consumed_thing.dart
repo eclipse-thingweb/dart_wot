@@ -78,7 +78,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
           }
 
           return servient.supportsOperation(
-            form.resolvedHref.scheme,
+            form.href.scheme,
             operationType,
             form.subprotocol,
           );
