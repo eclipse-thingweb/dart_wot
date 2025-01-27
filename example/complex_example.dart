@@ -76,18 +76,15 @@ const thingDescriptionJson = {
 };
 
 final Map<String, BasicCredentials> basicCredentials = {
-  "urn:test": const BasicCredentials("username", "password"),
+  "httpbin.org": const BasicCredentials("username", "password"),
 };
 
 Future<BasicCredentials?> basicCredentialsCallback(
   Uri uri,
-  AugmentedForm? form, [
+  AugmentedForm? form,
   BasicCredentials? invalidCredentials,
-]) async {
-  final id = form?.tdIdentifier;
-
-  return basicCredentials[id];
-}
+) async =>
+    basicCredentials[uri.authority];
 
 Future<void> main() async {
   final coapClientFactory = CoapClientFactory(

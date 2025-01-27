@@ -104,8 +104,7 @@ final class HttpClient extends ProtocolClient
       return false;
     }
 
-    final basicCredentials =
-        await _getBasicCredentials(form.resolvedHref, form);
+    final basicCredentials = await _getBasicCredentials(form.href, form);
 
     if (basicCredentials == null) {
       return false;
@@ -127,8 +126,7 @@ final class HttpClient extends ProtocolClient
       return false;
     }
 
-    final bearerCredentials =
-        await _getBearerCredentials(form.resolvedHref, form);
+    final bearerCredentials = await _getBearerCredentials(form.href, form);
 
     if (bearerCredentials == null) {
       return false;
@@ -222,7 +220,7 @@ final class HttpClient extends ProtocolClient
   ) async {
     final requestMethod =
         HttpRequestMethod.getRequestMethod(form, operationType);
-    final Uri uri = form.resolvedHref;
+    final Uri uri = form.href;
 
     final request = Request(requestMethod.methodName, uri)
       ..headers.addAll(_getHeadersFromForm(form))

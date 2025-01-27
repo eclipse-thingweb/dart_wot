@@ -31,9 +31,6 @@ final class AugmentedForm implements Form {
 
   final Map<String, Object>? _userProvidedUriVariables;
 
-  /// The identifier of the [_thingDescription] associated with this form.
-  String get tdIdentifier => _thingDescription.identifier;
-
   @override
   Map<String, dynamic> get additionalFields => _form.additionalFields;
 
@@ -47,8 +44,9 @@ final class AugmentedForm implements Form {
   @override
   String get contentType => _form.contentType;
 
-  @override
-  Uri get href {
+  /// Resolves all [_userProvidedUriVariables] in this [Form] and returns the
+  /// resulting [Uri].
+  Uri get _resolvedHref {
     final baseUri = _thingDescription.base;
 
     if (baseUri != null) {
@@ -56,6 +54,39 @@ final class AugmentedForm implements Form {
     }
 
     return _form.href;
+  }
+
+  @override
+  Uri get href {
+    final href = _resolvedHref;
+    final hrefUriVariables = _filterUriVariables(href);
+
+    if (hrefUriVariables.isEmpty) {
+      return href;
+    }
+
+    final Map<String, DataSchema> affordanceUriVariables = {
+      ..._thingDescription.uriVariables ?? {},
+      ..._interactionAffordance.uriVariables ?? {},
+    };
+
+    final userProvidedUriVariables = _userProvidedUriVariables;
+
+    if (userProvidedUriVariables != null) {
+      _validateUriVariables(
+        hrefUriVariables,
+        affordanceUriVariables,
+        userProvidedUriVariables,
+      );
+    }
+
+    // As "{" and "}" are "percent encoded" due to Uri.parse(), we need to
+    // revert the encoding first before we can insert the values.
+    final decodedHref = Uri.decodeFull(href.toString());
+
+    final expandedHref =
+        UriTemplate(decodedHref).expand(userProvidedUriVariables ?? {});
+    return Uri.parse(expandedHref);
   }
 
   @override
@@ -96,38 +127,6 @@ final class AugmentedForm implements Form {
         .map((e) => e.split(","))
         .flattened
         .toList(growable: false);
-  }
-
-  /// Resolves all [_userProvidedUriVariables] in this [Form] and returns the
-  /// resulting [Uri].
-  Uri get resolvedHref {
-    final hrefUriVariables = _filterUriVariables(href);
-
-    if (hrefUriVariables.isEmpty) {
-      return href;
-    }
-
-    final Map<String, DataSchema> affordanceUriVariables = {
-      ..._thingDescription.uriVariables ?? {},
-      ..._interactionAffordance.uriVariables ?? {},
-    };
-
-    final userProvidedUriVariables = _userProvidedUriVariables;
-    if (userProvidedUriVariables != null) {
-      _validateUriVariables(
-        hrefUriVariables,
-        affordanceUriVariables,
-        userProvidedUriVariables,
-      );
-    }
-
-    // As "{" and "}" are "percent encoded" due to Uri.parse(), we need to
-    // revert the encoding first before we can insert the values.
-    final decodedHref = Uri.decodeFull(href.toString());
-
-    final expandedHref =
-        UriTemplate(decodedHref).expand(userProvidedUriVariables ?? {});
-    return Uri.parse(expandedHref);
   }
 
   void _validateUriVariables(

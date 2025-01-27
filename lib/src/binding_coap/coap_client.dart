@@ -132,7 +132,7 @@ final class CoapClient extends ProtocolClient
     final code = requestMethod.code;
 
     return _sendRequest(
-      form.resolvedHref,
+      form.href,
       code,
       content: content,
       format: form.contentFormat,
@@ -232,7 +232,7 @@ final class CoapClient extends ProtocolClient
   ) async {
     final requestMethod = (form.method ?? CoapRequestMethod.get).code;
 
-    final creationHintUri = form.resolvedHref.replace(scheme: "coap");
+    final creationHintUri = form.href.replace(scheme: "coap");
 
     final request = await _createRequest(
       requestMethod,
@@ -419,13 +419,13 @@ final class CoapClient extends ProtocolClient
 
     final request = await _createRequest(
       (form.method ?? CoapRequestMethod.get).code,
-      form.resolvedHref,
+      form.href,
       format: form.contentFormat,
       accept: form.accept,
     );
 
     final coapClient = coap.CoapClient(
-      form.resolvedHref,
+      form.href,
       config: _InternalCoapConfig(_coapConfig ?? const CoapConfig()),
     );
 
