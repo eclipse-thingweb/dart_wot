@@ -140,7 +140,7 @@ extension MqttFormExtension on AugmentedForm {
     if (qosValue != null) {
       throw FormatException(
         "Encountered unknown QoS value $qosValue. "
-        "in form with resolved href $href.",
+        "in form with resolved href $resolvedHref.",
       );
     }
 

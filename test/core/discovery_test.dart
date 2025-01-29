@@ -147,7 +147,7 @@ final class _MockedProtocolClient extends ProtocolClient with DirectDiscoverer {
 
   @override
   Future<Content> readResource(AugmentedForm form) async {
-    final href = form.href;
+    final href = form.resolvedHref;
 
     if (href == directoryTestThingsUri1) {
       return "[$validTestThingDescription]".toContent("application/td+json");

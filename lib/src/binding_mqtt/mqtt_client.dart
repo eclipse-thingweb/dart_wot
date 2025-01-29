@@ -68,7 +68,7 @@ final class MqttClient extends ProtocolClient with MqttDiscoverer {
   }
 
   Future<MqttServerClient> _connectWithForm(AugmentedForm form) async =>
-      _connect(form.href, form);
+      _connect(form.resolvedHref, form);
 
   Future<MqttServerClient> _connect(Uri brokerUri, AugmentedForm? form) async {
     final client = brokerUri.createClient(_mqttConfig.keepAlivePeriod);
