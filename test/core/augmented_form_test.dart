@@ -144,13 +144,8 @@ void main() {
       );
 
       expect(
-        augmentedForm1.resolvedHref,
+        augmentedForm1.href,
         Uri.parse("http://example.org/weather/?lat=5&long=10"),
-      );
-
-      expect(
-        augmentedForm1.resolvedHref != augmentedForm1.href,
-        isTrue,
       );
 
       final augmentedForm2 = AugmentedForm(
@@ -163,7 +158,7 @@ void main() {
       );
 
       expect(
-        augmentedForm2.resolvedHref,
+        augmentedForm2.href,
         Uri.parse("http://example.org/weather/?lat=5"),
       );
 
@@ -177,7 +172,7 @@ void main() {
       );
 
       expect(
-        augmentedForm3.resolvedHref,
+        augmentedForm3.href,
         Uri.parse("http://example.org/weather/?long=10"),
       );
 
@@ -192,7 +187,7 @@ void main() {
       );
 
       expect(
-        () => augmentedForm4.resolvedHref,
+        () => augmentedForm4.href,
         throwsA(isA<FormatException>()),
       );
 
@@ -207,20 +202,8 @@ void main() {
       );
 
       expect(
-        () => augmentedForm5.resolvedHref,
+        () => augmentedForm5.href,
         throwsA(isA<FormatException>()),
-      );
-
-      final augmentedForm6 = AugmentedForm(
-        affordance.forms[2],
-        affordance,
-        thingDescription,
-        const {},
-      );
-
-      expect(
-        augmentedForm6.href,
-        augmentedForm6.resolvedHref,
       );
     });
   });

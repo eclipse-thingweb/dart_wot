@@ -20,7 +20,7 @@ final class HttpSseSubscription extends ProtocolSubscription {
     void Function(Exception error)? onError,
     void Function()? complete,
   })  : _active = true,
-        _sseChannel = SseChannel.connect(form.resolvedHref) {
+        _sseChannel = SseChannel.connect(form.href) {
     _sseChannel.stream.listen(
       (data) {
         if (data is! String) {
