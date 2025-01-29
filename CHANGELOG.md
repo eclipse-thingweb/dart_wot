@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.37.0] - 2025-01-29
+
+### Changed
+
+- Do not expose the TD ID via AugmentedForms ([4471213](https://github.com/eclipse-thingweb/dart_wot/commit/4471213d31c6d0d1945e7fe9f1c5c214267a128b))
+- Expose resolvedHref as href ([aef4bd1](https://github.com/eclipse-thingweb/dart_wot/commit/aef4bd1371a57a878469a47dc514d4c1023693fe))
+
+### Removed
+
+- Remove unnecessary library names  (#211) ([fdc099a](https://github.com/eclipse-thingweb/dart_wot/commit/fdc099af90e6559cf0c77a336660b70712e8f2bf))
+
 ## [0.36.2] - 2024-12-13
 
 ### Added
@@ -1171,6 +1182,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.37.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.36.2..v0.37.0
 [0.36.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.36.1..v0.36.2
 [0.36.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.36.0..v0.36.1
 [0.36.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.35.3..v0.36.0
