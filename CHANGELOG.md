@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.37.1] - 2025-03-03
+
+### Removed
+
+- Remove incorrect base field ([036de14](https://github.com/eclipse-thingweb/dart_wot/commit/036de14b91ffd1813d955c1cbfc8eb9a78677135))
+
 ## [0.37.0] - 2025-01-29
 
 ### Changed
@@ -1182,6 +1188,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove TODO from misc issue template ([f0281cf](https://github.com/eclipse-thingweb/dart_wot/commit/f0281cf91d3ab717fa18aef0576ddef5aaf9abcb))
 
+[0.37.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.37.0..v0.37.1
 [0.37.0]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.36.2..v0.37.0
 [0.36.2]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.36.1..v0.36.2
 [0.36.1]: https://github.com/eclipse-thingweb/dart_wot/compare/v0.36.0..v0.36.1
