@@ -13,7 +13,6 @@ const thingDescriptionJson = {
   "@context": "https://www.w3.org/2022/wot/td/v1.1",
   "title": "Test Thing",
   "id": "urn:test",
-  "base": "coap://coap.me",
   "security": ["auto_sc"],
   "securityDefinitions": {
     "auto_sc": {"scheme": "auto"},
