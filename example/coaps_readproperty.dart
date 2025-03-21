@@ -13,18 +13,17 @@ import "package:dart_wot/core.dart";
 
 /// Matches [PskCredentials] by hostname and URI scheme.
 final Map<Uri, PskCredentials> _pskCredentialsStore = {
-  Uri(host: "californium.eclipseprojects.io", scheme: "coaps"): PskCredentials(
+  Uri(host: "californium.eclipseprojects.io"): PskCredentials(
     identity: Uint8List.fromList("Client_identity".codeUnits),
     preSharedKey: Uint8List.fromList("secretPSK".codeUnits),
   ),
 };
 
 PskCredentials? _pskCredentialsCallback(
-  Uri uri,
-  Form? form,
+  DiscoveryCallbackParameter discoveryCallbackParameter,
   String? identityHint,
 ) {
-  final key = Uri(scheme: uri.scheme, host: uri.host);
+  final key = Uri(host: discoveryCallbackParameter.uri.host);
 
   return _pskCredentialsStore[key];
 }

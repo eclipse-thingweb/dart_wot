@@ -37,16 +37,15 @@ const thingDescriptionJson = {
 
 const basicCredentials = BasicCredentials("username", "password");
 
-final Map<String, BasicCredentials> basicCredentialsMap = {
-  "httpbin.org": basicCredentials,
+final Map<Uri, BasicCredentials> basicCredentialsMap = {
+  Uri(host: "httpbin.org"): basicCredentials,
 };
 
 Future<BasicCredentials?> basicCredentialsCallback(
-  Uri uri,
-  AugmentedForm? form,
+  DiscoveryCallbackParameter blah,
   BasicCredentials? invalidCredentials,
 ) async =>
-    basicCredentialsMap[uri.authority];
+    basicCredentialsMap[blah.uri.origin];
 
 /// Illustrates the usage of both the basic and the automatic security scheme,
 /// with a server supporting basic authentication.

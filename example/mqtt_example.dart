@@ -53,11 +53,10 @@ final Map<String, BasicCredentials> basicCredentials = {
 };
 
 Future<BasicCredentials?> basicCredentialsCallback(
-  Uri uri,
-  AugmentedForm? form, [
+  DiscoveryCallbackParameter blah, [
   BasicCredentials? invalidCredentials,
 ]) async =>
-    basicCredentials[uri.authority];
+    basicCredentials[blah.uri.authority];
 
 Future<void> main(List<String> args) async {
   final servient = Servient.create(

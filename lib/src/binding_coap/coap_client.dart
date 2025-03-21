@@ -59,8 +59,10 @@ coap.PskCredentialsCallback? _createPskCallback(
   }
 
   return (identityHint) {
+    final blah = DiscoveryCallbackParameter.create(uri, form);
+
     final PskCredentials? pskCredentials =
-        pskCredentialsCallback(uri, form, identityHint);
+        pskCredentialsCallback(blah, identityHint);
 
     if (pskCredentials == null) {
       throw CoapBindingException(
@@ -302,9 +304,9 @@ final class CoapClient extends ProtocolClient
     AugmentedForm? form, [
     AceCredentials? invalidAceCredentials,
   ]) async {
+    final blah = DiscoveryCallbackParameter.create(uri, form);
     final aceCredentials = await aceCredentialsCallback(
-      uri,
-      form,
+      blah,
       creationHint,
       invalidAceCredentials,
     );

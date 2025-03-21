@@ -80,11 +80,10 @@ final Map<String, BasicCredentials> basicCredentials = {
 };
 
 Future<BasicCredentials?> basicCredentialsCallback(
-  Uri uri,
-  AugmentedForm? form,
+  DiscoveryCallbackParameter discoveryCallbackParameter,
   BasicCredentials? invalidCredentials,
 ) async =>
-    basicCredentials[uri.authority];
+    basicCredentials[discoveryCallbackParameter.uri.authority];
 
 Future<void> main() async {
   final coapClientFactory = CoapClientFactory(

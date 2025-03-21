@@ -35,44 +35,64 @@ final class MqttClient extends ProtocolClient with MqttDiscoverer {
   final MqttConfig _mqttConfig;
 
   Future<BasicCredentials?> _obtainCredentials(
-    Uri uri,
-    AugmentedForm? form, [
+    DiscoveryCallbackParameter discoveryCallbackParameter, [
     BasicCredentials? invalidCredentials,
     bool unauthorized = false,
   ]) async {
-    final requiresBasicAuthentication =
-        form?.requiresBasicAuthentication(invalidCredentials) ?? false;
-    final isDiscovery = form == null && unauthorized;
+    // final BasicCredentials? basicCredentials;
 
-    if (!(requiresBasicAuthentication || isDiscovery)) {
-      return null;
+    switch (discoveryCallbackParameter) {
+      case UriDiscoveryCallbackParameter():
+        final isDiscovery = unauthorized;
+
+        if (!isDiscovery) {
+          return null;
+        }
+
+        final basicCredentials = await _basicCredentialsCallback?.call(
+          discoveryCallbackParameter,
+          invalidCredentials,
+        );
+
+        if (basicCredentials != null) {
+          return basicCredentials;
+        }
+
+        throw MqttBindingException(
+          "Discovery requires basic authentication but no credentials were "
+          "provided.",
+        );
+      case FormDiscoveryCallbackParameter(:final uri, :final form):
+        // final requiresBasicAuthentication =
+        // ;
+
+        if (!form.requiresBasicAuthentication(invalidCredentials)) {
+          return null;
+        }
+
+        final basicCredentials = await _basicCredentialsCallback?.call(
+          discoveryCallbackParameter,
+          invalidCredentials,
+        );
+
+        if (basicCredentials != null) {
+          return basicCredentials;
+        }
+
+        throw MqttBindingException(
+          "Form requires basic authentication but no credentials were provided.",
+        );
     }
-
-    final basicCredentials =
-        _basicCredentialsCallback?.call(uri, form, invalidCredentials);
-
-    if (basicCredentials != null) {
-      return basicCredentials;
-    }
-
-    if (form != null) {
-      throw MqttBindingException(
-        "Form requires basic authentication but no credentials were provided.",
-      );
-    }
-
-    throw MqttBindingException(
-      "Discovery requires basic authentication but no credentials were "
-      "provided.",
-    );
   }
 
   Future<MqttServerClient> _connectWithForm(AugmentedForm form) async =>
-      _connect(form.href, form);
+      _connect(FormDiscoveryCallbackParameter(form));
 
-  Future<MqttServerClient> _connect(Uri brokerUri, AugmentedForm? form) async {
-    final client = brokerUri.createClient(_mqttConfig.keepAlivePeriod);
-    final credentials = await _obtainCredentials(brokerUri, form);
+  Future<MqttServerClient> _connect(
+      DiscoveryCallbackParameter discoveryCallbackParater) async {
+    final client =
+        discoveryCallbackParater.uri.createClient(_mqttConfig.keepAlivePeriod);
+    final credentials = await _obtainCredentials(discoveryCallbackParater);
 
     MqttClientConnectionStatus? status;
 
@@ -81,7 +101,7 @@ final class MqttClient extends ProtocolClient with MqttDiscoverer {
     } on NoConnectionException {
       // Ask user for (new) credentials
       final newCredentials =
-          await _obtainCredentials(brokerUri, form, credentials);
+          await _obtainCredentials(discoveryCallbackParater, credentials);
       if (newCredentials != null) {
         status = await client.connectWithCredentials(newCredentials);
       }
@@ -205,7 +225,7 @@ final class MqttClient extends ProtocolClient with MqttDiscoverer {
     required String expectedContentType,
     required Duration discoveryTimeout,
   }) async* {
-    final client = await _connect(brokerUri, null);
+    final client = await _connect(UriDiscoveryCallbackParameter(brokerUri));
 
     // TODO: Revisit QoS value and subscription check
     if (client.subscribe(discoveryTopic, MqttQos.atLeastOnce) == null) {

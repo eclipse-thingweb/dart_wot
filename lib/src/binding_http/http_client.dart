@@ -104,7 +104,8 @@ final class HttpClient extends ProtocolClient
       return false;
     }
 
-    final basicCredentials = await _getBasicCredentials(form.href, form);
+    final basicCredentials =
+        await _getBasicCredentials(FormDiscoveryCallbackParameter(form));
 
     if (basicCredentials == null) {
       return false;
@@ -126,7 +127,8 @@ final class HttpClient extends ProtocolClient
       return false;
     }
 
-    final bearerCredentials = await _getBearerCredentials(form.href, form);
+    final bearerCredentials =
+        await _getBearerCredentials(FormDiscoveryCallbackParameter(form));
 
     if (bearerCredentials == null) {
       return false;
@@ -164,7 +166,12 @@ final class HttpClient extends ProtocolClient
     AugmentedForm? form,
   ) async {
     final request = _copyRequest(originalRequest);
-    final basicCredentials = await _getBasicCredentials(request.url, form);
+    final basicCredentials = await _getBasicCredentials(
+      DiscoveryCallbackParameter.create(
+        originalRequest.url,
+        form,
+      ),
+    );
 
     if (basicCredentials == null) {
       throw HttpSecurityException("No BasicCredentials have been provided.");
@@ -180,7 +187,12 @@ final class HttpClient extends ProtocolClient
     AugmentedForm? form,
   ) async {
     final request = _copyRequest(originalRequest);
-    final bearerCredentials = await _getBearerCredentials(request.url, form);
+    final bearerCredentials = await _getBearerCredentials(
+      DiscoveryCallbackParameter.create(
+        originalRequest.url,
+        form,
+      ),
+    );
 
     if (bearerCredentials == null) {
       throw HttpSecurityException("No BearerCredentials have been provided.");
@@ -234,19 +246,17 @@ final class HttpClient extends ProtocolClient
   }
 
   Future<BasicCredentials?> _getBasicCredentials(
-    Uri uri,
-    AugmentedForm? form, [
+    DiscoveryCallbackParameter blargh, [
     BasicCredentials? invalidCredentials,
   ]) async {
-    return _basicCredentialsCallback?.call(uri, form, invalidCredentials);
+    return _basicCredentialsCallback?.call(blargh, invalidCredentials);
   }
 
   Future<BearerCredentials?> _getBearerCredentials(
-    Uri uri,
-    AugmentedForm? form, [
+    DiscoveryCallbackParameter blargh, [
     BearerCredentials? invalidCredentials,
   ]) async {
-    return _bearerCredentialsCallback?.call(uri, form, invalidCredentials);
+    return _bearerCredentialsCallback?.call(blargh, invalidCredentials);
   }
 
   static Map<String, String> _getHeadersFromForm(Form form) {

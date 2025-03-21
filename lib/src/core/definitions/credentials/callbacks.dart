@@ -12,6 +12,40 @@ import "ace_credentials.dart";
 import "credentials.dart";
 import "psk_credentials.dart";
 
+sealed class DiscoveryCallbackParameter {
+  Uri get uri;
+
+  static DiscoveryCallbackParameter create(
+    Uri uri, [
+    AugmentedForm? form,
+  ]) {
+    if (form == null) {
+      return UriDiscoveryCallbackParameter(uri);
+    }
+
+    return FormDiscoveryCallbackParameter(form, uri);
+  }
+}
+
+final class UriDiscoveryCallbackParameter extends DiscoveryCallbackParameter {
+  UriDiscoveryCallbackParameter(this.uri);
+
+  final Uri uri;
+}
+
+final class FormDiscoveryCallbackParameter extends DiscoveryCallbackParameter {
+  FormDiscoveryCallbackParameter(
+    this.form, [
+    this._uri,
+  ]);
+
+  final Uri? _uri;
+
+  final AugmentedForm form;
+
+  Uri get uri => _uri ?? form.href;
+}
+
 /// Function signature for a synchronous callback for providing client
 /// [PskCredentials] at runtime.
 ///
@@ -23,8 +57,7 @@ import "psk_credentials.dart";
 /// an [identityHint] that might be given by the server. In the case of
 /// interactions, the corresponding [Form] is also provided.
 typedef ClientPskCallback = PskCredentials? Function(
-  Uri uri,
-  Form? form,
+  DiscoveryCallbackParameter yo,
   String? identityHint,
 );
 
@@ -37,8 +70,7 @@ typedef ClientPskCallback = PskCredentials? Function(
 /// "Unauthorized" response, the [invalidAceCredentials] from the previous
 /// request are returned as an additional parameter.
 typedef AceSecurityCallback = Future<AceCredentials?> Function(
-  Uri uri,
-  Form? form,
+  DiscoveryCallbackParameter yo,
   AuthServerRequestCreationHint? creationHint,
   AceCredentials? invalidAceCredentials,
 );
@@ -60,7 +92,7 @@ typedef AceSecurityCallback = Future<AceCredentials?> Function(
 /// This callback signature is currently only used for [PskCredentials] due to
 /// implementation limitations, which do not allow for asynchronous callbacks.
 typedef AsyncClientSecurityCallback<T extends Credentials> = Future<T?>
-    Function(Uri uri, AugmentedForm? form, T? invalidCredentials);
+    Function(DiscoveryCallbackParameter yo, T? invalidCredentials);
 
 /// Function signature for a synchronous callback retrieving server
 /// [Credentials] by Thing [id] at runtime.
