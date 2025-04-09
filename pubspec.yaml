@@ -15,7 +15,7 @@ dev_dependencies:
   test: ^1.24.3
 
 dependencies:
-  args: ^2.5.0
+  args: ^2.7.0
   cbor: ^6.1.0
   coap: ^9.1.0
   collection: ^1.17.2
