@@ -10,7 +10,6 @@
   <img title="Thingweb dart_wot " alt="Thingweb dart_wot logo" src="https://raw.githubusercontent.com/eclipse-thingweb/thingweb/main/brand/logos/dart_wot.svg" width="300">
 </picture>
 
-# dart_wot
 
 dart_wot is an implementation of the
 Web of Things [Scripting API](https://w3c.github.io/wot-scripting-api/) modelled
