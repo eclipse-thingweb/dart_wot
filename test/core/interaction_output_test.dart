@@ -83,9 +83,8 @@ void main() {
 
       await interactionOutput.arrayBuffer();
 
-      final result = interactionOutput.arrayBuffer();
-      await expectLater(
-        result,
+      expect(
+        interactionOutput.arrayBuffer,
         throwsA(
           isA<NotReadableException>(),
         ),
@@ -118,7 +117,7 @@ void main() {
     );
   });
 
-  test("allow accessing the form field", () async {
+  test("allow accessing the form field", () {
     final contentSerdes = ContentSerdes();
     final content = Content(
       "text/plain",

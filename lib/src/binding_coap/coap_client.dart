@@ -127,7 +127,7 @@ final class CoapClient extends ProtocolClient
     AugmentedForm form,
     OperationType operationType, [
     Content? content,
-  ]) async {
+  ]) {
     final requestMethod = form.method ?? operationType.requestMethod;
     final code = requestMethod.code;
 
@@ -370,7 +370,7 @@ final class CoapClient extends ProtocolClient
   }
 
   @override
-  Future<Content> readResource(AugmentedForm form) async {
+  Future<Content> readResource(AugmentedForm form) {
     return _sendRequestFromForm(form, OperationType.readproperty);
   }
 
@@ -380,7 +380,7 @@ final class CoapClient extends ProtocolClient
   }
 
   @override
-  Future<Content> invokeResource(AugmentedForm form, Content content) async {
+  Future<Content> invokeResource(AugmentedForm form, Content content) {
     return _sendRequestFromForm(form, OperationType.invokeaction, content);
   }
 
@@ -390,7 +390,7 @@ final class CoapClient extends ProtocolClient
     required void Function(Content content) next,
     required void Function() complete,
     void Function(Exception error)? error,
-  }) async {
+  }) {
     final OperationType operationType = form.op.firstWhere(
       (element) => [OperationType.subscribeevent, OperationType.observeproperty]
           .contains(element),
@@ -443,8 +443,7 @@ final class CoapClient extends ProtocolClient
   Future<void> stop() async {}
 
   @override
-  Future<DiscoveryContent> discoverDirectly(Uri uri) async =>
-      _sendDiscoveryRequest(
+  Future<DiscoveryContent> discoverDirectly(Uri uri) => _sendDiscoveryRequest(
         uri,
         coap.RequestMethod.get,
         form: null,

@@ -60,9 +60,9 @@ class DataSchema implements Serializable {
   factory DataSchema.fromJson(
     Map<String, dynamic> json,
     PrefixMapping prefixMapping, [
-    Set<String>? parsedFields,
+    Set<String>? parsedFieldsInput,
   ]) {
-    parsedFields = parsedFields ?? {};
+    final parsedFields = parsedFieldsInput ?? {};
     final atType =
         json.parseArrayField<String>("@type", parsedFields: parsedFields);
     final title = json.parseField<String>("title", parsedFields);

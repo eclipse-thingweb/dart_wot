@@ -219,7 +219,7 @@ class ConsumedThing implements scripting_api.ConsumedThing {
     Object? data,
     int? formIndex,
     Map<String, Object>? uriVariables,
-  }) async {
+  }) {
     final property = thingDescription.properties?[propertyName];
 
     if (property == null) {

@@ -10,7 +10,7 @@ import "package:test/test.dart";
 
 void main() {
   group("Should serialize and deserialize", () {
-    test("ThingDescriptions", () async {
+    test("ThingDescriptions", () {
       final thingDescriptionJson = {
         "@context": ["https://www.w3.org/2022/wot/td/v1.1"],
         "@type": ["foobar"],
@@ -63,7 +63,7 @@ void main() {
       );
     });
 
-    test("VersionInfo", () async {
+    test("VersionInfo", () {
       final versionInfoJson = {
         "instance": "1.0.0",
         "model": "1.0.0",
@@ -78,7 +78,7 @@ void main() {
       );
     });
 
-    test("Links", () async {
+    test("Links", () {
       final linkJson = {
         "href": "https://example.org",
         "anchor": "https://example.org",
@@ -96,7 +96,7 @@ void main() {
       );
     });
 
-    test("Forms", () async {
+    test("Forms", () {
       final formJson = {
         "href": "https://example.org",
         "subprotocol": "foobar",
@@ -117,7 +117,7 @@ void main() {
       );
     });
 
-    test("AugmentedForms", () async {
+    test("AugmentedForms", () {
       final formJson = {
         "href": "https://example.org",
       };
@@ -152,7 +152,7 @@ void main() {
       );
     });
 
-    test("AdditionalExpectedResponses", () async {
+    test("AdditionalExpectedResponses", () {
       final additionalExpectedResponseJson = {
         "success": true,
         "contentType": "application/cbor",
@@ -172,7 +172,7 @@ void main() {
       );
     });
 
-    test("Actions", () async {
+    test("Actions", () {
       final actionJson = {
         "input": {},
         "output": {},
@@ -197,7 +197,7 @@ void main() {
       );
     });
 
-    test("DataSchemas", () async {
+    test("DataSchemas", () {
       final dataSchemaJson = {
         "items": [
           {
@@ -222,7 +222,7 @@ void main() {
       );
     });
 
-    test("OAuth2SecurityScheme", () async {
+    test("OAuth2SecurityScheme", () {
       final oAuth2SecuritySchemeJson = {
         "scheme": "oauth2",
         "authorization": "https://example.org",
@@ -246,7 +246,7 @@ void main() {
       );
     });
 
-    test("BearerSecurityScheme", () async {
+    test("BearerSecurityScheme", () {
       final bearerSecuritySchemeJson = {
         "scheme": "bearer",
         "authorization": "https://example.org",
@@ -270,7 +270,7 @@ void main() {
       );
     });
 
-    test("DigestSecurityScheme", () async {
+    test("DigestSecurityScheme", () {
       final digestSecuritySchemeJson = {
         "scheme": "digest",
         "name": "foobar",
@@ -292,7 +292,7 @@ void main() {
       );
     });
 
-    test("BasicSecurityScheme", () async {
+    test("BasicSecurityScheme", () {
       final basicSecuritySchemeJson = {
         "scheme": "basic",
         "name": "foobar",
@@ -313,7 +313,7 @@ void main() {
       );
     });
 
-    test("ApiKeySecurityScheme", () async {
+    test("ApiKeySecurityScheme", () {
       final apiKeySecuritySchemeJson = {
         "scheme": "apikey",
         "name": "foobar",
@@ -334,7 +334,7 @@ void main() {
       );
     });
 
-    test("PskSecurityScheme", () async {
+    test("PskSecurityScheme", () {
       final pskSecuritySchemeJson = {
         "scheme": "psk",
         "identity": "foobar",
@@ -360,7 +360,7 @@ void main() {
       );
     });
 
-    test("ComboSecurityScheme", () async {
+    test("ComboSecurityScheme", () {
       for (final comboVariantKey in ["allOf", "oneOf"]) {
         final comboSecuritySchemeJson = {
           "scheme": "combo",
@@ -382,7 +382,7 @@ void main() {
       }
     });
 
-    test("AceSecurityScheme", () async {
+    test("AceSecurityScheme", () {
       final aceSecuritySchemeJson = {
         "scheme": "ace:ACESecurityScheme",
         "ace:as": "https://example.org",

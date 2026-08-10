@@ -25,15 +25,15 @@ void main() {
       expect(defaultServer.scheme, "http");
 
       expect(
-        () async => defaultServer.start(),
+        defaultServer.start,
         throwsA(const TypeMatcher<UnimplementedError>()),
       );
       expect(
-        () async => defaultServer.stop(),
+        defaultServer.stop,
         throwsA(const TypeMatcher<UnimplementedError>()),
       );
       expect(
-        () async => defaultServer.expose(MockExposedThing()),
+        () => defaultServer.expose(MockExposedThing()),
         throwsA(const TypeMatcher<UnimplementedError>()),
       );
 

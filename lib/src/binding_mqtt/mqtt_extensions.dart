@@ -153,7 +153,7 @@ extension MqttClientExtension on MqttServerClient {
   /// Connect using optional [credentials].
   Future<MqttClientConnectionStatus?> connectWithCredentials(
     BasicCredentials? credentials,
-  ) async =>
+  ) =>
       connect(
         credentials?.username,
         credentials?.password,

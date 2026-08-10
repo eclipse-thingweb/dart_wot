@@ -35,13 +35,13 @@ final class HttpServer implements ProtocolServer {
   }
 
   @override
-  Future<void> start([ServerSecurityCallback? serverSecurityCallback]) async {
+  Future<void> start([ServerSecurityCallback? serverSecurityCallback]) {
     // TODO(JKRhb): implement start
     throw UnimplementedError();
   }
 
   @override
-  Future<void> stop() async {
+  Future<void> stop() {
     // TODO(JKRhb): implement stop
     throw UnimplementedError();
   }

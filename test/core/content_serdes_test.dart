@@ -57,7 +57,7 @@ void main() {
         null,
       );
     });
-    test("support registration of new Codecs", () async {
+    test("support registration of new Codecs", () {
       final contentSerdes = ContentSerdes();
 
       expect(
@@ -139,8 +139,7 @@ void main() {
       expect(await content.body.isEmpty, isTrue);
     });
 
-    test("reject undefined DataSchemaValues if a DataSchema is given",
-        () async {
+    test("reject undefined DataSchemaValues if a DataSchema is given", () {
       final contentSerdes = ContentSerdes();
 
       expect(

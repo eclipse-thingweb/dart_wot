@@ -12,7 +12,7 @@ import "package:test/test.dart";
 
 void main() {
   group("CoAP definitions should", () {
-    test("deserialize CoAP Forms", () async {
+    test("deserialize CoAP Forms", () {
       const thingDescriptionJson = {
         "@context": [
           "https://www.w3.org/2022/wot/td/v1.1",

@@ -343,7 +343,7 @@ final class HttpClient extends ProtocolClient
   Future<DiscoveryContent> discoverDirectly(
     Uri uri, {
     bool disableMulticast = false,
-  }) async {
+  }) {
     final request = Request(HttpRequestMethod.get.methodName, uri);
 
     return _sendDiscoveryRequest(
