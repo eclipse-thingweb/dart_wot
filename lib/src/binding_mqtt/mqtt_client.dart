@@ -67,7 +67,7 @@ final class MqttClient extends ProtocolClient with MqttDiscoverer {
     );
   }
 
-  Future<MqttServerClient> _connectWithForm(AugmentedForm form) async =>
+  Future<MqttServerClient> _connectWithForm(AugmentedForm form) =>
       _connect(form.href, form);
 
   Future<MqttServerClient> _connect(Uri brokerUri, AugmentedForm? form) async {
@@ -223,9 +223,7 @@ final class MqttClient extends ProtocolClient with MqttDiscoverer {
 
     Timer(
       discoveryTimeout,
-      () async {
-        client.disconnect();
-      },
+      client.disconnect,
     );
 
     await for (final receivedMessageList in receivedMessageStream) {

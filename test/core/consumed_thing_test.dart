@@ -10,7 +10,7 @@ import "package:test/test.dart";
 
 void main() {
   group("ConsumedThing should", () {
-    test("parse Interaction Affordances", () async {
+    test("parse Interaction Affordances", () {
       const thingDescriptionJson = {
         "@context": [
           "https://www.w3.org/2022/wot/td/v1.1",
