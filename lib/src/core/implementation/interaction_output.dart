@@ -45,7 +45,7 @@ class InteractionOutput implements scripting_api.InteractionOutput {
   scripting_api.DataSchemaValue? _value;
 
   @override
-  Future<ByteBuffer> arrayBuffer() async {
+  Future<ByteBuffer> arrayBuffer() {
     if (dataUsed) {
       throw const NotReadableException("Data has already been read");
     }

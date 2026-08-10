@@ -352,7 +352,7 @@ void main() {
         (event) {
           counter++;
         },
-        onError: (error) async {},
+        onError: (error) {},
         onDone: () {
           expect(counter, 0);
           expect(thingDiscoveryProcess.done, true);
@@ -376,7 +376,7 @@ void main() {
       final wot = await servient.start();
 
       expect(
-        () async => wot.exploreDirectory(directoryTestUri3),
+        wot.exploreDirectory(directoryTestUri3),
         throwsA(isException),
       );
     });

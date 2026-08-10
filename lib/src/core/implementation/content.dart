@@ -63,7 +63,7 @@ class Content {
   }
 
   /// Converts the [body] of this [Content] to a [List] of bytes asynchronously.
-  Future<List<int>> toByteList() async =>
+  Future<List<int>> toByteList() =>
       body.expand<int>((element) => element).toList();
 }
 
