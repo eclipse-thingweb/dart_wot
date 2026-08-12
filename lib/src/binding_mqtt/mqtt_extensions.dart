@@ -11,7 +11,6 @@ import "package:uuid/uuid.dart";
 
 import "../../core.dart";
 import "constants.dart";
-import "mqtt_binding_exception.dart";
 
 /// [PrefixMapping] for expanding MQTT Vocabulary terms from compact IRIs.
 final mqttPrefixMapping = PrefixMapping(defaultPrefixValue: mqttContextUri);
@@ -59,6 +58,16 @@ extension MqttUriExtension on Uri {
 
     throw StateError("MQTT URI scheme $scheme is not supported.");
   }
+
+  String get _mqttTopic {
+    final path = Uri.decodeComponent(this.path);
+
+    if (path.isEmpty) {
+      return path;
+    }
+
+    return path.substring(1);
+  }
 }
 
 /// Additional methods for making MQTT [Form]s easier to work with.
@@ -87,28 +96,30 @@ extension MqttFormExtension on AugmentedForm {
 
   /// Gets the MQTT topic for publishing from this [Form].
   ///
-  /// Throws an [Exception] if no topic could be retrieved.
+  /// If present, this getter uses the dedicated vocabulary term `topic`.
+  /// Otherwise, the URI path from the `href` field is being used as a fallback.
   String get topicName {
     final topic = _obtainVocabularyTerm<String>("topic");
 
-    if (topic == null) {
-      throw MqttBindingException("MQTT topic was not defined on form.");
+    if (topic != null) {
+      return topic;
     }
 
-    return topic;
+    return href._mqttTopic;
   }
 
   /// Gets the MQTT topic for subscribing from this [Form].
   ///
-  /// Throws an [Exception] if no topic could be retrieved.
+  /// If present, this getter uses the dedicated vocabulary term `filter`.
+  /// Otherwise, the URI path from the `href` field is being used as a fallback.
   String get topicFilter {
     final topic = _obtainVocabularyTerm<String>("filter");
 
-    if (topic == null) {
-      throw MqttBindingException("MQTT topic was not defined on form.");
+    if (topic != null) {
+      return topic;
     }
 
-    return topic;
+    return href._mqttTopic;
   }
 
   /// Gets the MQTT `retain` value from this [Form] if present.
